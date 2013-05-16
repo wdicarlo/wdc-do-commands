@@ -1,3 +1,26 @@
 #!/bin/bash
 
-git tag -l
+log_cmd="do-git-log | grep -E \".*\\(tag:|\\(HEAD\""
+if [ $# -gt 0 ]
+then
+    if [ "$1" == "-h" ]
+    then
+        cmd=`basename $0`
+        echo "Usage: $cmd [-r] [<grep-pattern>]"
+        echo "       -raw    raw format"
+        exit
+    fi
+    if [ "$1" == "-raw" ]
+    then
+        log_cmd="git tag -l"
+        shift
+    fi
+fi
+
+
+if [ $# -gt 0 ]
+then
+    log_cmd="$log_cmd | grep $@"
+fi
+
+eval $log_cmd
