@@ -1,0 +1,26 @@
+#!/bin/sh
+
+
+#if [ $# == 1 && "$1" == "-h" ]
+#then
+#        app=`basename $0`
+#        echo "Usage: $app [<find options>]"
+#        exit
+#fi
+
+test=$PROJECT
+if [ -z "$test" ]
+then
+    echo "Variable \$PROJECT not defined"
+    exit
+fi
+
+dest="/media/sf_Shared/tests/$test"
+
+if [ ! -d "$dest" ]
+then
+    echo "Missing test folder $dest"
+    exit
+fi
+
+find $dest $@

@@ -1,0 +1,44 @@
+#!/bin/sh
+
+if [ $# -eq 0 ]
+then
+    app=`basename $0`
+    echo "Usage: $app <files>"
+    return
+fi
+
+project=$PROJECT
+if [ -z "$project" ]
+then
+    project=`basename $PWD`
+fi
+
+echo "project: $project"
+
+dest=`echo ~/projects/$project`
+
+if [ ! -d "$dest" ]
+then
+    echo "Missing project folder $dest"
+    exit
+fi
+
+echo "Are you sure to update: $dest {Y/N}?"
+read answer
+if [ "$answer" != "Y" ]
+then
+    return
+fi
+
+echo "Updating project: $dest"
+for file in $@
+do
+    if [ -f $file ]
+    then
+        echo "Updating $file"
+        cp --preserve=all $file $dest
+    else
+        echo "$file is not a file"
+    fi
+done
+ls -last $dest

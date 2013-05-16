@@ -1,0 +1,56 @@
+#!/bin/sh 
+
+
+folders="."
+while getopts cdf: flag
+do
+    case $flag in
+
+        c)
+            if [ -f "cscope.files" ]
+            then
+                echo "Cleaning cscope files..."
+                rm cscope.*
+            fi
+            ;;
+        d)
+            echo debugging on
+            ;;
+        f)
+            folders=$OPTARG
+            ;;
+        ?)
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift past the last flag or argument
+
+home=$PWD
+
+echo Home: $home
+echo Folders to scan are: $folders
+
+if [ ! -f "cscope.files" ]
+then
+    echo "Building cscope source file list..."
+    for folder in $folders
+    do
+        cd $folder
+        curdir=`pwd`
+        echo "Scanning folder: $curdir ..."
+        find `pwd` -name "*.h" >> $home/cscope.files
+        find `pwd` -name "*.hpp" >> $home/cscope.files
+        find `pwd` -name "*.c" >> $home/cscope.files
+        find `pwd` -name "*.cpp" >> $home/cscope.files
+        find `pwd` -name "*.S" >> $home/cscope.files
+        find `pwd` -name "*.s" >> $home/cscope.files
+        find `pwd` -name "*.const" >> $home/cscope.files
+        find `pwd` -name Makefile >> $home/cscope.files
+        find `pwd` -name Kconfig >> $home/cscope.files
+        cd $home
+    done
+fi
+
+echo "Building cscope database..."
+cscope -bkq

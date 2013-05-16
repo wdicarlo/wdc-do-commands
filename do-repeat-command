@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $# == 0 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <num_of_repetitions> <cmd> [<par1>...<parn>]"
+    exit
+fi
+
+number=$1
+
+if [ "$number" -lt 2 ] || [ "$number" -gt 10 ]
+then
+    echo "Wrong repetition number: $number"
+    exit
+fi
+
+shift
+for i in `seq $number` 
+do
+    $@
+done

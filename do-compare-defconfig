@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ ! $# == 1 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <def-config-to-compare-with-.config>"
+    exit
+fi
+
+if [ ! -f ".config" ]
+then
+    echo "Missing .config file"
+    exit
+fi
+
+if [ ! -f "$1" ]
+then
+    echo "Missing $1 file"
+    exit
+fi
+
+vimdiff "$1" .config
+

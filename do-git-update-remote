@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# update URL present in .git/config
+
+
+if [ ! $# == 1 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <new-remote-url>"
+    echo "git remote -v"
+    git remote -v
+    exit
+fi
+
+
+git remote set-url origin $1
+git remote -v

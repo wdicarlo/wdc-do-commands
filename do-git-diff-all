@@ -1,0 +1,4 @@
+#!/bin/bash
+
+git diff -w --color=always $@
+git ls-files --others --exclude-standard | while read -r i; do git diff --color -- /dev/null "$i"; done

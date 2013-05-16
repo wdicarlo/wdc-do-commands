@@ -1,0 +1,28 @@
+git clone git://git.savannah.nongnu.org/qemu.git
+./configure --prefix=/opt/qemu --target-list=arm-linux-user
+make install
+
+git clone git://gitorious.org/scratchbox2/scratchbox2.git
+git checkout -b 2.3.63 2.3.63
+./autogen.sh --prefix=/opt/sb2
+make install
+cd /opt/arm-2009q1/arm-none-linux-gnueabi/libc/
+sb2-init -c /opt/qemu/bin/qemu-arm armv9 /opt/arm-2009q1/bin/arm-none-linux-gnueabi-gcc
+wget -c http://zlib.net/zlib-1.2.8.tar.gz
+tar -xf zlib-1.2.8.tar.gz
+Configure zlib
+	sb2 ./configure --prefix=/opt/arm/gst
+Make and install zlib
+	sb2 make install
+Checkout glib
+	git clone git://git.gnome.org/glib
+
+	git checkout -b 2.37.0 2.37.0
+
+	./autogen.sh --noconfigure
+
+	export C_INCLUDE_PATH='/opt/arm/gst/include' LDFLAGS='-L/opt/arm/gst/lib'
+
+	sb2 ./configure --prefix=/opt/arm/gst --disable-static --with-html-dir=/tmp/dump
+Reference howto notes at:
+	http://felipec.wordpress.com/2010/10/08/my-arm-development-notes/

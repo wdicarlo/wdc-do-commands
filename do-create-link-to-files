@@ -1,0 +1,26 @@
+#!/bin/bash
+
+
+if [ ! $# == 2 ]
+then
+    app=`basename $0`
+    echo "Usage: $app <source-folder> <pattern>"
+    exit
+
+fi
+
+
+curr_path=$PWD
+curr_folder=`basename $PWD`
+
+
+if [ ! -d "$1" ]
+then
+    echo "$1 does not exists"
+    exit
+fi
+
+
+find "$1" -maxdepth 1 -type f -name "$2" -exec ln -s {} \;
+
+find . -maxdepth 1 -type l -name "$2" |xargs -I@ file @

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+now=`date +%Y%m%d%H%M%S`
+
+if [  $# != 1 ]
+then
+    echo "Usage: do-build-patch <patch>"
+    return
+fi
+
+patch -p1 < $1

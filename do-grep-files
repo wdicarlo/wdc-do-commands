@@ -1,0 +1,33 @@
+#!/bin/bash
+
+if [ ! $# -gt 1 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <grep-pattern> <file1> [... <filen>] "
+    exit
+fi
+
+grep_patt="$1"
+if [ -z "$grep_patt" ]
+then
+    echo "Missing grep pattern"
+    exit
+fi
+
+shift
+
+if [ -f "$grep_patt" ]
+then
+    echo "ATTENTION: Grep pattern \"$grep_patt\" correspond to a filename"
+fi
+
+for file in "$@"
+do
+    if [ ! -f "$file" ]
+    then
+        echo "Missing $2 file"
+    else
+        echo "$file -> $file.grep"
+        grep "$grep_patt" $file > $file.grep
+    fi
+done

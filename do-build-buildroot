@@ -1,0 +1,35 @@
+#!/bin/bash
+
+folder=`basename $PWD`
+app=`basename $0`
+
+if [ ! $folder == "buildroot" ]
+then
+    echo "Not in the buildroot folder"
+    exit
+fi
+
+if [ ! -f ".config" ]
+then
+    echo "buildroot not configured"
+    exit
+fi
+
+if [ ! -f "dl" ]
+then
+    if [ ! -h "dl" ]
+    then
+        echo "dl folder is missing"
+        exit
+    fi
+fi
+
+is_aux=`grep fs_aux .config`
+if [ -z "$is_aux" ]
+then
+    make
+else
+    make && mv output/images/rootfs.jffs2 output/images/auxfs.jffs2 && mv output/images/rootfs.tar.bz2 output/images/auxfs.tar.bz2
+fi
+
+

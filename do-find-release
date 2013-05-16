@@ -1,0 +1,35 @@
+#!/bin/sh
+
+
+if [ $# == 1 ]
+then
+    if [ $1 == "-h" ]
+    then
+        app=`basename $0`
+        echo "Usage: $app [<find options>]"
+        exit
+    fi
+fi
+
+if [ ! -z "$RELEASE" ]
+then
+    release=$RELEASE
+else
+    release=$PROJECT
+fi
+
+if [ -z "$release" ]
+then
+    echo "Variable \$PROJECT not defined"
+    exit
+fi
+
+dest="/media/sf_Shared/releases/$release"
+
+if [ ! -d "$dest" ]
+then
+    echo "Missing release folder $dest"
+    exit
+fi
+
+find $dest $@

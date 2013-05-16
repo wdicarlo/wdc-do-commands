@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ ! $# -eq 1 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <grep-pattern>"
+    exit
+fi
+
+do-git-diff `do-git-list-modified  | grep "$1"`

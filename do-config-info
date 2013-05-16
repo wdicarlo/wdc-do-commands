@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ ! -f ".config" ]
+then
+    echo "Missing .config file"
+    exit
+fi
+grep NAME .config
+grep CUSTOM_PATH .config

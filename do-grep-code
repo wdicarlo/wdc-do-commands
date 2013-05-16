@@ -1,0 +1,24 @@
+#!/bin/bash
+
+home=$PWD
+
+exts="*.h *.hpp *.c *.cpp *.S *.s Makefile Kconfig"
+
+dirs="."
+if [ $# == 0 ]
+then
+    echo "Usage: do-grep-code <pattern> [\"dir1 dir2 ... dirn\"]"
+    exit
+fi
+if [ $# == 2 ]
+then
+    dirs=$2
+fi
+echo "Grepping in: $dirs"
+for dir in $dirs
+do
+    for ext in $exts
+    do
+        find  $dir -name $ext | xargs -n1 -I@ grep -nHi $1 @
+    done
+done

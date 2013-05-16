@@ -1,0 +1,51 @@
+#!/bin/sh
+
+if [ $# -eq 0 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <files>"
+    return
+fi
+
+if [ ! -z "$RELEASE" ]
+then
+    release=$RELEASE
+else
+    release=$PROJECT
+fi
+
+if [ -z "$release" ]
+then
+    release=`basename $PWD`
+fi
+
+echo "Release: $release"
+
+orig="/media/sf_Shared/releases/$release"
+dest="."
+
+if [ ! -d "$dest" ]
+then
+    echo "Missing release folder $dest"
+    exit
+fi
+
+echo "Are you sure to update: $dest {Y/N}?"
+read answer
+if [ "$answer" != "Y" ]
+then
+    return
+fi
+
+echo "Updating test: $dest"
+for file in $@
+do
+    if [ -f "$orig/$file" ]
+    then
+        echo "Updating $file"
+        cp --preserve=all "$orig/$file" $dest
+    else
+        echo "$orig/$file is not a file"
+    fi
+done
+ls -last $dest

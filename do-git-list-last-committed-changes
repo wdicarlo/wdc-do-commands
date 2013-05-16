@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $# -gt 0 ]
+then
+    if [ "$1" == "-h" ]
+    then
+        cmd=`basename $0`
+        echo "Usage: $cmd [<grep-parameters>]"
+        exit
+    fi
+    git diff -w HEAD~1..HEAD `do-git-list-last-committed-files $@`
+else
+    git diff -w HEAD~1..HEAD
+fi

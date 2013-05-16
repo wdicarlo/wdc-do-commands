@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+defs_file=include/generated/autoconf.h
+
+
+if [ ! -f $defs_file ]
+then
+    echo "Either you are not in a linux kernel root folder or the kernel has not been generated"
+    exit
+fi
+
+if [ $# == 1 ]
+then
+    #cat $defs_file | grep -i --color $1
+    cat $defs_file | grep -e "^#" | awk '{ print $2 " " $3 }' | sort | grep -i --color $1
+else
+    #cat $defs_file 
+    cat $defs_file | grep -e "^#" | awk '{ print $2 " " $3 }' | sort 
+fi

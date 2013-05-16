@@ -1,0 +1,33 @@
+#!/bin/bash
+
+
+
+folders="\
+        /opt/arm-2009q1-eabi/share/doc/arm-arm-none-eabi/pdf/ \
+        /opt/arm-2009q1/share/doc/ \
+        /opt/okl4sdk-manta/docs/ \
+        /usr/share \
+    "
+if [ $# == 1 ]
+then
+    if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+    then
+        cmd=`basename $0`
+        echo "Usage: $cmd <pdf-filename-pattern>"
+        echo "Examples:"
+        echo "   $cmd   \"q1-eabi.*libc\""
+        exit
+    fi
+    # TODO: improve filtering considering only the filename but maintaining the path
+    list=`find $folders -name "*.pdf" | grep "$@"`
+    num=`ls -1 $list|wc -l`
+    if [ "$num" == 1 ]
+    then
+        evince $list &
+    else
+        ls -1 $list
+    fi
+else
+    find $folders -name "*.pdf"
+fi
+

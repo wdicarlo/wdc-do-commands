@@ -1,0 +1,18 @@
+#!/bin/bash
+
+
+if [ ! $# == 2 ]
+then
+    cmd=`basename $0`
+   echo "Usage: $cmd \"title\" \"command\""
+   exit
+fi
+
+howto=`echo ~/bin/howto_gstreamer.otl`
+
+echo -e "$1\n\t$2" >> $howto
+
+cat $howto | tail
+
+
+

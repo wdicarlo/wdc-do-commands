@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ $# == 1 ]
+then
+    if [ $1 == "-h" ]
+    then
+        app=`basename $0`
+        echo "Usage: $app [<find options>]"
+        exit
+    fi
+fi
+
+for file in `find $@`; do if [ -h $file ]; then echo $file; fi; done

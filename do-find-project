@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $# == 1 ]
+then
+    if [ $1 == "-h" ]
+    then
+        app=`basename $0`
+        echo "Usage: $app [<find options>]"
+        exit
+    fi
+fi
+
+folder=`echo ~/projects/$PROJECT`
+find $folder $@

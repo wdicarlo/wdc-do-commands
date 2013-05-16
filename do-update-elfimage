@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [  $# != 2 ]
+then
+    echo "Usage: do-update-elfimage <linux-folder> <output>"
+    return
+fi
+
+
+if [ ! -d "$1" ]
+then    
+    echo "$1 is not a folder"
+    return
+fi
+
+if [ -f "$2" ]
+then
+    mv $2 $2.bak
+    ls -l $2.bak
+fi
+
+cp $1/arch/arm/boot/elfImage ./$2
+ls -l $2

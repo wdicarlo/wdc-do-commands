@@ -1,0 +1,36 @@
+#!/bin/sh
+
+now=`date +%Y%m%d%H%M%S`
+
+if [  $# != 2 ]
+then
+    echo "Usage: do-build-kernel <linux-folder> <defconfig>"
+    return
+fi
+
+
+if [ ! -d "$1" ]
+then    
+    echo "$1 is not a folder"
+    return
+fi
+
+
+if [ ! -f "$2" ]
+then
+    echo "Missing $2"
+    return
+fi
+
+defconfig="$1/.config"
+if [ -f "$defconfig" ]
+then
+    backup="./defconfig-$now.txt"
+    cp $defconfig $backup
+    echo "Backuped .config in $backup"
+fi
+
+cp $2 $defconfig
+cd $1
+make elfImage
+cd -

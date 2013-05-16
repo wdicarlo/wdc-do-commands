@@ -1,0 +1,6 @@
+#!/bin/sh
+
+
+#find . -type f -name "*.rej" | sed -s "s/.rej//" | xargs -I@  echo "wiggle --replace @ @.rej"
+find . -type f -name "*.rej" | sed -s "s/.rej//" | xargs -I@  wiggle --replace @ @.rej
+find . -type f -name "*.rej" | xargs -I@ rm @
