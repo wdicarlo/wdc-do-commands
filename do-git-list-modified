@@ -1,0 +1,17 @@
+#!/bin/bash
+
+cmd="git status -s"
+
+if [ $# -gt 0 ]
+then
+    if [ "$1" == "-h" ]
+    then
+        cmd=`basename $0`
+        echo "Usage: $cmd [<grep-parameters]"
+        exit
+    fi
+    git status -s  | awk '{ print $2 }' | grep $@
+else
+    git status -s | awk '{ print $2 }'
+fi
+

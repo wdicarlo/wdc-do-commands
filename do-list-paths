@@ -1,0 +1,36 @@
+#!/bin/bash
+
+PROJECT_REL_PATHS=(             \
+             "arch/arm/mach-streamplug/" \
+             "arch/arm/plat-streamplug/"
+             "sound/soc/streamplug/" \
+             "drivers/gpio/" \
+             "drivers/ata/" \
+             "drivers/pci/" \
+             "drivers/mtd/devices/" \
+             "drivers/dma/" \
+             "drivers/char/c3/" \
+             "drivers/spi/" \
+             "drivers/net/stmmac/" \
+             "drivers/net/irda/" \
+             "drivers/watchdog/" \
+             "drivers/video/" \
+             "drivers/misc/" \
+             "drivers/rtc/" \
+             "drivers/usb/gadget/" \
+             );
+
+roots="./"
+if [ $# -gt 0 ]
+then
+    roots=$@
+fi
+
+
+for root in $roots
+do
+    for dir in "${PROJECT_REL_PATHS[@]}"
+    do
+        echo $root$dir
+    done
+done

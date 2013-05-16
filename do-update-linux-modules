@@ -1,0 +1,42 @@
+#!/bin/bash
+
+
+# TODO: improve check to see if we are in the root of the linux kernel
+file=MAINTAINERS
+if [ ! -f $file ]
+then
+    echo "Not in the Linux kernel root folder"
+    exit
+fi
+
+common=`echo ~/linux/lib/modules`
+
+modules=`ls -1 $common|head -1`
+
+if [ ! -z "$modules" ]
+then
+    echo "Replace $common/$modules {Y/N}?"
+    read answer
+    if [ ! "$answer" == "Y" ]
+    then
+        exit
+    fi
+    rm -rf $common
+    mkdir -p $common
+fi
+
+
+echo "Updating modules..."
+install_dir="$1/lib/modules"
+make modules && make modules_install
+
+# remove links to the folder used to build the modules
+for file in  `find $common`
+do
+    if [ -h "$file" ]
+    then
+        rm "$file"
+    fi
+done
+find $common
+echo "Done"

@@ -1,0 +1,58 @@
+Tar excluding the GIT repository folder
+    tar -cjf linux-2.6.35.0-okl-azcom.tar.bz2 --exclude=.git linux-2.6.35.0-okl-azcom
+Prune folder
+    find . -maxdepth 1 \( -name .git -prune -o -name "*" -print -exec rm -rf {} \; \)
+Explore more than one folder with find command
+    echo -e "fs\nmm"|xargs -n1 -I@ find @ -name "p*.c"
+Grep over different sets of folders
+	echo -e "fs\nmm"|xargs -n1 -I@ find @ -name "p*.c" | xargs -n1 -I@ grep -iHn --color cpu @"
+Add a column with the line number
+	awk '{print NR,$0}' README
+Generate initramfs_list
+	../oklinux-2.6.35-streamplug/scripts/gen_initramfs_list.sh initramfs > initramfs_list
+Find dynamic libraries used by examples
+	find initramfs/examples/ -type f | grep -v "txt\|dat\|jpg\|mcu" | xargs -I@ readelf -d @
+Mount jffs2 image
+    sudo modprobe mtdblock
+    sudo modprobe jffs2
+    sudo modprobe mtdram total_size=200000
+    cat /proc/mtd 
+    sudo dd if=/usr/src/sheeva/Image/ubuntu.jffs2 of=/dev/mtdblock0
+    sudo mount -t jffs2 /dev/mtdblock0 /mnt
+    ls /mnt
+
+    # modprobe mtdblock
+    # modprobe jffs2
+    # modprobe mtdram total_size=200000
+    # cat /proc/mtd 
+    dev:    size   erasesize  name
+    mtd0: 0c350000 00020000 "mtdram test device"
+    # dd if=/usr/src/sheeva/Image/ubuntu.jffs2 of=/dev/mtdblock0
+    278272+0 records in
+    278272+0 records out
+    142475264 bytes (142 MB) copied, 2.59761 s, 54.8 MB/s
+    # mount -t jffs2 /dev/mtdblock0 /mnt
+    # ls /mnt
+    bin   dev  home  media  opt   root  selinux  sys  usr
+    boot  etc  lib   mnt    proc  sbin  srv      tmp  var
+
+    =================================================================================
+    First, load the mtdram module. The total_size and erase_size parameters are in units of !KiB.
+    modprobe mtdram total_size=24576 erase_size=128
+
+    You can verify that it is loaded by looking in /proc.
+    # cat /proc/mtd
+    dev:    size   erasesize  name
+    mtd0: 01800000 00020000 "mtdram test device"
+
+    Then load the mtdblock device, copy the jffs2 filesystem into it, and mount it.
+    modprobe mtdblock
+    dd if=filesystem.jffs2 of=/dev/mtdblock0
+    mount -t jffs2 /dev/mtdblock0 ./root
+
+Avoid some paths in the find command
+	find . -type d \( -path dir1 -o -path dir2 -o -path dir3 \) -prune -o -print
+Find in subfolder excluding the current one
+	find . -type d -not -path .
+Find links
+	for file in `find fs_debug/lib`; do if [ -h $file ]; then echo $file; fi; done

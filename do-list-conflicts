@@ -1,0 +1,4 @@
+#!/bin/sh
+
+
+find . -type f -name "*.rej" | sed -s "s/.rej//" | xargs -I@ grep -Hn "<<<" @

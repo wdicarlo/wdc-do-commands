@@ -1,0 +1,54 @@
+#!/bin/bash
+
+if [ ! $# == 1 ] && [ ! $# == 2 ]
+then
+    echo "Usage: do-generate-initramfs-list <initramfs folder> [<path_prefix>]"
+    exit
+fi
+
+if [ ! -d "$1" ]
+then
+    echo "$1 is not a folder"
+    exit
+fi
+
+folder=`echo $1|sed 's/\/$//'`
+
+if [ $# == 2 ]
+then
+    ~/bin/gen_initramfs_list -u 1001 -g 100 $folder > ${folder}_list.tmp || exit
+
+    cat ${folder}_list.tmp|sed -e "s/ $folder/ $2\/$folder/"  >  ${folder}_list
+    rm ${folder}_list.tmp
+else
+    ~/bin/gen_initramfs_list -u 1001 -g 100 $folder > ${folder}_list || exit
+fi
+
+if [ -d "${folder}_dbg" ]
+then
+    echo "Add files in initramfs_dbg {Y/N}?"
+    read answer
+    if [ "$answer" == "Y" ]
+    then
+        # build custom extension
+        ~/bin/gen_initramfs_list -u 1001 -g 100 ${folder}_dbg >> ${folder}_list || exit
+    fi
+fi
+
+
+echo -e "\
+nod /dev/jpgr 666 0 0 c 253 0\n\
+nod /dev/jpgw 666 0 0 c 253 1\n\
+nod /dev/mtd0      644 0 0 c 90 0\n\
+nod /dev/mtdr0     644 0 0 c 90 1\n\
+nod /dev/mtd1      644 0 0 c 90 2\n\
+nod /dev/mtdr1     644 0 0 c 90 3\n\
+nod /dev/mtd2      644 0 0 c 90 4\n\
+nod /dev/mtdr2     644 0 0 c 90 5\n\
+nod /dev/mtd3      644 0 0 c 90 6\n\
+nod /dev/mtdr3     644 0 0 c 90 7\n\
+nod /dev/mtdblock0 644 0 0 b 31 0\n\
+nod /dev/mtdblock1 644 0 0 b 31 1\n\
+nod /dev/mtdblock2 644 0 0 b 31 2\n\
+nod /dev/mtdblock3 644 0 0 b 31 3\n\
+" >> ${folder}_list

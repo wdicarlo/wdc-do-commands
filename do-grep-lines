@@ -1,0 +1,17 @@
+#!/bin/bash
+
+home=$PWD
+
+if [ $# == 0 ]
+then
+    echo "Usage: do-grep-lines <file> <pattern>"
+    echo "where <pattern> could be: "
+    echo "                       \"12\|23\""
+    exit
+fi
+if [ $# == 2 ]
+then
+    pattern=$2
+    file=$1
+fi
+grep -nH $pattern $file | awk '{ print NR " " $0 }' | grep "^$pattern"

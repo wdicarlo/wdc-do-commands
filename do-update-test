@@ -1,0 +1,66 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]
+then
+    app=`basename $0`
+    echo "Usage: $app [-t <test_pattern_name>] <files>"
+    exit
+fi
+
+test=$PROJECT
+if [ -z "$test" ]
+then
+    test=`basename $PWD`
+fi
+
+echo "test: $test"
+
+dest="/media/sf_Shared/tests/$test"
+
+if [ ! -d "$dest" ]
+then
+    echo "Missing test folder $dest"
+    exit
+fi
+
+if [ $# -gt 2 ]
+then
+    arg="$1"
+    case "$arg" in
+        "-t")
+            shift
+            test_folder="$1"
+            dest_folder=`ls -1 $dest|grep $test_folder`
+
+            if [ -z "$dest_folder" ] || [ ! -d "$dest/$dest_folder" ]
+            then
+                echo "Missing test folder $dest/*$test_folder*"
+                echo "Available test folders:"
+                ls -1 $dest | grep -E "^test_" | xargs -I@ basename @
+                exit
+            fi
+            dest="$dest/$dest_folder"
+            shift
+            ;;
+    esac
+fi
+
+echo "Are you sure to update: $dest {Y/N}?"
+read answer
+if [ ! "$answer" == "Y" ]
+then
+    exit
+fi
+
+echo "Updating test: $dest"
+for file in $@
+do
+    if [ -f $file ]
+    then
+        echo "Updating $file"
+        cp --preserve=all $file $dest
+    else
+        echo "$file is not a file"
+    fi
+done
+ls -last $dest

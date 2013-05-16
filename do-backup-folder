@@ -1,0 +1,59 @@
+#!/bin/bash
+
+if [[ $# < 1 || $# > 2 ]]
+then
+    echo "Usage: do-backup-folder <folder> [<post-fix>]"
+    exit
+fi
+
+if [ ! -d "$1" ]
+then
+    echo "$1 is not a folder"
+    exit
+fi
+
+
+bakfile="backup"
+curdate="`date '+%y%m%d-%H%M%S'`"
+bakdir=`echo ~/backups`
+
+
+export MY_FILES=`find $1/*|grep -v ".git"`
+#echo -e "Files to be included into the backup:\n$MY_FILES"
+
+if [ ${#MY_FILES} -eq 0 ]
+then
+  echo "Please, set MY_FILES"
+  exit
+fi
+
+
+if [ $2 ]; then
+	tarfile="$bakfile-$1-$curdate-$2.tar"
+else
+	tarfile="$bakfile-$1-$curdate.tar"
+fi
+
+
+echo "Creating backups/$tarfile..."
+tar -cvf $bakdir/$tarfile --exclude=.git $MY_FILES
+echo "Done."
+
+
+echo "Creating $tarfile.gz..."
+gzip -c $bakdir/$tarfile > $bakdir/$tarfile.gz
+echo "Done."
+
+
+if [ $bakdir/$tarfile.gz ]; then
+  echo "Removing $tarfile..."
+  rm -f $bakdir/$tarfile
+  echo "Done."
+  if [ $remote_host ]; then 
+    echo "Duplicating backup wdicarlo@$remote_host:walter/backups..."
+    #cp $bakdir/$tarfile.gz /mnt/alvs17/backups
+    scp $bakdir/$tarfile.gz wdicarlo@$remote_host:walter/backups
+    echo "Done."
+  fi
+fi
+

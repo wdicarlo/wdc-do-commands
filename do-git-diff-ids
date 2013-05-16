@@ -1,0 +1,79 @@
+#!/bin/bash
+
+usage()
+{
+app=`basename $0`
+cat << EOF
+Usage: $app -b<branch> [-n<num-ids-to-list>] [-f<from> -t<to>] [-m<mode:0=list files,1=display diffs]
+
+This script prints either the list of changed files or the differences between the files
+
+OPTIONS:
+   -h      Show this message
+   -b      Branch to consider
+   -n      Number of entries to print
+   -m      Printing mode:
+                0 - List files
+                1 - Display differences
+EOF
+}
+
+while getopts "b:m:n:h" flag
+do
+    case $flag in
+        b)
+            echo "branch: $OPTARG"
+            branch=$OPTARG
+            ;;
+        m)
+            mode=$OPTARG
+            ;;
+        n)
+            num=$OPTARG
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift past the last flag or argument
+
+if [ -z $branch ]
+then
+    echo "Missing branch name"
+    exit
+fi
+
+
+if [ -z $mode ]
+then
+    mode=0
+fi
+
+if [ -z $num ]
+then
+    num=30
+fi
+
+git log --oneline "$branch" -"$num" | awk '{print NR,$0}'
+
+read -p "From: " from
+read -p "To: " to
+
+
+from_id=`git log --oneline "$branch" -"$num" | awk '{ print NR,$0}' | grep "^$from" | awk '{ print $2 }'`
+to_id=`git log --oneline "$branch" -"$num" | awk '{ print NR,$0}' | grep "^$to" | awk '{ print $2 }'`
+
+echo "git diff -w $from_id..$to_id"
+
+if [ "$mode" == "0" ]
+then
+    git diff -w $from_id..$to_id | grep "^diff"
+else
+    git diff -w $from_id..$to_id 
+fi

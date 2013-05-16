@@ -1,0 +1,33 @@
+#!/bin/sh
+
+now=`date +%Y%m%d%H%M%S`
+
+if [  $# != 3 ]
+then
+    echo "Usage: do-build-patch <folder> <folder> <output>"
+    return
+fi
+
+
+if [ ! -d "$1" ]
+then    
+    echo "$1 is not a folder"
+    return
+fi
+
+
+if [ ! -d "$2" ]
+then
+    echo "$2 is not a folder"
+    return
+fi
+
+output=$3.patch
+
+if [ -f $output ]
+then
+    mv $output $output-$now
+fi
+
+
+diff -rupN $1 $2 > $3.patch

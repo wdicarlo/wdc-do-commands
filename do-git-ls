@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cmd="git status -s"
+
+if [ ! $# == 1 ]
+then
+    git status -s  
+else
+    git status -s  | grep $1 | awk '{ print $2 }'
+fi
+

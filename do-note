@@ -1,0 +1,18 @@
+#!/bin/sh
+
+
+project=$PROJECT
+if [ -z "$project" ]
+then
+    project="."
+fi
+
+dest=`echo ~/projects/$project`
+
+if [ ! -d "$dest" ]
+then
+    echo "Missing project folder $dest"
+    exit
+fi
+
+vi $dest/notes.otl

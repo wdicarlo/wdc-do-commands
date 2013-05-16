@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if [ $# == 2 ]
+then
+    grep -E "^$1 "|sh -c "awk '{ print \$${2} }'"
+fi

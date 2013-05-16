@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ ! $# == 1 ]
+then
+    echo "Usage: do-cd-link <link>"
+    return
+fi
+
+
+if [ ! -h "$1" ]
+then
+    echo "$1 is not a link"
+    return
+fi
+
+
+
+folder=`file $1 | tr -d "\'" | awk '{print $5}'`
+folder=${folder:1}
+if [ -f "$folder" ]
+then
+    folder=`dirname $folder`
+fi
+if [ ! -d "$folder" ]
+then
+    echo "The folder $folder does not exists"
+    return
+fi
+cd $folder

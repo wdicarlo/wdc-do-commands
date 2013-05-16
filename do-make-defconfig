@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#TODO: check it is executed in the linux or buildroot root folder
+
+if [ ! $# == 1 ]
+then
+    app=`basename $0`
+    echo "Usage: $app <path-to-defconfig>"
+    exit
+fi
+
+if [ ! -f $1 ]
+then
+    echo "$1 does not exists"
+    exit
+fi
+
+make `basename $1`
+

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ -d ".git" ]
+then
+    echo "Folder .git already exists"
+    file .git
+    exit
+fi
+
+folder=`basename $PWD`
+if [ ! -d "../$folder.git" ]
+then
+    echo "Missing ../$folder.git"
+    exit
+fi
+
+ln -s ../$folder.git ./.git
+file .git

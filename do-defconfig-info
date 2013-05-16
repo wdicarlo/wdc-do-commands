@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ ! $# == 1 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <defconfig-folder>"
+    exit
+fi
+if [ ! -d "$1" ]
+then
+    echo "Missing defconfig folder"
+    exit
+fi
+
+grep -e CUSTOM_PATH -e HOSTNAME -e LOCALVERSION -e _PLAT_ -e _ARCH_ $1/*| grep -vE ":#"

@@ -1,0 +1,63 @@
+#!/bin/bash
+
+
+if [ ! $# == 2 ]
+then
+    echo "Usage: do-install-linux-modules <linux-kernel-folder> <dest-folder>"
+    exit
+fi
+
+tmpfolder=`echo ~/linux`
+
+if [ ! -d $tmpfolder ]
+then
+    echo "Missing $tmpfolder"
+    exit
+fi
+
+if [ ! -d $1 ]
+then
+    echo "Missing $1"
+    exit
+fi
+
+targetfolder=`basename $2`
+
+if [ ! "$targetfolder" == "lib" ]
+then 
+    echo "Destination folder must be \"lib\""
+    exit
+fi
+
+if [ ! -d $2 ]
+then
+    echo "Missing $2"
+    exit
+fi
+
+if [ -d "$2/modules" ]
+then
+    echo "Folder $2/modules already exists"
+    exit
+fi
+
+export INSTALL_MOD_PATH=$tmpfolder
+
+rm -rf "$tmpfolder/lib"
+
+curdir="$PWD"
+
+cd $1&&make modules&&make modules_install
+
+cd "$curdir"
+
+if [ ! -d "$tmpfolder/lib/modules" ]
+then
+    echo "Failed to build $tmpfolder/modules"
+    exit
+fi
+
+
+mv "$tmpfolder/lib/modules" "$2"
+
+find "$2/modules"

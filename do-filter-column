@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ ! $# -gt 2 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd -c <col> <text-files>"
+    exit
+fi
+
+arg="$1"
+case "$arg" in
+    "-c")
+        shift
+        col="$1"
+        shift
+        ;;
+esac
+
+for file in $@
+do
+    echo "$file -> $file.filtered"
+    cmd="cat $file | awk '{ print \$${col} }' | sort > $file.filtered"
+    eval $cmd
+done 

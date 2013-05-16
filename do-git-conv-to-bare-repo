@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ ! -d ".git" ]
+then
+    echo "Folder .git does not exists"
+    exit
+fi
+if [ -h ".git" ]
+then
+    echo "Removing symbolic link..."
+    file .git
+    rm .git
+    exit
+fi
+
+folder=`basename $PWD`
+if [ -d "../$folder.git" ]
+then
+    echo "The folder ../$folder.git already exists"
+    exit
+fi
+
+mv .git ../$folder.git
+file  ../$folder.git

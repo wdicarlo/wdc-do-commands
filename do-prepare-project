@@ -1,0 +1,40 @@
+#!/bin/bash
+
+
+if [ ! $# == 2 ]
+then
+    echo "Usage: do-prepare-project <ref-project> <project-name>"
+    exit
+
+fi
+
+
+curr_path=$PWD
+curr_folder=`basename $PWD`
+
+if [ ! "$curr_folder" == "projects" ]
+then
+    echo "Not in projects folder"
+    exit
+fi
+
+if [ ! -d "$1" ]
+then
+    echo "$1 does not exists"
+    exit
+fi
+
+if [ -d "$2" ]
+then
+    echo "$2 already exists"
+    exit
+fi
+
+
+cd $1
+find . -type d -exec mkdir -p "$curr_path/$2/"{} \;
+find . -maxdepth 2 -type l -exec cp -d {} "$curr_path/$2/"{} \;
+cd $curr_path
+
+find $2
+

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ ! $# == 1 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <branch-name>"
+    exit
+fi
+
+
+git merge --no-commit --no-ff $1

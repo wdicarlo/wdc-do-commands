@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#git archive master | bzip2 >source-tree.tar.bz2
+#git archive --format zip --output /full/path/to/zipfile.zip master 
+
+
+if [ ! $# == 1 ]
+then
+    app=`basename $0`
+    echo "Usage: $app <export-parent-path>"
+    exit
+fi
+
+if [ ! -d .git ] || 
+    [ ! -h .git ]
+then
+    echo "Not in the git root folder"
+    exit
+fi
+
+project=`basename $PWD`
+
+if [ ! -d "$1" ]
+then
+    echo "Missing destination parent folder: $1"
+    exit
+fi
+
+path=`echo $1|sed 's/\/$//'`
+dest="$path/$project"
+
+if [ -d "$dest" ]
+then
+    echo "Destination folder already exists: $dest"
+    exit
+fi
+
+mkdir $dest
+git archive master | tar -x -C $dest
+
+

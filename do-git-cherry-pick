@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for id in $@
+do
+    echo "Cherry-picking $id ..."
+    git cherry-pick --no-commit $id
+done
