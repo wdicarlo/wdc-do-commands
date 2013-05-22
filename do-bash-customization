@@ -3,6 +3,11 @@
 #export C_INCLUDE_PATH='/opt/arm/gst/include' 
 #export LDFLAGS='-L/opt/arm/gst/lib'
 
+export TESTS=~/tests
+export PROJECTS=~/projects
+export SHARED_FOLDER=/media/sf_Shared
+
+
 function mkcd() {
     mkdir "$1"
     cd "$1"
@@ -65,11 +70,21 @@ function gohome() {
 }
 
 function last() {
+    #if [ $# -gt 0 ]
+    #then
+    #    if [ "$1" == "-h" ]
+    #    then
+    #        cmd=`basename $0`
+    #        echo "Usage: $cmd [<ls-options>]"
+    #        exit
+    #    fi
+    #fi
     ls -last $@ | head -20
 }
 
 function do_activate_release() {
-    source "~/bin/do-activate-release"
+    script=`echo ~/bin/do_activate_release`
+    source $script
 }
 
 function copy_and_cd()
@@ -144,6 +159,7 @@ parse_git_branch() {
 #fi
 
 alias cac="copy_and_cd $@"
+#alias last="last $@"
 alias last=last
 
 
