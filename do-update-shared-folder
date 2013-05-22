@@ -1,0 +1,44 @@
+#!/bin/sh
+
+if [ $# -lt 2 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <dest-in-shared-folder> <file>..<file> "
+    return
+fi
+
+if [ -z "$SHARED_FOLDER" ]
+then
+    echo "Shared folder variable is not defined: SHARED_FOLDER"
+    exit
+fi
+
+dest=`echo $SHARED_FOLDER/$1`
+
+if [ ! -d "$dest" ]
+then
+    echo "Missing shared folder $dest"
+    exit
+fi
+
+
+
+echo "Are you sure to update: $dest {Y/N}?"
+read answer
+if [ "$answer" != "Y" ]
+then
+    return
+fi
+
+echo "Updating shared folder: $dest"
+for file in $@
+do
+    if [ -f $file ]
+    then
+        echo "Updating $file"
+        cp --preserve=all $file $dest
+    else
+        echo "$file is not a file"
+    fi
+done
+ls -last $dest

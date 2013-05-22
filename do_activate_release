@@ -1,8 +1,8 @@
 #!/bin/bash
 
-prj_root=`echo ~/projects/`
+prj_root=`echo /media/sf_Shared/releases/`
 n=0
-if [ $# == 1 ]
+if [ $# == "1" ]
 then
     n=`ls -1 $prj_root | grep $1 | awk '{ print NR, $0 }' | wc -l`
     ls -1 $prj_root | grep $1 | awk '{ print NR, $0 }'
@@ -12,13 +12,13 @@ else
 fi
 
 num=-1
-if [ "$n" == 0 ]
+if [ "$n" == "0" ]
 then
     echo "Project/s not found!!!"
     return
 fi
 
-if [ "$n" == 1 ]
+if [ "$n" == "1" ]
 then
     num=1
 else

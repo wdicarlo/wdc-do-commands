@@ -1,0 +1,26 @@
+#!/bin/bash
+folders=`echo ~/bin`
+
+if [ $# == 1 ]
+then
+    if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+    then
+        cmd=`basename $0`
+        echo "Usage: $cmd <do-command-command-pattern"
+        echo "Examples:"
+        echo "   $cmd   \"linux\""
+        exit
+    fi
+    # TODO: improve filtering considering only the filename but maintaining the path
+    list=`find $folders -name "howto_*" | grep "$@"`
+    num=`ls -1 $list|wc -l`
+    if [ "$num" == 1 ]
+    then
+        vim `echo $list` < `tty` 
+    else
+        ls -1 $list
+    fi
+else
+    find $folders -name "howto_*" | sed "s#$folders/##"
+fi
+

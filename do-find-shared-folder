@@ -11,24 +11,24 @@ then
     fi
 fi
 
-if [ ! -z "$RELEASE" ]
-then
-    release=$RELEASE
-else
-    release=$PROJECT
-fi
 
-if [ -z "$release" ]
+if [ -z "$SHARED_FOLDER" ]
 then
-    echo "Variable \$PROJECT not defined"
+    echo "Variable \$SHARED_FOLDER not defined"
     exit
 fi
 
-dest="/media/sf_Shared/releases/$release"
+if [ $# -gt 0 ]
+then
+    dest=`echo $SHARED_FOLDER/$1`
+    shift
+else
+    dest=$SHARED_FOLDER
+fi
 
 if [ ! -d "$dest" ]
 then
-    echo "Missing release folder $dest"
+    echo "Missing shared folder $dest"
     exit
 fi
 

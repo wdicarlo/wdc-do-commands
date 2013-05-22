@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if [ $# -gt 0 ]
+then
+    if [ "$1" == "-h" ]
+    then
+        app=`basename $0`
+        echo "Usage: $app [-h|<root-folder> [<maxdepth> [<grep-pattern>]]]"
+        exit
+    fi
+fi
+
+case $# in
+    "0")
+    find . -maxdepth 1 -type d
+    ;;
+    "1")
+    find "$1" -maxdepth 1 -type d
+    ;;
+    "2")
+    find "$1" -maxdepth "$2" -type d
+    ;;
+    *)
+    root="$1"
+    shift
+    depth="$1"
+    shift
+    find $root -maxdepth $depth -type d|grep $@
+    ;;
+esac
+

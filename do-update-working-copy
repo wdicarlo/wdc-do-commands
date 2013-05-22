@@ -1,10 +1,13 @@
 #!/bin/sh
 
-if [ $# -eq 0 ]
+if [ $# -gt 0 ]
 then
-    cmd=`basename $0`
-    echo "Usage: $cmd <files>"
-    return
+    if [ "$1" == "-h" ]
+    then
+        cmd=`basename $0`
+        echo "Usage: $cmd <files>"
+        return
+    fi
 fi
 
 if [ ! -z "$RELEASE" ]
@@ -24,28 +27,28 @@ echo "Release: $release"
 orig="/media/sf_Shared/releases/$release"
 dest="."
 
-if [ ! -d "$dest" ]
+if [ ! -d "$orig" ]
 then
-    echo "Missing release folder $dest"
+    echo "Missing release folder $orig"
     exit
 fi
 
-echo "Are you sure to update: $dest {Y/N}?"
-read answer
-if [ "$answer" != "Y" ]
+do-find-release -type f | sed "s#$orig/##" | do-numerate | more
+echo "File to update? "
+read num
+
+file=`do-find-release -type f | do-numerate | grep "$num" | awk '{ print $2 }'`
+filename=`basename "$file"`
+if [ -f "$filename" ]
 then
-    return
+    echo "Coping $file ..."
+    echo "Are you sure to update: $filename {Y/N}?"
+    read answer
+    if [ "$answer" != "Y" ]
+    then
+        return
+    fi
 fi
 
-echo "Updating test: $dest"
-for file in $@
-do
-    if [ -f "$orig/$file" ]
-    then
-        echo "Updating $file"
-        cp --preserve=all "$orig/$file" $dest
-    else
-        echo "$orig/$file is not a file"
-    fi
-done
-ls -last $dest
+cp $file $dest
+ls -last $dest | head -10
