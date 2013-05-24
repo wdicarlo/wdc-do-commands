@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $# == 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd [-p] <grep-parameters>"
+    exit
+fi
+
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-p" ]; then
+        shift
+        cmd="grep -Rc $1 * | grep -v \":0\" | sed \"s#:[0-9]*##\""
+    else
+        cmd="grep -Rc $1 * | grep -v \":0\""
+    fi
+    eval $cmd
+fi

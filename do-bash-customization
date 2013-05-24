@@ -2,11 +2,30 @@
 #export PKG_CONFIG_PATH=/opt/arm/gst/lib/pkgconfig
 #export C_INCLUDE_PATH='/opt/arm/gst/include' 
 #export LDFLAGS='-L/opt/arm/gst/lib'
+#export BUILD_ROOT_DIR=/home/walter/projects/stream_plug/checkouts/trunk/src/buildroot
+#export INSTALL_MOD_PATH=/home/walter/projects/stream_plug/checkouts/trunk/src/buildroot/package/customize/source
+# export UCOS_DIR=/home/walter/projects/okl_hybrid_streamplug_0_4_alpha/ucos-support-5.1.8m2/ucos
+#export BUILD_ROOT_DIR=/home/walter/projects/okl_hybrid_streamplug/buildroot
+#export INSTALL_MOD_PATH=/home/walter/linux
+#
+#export ARCH=arm
+#export CROSS_COMPILE=arm-none-linux-gnueabi-
+#export OKL4_SDK=/opt/okl4sdk-manta
+#export OKL4_PROG_ENV=../stage
+#export OKLINUX_BOOT_DIR=/home/walter/projects/okl_hybrid_streamplug
+#export UCOS_DIR=/home/walter/projects/okl_hybrid_streamplug_0_4_alpha/ucos-5.1.8m2
+#export STM_SDK=/media/sf_Shared/releases/STreamPlug_OKLinux_Release_0_3
+
+#export PATH=$PATH:/opt/arm-2009q1/bin:/opt/arm-2009q1-eabi/bin:/opt/manta-toolchain/bin:$OKL4_SDK/bin:/opt/sb2/bin:~/bin
 
 export TESTS=~/tests
 export PROJECTS=~/projects
 export SHARED_FOLDER=/media/sf_Shared
+#export TOOLCHAIN=/opt/okl4sdk-manta-5.1.8m4/
+#export OKL4_PROG_ENV=../stage
+#export OKL4_SDK=/opt/okl4sdk-manta
 
+. ~/bin/do_setup_env_for_okl4sdk-5.1.8m2
 
 function mkcd() {
     mkdir "$1"
@@ -21,10 +40,15 @@ function cdenv() {
     \cd $1
     if [ -f .bash_env ]
     then
+        cat .bash_env
         source .bash_env
     fi
 }
-
+function setup_env() {
+    if [ -f .bash_env ]; then
+        . .bash_env
+    fi
+}
 function gohome() {
     # find upword the following: .git, project folder, user home
     path=`dirname $PWD`
@@ -38,6 +62,7 @@ function gohome() {
         path="/"
         echo "$path"
         \cd `echo $path`
+        setup_env
         return
     fi
     found=0
@@ -54,6 +79,7 @@ function gohome() {
         if [ $folder == "$user" ] ||
             [ -d "$path/.git" ] ||
             [ -h "$path/.git" ] ||
+            [ -f "$path/.bash_env" ] ||
             [ -d "$parent/$folder.git" ] ||
             [ "$parent_folder" == "projects" ] ||
             [ "$parent_folder" == "releases" ] ||
@@ -67,6 +93,7 @@ function gohome() {
     done
     echo "$path"
     \cd `echo $path`
+    setup_env
 }
 
 function last() {
@@ -180,4 +207,5 @@ alias do-cd-link='. ~/bin/do-cd-link'
 
 alias cd=cdenv 
 alias gh=gohome
-alias do-activate-release=do_activate_release
+alias do-activate-release='. ~/bin/do_activate_release'
+alias do-setup-env='. ~/bin/do_setup_env'
