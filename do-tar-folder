@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ $# == 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <folder-to-tar>"
+    exit
+fi
+
+if [ ! -d "$1" ]
+then
+    echo "Missing folder $1"
+    exit
+fi
+
+
+curdate="`date '+%y%m%d-%H%M%S'`"
+
+
+#tar -cjf custom_soc_$curdate.tar.bz2 --exclude=.git --exclude=manta.kernel --exclude=vmlinux --exclude=initramfs --exclude=initramfs_dbg --exclude=*.boot custom_soc/
+tar -cjf ${1}_$curdate.tar.bz2 --exclude=.git --exclude=initramfs --exclude=initramfs_dbg --exclude=*.boot ${1}/

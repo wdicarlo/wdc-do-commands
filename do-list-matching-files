@@ -9,7 +9,8 @@ fi
 if [ $# -gt 0 ]; then
     if [ "$1" == "-p" ]; then
         shift
-        cmd="grep -Rc $1 * | grep -v \":0\" | sed \"s#:[0-9]*##\""
+        #cmd="grep -Rc $1 * | grep -v \":0\" | sed \"s#:[0-9]*##\""
+        cmd="grep -Rl $1 *"
     else
         cmd="grep -Rc $1 * | grep -v \":0\""
     fi
