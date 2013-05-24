@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [  $# != 1 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <reg-expr-to-select-defconfig>"
+    exit
+fi
+
+configs="arch/arm/configs"
+
+if [ ! -d "$configs" ]
+then
+    echo "Not in a valid linux source code tree location. Missing $configs"
+    exit
+fi
+
+cmd="ls $configs | grep -E $1"
+#selected=`ls $configs | grep -E $1`
+echo "> $cmd"
+eval $cmd
+

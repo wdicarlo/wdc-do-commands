@@ -1,0 +1,33 @@
+#!/bin/bash
+function help() {
+        cmd=`basename $0`
+        echo "Usage: $cmd [-e <command-to-be-evaluated>|files ] "
+}
+
+if [ $# == 0 ]; then
+    help
+    exit
+fi
+
+if [ $# -gt 0 ]
+then
+    if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+    then
+        help
+        exit
+    fi
+    if [ "$1" == "-e" ]; then
+        shift
+        list=`eval "$@"`
+    else
+        list="$@"
+    fi
+    num=`ls -1 $list|wc -l`
+    if [ "$num" -lt 10 ]
+    then
+        vim `echo $list` < `tty` 
+    else
+        ls -1 $list
+    fi
+fi
+

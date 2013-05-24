@@ -22,5 +22,5 @@ if [ $# -gt 0 ]
 then
     log_cmd="$log_cmd | grep $@"
 fi
-
+echo $log_cmd
 eval $log_cmd

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ ! $# == 3 ] && [ ! $# == 4 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd [-p] <root> <depth> <string>"
+    exit
+fi
+pars="-Hn"
+if [ "$1" == "-p" ]; then
+    shift
+    pars="-l"
+fi
+
+find "$1" -maxdepth "$2" -type f | xargs -I@ grep "$pars" "$3" @
