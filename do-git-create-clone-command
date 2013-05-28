@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ ! -d ".git" ]; then
+    echo "Not in a git repository"
+fi
+
+repo_path=`git remote -v | head -1 | awk '{ print $2 }'`
+repo=`basename $repo_path`
+repo=${repo%.git}
+echo "git clone $repo_path $repo"
