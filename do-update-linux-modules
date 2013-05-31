@@ -9,13 +9,21 @@ then
     exit
 fi
 
-common=`echo ~/linux/lib/modules`
+if [ ! -z "$PROJECT" ]; then
+    common=`echo ~/linux/$PROJECT`
+else
+    common=`echo ~/linux`
+fi
 
-modules=`ls -1 $common|head -1`
+if [ ! -d "$common" ];then
+    mkdir -p $common
+fi
+
+modules=`ls -1 "$common/lib/modules"|head -1`
 
 if [ ! -z "$modules" ]
 then
-    echo "Replace $common/$modules {Y/N}?"
+    echo "Replace $common/lib/modules/$modules {Y/N}?"
     read answer
     if [ ! "$answer" == "Y" ]
     then
@@ -25,9 +33,8 @@ then
     mkdir -p $common
 fi
 
-
 echo "Updating modules..."
-install_dir="$1/lib/modules"
+export INSTALL_MOD_PATH="$common"
 make modules && make modules_install
 
 # remove links to the folder used to build the modules
@@ -38,5 +45,5 @@ do
         rm "$file"
     fi
 done
-find $common
+find "$common/lib/modules/$modules"
 echo "Done"

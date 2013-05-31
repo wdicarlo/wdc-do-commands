@@ -13,7 +13,15 @@ then
     exit
 fi
 
-common=`echo ~/linux/lib/modules`
+if [ ! -z "$PROJECT" ]; then
+    common=`echo ~/linux/$PROJECT/lib/modules`
+else
+    common=`echo ~/linux/lib/modules`
+fi
+
+if [ ! -d "$common" ];then
+    mkdir -p $common
+fi
 
 modules=`ls -1 $common|head -1`
 
