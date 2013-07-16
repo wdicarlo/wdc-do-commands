@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -gt 0 ]
+then
+    cat ~/bin/howto_debian.otl | grep -A 1 -in $@
+else
+    cat ~/bin/howto_debian.otl
+fi
