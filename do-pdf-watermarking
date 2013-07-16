@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ ! $# == 3 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <pdf-to-watermark> <watermark-pdf> <output-pdf>"
+    exit
+fi
+
+#TODO: check all parameters
+
+pdftk $1 background $2 output $3

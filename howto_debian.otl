@@ -1,0 +1,10 @@
+Debian HowTos
+	List of debian howtos
+Search in which package a file is present
+	apt-get install apt-file
+	apt-file update
+	apt-file search <file>
+Edit image
+	mirage wdt_sw_architecture.png
+Start fluxbox at startup
+	echo "exec startfluxbox" >> ~/.xinitrc

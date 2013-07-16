@@ -1,14 +1,28 @@
 #!/bin/bash
 
+num=1
 if [ $# -gt 0 ]
 then
     if [ "$1" == "-h" ]
     then
         cmd=`basename $0`
-        echo "Usage: $cmd [<grep-parameters>]"
+        echo "Usage: $cmd [-n <num-commits>] [<grep-parameters>]"
         exit
     fi
-    git diff --name-only HEAD~1..HEAD | grep $@
-else
-    git diff --name-only HEAD~1..HEAD
+    if [ "$1" == "-n" ]; then
+        shift
+        num="$1"
+        shift
+    fi
 fi
+
+if [ $# -gt 0 ]; then
+    #git diff --name-only HEAD~1..HEAD | grep $@
+    cmd="git diff --name-only HEAD~$num..HEAD | grep $@"
+else
+    #git diff --name-only HEAD~1..HEAD
+    cmd="git diff --name-only HEAD~$num..HEAD"
+fi
+
+echo "> $cmd"
+eval $cmd

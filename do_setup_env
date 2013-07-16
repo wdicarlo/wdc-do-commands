@@ -1,0 +1,45 @@
+#!/bin/bash
+if [ $# -gt 0 ]
+then
+    if [ "$1" == "-h" ]
+    then
+        app=`basename $0`
+        echo "Usage: $app [<find options>]"
+        exit
+    fi
+fi
+
+prj_root=`echo ~/bin`
+n=0
+if [ $# == 1 ]
+then
+    n=`ls -1 $prj_root/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | wc -l`
+    ls -1 $prj_root/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }'
+else
+    n=`ls -1 $prj_root/do_setup_env_for_* | awk '{ print NR, $0 }' | wc -l`
+    ls -1 $prj_root/do_setup_env_for_* | awk '{ print NR, $0 }'
+fi
+
+num=-1
+if [ "$n" == 0 ]
+then
+    echo "Environment/s not found!!!"
+    return
+fi
+
+if [ "$n" == 1 ]
+then
+    num=1
+else
+    read -p "Environment Num: " num
+fi
+
+
+if [ $# == 1 ]
+then
+    prj=`ls -1 $prj_root/do_setup_env_for_* | grep $1 | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+else
+    prj=`ls -1 $prj_root/do_setup_env_for_* | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+fi
+
+. "$prj"

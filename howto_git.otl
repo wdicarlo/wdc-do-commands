@@ -1,3 +1,5 @@
+Git HowTos
+	List of git howtos
 Sync tags
 	git push --tags
 	git fetch --tags
@@ -81,7 +83,7 @@ Create a patch between two tags
 	git diff streamplug-1.2.4..streamplug-1.2.5 > ../linux-2.6.35-streamplug-1.2.4-1.2.5.patch
 Unstage all added files to the index
 	git reset HEAD .
-List all commits containing changes of a specific file
+List all commits containing changes of a specific file (history of a file)
 	git log --oneline arch/arm/mach-streamplug/streamplug_devel_board.c
 List graph of all commit containing changes of a file
 	git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative arch/arm/mach-streamplug/streamplug_devel_board.c
@@ -123,3 +125,21 @@ Export git files into a new destination folder
 	git archive master | tar -x -C /path/to/destination/folder
 Add a remote to existing git repository
 	git remote add --track master origin ssh://gitvcs@192.168.10.1/mnt/devrepos/gitrepos/STMANTA/linux-2.6.35
+Delete branch
+	git branch -d branch-temp-new-flash-controller-mutex
+Create a bare repository (named <repo-name>.git)
+	git init --bare $repo
+First push from a cloned repo to a bare repo
+	git push origin master
+Update latest committed message
+	git commit --amend -m  "Added example of OKLinux output into Booting chapter"
+Push a new local branch
+	git push -u origin branch_dev_wdc
+Merge a single file
+	git checkout --patch branch_dev_wdc Makefile
+Stage change-by-change of a file
+	git add --patch clock.c
+Create a new branch tracking a remote one without checking-out it
+	git branch --track branch_dev_rex origin/branch_dev_rex
+Force stagging of a file included in the .gitignore file
+	git add -f STreamPlug_Watermark_Draft.pdf

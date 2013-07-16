@@ -1,0 +1,2 @@
+find ~/bin -name "do-*" | xargs -I@ basename @
+echo "WARNING: STILL UNDER DEVELOPMENT"

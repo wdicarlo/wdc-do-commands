@@ -1,3 +1,5 @@
+Linux HowTos
+	List of Linux howtos
 Tar excluding the GIT repository folder
     tar -cjf linux-2.6.35.0-okl-azcom.tar.bz2 --exclude=.git linux-2.6.35.0-okl-azcom
 Prune folder

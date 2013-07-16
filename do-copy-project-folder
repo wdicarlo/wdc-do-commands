@@ -1,0 +1,84 @@
+#!/bin/sh
+
+if [ $# -gt 0 ]
+then
+    if [ "$1" == "-h" ]
+    then
+        cmd=`basename $0`
+        echo "Usage: $cmd [<project-pattern> [<folder>]]"
+        return
+    fi
+fi
+
+echo "WARNING: STILL UNDER DEVELOPMENT"
+exit
+prj_root=`echo ~/projects/`
+n=0
+if [ $# == 1 ]
+then
+    n=`ls -1 $prj_root | grep $1 | awk '{ print NR, $0 }' | wc -l`
+    ls -1 $prj_root | grep $1 | awk '{ print NR, $0 }'
+else
+    n=`ls -1 $prj_root | awk '{ print NR, $0 }' | wc -l`
+    ls -1 $prj_root | awk '{ print NR, $0 }'
+fi
+
+num=-1
+if [ "$n" == 0 ]
+then
+    echo "Project/s not found!!!"
+    return
+fi
+
+if [ "$n" == 1 ]
+then
+    num=1
+else
+    read -p "Project Num: " num
+fi
+
+
+if [ $# == 1 ]
+then
+    prj=`ls -1 $prj_root | grep $1 | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+else
+    prj=`ls -1 $prj_root | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+fi
+
+#cd "${prj_root}$prj"
+
+if [ -z "$prj" ]
+then
+    echo "Source project not selected"
+    exit
+fi
+
+
+orig="${prj_root}$prj"
+dest="."
+
+if [ ! -d "$orig" ]
+then
+    echo "Missing release folder $orig"
+    exit
+fi
+
+find $orig -type d | sed "s#$orig/##" | do-numerate | more
+echo "Folder to copy? "
+read num
+
+file=`find $orig -type d | do-numerate | grep "$num" | awk '{ print $2 }'`
+filename=`basename "$file"`
+if [ -f "$filename" ]
+then
+    echo "Coping $file ..."
+    echo "Are you sure to copy: $filename {Y/N}?"
+    read answer
+    if [ "$answer" != "Y" ]
+    then
+        return
+    fi
+fi
+
+cp -r $file $dest
+ls -last $dest | head -10

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# TODO: -p print paths, $1 = num files to print
+ls -1st $1 | grep -v "^total" | head -1| awk '{print $2}'|xargs -I@ echo "$1@"

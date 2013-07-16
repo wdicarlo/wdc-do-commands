@@ -1,4 +1,7 @@
 #!/bin/sh
+
+#TODO: use only two inout <path/filename> <other-root-path>
+
 if [ ! $# -eq 3 ]
 then
     app=`basename $0`

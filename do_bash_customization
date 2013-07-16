@@ -1,0 +1,227 @@
+#!/bin/bash
+
+force_color_prompt=yes
+
+
+export TESTS=~/tests
+export PROJECTS=~/projects
+export SHARED_FOLDER=/media/sf_Shared
+
+# to use vim keybindings in bash, 
+# do "set -o vi". Then, you can 
+# press "v" to edit current command 
+# in vim.
+#set -o vi
+
+. ~/bin/do_setup_env_for_default
+
+function mkcd() {
+    mkdir "$1"
+    cd "$1"
+}
+function mterm() {
+    #xfce4-terminal --geometry=80x20
+    xterm -fn 10x20
+}
+function cdenv() {
+    # TODO: evaluate to replace this with smartcd tool
+
+    \cd $1
+    if [ -f .bash_env ]
+    then
+        cat .bash_env
+        source .bash_env
+    fi
+}
+function setup_env() {
+    if [ -f .bash_env ]; then
+        . .bash_env
+    fi
+}
+function gohome() {
+    # find upword the following: .git, project folder, user home
+    path=`dirname $PWD`
+    folder=`basename $PWD`
+    if [ $folder == "/" ]
+    then
+        return
+    fi
+    if [ $folder == "$user" ]
+    then
+        path="/"
+        echo "$path"
+        \cd `echo $path`
+        setup_env
+        return
+    fi
+    found=0
+    user=`whoami`
+    while [ $found -eq 0 ]
+    do
+        folder=`basename $path`
+        parent=`dirname $path`
+        parent_folder=`basename $parent`
+
+        #echo $path
+        #echo $folder
+        #echo $parent
+        if [ $folder == "$user" ] ||
+            [ -d "$path/.git" ] ||
+            [ -h "$path/.git" ] ||
+            [ -f "$path/.bash_env" ] ||
+            [ -d "$parent/$folder.git" ] ||
+            [ "$parent_folder" == "projects" ] ||
+            [ "$parent_folder" == "releases" ] ||
+            [ "$parent_folder" == "tests" ] ||
+            [ $folder == "/" ] 
+        then
+            found=1
+        else
+            path=$parent
+        fi
+    done
+    echo "$path"
+    \cd `echo $path`
+    setup_env
+}
+
+function last() {
+    opts="-1t"
+    if [ $# -gt 0 ]
+    then
+        if [ "$1" == "-h" ]
+        then
+            cmd=`basename $0`
+            echo "Usage: $cmd [<ls-options>]"
+            exit
+        fi
+        if [ "$1" == "-l" ]
+        then
+            opts="-last"
+            shift
+        fi
+    fi
+    #ls -last $@ | head -20
+    ls $opts $@ | head -20
+}
+
+function do_activate_release() {
+    script=`echo ~/bin/do_activate_release`
+    source $script
+}
+
+function copy_and_cd()
+{
+    if [ "$#" -ne 2 ];
+    then
+        echo "Usage: cac <file> <dest-folder>"
+        return
+    fi
+    if [ -d "$2" ];
+    then
+        cp $1 $2
+        cd $2
+    fi
+}
+parse_git_branch() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+function prompt_command()
+{
+    export TYPE=`pwd | sed -e "s/\// /g" | awk '{ print $3}'`
+    # if [ "$TYPE" = "projects" ];
+    # then
+    #     TYPE="p"
+    # fi
+    export PROJECT=""
+    case $TYPE in
+        "projects")
+            TYPE="p"
+            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+            ;;
+        "tests")
+            TYPE="t"
+            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+            ;;
+        "releases")
+            TYPE="r"
+            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+            ;;
+    esac
+
+    PROJECT_PATH="/home/walter/projects/$PROJECT"
+    TEST_PATH="/media/sf_Shared/tests/$PROJECT"
+    RELEASE_PATH="/media/sf_Shared/releases/$PROJECT"
+    export LOCATION=`basename $PWD`
+    if [ "$PROJECT_PATH" == $PWD ]
+    then
+        LOCATION=""
+    fi
+    if [ "$TEST_PATH" == $PWD ]
+    then
+        LOCATION=""
+    fi
+    if [ "$RELEASE_PATH" == $PWD ]
+    then
+        LOCATION=""
+    fi
+    history -a; history -c; history -r
+}
+PROMPT_COMMAND=prompt_command
+#export PS1="\[\033[00m\]\u@\h\[\033[01;34m\] \W \[\033[31m\]\$(parse_git_branch) \[\033[00m\]$\[\033[00m\] "
+#if [ "$color_prompt" = yes ]; then
+if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+    #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    #PS1='\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+    PS1='\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]\$ '
+else
+    #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    #PS1='`basename \w` \$ '
+    #PS1='$TYPE:$PROJECT:\W \$ '
+    PS1='$TYPE:$PROJECT:$LOCATION \$ '
+fi
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# some more ls aliases
+alias ll='ls -l'
+alias la='ls -A'
+alias l='ls -CF'
+
+alias cac="copy_and_cd $@"
+#alias last="last $@"
+alias last=last
+
+
+#alias term='xfce4-terminal --geometry=100x40'
+alias term='xterm -fullscreen -fn 10x20'
+#alias miniterm='xfce4-terminal --geometry=80x20'
+alias miniterm='xterm -fn 10x10'
+
+alias cd-p='cd ~/projects/$PROJECT'
+
+alias cd-projects='cd ~/projects/'
+alias cd-tests='cd ~/tests/'
+alias cd-releases='cd /media/sf_Shared/releases/'
+
+alias do-cd-project='. ~/bin/do-cd-project'
+alias do-cd-test='. ~/bin/do-cd-test'
+alias do-cd-release='. ~/bin/do-cd-release'
+
+alias do-cd-link='. ~/bin/do-cd-link'
+
+alias cd=cdenv 
+alias gh=gohome
+alias do-activate-release='. ~/bin/do_activate_release'
+alias do-setup-env='. ~/bin/do_setup_env'

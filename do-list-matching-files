@@ -10,9 +10,9 @@ if [ $# -gt 0 ]; then
     if [ "$1" == "-p" ]; then
         shift
         #cmd="grep -Rc $1 * | grep -v \":0\" | sed \"s#:[0-9]*##\""
-        cmd="grep -Rl $1 *"
+        cmd="grep -Rl $@ *"
     else
-        cmd="grep -Rc $1 * | grep -v \":0\""
+        cmd="grep -Rc $@ * | grep -v \":0\""
     fi
     eval $cmd
 fi

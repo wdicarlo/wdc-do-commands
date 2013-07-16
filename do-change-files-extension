@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ ! $# == 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <curr-ext> <new-ext>"
+    exit
+fi
+find . -maxdepth 1 -name "*.$1" | sed -e "s/\.$1//" | xargs -I@ basename @
+find . -maxdepth 1 -name "*.$1" | sed -e "s/\.$1//" | xargs -I@ basename @ | xargs -I@  mv @.$1 @.$2
