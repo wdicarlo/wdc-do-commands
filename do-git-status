@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cmd="git status"
+
+if [ ! $# == 0 ]
+then
+    cmd="git status | grep -e \"$1\|# \w\" "
+fi
+echo "> $cmd"
+eval $cmd

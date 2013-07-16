@@ -1,0 +1,33 @@
+#!/bin/bash
+
+
+if [ $# != 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <file-of-items-to-remove> <file-of-items-to-filter>"
+    exit
+fi
+
+if [ ! -f $1 ]; then
+    echo "the filter is missing"
+    exit
+fi
+
+if [ ! -f $2 ]; then
+    echo "The list is missing"
+
+    exit
+fi
+
+for file in `cat $2`; do
+    found=0
+    for filter in `cat $1`; do
+        if [ $file == $filter ]; then
+            found=1
+            break
+        fi
+    done
+    if [ $found == 1 ]; then
+        continue
+    fi
+    echo $file
+done

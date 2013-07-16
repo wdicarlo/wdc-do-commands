@@ -1,0 +1,26 @@
+#!/bin/bash
+
+
+if [ ! $# == 3 ]
+then
+    cmd=`basename $0`
+   echo "Usage: $cmd <category> \"title\" \"description\""
+   echo "       where <category> may be:"
+   echo "          git"
+   echo "          linux"
+   echo "          debian"
+   echo "          ..."
+   exit
+fi
+
+howto=`echo ~/bin/howto_$1.otl`
+
+if [ -f $howto ]; then
+    echo "Existing howto file: $howto"
+    exit
+fi
+
+echo -e "$2\n\t$3" >> $howto
+
+cat $howto | tail
+

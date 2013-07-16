@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function help() {
+    cmd=`basename $0`
+    echo "Usage: $cmd <bare-git-repo-name[.git]>"
+}
+
+if [ $# != 1 ]; then
+    help
+    exit
+fi
+
+if [ "$1" == "-h" ]; then
+    help
+    exit
+fi
+
+repo=${1%.git}
+repo="${repo}.git"
+
+git init --bare $repo

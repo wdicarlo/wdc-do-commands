@@ -29,31 +29,29 @@ fi
 
 
 if [ $2 ]; then
-	tarfile="$bakfile-$1-$curdate-$2.tar"
+	tarfile="$bakfile-$1-$curdate-$2.tar.bz2"
 else
-	tarfile="$bakfile-$1-$curdate.tar"
+	tarfile="$bakfile-$1-$curdate.tar.bz2"
 fi
 
 
 echo "Creating backups/$tarfile..."
-tar -cvf $bakdir/$tarfile --exclude=.git $MY_FILES
+tar -cvjf $bakdir/$tarfile --exclude=.git $MY_FILES
 echo "Done."
 
 
-echo "Creating $tarfile.gz..."
-gzip -c $bakdir/$tarfile > $bakdir/$tarfile.gz
-echo "Done."
-
-
-if [ $bakdir/$tarfile.gz ]; then
-  echo "Removing $tarfile..."
-  rm -f $bakdir/$tarfile
-  echo "Done."
-  if [ $remote_host ]; then 
-    echo "Duplicating backup wdicarlo@$remote_host:walter/backups..."
-    #cp $bakdir/$tarfile.gz /mnt/alvs17/backups
-    scp $bakdir/$tarfile.gz wdicarlo@$remote_host:walter/backups
-    echo "Done."
-  fi
-fi
+#echo "Creating $tarfile.gz..."
+#gzip -c $bakdir/$tarfile > $bakdir/$tarfile.gz
+#echo "Done."
+#if [ $bakdir/$tarfile.gz ]; then
+#  echo "Removing $tarfile..."
+#  rm -f $bakdir/$tarfile
+#  echo "Done."
+#  if [ $remote_host ]; then 
+#    echo "Duplicating backup wdicarlo@$remote_host:walter/backups..."
+#    #cp $bakdir/$tarfile.gz /mnt/alvs17/backups
+#    scp $bakdir/$tarfile.gz wdicarlo@$remote_host:walter/backups
+#    echo "Done."
+#  fi
+#fi
 

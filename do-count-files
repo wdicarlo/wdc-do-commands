@@ -1,11 +1,27 @@
 #!/bin/bash
 
-if [ ! $# == 2 ]
-then
-    cmd=`basename $0`
-    echo "Usage: $cmd <find-maxdepth> <find-name-for-folder>"
+if [ $# == 0 ]; then
+    find . -type d | xargs -I@ bash -c "echo -n '@ ' ; find @ -maxdepth 1 -type d -not -path @ | wc -l"
     exit
 fi
 
-#find . -maxdepth "$1" -type d -name "$2" | xargs -I@ sh -c "echo @;find @ | wc -l"
-find . -maxdepth "$1" -type d -name "$2" | xargs -I@ sh -c "echo \"\`find @ | wc -l\`\t@\"" | sort  -g
+if [ "$1" == "-h" ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd [-t <threshold-counting>] [<find-parameters>]"
+    exit
+fi
+
+num=-1
+if [ "$1" == "-t" ]; then
+    shift
+    num=$1
+    shift
+fi
+if [ "$num" -gt -1 ]; then
+    echo "=================================================================="
+echo "threshold-counting=$num"
+    find $@ -type d | xargs -I@ bash -c "echo -n '@ ' ; find @ -maxdepth 1 -type d -not -path @ | wc -l"
+    #echo "STILL UNDER DEVELOPMENT"
+else
+    find $@ -type d | xargs -I@ bash -c "echo -n '@ ' ; find @ -maxdepth 1 -type d -not -path @ | wc -l"
+fi

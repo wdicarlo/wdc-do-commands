@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ $# == 1 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd "
+    exit
+fi
+
+cmd="find . -name \"*.o\" | xargs -I@ basename @ | sed 's/\.o//' | xargs -I@ sh -c \"[ -f @.c ]&& echo @.c\""
+echo "> $cmd"
+eval $cmd

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tar -tjf $1 | grep "/$"

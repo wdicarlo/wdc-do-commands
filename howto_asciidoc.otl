@@ -1,0 +1,4 @@
+AsciiDoc HowTos
+	List of asciidoc howtos
+Path for docbook's  xsl files
+	/usr/share/xml/docbook/stylesheet/dblatex/xsl

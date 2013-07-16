@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ ! $# == 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <folder> <imagename>[.png]"
+    exit
+fi
+
+scrot -d 5  -e "mirage $f $1" $1/${2%.png}.png
