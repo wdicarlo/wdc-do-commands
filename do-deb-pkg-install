@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ ! $# == 1 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <debian-pkg-to-install>"
+    exit
+fi
+
+su-to-root -c "apt-get install $1"

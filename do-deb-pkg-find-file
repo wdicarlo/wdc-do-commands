@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+apt-file search $1
