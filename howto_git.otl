@@ -143,3 +143,5 @@ Create a new branch tracking a remote one without checking-out it
 	git branch --track branch_dev_rex origin/branch_dev_rex
 Force stagging of a file included in the .gitignore file
 	git add -f STreamPlug_Watermark_Draft.pdf
+Selectivelly discard changes from a file
+	git checkout --patch drivers/media/video/streamplug_camera.c
