@@ -1,0 +1,3 @@
+#!/bin/bash
+
+su-to-root -c "apt-get update"
