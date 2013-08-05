@@ -4,8 +4,18 @@ cmd="git status -s"
 
 if [ ! $# == 1 ]
 then
-    git status -s  
+    cmd="git status -s"
 else
-    git status -s  | grep $1 | awk '{ print $2 }'
+  if [ "$1" == "-h" ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd [<grep-regex>]"
+    echo ""
+    echo "   ex: $cmd         ---> list changed files"
+    echo "   ex: $cmd firm    ---> list just the paths of changed files whose filename contains the \"firm\" string"
+    echo "   ex: $cmd .       ---> list just the paths of all changes"
+    exit
+  fi
+    cmd="git status -s  | grep $1 | awk '{ print \$2 }'"
 fi
-
+echo "> $cmd"
+eval $cmd

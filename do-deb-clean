@@ -1,0 +1,5 @@
+#!/bin/bash
+
+localepurge
+
+su-to-root -c "apt-get clean"

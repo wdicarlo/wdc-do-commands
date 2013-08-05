@@ -69,7 +69,7 @@ read -p "To: " to
 from_id=`git log --oneline "$branch" -"$num" | awk '{ print NR,$0}' | grep "^$from" | awk '{ print $2 }'`
 to_id=`git log --oneline "$branch" -"$num" | awk '{ print NR,$0}' | grep "^$to" | awk '{ print $2 }'`
 
-echo "git diff -w $from_id..$to_id"
+echo "> git diff -w $from_id..$to_id"
 
 if [ "$mode" == "0" ]
 then
