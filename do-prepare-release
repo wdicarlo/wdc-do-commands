@@ -1,39 +1,55 @@
 #!/bin/bash
 
-
-if [ ! $# == 2 ]
+function help() {
+    cmd=`basename $0`
+    echo "Usage: $cmd [<release-name> [<ref-release>]] "
+}
+if [  $# -gt 2 ]
 then
-    echo "Usage: do-prepare-release <ref-release> <release-name>"
+    help
     exit
 
 fi
 
-
-curr_path=$PWD
-curr_folder=`basename $PWD`
-
-if [ ! "$curr_folder" == "releases" ]
-then
-    echo "Not in releases folder"
+if [ -z "$PROJECT" ]; then
+    echo "Not in a project"
     exit
 fi
 
-if [ ! -d "$1" ]
+rel_root=`echo /media/sf_Shared/releases/`
+new_rel=$rel_root/$PROJECT
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+    then
+        help
+        exit
+    fi
+    new_rel=$rel_root/$1
+fi
+
+if [ $# == 2 ]; then
+    ref_rel=$rel_root/$2
+    if [ ! -d "$ref_rel" ]
+    then
+        echo "$ref_rel does not exists"
+        exit
+    fi
+fi
+
+
+if [ -d "$new_rel" ]
 then
-    echo "$1 does not exists"
+    echo "$new_rel already exists"
     exit
 fi
 
-if [ -d "$2" ]
-then
-    echo "$2 already exists"
-    exit
+if [ $# == 2 ]; then
+    cd $ref_rel
+    find . -type d -exec mkdir -p "$new_rel/"{} \;
+
+    cd $new_rel
+
+    find 
+else
+    mkdir $new_rel
 fi
-
-
-cd $1
-find . -type d -exec mkdir -p "$curr_path/$2/"{} \;
-
-cd $curr_path
-
-find $2
