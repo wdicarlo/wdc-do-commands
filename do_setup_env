@@ -31,7 +31,7 @@ fi
 
 
 prj_root=`echo ~/bin`
-PROJECT_VARS=""
+export PROJECT_VARS=""
 n=0
 if [ $# == 1 ]
 then
@@ -76,7 +76,11 @@ env_name=${env_path#do_setup_env_for_}
 if [ "$env_name" == "$PROJECT_ENV" ]; then
     return
 fi
-PROJECT_ENV=$env_name
+
+# reset environment 
+PATH=~/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+PROJECT_VARS=
+export PROJECT_ENV=$env_name
 echo "Applying settings: $PROJECT_ENV"
 . "$prj"
 setup_project_env
