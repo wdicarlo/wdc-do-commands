@@ -12,8 +12,11 @@ export SHARED_FOLDER=/media/sf_Shared
 # press "v" to edit current command 
 # in vim.
 #set -o vi
+echo "Customizing bash"
 
-. ~/bin/do_setup_env_for_default
+#. ~/bin/do_setup_env_for_okl4sdk-5.1.8m4
+#. ~/bin/do_setup_env okl4sdk-5.1.8m4
+. ~/bin/do_setup_env 
 
 function mkcd() {
     mkdir "$1"
@@ -31,6 +34,9 @@ function cdenv() {
     then
         cat .bash_env
         source .bash_env
+    else
+        shift $#
+        . ~/bin/do_setup_env
     fi
 }
 function setup_env() {
@@ -194,6 +200,7 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+
 # some more ls aliases
 alias ll='ls -l'
 alias la='ls -A'
@@ -224,4 +231,4 @@ alias do-cd-link='. ~/bin/do-cd-link'
 alias cd=cdenv 
 alias gh=gohome
 alias do-activate-release='. ~/bin/do_activate_release'
-alias do-setup-env='. ~/bin/do_setup_env'
+alias do-setup-env='. ~/bin/do_setup_env -s'
