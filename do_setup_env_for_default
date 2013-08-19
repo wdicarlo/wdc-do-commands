@@ -17,6 +17,5 @@ function setup_project_env() {
 
     PATH=$PATH:/opt/$TOOLCHAIN/bin
 
-    echo "TOOLCHAIN=$TOOLCHAIN"
+    export PROJECT_VARS="INSTALL_MOD_PATH ARCH TOOLCHAIN CROSS_COMPILE PATH"
 }
-setup_project_env
