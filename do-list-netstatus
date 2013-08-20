@@ -1,9 +1,9 @@
 #!/bin/bash
 
 cmd=""
-if [ -f `which sudo` ]; then
+if [  `which sudo` ]; then
     cmd="sudo"
-elif [ -f `which su-to-root` ]; then
+elif [ `which su-to-root` ]; then
     cmd="su-to-root"
 else
     echo "Missing super hero command"
