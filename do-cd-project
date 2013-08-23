@@ -36,5 +36,5 @@ fi
 cd "${prj_root}$prj"
 if [ ! -f .bash_env ]; then
     shift $#
-    . do_setup_env
+    . ~/bin/do_setup_env
 fi

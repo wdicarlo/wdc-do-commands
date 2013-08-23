@@ -4,11 +4,11 @@
 if [ $# == 0 ]; then
     is_project_folder=`pwd|grep $PROJECTS`
     if [ -z "$is_project_folder" ];then
-        . do_setup_env default
+        . ~/bin/do_setup_env default
     else
         curr_folder=`basename $PWD`
         if [ -f "$PROJECTS/$curr_folder" ]; then
-            . do_setup_env okl4sdk-5.1.8m4
+            . ~/bin/do_setup_env okl4sdk-5.1.8m4
         fi
     fi
     unset is_project_folder
