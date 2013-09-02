@@ -1,9 +1,20 @@
 #!/bin/bash
 
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: <piped-commands> | $cmd <output-file>"
+}
+
+
+if [ -t 0 ]; then
+    usage
+    exit
+fi
+
 if [ ! $# == 1 ]
 then
-    app=`basename $0`
-    echo "Usage: $app <file-to-redirect-output>"
+    usage
     exit
 fi
 
@@ -14,4 +25,5 @@ then
 fi
 
 #do_something 2>&1 | tee -a some_file
+# TODO: solve redirection issue - convert to command which evaluate the input pipe command
 cat 2>&1 | tee -a $1

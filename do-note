@@ -1,17 +1,25 @@
-#!/bin/sh
+#!/bin/bash
 
 
-project=$PROJECT
-if [ -z "$project" ]
-then
-    project="."
+isglobal=0
+if [ $# == 1 ]; then
+    if [ "$1" == "-g" ]; then
+        isglobal=1
+    fi
 fi
 
-dest=`echo ~/projects/$project`
+
+if [ -z "$PROJECT" ] || [ "$isglobal" == "1" ]
+then
+    dest=`echo ~`
+else
+    dest=`echo ~/projects/$PROJECT`
+fi
+
 
 if [ ! -d "$dest" ]
 then
-    echo "Missing project folder $dest"
+    echo "Missing folder $dest"
     exit
 fi
 

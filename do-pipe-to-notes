@@ -1,0 +1,38 @@
+#!/bin/bash
+
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+if [ $# == 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <note-title>"
+    exit
+fi
+
+if [ -z "$PROJECT" ]
+then
+    dest=`echo ~`
+else
+    dest=`echo ~/projects/$PROJECT`
+fi
+
+
+if [ ! -d "$dest" ]
+then
+    echo "Missing folder $dest"
+    exit
+fi
+
+cmd=`basename $0`
+curdate=`date '+%y_%m_%d_%H_%M'`
+
+
+echo "Note: $@" >> $dest/notes.otl
+echo -e "\tDate: $curdate" >> $dest/notes.otl
+echo -e "\tReference: $cmd" >> $dest/notes.otl
+#echo -e "\tREFERENCE: $@" >> $dest/notes.otl
+cat -E| xargs -I@ echo -e "\t; @"|sed 's/$$//' >>  $dest/notes.otl
