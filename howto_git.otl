@@ -145,3 +145,7 @@ Force stagging of a file included in the .gitignore file
 	git add -f STreamPlug_Watermark_Draft.pdf
 Selectivelly discard changes from a file
 	git checkout --patch drivers/media/video/streamplug_camera.c
+Amend the author of last commit (new author added in .git/config file)
+	git commit --amend --reset-author
+Untrack a file, i.e delete from the repo but leave a local copy
+	git rm --cached afile.txt

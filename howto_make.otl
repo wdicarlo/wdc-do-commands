@@ -1,0 +1,2 @@
+remake tool can be used to debug make build procedures
+	remake -d

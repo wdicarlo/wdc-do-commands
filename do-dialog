@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ ! $# == 1 ]; then
+    msg="Please, provide message to display"
+else
+    msg="$1"
+fi
+
+
+
+cmd='xterm -e "bash -c \"whiptail --msgbox \\\"$msg\\\" 10 30\""&'
+echo "> $cmd"
+eval $cmd

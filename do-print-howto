@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+if [ ! $# == 1 ]
+then
+    cmd=`basename $0`
+   echo "Usage: $cmd <category> "
+   echo "       where <category> may be:"
+   echo "          git"
+   echo "          linux"
+   echo "          debian"
+   echo "          ..."
+   exit
+fi
+
+howto=`echo ~/bin/howto_$1.otl`
+
+if [ ! -f $howto ]; then
+    echo "Missing howto file: $howto"
+    exit
+fi
+
+cat $howto 
+

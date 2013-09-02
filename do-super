@@ -1,0 +1,21 @@
+#!/bin/bash
+
+
+
+if [ $# == 0 ]; then
+    exit
+fi
+
+cmd=""
+if [  `which sudo` ]; then
+    cmd="sudo"
+elif [ `which su-to-root` ]; then
+    cmd="su-to-root"
+else
+    echo "Missing super hero command"
+    exit
+fi
+
+cmd="$cmd sh -c \"$@\""
+echo "> $cmd"
+eval $cmd

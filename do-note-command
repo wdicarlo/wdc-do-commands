@@ -1,0 +1,35 @@
+#!/bin/bash
+if [ ! $# == 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <note-title> <note-command>"
+    exit
+fi
+
+command=`basename $0`
+CMD="$command $*"
+title=$1
+shift
+expr="$*"
+
+if [ -z "$PROJECT" ]
+then
+    dest=`echo ~`
+else
+    dest=`echo ~/projects/$PROJECT`
+fi
+
+
+if [ ! -d "$dest" ]
+then
+    echo "Missing folder $dest"
+    exit
+fi
+
+cmd=`basename $0`
+curdate=`date '+%y_%m_%d_%H_%M'`
+
+
+echo "Note: $title" >> $dest/notes.otl
+echo -e "\tDate: $curdate" >> $dest/notes.otl
+echo -e "\tReference: $expr" >> $dest/notes.otl
+eval $expr| cat -E| xargs -I@ echo -e "\t; @"|sed 's/$$//' >>  $dest/notes.otl

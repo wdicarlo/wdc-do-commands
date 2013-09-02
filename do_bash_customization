@@ -212,9 +212,9 @@ alias last=last
 
 
 #alias term='xfce4-terminal --geometry=100x40'
-alias term='xterm -fullscreen -fn 10x20'
+alias term='xterm -maximized -fn 10x20&'
 #alias miniterm='xfce4-terminal --geometry=80x20'
-alias miniterm='xterm -fn 10x10'
+alias miniterm='xterm -fn 10x10&'
 
 alias cd-p='cd ~/projects/$PROJECT'
 
