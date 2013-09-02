@@ -1,8 +1,13 @@
 #!/bin/bash
 
+cmd=`basename $0`
 
+function usage() {
+    echo "Usage: $cmd <command-to-execute-with-admin-privileges>"
+}
 
 if [ $# == 0 ]; then
+    usage
     exit
 fi
 
