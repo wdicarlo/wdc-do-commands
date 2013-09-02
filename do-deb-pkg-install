@@ -6,4 +6,4 @@ if [ ! $# == 1 ]; then
     exit
 fi
 
-su-to-root -c "apt-get install $1"
+do-super "apt-get install $1"

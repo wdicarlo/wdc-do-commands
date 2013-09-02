@@ -2,4 +2,4 @@
 
 localepurge
 
-su-to-root -c "apt-get clean"
+do-super "apt-get clean"
