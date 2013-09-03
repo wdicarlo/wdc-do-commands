@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ ! $# == 1 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <paint>"
+    exit
+fi
+
+mtpaint $1&
