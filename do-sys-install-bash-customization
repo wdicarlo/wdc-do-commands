@@ -1,0 +1,16 @@
+#!/bin/bash
+
+script="\n\
+if [ -f ~/bin/do_bash_customization ]; then\n\
+\t. ~/bin/do_bash_customization\n\
+fi\n\
+"
+
+is_custom=`cat ~/.bashrc | grep -E "\. ~/bin/do_bash_cust"`
+
+if [ ! -z "$is_custom" ]; then
+    echo "Customization already installed"
+    exit
+fi
+
+echo -e $script >> ~/.bashrc
