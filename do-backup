@@ -9,7 +9,6 @@ export MY_VIM_FILES=`eval echo " \
 ~/git/wdc-vim-generic/README.md \
 ~/git/wdc-vim-generic/install.sh \
 ~/git/wdc-vim-generic/vimrc \
-~/git/wdc-vim-generic/vim/plugin/streamplug.vim \
 "`
 
 export MY_FILES=`eval echo " \
