@@ -4,17 +4,17 @@ Sync tags
 	git push --tags
 	git fetch --tags
 Create a new branch and checkout
-	git checkout -b linux-2.6.35.0-okl-azcom
+	git checkout -b linux-2.6.35.0-oklaoma-azcommon
 Create a new branch and checkout a remote branch
-	git checkout -b STreamPLug_1_2_2 origin/STreamPLug_1_2_2
+	git checkout -b GitDemos_1_2_2 origin/GitDemos_1_2_2
 Switch to master
 	git checkout master
 Merge branch
-	git merge linux-2.6.35.0-okl-azcom
+	git merge linux-2.6.35.0-oklaoma-azcommon
 Push changes to remote
 	git push origin master
 Push changes of a branch to remote
-	git push origin STreamPLug_1_2_2
+	git push origin GitDemos_1_2_2
 Pull changes from remote
 	git pull origin
 Undo all changes
@@ -22,19 +22,19 @@ Undo all changes
 	git reset HEAD --hard
 	git clean -f -d
 Differences of last remote commits
-	git diff  origin/STreamPlug..origin/STreamPlug~2
+	git diff  origin/GitDemos..origin/GitDemos~2
 Stats of a git commit
-	git diff --stat 04c77e46eef51098c4c9c4489472df7a55b14591
+	git diff --stat 04c77e46ee
 Delete remote branch
-	git push origin --delete STreamPLug_1_2_2
+	git push origin --delete GitDemos_1_2_2
 Prune branches remotelly deleted
 	git remote prune origin
 Create patch from a git commit
-	git format-patch -1 04c77e46eef51098c4c9c4489472df7a55b14591
-Create the patch of the branch STreamPlug_Ark_GPIO
-	git format-patch STreamPlug --stdout > ../ark_gpio.patch
+	git format-patch -1 04c77e46ee
+Create the patch of the branch GitDemos_Ark_GPIO
+	git format-patch GitDemos --stdout > ../ark_gpio.patch
 Fast-forward merge of a remote branch
-	git merge origin/STreamPlug
+	git merge origin/GitDemos
 Patch of changes ready to be committed on master
 	git diff master > ../adiff.patch
 Print diffs of a file ready to be committed on master
@@ -50,17 +50,17 @@ Update tracking branches
 Delete a tag
 	git tag -d mytag
 Create a tag
-	git tag -m "STreamPlug 1.2.4" streamplug-1.2.4
+	git tag -m "GitDemos 1.2.4" gitdemos-1.2.4
 Track a specific remote branch of a different repository
-	git remote add -t STreamPlug streamplug ssh://gitvcs@192.168.10.1/mnt/devrepos/gitrepos/STMANTA/linux-2.6.35
+	git remote add -t GitDemos gitdemos ssh://gitvcs@192.168.10.1/mnt/devrepos/gitrepos/STMANTA/linux-2.6.35
 List all tags
 	git tag -l
 List all url specified in the git config
 	git config --get-regexp url
 List first 10 commit id
-	git log --oneline streamplug/STreamPlug -10 | awk '{ print $1 }'
+	git log --oneline gitdemos/GitDemos -10 | awk '{ print $1 }'
 Print reverted list of last 10 commit id
-	git log --oneline streamplug/STreamPlug -10 | awk '{ print $1 }' | git rev-list --reverse --stdin -10
+	git log --oneline gitdemos/GitDemos -10 | awk '{ print $1 }' | git rev-list --reverse --stdin -10
 Create a branch whit changed files still not stagged
 	git checkout -b another_branch
 Display nice git history
@@ -68,7 +68,7 @@ Display nice git history
 Unstage added file EXAMPLES
 	git reset HEAD EXAMPLES
 Diff of file ready to be committed
-	git diff -w master -- arch/arm/mach-streamplug/streamplug10_debug_board.c
+	git diff -w master -- arch/arm/mach-gitdemos/gitdemos10_debug_board.c
 Stages All ... equivalent to "git add .; git add -u"
 	git add -A
 Stages new and modified, without deleted
@@ -76,19 +76,19 @@ Stages new and modified, without deleted
 Stages modified and deleted, without new
 	git add -u
 Checkout a tag
-	git checkout streamplug-1.2.4
+	git checkout gitdemos-1.2.4
 Checkout tag into a new branch
-	git checkout -b okl-streamplug-0.3 okl-streamplug-0.3
+	git checkout -b oklaoma-gitdemos-0.3 oklaoma-gitdemos-0.3
 Create a patch between two tags
-	git diff streamplug-1.2.4..streamplug-1.2.5 > ../linux-2.6.35-streamplug-1.2.4-1.2.5.patch
+	git diff gitdemos-1.2.4..gitdemos-1.2.5 > ../linux-2.6.35-gitdemos-1.2.4-1.2.5.patch
 Unstage all added files to the index
 	git reset HEAD .
 List all commits containing changes of a specific file (history of a file)
-	git log --oneline arch/arm/mach-streamplug/streamplug_devel_board.c
+	git log --oneline arch/arm/mach-gitdemos/gitdemos_devel_board.c
 List graph of all commit containing changes of a file
-	git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative arch/arm/mach-streamplug/streamplug_devel_board.c
+	git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative arch/arm/mach-gitdemos/gitdemos_devel_board.c
 Undo changes of a file un-stagged
-	git checkout arch/arm/mach-streamplug/clock.c
+	git checkout arch/arm/mach-gitdemos/clock.c
 Display simplified git status
 	git status -s
 Remove untracked files and directory together with ignored one. Replace -f with -n to test the command
@@ -96,15 +96,15 @@ Remove untracked files and directory together with ignored one. Replace -f with 
 Delete last commit
 	git reset --hard HEAD~1
 Merge a branch squashing its commits into ready-to-be-committed changes
-	git merge --squash branch-temp-oklab-build-parameters
+	git merge --squash branch-temp-oklaomaab-build-parameters
 Delete branch merged using --squash parameter
-	git branch -D branch-temp-oklab-build-parameters
+	git branch -D branch-temp-oklaomaab-build-parameters
 List all files filtered by Git
 	git ls-files --other
 List files ignored by Git
 	git ls-files --other --ignored --exclude-standard
 Clone a local Git repository
-	git clone ../okl_hybrid_streamplug_0_5/oklinux-2.6.35
+	git clone ../oklaoma_hybrid_gitdemos_0_5/oklaomainux-2.6.35
 Fetch a branch
 	git fetch origin branch-temp-misc-stub:branch-temp-misc-stub
 Display a summary of the changes in the last commit
@@ -112,15 +112,15 @@ Display a summary of the changes in the last commit
 Convert a local Git repo into a bare Git repo
 	git checkout -b BRANCH_FOR_BARE_REPO_USAGE
 Reset file marked for deletion
-	git checkout -- arch/arm/configs/okl4_hybrid_platform_streamplug_devel_board_defconfig
+	git checkout -- arch/arm/configs/oklaoma4_hybrid_platform_gitdemos_devel_board_defconfig
 List last committed files
 	git diff --name-only HEAD~1..HEAD
 Revert to previous committed version of a file
-	git checkout HEAD~1 arch/arm/mach-streamplug/streamplug_devel_board.c
+	git checkout HEAD~1 arch/arm/mach-gitdemos/gitdemos_devel_board.c
 Merge branch changes with no commit and no fast-forward
 	git merge --no-commit --no-ff branch-temp-shared-log-test-libmac
 Update tag
-	git tag -f -m "okl-streamplug-0.5" okl-streamplug-0.5
+	git tag -f -m "oklaoma-gitdemos-0.5" oklaoma-gitdemos-0.5
 Export git files into a new destination folder
 	git archive master | tar -x -C /path/to/destination/folder
 Add a remote to existing git repository
@@ -132,7 +132,7 @@ Create a bare repository (named <repo-name>.git)
 First push from a cloned repo to a bare repo
 	git push origin master
 Update latest committed message
-	git commit --amend -m  "Added example of OKLinux output into Booting chapter"
+	git commit --amend -m  "Added example of oklaomainux output into Booting chapter"
 Push a new local branch
 	git push -u origin branch_dev_wdc
 Merge a single file
@@ -142,9 +142,9 @@ Stage change-by-change of a file
 Create a new branch tracking a remote one without checking-out it
 	git branch --track branch_dev_rex origin/branch_dev_rex
 Force stagging of a file included in the .gitignore file
-	git add -f STreamPlug_Watermark_Draft.pdf
+	git add -f GitDemos_Watermark_Draft.pdf
 Selectivelly discard changes from a file
-	git checkout --patch drivers/media/video/streamplug_camera.c
+	git checkout --patch drivers/media/video/gitdemos_camera.c
 Amend the author of last commit (new author added in .git/config file)
 	git commit --amend --reset-author
 Untrack a file, i.e delete from the repo but leave a local copy

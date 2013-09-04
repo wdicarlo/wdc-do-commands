@@ -23,8 +23,13 @@ fi
 
 git clone $repo_url $repo_folder
 
+
+
+read -p "Name: " name
+read -p "eMail: " email
+
 echo -e "
 [user]
-	name = Walter Di Carlo
-	email = walter@di-carlo.it
+	name = $name
+	email = $email
 " >> $repo_folder/.git/config
