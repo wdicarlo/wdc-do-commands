@@ -1,0 +1,19 @@
+#!/bin/bash
+
+cmd=`basename $0`
+function usage() {
+	echo "Usage: $cmd <num-line-context> <grep-parameters>"
+}
+
+
+if [ $# == 0 ]; then
+	usage
+	exit
+fi
+
+
+num=$1
+shift
+
+
+\grep --color=auto -A$num $@
