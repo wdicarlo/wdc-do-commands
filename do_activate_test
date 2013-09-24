@@ -1,0 +1,59 @@
+#!/bin/bash
+
+if [ -z "$TESTS" ]; then
+    echo "TESTS not defined"
+    exit
+fi
+
+if [ -z "$PROJECT" ]; then
+    echo "PROJECT not defined"
+    exit
+fi
+
+if [ ! -d "$TESTS/$PROJECT" ]; then
+    mkdir "$TESTS/$PROJECT" && echo "Created folder $TESTS/$PROJECT"
+fi
+
+prj_root=$TESTS/$PROJECT
+n=0
+if [ $# == "1" ]
+then
+    n=`ls -1 $prj_root | grep $1 | awk '{ print NR, $0 }' | wc -l`
+    ls -1 $prj_root | grep $1 | awk '{ print NR, $0 }'
+else
+    n=`ls -1 $prj_root | awk '{ print NR, $0 }' | wc -l`
+    ls -1 $prj_root | awk '{ print NR, $0 }'
+fi
+
+num=-1
+if [ "$n" == "0" ]
+then
+    echo "Test/s not found!!!"
+    return
+fi
+
+if [ "$n" == "1" ]
+then
+    num=1
+else
+    read -p "Test Num: " num
+fi
+
+
+if [ $# == 1 ]
+then
+    prj=`ls -1 $prj_root | grep $1 | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+else
+    prj=`ls -1 $prj_root | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+fi
+
+export TEST="$prj"
+export TEST_PATH="$prj_root"
+
+echo "TEST=$TEST"
+echo "TEST_PATH=$TEST_PATH"
+
+if [ ! -d "$TEST_PATH" ]
+then
+    echo "WARNING -  missing test path: $TEST_PATH"
+fi
