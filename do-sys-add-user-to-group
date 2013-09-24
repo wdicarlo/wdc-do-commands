@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd <user> <group>"
+}
+
+if [ ! $# == 2 ]; then
+    usage
+    exit
+fi
+
+do-super "usermod -a -G $2 $1"
+
+groups $1
