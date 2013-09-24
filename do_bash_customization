@@ -231,4 +231,5 @@ alias do-cd-link='. ~/bin/do-cd-link'
 alias cd=cdenv 
 alias gh=gohome
 alias do-activate-release='. ~/bin/do_activate_release'
+alias do-activate-test='. ~/bin/do_activate_test'
 alias do-setup-env='. ~/bin/do_setup_env -s'

@@ -17,6 +17,7 @@ fi
 if [ ! $# == 1 ]; then
     cmd=`basename $0`
     echo "Usage: $cmd <test_name>"
+    echo "Note:  a new folder is created with name test_<date>_<time>_<test_name>"
     exit
 fi
 
@@ -30,4 +31,6 @@ if [ -d "$test_path" ]; then
     exit
 fi
 
-mkdir $test_path&& echo "Created test: $test_name"
+echo "> mkdir $test_path"
+
+mkdir $test_path&&source ~/bin/do_activate_test $test_name&& echo "Created test: $TEST at $TEST_PATH"
