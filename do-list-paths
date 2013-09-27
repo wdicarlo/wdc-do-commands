@@ -1,9 +1,6 @@
 #!/bin/bash
 
 PROJECT_REL_PATHS=(             \
-             "arch/arm/mach-streamplug/" \
-             "arch/arm/plat-streamplug/"
-             "sound/soc/streamplug/" \
              "drivers/gpio/" \
              "drivers/ata/" \
              "drivers/pci/" \
@@ -11,7 +8,6 @@ PROJECT_REL_PATHS=(             \
              "drivers/dma/" \
              "drivers/char/c3/" \
              "drivers/spi/" \
-             "drivers/net/stmmac/" \
              "drivers/net/irda/" \
              "drivers/watchdog/" \
              "drivers/video/" \
