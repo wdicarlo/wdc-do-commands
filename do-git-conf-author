@@ -1,0 +1,33 @@
+#!/bin/bash
+
+function usage() {
+    cmd=`basename $0`
+    echo "Usage: $cmd <name> <email>"
+}
+
+
+if [ ! $# == 2 ]; then
+    usage
+    exit
+fi
+
+
+git_conf=".git/config"
+
+if [ ! -f $git_conf ]; then
+    echo "Not in a git tree"
+    exit
+fi
+
+name=$1
+email=$2
+
+
+echo -e "
+[user]
+	name = $name
+	email = $email
+" >> $git_conf
+
+
+cat $git_conf|grep -A2 user

@@ -1,7 +1,7 @@
 Linux HowTos
 	List of Linux howtos
 Tar excluding the GIT repository folder
-    tar -cjf linux-2.6.35.0-okl-azcom.tar.bz2 --exclude=.git linux-2.6.35.0-okl-azcom
+    tar -cjf linux-2.6.35.0-okl-azcommon.tar.bz2 --exclude=.git linux-2.6.35.0-okl-azcommon
 Prune folder
     find . -maxdepth 1 \( -name .git -prune -o -name "*" -print -exec rm -rf {} \; \)
 Explore more than one folder with find command
@@ -11,7 +11,7 @@ Grep over different sets of folders
 Add a column with the line number
 	awk '{print NR,$0}' README
 Generate initramfs_list
-	../oklinux-2.6.35-streamplug/scripts/gen_initramfs_list.sh initramfs > initramfs_list
+	../oklinux-2.6.35-gitdemos/scripts/gen_initramfs_list.sh initramfs > initramfs_list
 Find dynamic libraries used by examples
 	find initramfs/examples/ -type f | grep -v "txt\|dat\|jpg\|mcu" | xargs -I@ readelf -d @
 Mount jffs2 image
