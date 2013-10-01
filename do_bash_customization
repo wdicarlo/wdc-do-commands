@@ -222,11 +222,11 @@ alias cd-projects='cd ~/projects/'
 alias cd-tests='cd ~/tests/'
 alias cd-releases='cd /media/sf_Shared/releases/'
 
-alias do-cd-project='. ~/bin/do-cd-project'
-alias do-cd-test='. ~/bin/do-cd-test'
-alias do-cd-release='. ~/bin/do-cd-release'
-
-alias do-cd-link='. ~/bin/do-cd-link'
+alias do-cd-project='. ~/bin/do_cd_project'
+alias do-cd-test='. ~/bin/do_cd_test'
+alias do-cd-release='. ~/bin/do_cd_release'
+alias do-cd-folder='. ~/bin/do_cd_folder'
+alias do-cd-link='. ~/bin/do_cd_link'
 
 alias cd=cdenv 
 alias gh=gohome
