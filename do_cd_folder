@@ -1,0 +1,36 @@
+#!/bin/bash
+
+prj_root=`pwd`
+n=0
+if [ $# == 1 ]
+then
+    n=`find $prj_root -maxdepth 3 -type d | grep $1 | awk '{ print NR, $0 }' | wc -l`
+    find $prj_root -maxdepth 3 -type d | grep $1 | awk '{ print NR, $0 }'
+else
+    n=0
+fi
+
+num=-1
+if [ "$n" == 0 ]
+then
+    echo "Folder/s not found!!!"
+    return
+fi
+
+if [ "$n" == 1 ]
+then
+    num=1
+else
+    read -p "Folder Num: " num
+fi
+
+
+if [ $# == 1 ]
+then
+    prj=`find $prj_root -maxdepth 3 -type d | grep $1 | awk '{ print NR, $0 }' |grep "^$num"|awk '{print $2}'`
+fi
+cd "$prj"
+if [ ! -f .bash_env ]; then
+    shift $#
+    . ~/bin/do_setup_env
+fi
