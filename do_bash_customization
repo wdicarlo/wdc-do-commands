@@ -206,6 +206,8 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 
+alias vi=vim
+
 alias cac="copy_and_cd $@"
 #alias last="last $@"
 alias last=last
