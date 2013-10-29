@@ -1,4 +1,11 @@
-#!/bin/sh
+#!/bin/bash
+
+cmd=`which wiggle`
+
+if [ -z "$cmd" ]; then
+    echo "wiggle command not installed!!!"
+    exit
+fi
 
 
 #find . -type f -name "*.rej" | sed -s "s/.rej//" | xargs -I@  echo "wiggle --replace @ @.rej"
