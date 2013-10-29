@@ -1,2 +1,6 @@
-find ~/bin -name "do-*" | xargs -I@ basename @
-echo "WARNING: STILL UNDER DEVELOPMENT"
+#!/bin/bash
+#
+
+
+cd ~/bin
+find . -name "do-*" | sed "s#^\.\/##" | xargs -I@ \grep --color -Hn $@ @
