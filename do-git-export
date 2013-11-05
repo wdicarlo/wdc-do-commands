@@ -11,7 +11,7 @@ then
     exit
 fi
 
-if [ ! -d .git ] || 
+if [ ! -d .git ] && 
     [ ! -h .git ]
 then
     echo "Not in the git root folder"
