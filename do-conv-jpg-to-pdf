@@ -1,0 +1,15 @@
+#!/bin/bash 
+
+if [ ! $# == 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd \"input-jpg-pattern\" output-pdf-filename"
+    exit
+fi
+
+if [ -f "$2" ]; then
+    echo "The file $2 already exists"
+    exit
+fi
+
+
+convert -compress jpeg "$1"  "$2"
