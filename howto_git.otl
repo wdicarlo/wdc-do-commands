@@ -149,3 +149,5 @@ Amend the author of last commit (new author added in .git/config file)
 	git commit --amend --reset-author
 Untrack a file, i.e delete from the repo but leave a local copy
 	git rm --cached afile.txt
+Print staged diffs of a file
+	git diff --cached afile.txt
