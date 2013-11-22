@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# minimal PATH setup
+# PATH=~/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+
+function setup_project_env() {
+    # reset PATH
+    PATH=~/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+
+    export PROJECT_VARS="PATH"
+}

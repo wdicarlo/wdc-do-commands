@@ -4,7 +4,7 @@
 if [ $# == 0 ]; then
     is_project_folder=`pwd|grep $PROJECTS`
     if [ -z "$is_project_folder" ];then
-        . ~/bin/do_setup_env default
+        . ~/bin/do_setup_env empty
     else
         curr_folder=`basename $PWD`
         if [ -f "$PROJECTS/$curr_folder" ]; then
