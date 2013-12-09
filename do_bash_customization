@@ -225,6 +225,7 @@ alias cd-tests='cd ~/tests/'
 alias cd-releases='cd /media/sf_Shared/releases/'
 
 alias do-cd-project='. ~/bin/do_cd_project'
+alias do-create-project='. ~/bin/do_create_project'
 alias do-cd-test='. ~/bin/do_cd_test'
 alias do-cd-release='. ~/bin/do_cd_release'
 alias do-cd-folder='. ~/bin/do_cd_folder'
