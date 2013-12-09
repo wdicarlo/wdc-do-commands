@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# == 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <sqlfile> <dbname>"
+    exit
+fi
+
+if [ ! -f "$1" ]; then
+    echo "SQL file does not exists: $1"
+    exit
+fi
+
+if [ -f "$2" ]; then
+    echo "Database file already exists: $2"
+    exit
+fi
+
+sqlite3 "$2" < "$1"
