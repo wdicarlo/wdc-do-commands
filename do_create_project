@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# == 1 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <projectname>"
+    return
+fi
+
+if [ -z "$PROJECTS" ]; then
+    echo "PROJECTS not defined"
+    return
+fi
+
+if [ -d "$PROJECTS/$1" ]; then
+    echo "Project already exists"
+    return
+fi
+
+mkdir "$PROJECTS/$1"
+
+eval ~/bin/do_cd_project $1
