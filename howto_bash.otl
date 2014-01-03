@@ -1,2 +1,6 @@
 bash howto
 	List of bash how to
+Replace $PWD with pwd command
+	pwd -P
+Get absolute path of a file/link
+	readlink -f <file|link>

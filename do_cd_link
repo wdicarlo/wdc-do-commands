@@ -14,7 +14,7 @@ then
 fi
 
 
-
+# TODO: use the readlink -f command
 folder=`file $1 | tr -d "\'" | awk '{print $5}'`
 folder=${folder:1}
 if [ -f "$folder" ]
