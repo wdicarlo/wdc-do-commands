@@ -17,4 +17,6 @@ if [ -f "$2" ]; then
     exit
 fi
 
+# TODO: use the following with compressed dumps
+# zcat "$1" | sqlite3 "$2"
 sqlite3 "$2" < "$1"
