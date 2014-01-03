@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+sudo screen /dev/ttyUSB0 38400,cs8,-ixon,-ixoff
