@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DOCS_FOLDER=docs
+FILENAME=notes.otl
 
 isglobal=0
 if [ $# == 1 ]; then
@@ -11,16 +13,22 @@ fi
 
 if [ -z "$PROJECT" ] || [ "$isglobal" == "1" ]
 then
-    dest=`echo ~`
+    dest=`echo ~/$DOCS_FOLDER`
 else
-    dest=`echo ~/projects/$PROJECT`
+    dest=`echo ~/projects/$PROJECT/$DOCS_FOLDER`
 fi
 
 
 if [ ! -d "$dest" ]
 then
-    echo "Missing folder $dest"
-    exit
+    mkdir -p $dest
 fi
 
-vi $dest/notes.otl
+if [ -f "$dest/../$FILENAME" ]; then
+    # TODO: create symbolic link
+    cat "$dest/../$FILENAME" >> "$dest/$FILENAME"
+    mv "$dest/../$FILENAME" "$dest/../${FILENAME}.bak"
+    ln -s "$dest/$FILENAME" "$dest/../$FILENAME"
+fi
+
+vi $dest/$FILENAME
