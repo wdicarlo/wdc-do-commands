@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# == 1 ]
+then
+    cmd=`basename $0`
+   echo "Usage: $cmd <user_profile> "
+   echo "       where <user_profile> may be:"
+   echo "          personal_1"
+   echo "          personal_2"
+   echo "          company_abc"
+   echo "          company_xyz"
+   echo "          ..."
+   echo "       Current available profiles:"
+    ls -1 ~/bin/git_user_profile* 2>/dev/null | xargs -I@ basename @ | sed  "s/git_user_profile_//" | sed "s/.txt//" | sed "s/^/\t\t/"
+   exit
+fi
+
+# TODO: use grep 
+profile=`echo ~/bin/git_user_profile_$1.txt`
+
+if [ ! -f $profile ]; then
+    echo "Missing profile file: $profile"
+    echo "Available profiles:"
+    ls -1 ~/bin/git_user_profile* 2>/dev/null | xargs -I@ basename @ | sed  "s/git_user_profile_//" | sed "s/.txt//"
+    exit
+fi
+
+echo "[user]"
+cat $profile 
+
