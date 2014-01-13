@@ -1,0 +1,2 @@
+	name = Walter Di Carlo
+	email = walter@di-carlo.it
