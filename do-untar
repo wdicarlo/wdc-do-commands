@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+if [ ! $# == 1 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <tar-archive>"
+    exit
+fi
+
+if [ ! -f "$1" ]; then
+    echo "Error: missing file $1"
+    exit
+fi
+
+
+# check extension: tar.bz2, tar.gz
+ext=".tar.gz"
+opt="z"
+check=`echo $1 | grep $ext`
+if [ -z "$check" ]; then
+    ext=".tar.bz2"
+    opt="j"
+    check=`echo $1 | grep $ext`
+    if [ -z "$check" ]; then
+        echo "Error: unknow extension"
+        exit
+    fi
+fi
+
+file=${1%$ext}
+
+
+tar -t${opt}f "$1" | head -20
+
+echo "..."
+
+read -p "Untar? <y|n>" ans
+
+
+if [ $ans == "y" ] || [ $ans == "Y" ]; then
+    # check if destination folder already exists
+    folder=`tar -t${opt}f "$1" | head -1`
+    if [ -d "$folder" ]; then
+        echo "Error: $folder already exists"
+        exit
+    fi
+
+    tar -x${opt}f "$1"
+fi
+
