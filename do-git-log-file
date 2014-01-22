@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+if [ ! $# == 1 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <file>"
+    exit
+fi
+
+echo "> git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative --follow -- $1"
+git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative --follow -- $1
