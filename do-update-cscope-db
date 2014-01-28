@@ -1,4 +1,10 @@
-#!/bin/sh 
+#!/usr/bin/env bash
+
+check=`which cscope`
+if [ -z "$check" ]; then
+    echo "Error: cannot find cscope command"
+    exit
+fi
 
 
 folders="."
