@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
 
+if [ "$1" == "-h" ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd [-b]"
+    echo "          -b  Use byobu client"
+    exit
+fi
 
-sudo screen /dev/ttyUSB0 38400,cs8,-ixon,-ixoff
+if [ "$1" == "-b" ]; then
+    sudo -H byobu-screen -L /dev/ttyUSB0 38400,cs8,-ixon,-ixoff
+else
+    sudo screen -L /dev/ttyUSB0 38400,cs8,-ixon,-ixoff
+fi
