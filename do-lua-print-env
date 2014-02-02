@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+
+echo "lua -e \"print(package.path)\""
+lua -e "print(package.path)"
+echo "lua -e \"print(package.cpath)\""
+lua -e "print(package.cpath)"
