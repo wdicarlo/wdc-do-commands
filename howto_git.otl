@@ -151,3 +151,5 @@ Untrack a file, i.e delete from the repo but leave a local copy
 	git rm --cached afile.txt
 Print staged diffs of a file
 	git diff --cached afile.txt
+Unstage files ready to be committed leaving changes in the working copy
+	git reset --mixed
