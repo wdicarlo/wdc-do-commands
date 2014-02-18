@@ -7,8 +7,25 @@ if [ "$1" == "-h" ]; then
     exit
 fi
 
-if [ "$1" == "-b" ]; then
-    sudo -H byobu-screen -L /dev/ttyUSB0 38400,cs8,-ixon,-ixoff
-else
-    sudo screen -L /dev/ttyUSB0 38400,cs8,-ixon,-ixoff
+user=`whoami`
+group=`groups $user | grep dialout`
+
+sd=`which sudo`
+
+cmd=
+if [ -z "$group" ]; then
+    cmd="do-super"
+    if [ "$1" == "-b" ]; then
+        cmd="do-super -H"
+    fi
 fi
+
+
+if [ "$1" == "-b" ]; then
+    cmd+=" byobu-"
+fi
+
+cmd+="screen -L /dev/ttyUSB0 38400,cs8,-ixon,-ixoff"
+
+echo "> $cmd"
+eval $cmd
