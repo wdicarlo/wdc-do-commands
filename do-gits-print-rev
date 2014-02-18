@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+
+for folder in `find . -maxdepth 1 -type d|xargs -I@ basename @`
+do
+    cd "$folder" > /dev/null
+    if [ -d .git ]; then
+        #rev=`git rev-list --all | head -1`
+        rev=`git rev-parse HEAD`
+        echo "$folder  $rev" | awk '{ printf "%-20s %-40s\n", $1, $2}'
+    fi
+    cd - > /dev/null
+done
