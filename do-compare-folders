@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+if [ ! $# == 2 ]
+then
+    cmd=`basename $0`
+    echo "Usage: $cmd <folder1> <folder2>"
+    exit
+fi
+
+if [ ! -d "$1" ]
+then
+    echo "$1 is not a folder"
+    exit
+fi
+if [ ! -d "$2" ]
+then
+    echo "$2 is not a folder"
+    exit
+fi
+
+cmd=`which meld`
+
+if [ -z "$cmd" ]; then
+    echo "meld command is not installed"
+    exit
+fi
+
+meld "$1" "$2"&
