@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ ! $# == 3 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <file-filter> <from> <to>"
+    exit
+fi
+
+exp="s/$2/$3/2"
+
+
+ls -1 $1 | awk '{ print ("mv -n "$1" "$1)}' |sed $exp| /bin/sh -v
