@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-v] [-l] [-c] [-g] [<lua-parameters>]"
+    echo "where:"
+    echo "       -h                 : help"
+    echo "       -v                 : verbose"
+    echo "       -l                 : trace lines"
+    echo "       -c                 : trace calls"
+    echo "       -g                 : trace globals"
+    exit
+}
+
+
+if [ -z $LUA_HOME ]; then
+    #echo "Please, define LUA_HOME enviroment variable"
+    #LUA_HOME=`readlink -f ~/.luarocks/`
+    #echo "Default: $LUA_HOME"
+    #exit
+    LUA_HOME=`echo ~/.luarocks`
+fi
+
+if [ ! -d $LUA_HOME ]; then
+    echo "Missing folder $LUA_HOME"
+    exit
+fi
+
+opts=
+verbose=0
+
+while getopts hvlcg flag
+do
+    case $flag in
+
+        v)
+            verbose=1
+            ;;
+        l)
+            opts+=" -ltrace-lines"
+            ;;
+        c)
+            opts+=" -ltrace-calls"
+            ;;
+        g)
+            opts+=" -ltrace-globals"
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+export LUA_PATH=`echo "?.lua;$LUA_HOME/share/lua/5.1/?.lua;$LUA_HOME/share/lua/5.1/?/init.lua"`
+export LUA_CPATH=`echo "$LUA_HOME/lib/lua/5.1/?.so;./?.so;?/?.so;$LUA_HOME/lib/lua/5.1/?.so;$LUA_HOME/lib/lua/5.1/loadall.so"`
+
+
+#export LUA_INIT="package.path = '?;'..package.path"
+export LUA_INIT=`echo "package.path = '${LUA_PATH};'..package.path"`
+
+
+if [ "$verbose" == 1 ]; then
+    echo "PATH      = $PATH"
+    echo "LUA_PATH  = $LUA_PATH"
+    echo "LUA_CPATH = $LUA_CPATH"
+    echo "LUA_INIT  = $LUA_INIT"
+    echo "options   = $opts"
+    echo
+fi
+
+lua $opts "$@"

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+
+LUAROCKS_ROOT=~/.luarocks
+if [ $# == 0 ]; then
+    $LUAROCKS_ROOT/bin/luarocks --tree=`echo $LUAROCKS_ROOT` | less
+else
+    $LUAROCKS_ROOT/bin/luarocks --tree=`echo $LUAROCKS_ROOT` $@
+fi
