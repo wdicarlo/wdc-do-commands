@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+
+
+if [ -t 0 ]; then
+    if [ $# == 0 ]; then
+        cmd=`basename $0`
+        echo "Usage: $cmd <grep-parameters>"
+        exit
+    fi
+    \grep -RHn $@ | grep -v git | less -p "$1"
+else
+    if [ $# == 0 ]; then
+        \grep -v git | less 
+    else
+        \grep -v git | grep "$1" | less -p "$1"
+    fi
+fi
