@@ -1,0 +1,8 @@
+Start the lua interpreter
+	lua
+Use relative paths in require command
+	require 'lib.foo.bar'
+	local pathOfThisFile = ... -- pathOfThisFile is now 'lib.foo.bar'
+	local folderOfThisFile = (...):match("(.-)[^%.]+$") -- returns 'lib.foo.'
+	require(folderOfThisFile .. 'baz')     -- require('lib.foo.baz')
+	require(folderOfThisFile .. 'bazinga') -- require('lib.foo.bazinga')
