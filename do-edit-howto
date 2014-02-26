@@ -12,7 +12,7 @@ then
         exit
     fi
     # TODO: improve filtering considering only the filename but maintaining the path
-    list=`find $folders -name "howto_*" | grep "$@"`
+    list=`find $folders/ -name "howto_*" | grep "$@"`
     num=`ls -1 $list|wc -l`
     if [ "$num" == 1 ]
     then
