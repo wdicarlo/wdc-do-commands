@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+#cmd=`basename $0`
+cmd="do-cd-path"
+
 if [ ! $# == 1 ]
 then
-    cmd=`basename $0`
     echo "Usage: $cmd <path>"
     return
 fi

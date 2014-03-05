@@ -10,9 +10,27 @@ function usage() {
     echo "       -l                 : trace lines"
     echo "       -c                 : trace calls"
     echo "       -g                 : trace globals"
+    echo "       -p <pkg-path>      : package path to add"
     exit
 }
 
+function update_path() {
+    if [ $# == 0 ]; then
+        return
+    fi
+    if [ -z "$LUA_PATH" ]; then
+        LUA_PATH="$1/?.lua;$1/init.lua"
+    else
+        LUA_PATH="$1/?.lua;$1/init.lua;$LUA_PATH"
+    fi
+    echo "Updated LUA_PATH: $LUA_PATH"
+    #if [ -z "$LUA_CPATH" ]; then
+    #    LUA_CPATH="$1/?.so"
+    #else
+    #    LUA_CPATH="$1/?.so;$LUA_PATH"
+    #fi
+    #echo "Updated LUA_CPATH: $LUA_CPATH"
+}
 
 if [ -z $LUA_HOME ]; then
     #echo "Please, define LUA_HOME enviroment variable"
@@ -30,7 +48,9 @@ fi
 opts=
 verbose=0
 
-while getopts hvlcg flag
+export LUA_PATH=""
+
+while getopts hvlcgp: flag
 do
     case $flag in
 
@@ -46,6 +66,13 @@ do
         g)
             opts+=" -ltrace-globals"
             ;;
+        p)
+            pkg_path=$OPTARG
+            if [ -d "$pkg_path" ]; then
+                echo "Added path: $pkg_path"
+                update_path $pkg_path
+            fi
+            ;;
         h)
             usage
             exit
@@ -58,7 +85,11 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-export LUA_PATH=`echo "?.lua;$LUA_HOME/share/lua/5.1/?.lua;$LUA_HOME/share/lua/5.1/?/init.lua"`
+if [ -z "$LUA_PATH" ]; then
+    LUA_PATH=`echo "?.lua;?/init.lua;$LUA_HOME/share/lua/5.1/?.lua;$LUA_HOME/share/lua/5.1/?/init.lua"`
+else
+    LUA_PATH=`echo "?.lua;?/init.lua;$LUA_PATH;$LUA_HOME/share/lua/5.1/?.lua;$LUA_HOME/share/lua/5.1/?/init.lua"`
+fi
 export LUA_CPATH=`echo "$LUA_HOME/lib/lua/5.1/?.so;./?.so;?/?.so;$LUA_HOME/lib/lua/5.1/?.so;$LUA_HOME/lib/lua/5.1/loadall.so"`
 
 

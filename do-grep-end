@@ -5,6 +5,10 @@ if [ $# == 0 ]; then
     echo "Usage: $cmd <end-string>"
     exit
 fi
+opts=""
+if [ "$1" == "-i" ]; then
+    opts="-i"
+fi
 
 
-grep --color -E "$1$"
+\grep --color $opts -E "$1$"

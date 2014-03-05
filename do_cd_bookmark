@@ -1,14 +1,78 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-prj_root=`echo ~/.bookmarks`
+cmd=`basename $0`
+
+#function usage() {
+#    echo "Usage: $cmd [-g] [-l] [<string>]"
+#    echo "where:"
+#    echo "       -g                 : globals - do not restrict to current project"
+#    #echo "       -b                 : just consider the basename"
+#    echo "       -l                 : list bookmarks"
+#    return
+#}
+
+global="0"
+list="0"
+
+while [ $# -gt 0 ]; do
+    if [ "$1" == "-g" ]; then
+        global="1"
+        shift
+    fi
+
+    if [ "$1" == "-l" ]; then
+        list="1"
+        shift
+    fi
+done
+#while getopts gl flag
+#do
+#    case $flag in
+#        g)
+#            global="1"
+#echo "global=$global"
+#            ;;
+#        l)
+#            list="1"
+#echo "list=$list"
+#            ;;
+#        \?)
+#            usage
+#            return
+#            ;;
+#    esac
+#done
+#shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+bookmarks_file=`echo ~/.bookmarks`
+
+
+if [ ! -f $bookmarks_file ]; then
+    echo "No Bookmark/s not found!!!"
+    return
+fi
+
+
+bookmarks=""
+if [ $global == "0" ]; then
+    bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | sed "s#$PROJECT_PATH/##"`
+else
+    bookmarks=`cat $bookmarks_file` 
+fi
+
+if [ "$list" == "1" ]; then
+    echo "$bookmarks"
+    return
+fi
+
 n=0
 if [ $# == 1 ]
 then
-    n=`cat $prj_root | grep $1 | awk '{ print NR, $0 }' | wc -l`
-    cat $prj_root | grep $1 | awk '{ print NR, $0 }'
+    n=`echo "$bookmarks" | grep $1 | awk '{ print NR, $0 }' | wc -l`
+    echo "$bookmarks" | grep $1 | awk '{ print NR, $0 }'
 else
-    n=`cat $prj_root | awk '{ print NR, $0 }' | wc -l`
-    cat $prj_root | awk '{ print NR, $0 }'
+    n=`echo "$bookmarks" | awk '{ print NR, $0 }' | wc -l`
+    echo "$bookmarks" | awk '{ print NR, $0 }'
 fi
 
 num=-1
@@ -28,12 +92,18 @@ fi
 
 if [ $# == 1 ]
 then
-    prj=`cat $prj_root | grep $1 | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+    bpath=`echo "$bookmarks" | grep $1 | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
 else
-    prj=`cat $prj_root | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+    bpath=`echo "$bookmarks" | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
 fi
 
-cd "${prj}"
+if [ $global == "0" ]; then
+    cd "$PROJECT_PATH/${bpath}"
+else
+    cd "${bpath}"
+fi
+
+# TODO: apply destination project env
 if [ ! -f .bash_env ]; then
     shift $#
     . ~/bin/do_setup_env
