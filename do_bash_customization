@@ -229,6 +229,8 @@ alias do-create-project='. ~/bin/do_create_project'
 alias do-cd-test='. ~/bin/do_cd_test'
 alias do-cd-release='. ~/bin/do_cd_release'
 alias do-cd-folder='. ~/bin/do_cd_folder'
+alias do-cd-path='. ~/bin/do_cd_path'
+alias do-cd-bookmark='. ~/bin/do_cd_bookmark'
 alias do-cd-link='. ~/bin/do_cd_link'
 
 alias cd=cdenv 
