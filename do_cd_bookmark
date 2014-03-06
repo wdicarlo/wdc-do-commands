@@ -24,6 +24,9 @@ while [ $# -gt 0 ]; do
         list="1"
         shift
     fi
+    if [ ! "${1:0,1}" == "-" ]; then
+        break
+    fi
 done
 #while getopts gl flag
 #do
