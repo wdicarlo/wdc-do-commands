@@ -74,6 +74,8 @@ function gohome() {
         if [ $folder == "$user" ] ||
             [ -d "$path/.git" ] ||
             [ -h "$path/.git" ] ||
+            [ -d "$path/.svn" ] ||
+            [ -h "$path/.svn" ] ||
             [ -f "$path/.bash_env" ] ||
             [ -d "$parent/$folder.git" ] ||
             [ "$parent_folder" == "projects" ] ||
