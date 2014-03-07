@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: <cmds> | $cmd <columns-list>"
+    echo "       Where <columns-list> can be:"
+    echo "           x,y,..."
+    echo "           x-y"
+    echo "           x-"
+    echo "           -y"
+    echo "           x-y,z,k,j-"
+    echo "       See cut manual"
+    exit
+fi
+
+cat | cut -d " " -f $@
