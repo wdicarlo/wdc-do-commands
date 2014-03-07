@@ -1,6 +1,0 @@
-#!/bin/bash
-
-if [ $# == 1 ]
-then
-    sh -c "awk '{ print \$${1} }'"
-fi
