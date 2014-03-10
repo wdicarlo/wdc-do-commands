@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+
+cmd=`which debootstrap`
+if [ -z "$cmd" ]; then
+    echo "Missing debootstrap command"
+    exit
+fi
+cmd=`basename $0`
+if [ $# == 0 ]; then
+    echo "Usage: $cmd <chroot-folder>"
+    exit
+fi
+
+if [ -f "$1" ]; then
+    echo "Error: $1 is a file"
+    exit
+fi
+
+if [ ! -d "$1" ]; then
+    mkdir -p "$1"
+
+    do-super "debootstrap --arch i386 wheezy \"$1\""
+fi
+
+
+EXP_FOLDERS="\
+bin\
+boot\
+dev\
+etc\
+home\
+lib\
+media\
+mnt\
+opt\
+proc\
+root\
+run\
+sbin\
+selinux\
+srv\
+sys\
+tmp\
+usr\
+var\
+"
+FOLDERS=`ls -1 $1`
+
+EXP_NUM_BIN=88
+NUM_BIN=`ls -1 $1|wc -l`
+
+
+do-super chroot "$1"
