@@ -7,7 +7,9 @@ do
     if [ -d .git ]; then
         #rev=`git rev-list --all | head -1`
         rev=`git rev-parse HEAD`
-        echo "$folder  $rev" | awk '{ printf "%-20s %-40s\n", $1, $2}'
+        rep=`git remote -v | grep fetch | awk '{ print $2 }'`
+        # layout columns correctly
+        echo "$folder $rep  $rev" | awk '{ printf "%-20s %-60s %-40s\n", $1, $2, $3}'
     fi
     cd - > /dev/null
 done
