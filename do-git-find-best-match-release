@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 if [ ! $# == 2 ]; then
-    cmd = `basename $0`
+    cmd=`basename $0`
     echo "Usage: $cmd <local-folder|local-file> <reference-folder|reference-file>"
     exit
 fi
 
 # TODO: check reference folder/file
 
-for REV in $(git rev-list --all); do
+for REV in $(git rev-list --all $1); do
     git checkout -q $REV
     # TODO: check existance of folders/file
-    count=`diff $1 $2  | wc -l`
+    count=`diff --new-file $1 $2  | wc -l`
     echo "$REV --> $count diff lines"
 done
