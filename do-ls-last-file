@@ -1,4 +1,60 @@
-#!/bin/bash
+#!/usr/bin/env bash
+cmd=`basename $0`
+num=1
+
+function usage() {
+    echo "usage: $cmd [-h] "
+    echo "where:"
+    echo "       -h                 : help"
+    echo "       -n <num>           : num of files to list"
+    exit
+}
+
+function list_last() {
+if [ $# -gt 0 ]; then
+    #files=""
+    #dirs=""
+    #for file in $@
+    #do
+    #    if [ -f $file ]; then
+    #        files="$files $file"
+    #    else 
+    #        if [ -d $file ]; then
+    #            dirs="$dirs $file"
+    #        fi
+    #    fi
+    for loc in $@
+    do
+        if [ -d "$loc" ]; then
+            ls -1t $loc | head -$num |xargs -I@ echo "${loc%\/}/@"
+        else
+            ls -1t $loc | head -$num |xargs -I@ echo @
+        fi
+    done
+fi
+}
 
 # TODO: -p print paths, $1 = num files to print
-ls -1st $1 | grep -v "^total" | head -1| awk '{print $2}'|xargs -I@ echo "$1@"
+while getopts hn: flag
+do
+    case $flag in
+        n)
+            num=$OPTARG
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+    list_last "."
+else
+    list_last $@
+fi
