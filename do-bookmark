@@ -9,5 +9,11 @@ n=`cat $bookmarks | grep -E "^$cpath$" | wc -l`
 if [ $n == 0 ]; then
     echo "$cpath" >> $bookmarks
 fi
+# modify bookmark file
 file=`cat $bookmarks`;echo  "$file" | sort > $bookmarks
-cat $bookmarks
+
+if [ "$PROJECT" == "" ]; then
+    cat $bookmarks
+else
+    cat $bookmarks | grep "$PROJECT_PATH/" | sed "s#$PROJECT_PATH/##"
+fi

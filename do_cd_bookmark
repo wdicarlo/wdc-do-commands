@@ -72,11 +72,11 @@ fi
 n=0
 if [ $# == 1 ]
 then
-    n=`echo "$bookmarks" | grep $1 | awk '{ print NR, $0 }' | wc -l`
-    echo "$bookmarks" | grep $1 | awk '{ print NR, $0 }'
+    n=`echo "$bookmarks" | grep $1 | awk '{ printf "%-2s %-60s\n", NR, $0 }' | wc -l`
+    echo "$bookmarks" | grep $1 | awk '{ printf "%-2s %-60s\n", NR, $0 }'
 else
-    n=`echo "$bookmarks" | awk '{ print NR, $0 }' | wc -l`
-    echo "$bookmarks" | awk '{ print NR, $0 }'
+    n=`echo "$bookmarks" | awk '{ printf "%-2s %-60s\n", NR, $0 }' | wc -l`
+    echo "$bookmarks" | awk '{ printf "%-2s %-60s\n", NR, $0 }'
 fi
 
 num=-1
