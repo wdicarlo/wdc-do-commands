@@ -158,9 +158,9 @@ function prompt_command()
             ;;
     esac
 
-    PROJECT_PATH=`echo ~/projects/$PROJECT`
-    TEST_PATH=`echo ~/tests/$PROJECT`
-    RELEASE_PATH=`echo ~/releases/$PROJECT`
+    export PROJECT_PATH=`echo ~/projects/$PROJECT`
+    export TEST_PATH=`echo ~/tests/$PROJECT`
+    export RELEASE_PATH=`echo ~/releases/$PROJECT`
     export LOCATION=`basename $PWD`
     if [ "$PROJECT_PATH" == $PWD ]
     then
