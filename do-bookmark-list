@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+
+cpath=`pwd`
+bookmarks=~/.bookmarks
+
+
+if [ $# -gt 0 ]; then
+    if [ $1 == "-h" ]; then
+        usage
+        exit
+    fi
+    cat $bookmarks | grep --color $@
+else
+    cat $bookmarks
+fi
+
+
+
