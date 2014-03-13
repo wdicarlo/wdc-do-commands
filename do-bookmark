@@ -3,17 +3,29 @@
 
 cpath=`pwd`
 bookmarks=~/.bookmarks
+
+if [ $cpath == $HOME ]; then
+    cat $bookmarks | sed "s#$HOME/##" 
+    exit
+fi
+
+
  # check if the bookmark is not already present
 n=`cat $bookmarks | grep -E "^$cpath$" | wc -l`
 
 if [ $n == 0 ]; then
+    #add bookmark
     echo "$cpath" >> $bookmarks
-fi
-# modify bookmark file
-file=`cat $bookmarks`;echo  "$file" | sort > $bookmarks
 
+    # modify bookmark file
+    file=`cat $bookmarks`;echo  "$file" | sort > $bookmarks
+fi
+
+# highlight the added path
 if [ "$PROJECT" == "" ]; then
-    cat $bookmarks
+    relpath=`echo $cpath|sed "s#$HOME/##"`
+    cat $bookmarks | sed "s#$HOME/##" | grep "^\|$relpath"
 else
-    cat $bookmarks | grep "$PROJECT_PATH/" | sed "s#$PROJECT_PATH/##"
+    relpath=`echo $cpath|sed "s#$PROJECT_PATH/##"`
+    cat $bookmarks | grep "$PROJECT_PATH/" | sed "s#$PROJECT_PATH/##" | grep --color "^\|$relpath"
 fi
