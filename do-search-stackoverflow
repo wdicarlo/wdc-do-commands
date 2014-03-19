@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+if [ $# == 0 ]; then
+    exit
+fi
+
+search="$1"
+vim_search="$1"
+shift
+for par in $@
+do
+    search="$search+$par"
+    vim_search="$vim_search\\\|$par"
+done
+
+lynx --dump http://stackoverflow.com/search?q=$search | vim -R -c "exec \"\/$vim_search\"" -
