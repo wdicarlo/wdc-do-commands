@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# compare same files with same filename but in different folders
+cmd=`basename $0`
+orig=`pwd`
+function usage () { 
+    echo "Usage: $cmd "cmd" <folder1> [...<folderN>]"
+}
+
+if [ $# -lt 2  ]; then
+    usage
+    exit
+fi
+
+exp=$1
+shift
+
+for folder in $@
+do
+    if [ ! -d $folder ]; then
+        echo "Missing folder: $folder ... skipping"
+        continue
+    fi
+    echo "Entering folder: $folder"
+    cd $folder
+    echo "> $exp"
+    eval $exp
+    cd -
+done
+
+echo "Returning to folder: $orig"
+cd $orig
+
