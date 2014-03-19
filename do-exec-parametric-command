@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# compare same files with same filename but in different folders
+cmd=`basename $0`
+function usage () { 
+    echo "Usage: $cmd "cmd" <folder1> [...<folderN>]"
+}
+
+if [ $# -lt 2  ]; then
+    usage
+    exit
+fi
+
+isok=`echo "$1" | grep "@@"`
+if [ "$isok" == "" ]; then
+    echo "Missing parametric hook @@"
+    exit
+fi
+
+exp=$1
+shift
+
+for par in $@
+do
+    cmd=`echo "$exp"|sed "s#@@#$par#g"`
+    echo "> $cmd"
+    eval $cmd
+done
+
+
