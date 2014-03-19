@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd <libs-and-or-object-files>"
+}
+
+
+
+
+if [ $# == 0 ]; then
+    usage
+    exit
+fi
+
+nm $@ | grep " T " | do-select-columns 3 | sort | uniq --count | grep -v " 1 "
