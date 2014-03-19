@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    echo "       Example:   ls | $cmd do-list-duplicated-symbols"
+    exit
+fi
+
+if [ ! $# == 1 ]; then
+    echo "Missing command to execute"
+    exit
+fi
+
+xargs -I@ sh -c "echo @; $1 @"
