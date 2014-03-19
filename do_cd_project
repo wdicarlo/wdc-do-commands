@@ -26,6 +26,10 @@ else
 fi
 
 
+if [ "$num" == "" ]; then
+    return
+fi
+
 if [ $# == 1 ]
 then
     prj=`ls -1 $prj_root | grep $1 | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`

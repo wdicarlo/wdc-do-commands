@@ -4,15 +4,20 @@
 cpath=`pwd`
 bookmarks=~/.bookmarks
 
+if [ "$PROJECT" == "" ]; then
+    list=`cat $bookmarks | grep -v $PROJECTS | sed "s#$HOME/##"`
+else
+    list=`cat $bookmarks | grep "$PROJECT_PATH/" | sed "s#$PROJECT_PATH/##"`
+fi
 
 if [ $# -gt 0 ]; then
     if [ $1 == "-h" ]; then
         usage
         exit
     fi
-    cat $bookmarks | grep --color $@
+    echo "$list" | grep --color $@
 else
-    cat $bookmarks
+    echo "$list"
 fi
 
 

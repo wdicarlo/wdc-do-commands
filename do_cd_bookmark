@@ -69,6 +69,23 @@ if [ "$list" == "1" ]; then
     return
 fi
 
+num=-1
+# TODO: priority to filenames
+#folders=`echo $bookmarks | xargs -I@ basename @`
+#m=0
+#if [ $# == 1 ]
+#then
+#    m=`echo "$folders" | grep $1 | awk '{ printf "%-2s %-60s\n", NR, $0 }' | wc -l`
+#    if [ "$m" -gt 0 ]
+#    then
+#        if [ "$m" == 1 ]
+#        then
+#            num=1
+#        fi
+#
+#    fi
+#fi
+
 n=0
 if [ $# == 1 ]
 then
@@ -79,7 +96,6 @@ else
     echo "$bookmarks" | awk '{ printf "%-2s %-60s\n", NR, $0 }'
 fi
 
-num=-1
 if [ "$n" == 0 ]
 then
     echo "Bookmark/s not found!!!"
@@ -93,6 +109,9 @@ else
     read -p "Bookmark Num: " num
 fi
 
+if [ "$num" == "" ]; then
+    return
+fi
 
 if [ $# == 1 ]
 then
