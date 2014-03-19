@@ -3,7 +3,7 @@
 # compare same files with same filename but in different folders
 cmd=`basename $0`
 function usage () { 
-    echo "Usage: $cmd "cmd" <folder1> [...<folderN>]"
+    echo "Usage: $cmd "cmd" <arg1> [...<argN>]"
 }
 
 if [ $# -lt 2  ]; then
