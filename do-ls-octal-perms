@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+find $@ -maxdepth 1 | xargs -I@ stat -c "%A %a %n" @
