@@ -24,8 +24,8 @@ fi
 # highlight the added path
 if [ "$PROJECT" == "" ]; then
     relpath=`echo $cpath|sed "s#$HOME/##"`
-    cat $bookmarks | sed "s#$HOME/##" | grep "^\|$relpath"
+    cat $bookmarks | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| sed "s#$HOME/##" | grep "^\|$relpath"
 else
     relpath=`echo $cpath|sed "s#$PROJECT_PATH/##"`
-    cat $bookmarks | grep "$PROJECT_PATH/" | sed "s#$PROJECT_PATH/##" | grep --color "^\|$relpath"
+    cat $bookmarks | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| grep "$PROJECT_PATH/" | sed "s#$PROJECT_PATH/##" | grep --color "^\|$relpath"
 fi
