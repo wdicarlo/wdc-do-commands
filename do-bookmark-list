@@ -5,9 +5,9 @@ cpath=`pwd`
 bookmarks=~/.bookmarks
 
 if [ "$PROJECT" == "" ]; then
-    list=`cat $bookmarks | grep -v $PROJECTS | sed "s#$HOME/##"`
+    list=`cat $bookmarks | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| grep -v $PROJECTS | sed "s#$HOME/##"`
 else
-    list=`cat $bookmarks | grep "$PROJECT_PATH/" | sed "s#$PROJECT_PATH/##"`
+    list=`cat $bookmarks | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| grep "$PROJECT_PATH/" | sed "s#$PROJECT_PATH/##"`
 fi
 
 if [ $# -gt 0 ]; then
@@ -20,5 +20,8 @@ else
     echo "$list"
 fi
 
-
-
+if [ "$PROJECT" == "" ]; then
+    list=`cat $bookmarks | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| grep -v $PROJECTS `
+else
+    list=`cat $bookmarks | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| grep "$PROJECT_PATH/" `
+fi

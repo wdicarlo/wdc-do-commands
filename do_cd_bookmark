@@ -56,12 +56,17 @@ if [ ! -f $bookmarks_file ]; then
 fi
 
 
+if [ "$PROJECT" == "" ]; then
+    global=1
+fi
+
 bookmarks=""
+
 if [ $global == "0" ]; then
-    bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | sed "s#$PROJECT_PATH/##"`
+    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| grep $PROJECT_PATH/ | sed "s#$PROJECT_PATH/##"`
 else
     # TODO: allows jump into another project's folder by evaluating its .bash_env file
-    bookmarks=`cat $bookmarks_file | grep -v $PROJECTS` 
+    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| grep -v $PROJECTS` 
 fi
 
 if [ "$list" == "1" ]; then
