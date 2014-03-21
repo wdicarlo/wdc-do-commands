@@ -59,6 +59,7 @@ function xephyr_pid()
 
 # If rc.lua.new is missing, make a default one.
 RC_LUA=~/.config/awesome/rc.lua.new
+test -d `dirname $RC_LUA` || mkdir -p `dirname $RC_LUA`
 test -f $RC_LUA || /bin/cp /etc/xdg/awesome/rc.lua $RC_LUA
 
 # Just in case we're not running from /usr/bin
@@ -70,9 +71,9 @@ test -x $XEPHYR || { echo "Xephyr executable not found. Please install Xephyr"; 
 
 case "$1" in
   start)
-    $XEPHYR -ac -br -noreset -screen 800x600 :1 &
+    $XEPHYR -ac -br -noreset -screen 800x600 :1 2>/dev/null &
     sleep 1
-    DISPLAY=:1.0 $AWESOME -c $RC_LUA &
+    DISPLAY=:1.0 $AWESOME -c $RC_LUA 2>/dev/null &
     sleep 1
     echo Awesome ready for tests. PID is $(awesome_pid)
     ;;
@@ -92,7 +93,7 @@ case "$1" in
     ;;
   run)
     shift
-    DISPLAY=:1.0 "$@" &
+    DISPLAY=:1.0 "$@" 2>/dev/null &
     ;;
   *)
     usage
