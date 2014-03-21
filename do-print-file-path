@@ -10,5 +10,6 @@ fi
 for file in $@
 do
     # print absolute path of the file
-    echo `readlink -f $file`
+    #echo `readlink -f $file`
+    echo $(cd $(dirname $file); pwd)/$(basename $file)
 done
