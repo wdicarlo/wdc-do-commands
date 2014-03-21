@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd <filename>"
+}
+
+if [ ! $# == 1 ]; then
+    usage
+    exit
+fi
+
+cpath=`pwd`
+hpath=`echo ~`
+
+
+relpath=".."
+parent=`dirname $cpath`
+cd $parent
+while true
+do
+    cp=`pwd`
+    matches=`ls -a | grep ".*$1.*"`
+    n=`echo "$matches"|wc -w`
+    if [ "$n" -gt 0 ]; then
+        echo "$matches"|xargs -I@ echo "$relpath/@"
+        exit
+    fi
+    if [ "$cp" == $hpath ]; then
+        exit
+    fi
+    parent=`dirname $cp`
+    cd $parent
+    relpath="$relpath/.."
+done
