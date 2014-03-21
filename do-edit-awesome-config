@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function usage() 
+{
+  cat <<USAGE
+
+USAGE
+  exit 0
+}
+
+RC_LUA=~/.config/awesome/rc.lua.new
+test -d `dirname $RC_LUA` || mkdir -p `dirname $RC_LUA`
+test -f $RC_LUA || /bin/cp /etc/xdg/awesome/rc.lua $RC_LUA
+
+vi $RC_LUA
