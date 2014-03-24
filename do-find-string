@@ -13,9 +13,10 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-i] [-p] [-r <root>] [-n <depth>] [-f <file-pattern>] <string>"
+    echo "Usage: $cmd [-i] [-p] [-c ][-r <root>] [-n <depth>] [-f <file-pattern>] <string>"
     echo "where:"
     echo "       -i                 : ignore case"
+    echo "       -c                 : just count occurences"
     echo "       -p                 : just print the paths"
     echo "       -r <root>          : start from root folder"
     echo "       -n <depth>         : max depth to search into"
@@ -32,8 +33,9 @@ pars="-Hn"
 root="."
 file="*"
 depth=99
+postproc=""
 
-while getopts ipr:n:f: flag
+while getopts icpr:n:f: flag
 do
     case $flag in
 
@@ -43,6 +45,12 @@ do
             ;;
         p)
             pars="-l"
+#            echo pars is $pars
+            ;;
+        c)
+            # just count occurences, filter out files with not matching the string and revert sort the list
+            pars="-Hnc"
+            postproc="grep -v \":0\"| sort -t \":\" -nr -k 2"
 #            echo pars is $pars
             ;;
         f)
@@ -72,6 +80,9 @@ string=$1
 #cmd="find \"$root\" -maxdepth \"$depth\" \( -path \"*/.svn\" -prune -o -type f -name \"$file\" \)| xargs -I@ grep \"$pars\" \"$string\" @"
 #cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type f -name \"$file\" \) | xargs -I@ grep \"$pars\" \"$string\" @"
 cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" | xargs -I@ \grep --color \"$pars\" \"$string\" @"
+if [ ! "$postproc" == "" ]; then
+    cmd+="|$postproc"
+fi
 #find "$root" -maxdepth "$depth" -type f -name "$file"| xargs -I@ grep "$pars" "$string" @
 echo "> $cmd"
 eval $cmd
