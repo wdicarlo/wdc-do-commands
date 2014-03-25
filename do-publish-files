@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+store=`echo ~/.do_publish_files`
+
+function usage () {
+    echo "Usage: $cmd [-p] <src-files> <dest-folder>"
+    echo "            copies <src-files> into <dest-folder>"
+    echo "            and store current folder and parameters"
+    echo ""
+    echo "       $cmd [-p]"
+    echo "            repeat last command if only one is available"
+    echo "            in the current folder, otherwise present a"
+    echo "            list of different options."
+    echo ""
+    echo "            -p              partial publishing"
+    #echo "            -f              force overwriting"
+    echo ""
+}
+
+function doprocess() {
+    cpath=$1
+    dest=`echo $2|sed "s#\"##g"`
+    srcs=`echo ${@: 3}|sed "s#\"##g"`
+    if [ ! -d $dest ]; then
+        echo "Missing destination folder: $dest"
+        exit
+    fi
+
+    echo "$cpath \"$dest\" \"$srcs\"" >> $store
+    # filter publish file
+    file=`cat $store`;echo  "$file" | sort | uniq  > $store
+
+    # check if all source files are present
+    if [ $partial == 0 ]; then
+        missing=""
+        for file in $srcs
+        do
+            if [ ! -f $file ]; then
+                missing+="$file\n"
+            fi
+        done
+        if [ ! "$missing" == "" ]; then
+            echo "______________"
+            echo "Missing files:"
+            echo "--------------"
+            echo -e "$missing"
+            echo ""
+            read -p "Partial publishing? (y/[n]): " ans
+            if [ ! "$ans" == "y" ]; then
+                echo "Please, make sure all files are ready for publishing."
+                exit
+            fi
+        fi
+    fi
+
+    for file in $srcs
+    do
+        if [ ! -f $file ]; then
+            echo "Skipping file: $file"
+        else
+            cmd="cp $file $dest"
+            destfile=`basename $file`
+            if [ -f "$dest/$destfile" ]; then
+                cmd+=" # overwriting"
+            fi
+            echo "> $cmd"
+            eval $cmd
+        fi
+    done
+
+}
+
+partial=0
+while getopts hp flag
+do
+    case $flag in
+        p)
+            partial=1
+            ;;
+
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+if [ ! -f "$store" ]; then
+    dir=`dirname $store`
+    if [ ! -d "$dir" ]; then
+        mkdir -p "$dir"
+    fi
+    touch "$store"
+
+fi
+
+cpath=`pwd`
+
+# find current path
+list=`cat "$store"|grep "$cpath "`
+if [ "$list" == "" ]; then
+    usage
+    echo "____________________________________________"
+    echo "You must be in one of the following folders:"
+    echo "--------------------------------------------"
+    cat $store| awk '{ print $1 }'
+    exit
+fi
+
+if [ $# == 1 ]; then
+    list=`echo "$list"|grep $1`
+    shift
+fi
+if [ $# == 0 ]; then
+    n=`echo "$list"|wc -l`
+    if [ $n -gt 1 ]; then
+        echo "_______________________"
+        echo "Available alternatives:"
+        echo "-----------------------"
+        echo "$list"
+        exit
+    fi
+    # print available publishing options
+    doprocess $list
+    exit
+fi
+
+
+dest="${@: -1}" # get last parameter
+# store all parameters apart the last one
+srcs=""
+n=$((${#@} -1 )) 
+for i in $(seq 1 $n)
+do
+    srcs+="${@:$i:1} "
+done
+
+list="$cpath \"$dest\" \"$srcs\""
+doprocess $list
