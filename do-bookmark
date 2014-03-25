@@ -17,7 +17,7 @@ if [ $n == 0 ]; then
     #add bookmark
     echo "$cpath" >> $bookmarks
 
-    # modify bookmark file
+    # filter bookmark file
     file=`cat $bookmarks`;echo  "$file" | sort > $bookmarks
 fi
 
