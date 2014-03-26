@@ -105,20 +105,20 @@ cpath=`pwd`
 
 # find current path
 list=`cat "$store"|grep "$cpath "`
-if [ "$list" == "" ]; then
-    usage
-    echo "____________________________________________"
-    echo "You must be in one of the following folders:"
-    echo "--------------------------------------------"
-    cat $store| awk '{ print $1 }'
-    exit
-fi
 
 if [ $# == 1 ]; then
     list=`echo "$list"|grep $1`
     shift
 fi
 if [ $# == 0 ]; then
+    if [ "$list" == "" ]; then
+        usage
+        echo "____________________________________________"
+        echo "You must be in one of the following folders:"
+        echo "--------------------------------------------"
+        cat $store| awk '{ print $1 }'
+        exit
+    fi
     n=`echo "$list"|wc -l`
     if [ $n -gt 1 ]; then
         echo "_______________________"
