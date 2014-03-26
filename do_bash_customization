@@ -208,7 +208,7 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 
-alias vi=vim
+alias vi=vim --servername wdcvimsrvr
 
 alias cac="copy_and_cd $@"
 #alias last="last $@"
@@ -226,7 +226,6 @@ alias cd-projects='cd ~/projects/'
 alias cd-tests='cd ~/tests/'
 alias cd-releases='cd /media/sf_Shared/releases/'
 
-alias do-cd-project='. ~/bin/do_cd_project'
 alias do-create-project='. ~/bin/do_create_project'
 alias do-cd-test='. ~/bin/do_cd_test'
 alias do-cd-release='. ~/bin/do_cd_release'
@@ -237,6 +236,7 @@ alias do-cd-link='. ~/bin/do_cd_link'
 
 alias cd=cdenv 
 alias gh=gohome
+alias do-activate-project='. ~/bin/do_activate_project'
 alias do-activate-release='. ~/bin/do_activate_release'
 alias do-activate-test='. ~/bin/do_activate_test'
 alias do-setup-env='. ~/bin/do_setup_env -s'
