@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 cmd=`basename $0`
+cpath=`pwd`
+
 
 #function usage() {
 #    echo "Usage: $cmd [-g] [-l] [<string>]"
@@ -57,20 +59,25 @@ fi
 
 
 if [ "$PROJECT" == "" ]; then
-    global=1
+    relpath=`echo $cpath|sed "s#$HOME/##"`
+    global="1"
+else
+    relpath=`echo $cpath|sed "s#$PROJECT_PATH/##"`
 fi
 
 bookmarks=""
 
 if [ $global == "0" ]; then
-    bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| sed "s#$PROJECT_PATH/##"`
+    #bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| sed "s#$PROJECT_PATH/##"`
+    bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$PROJECT_PATH/##"`
 else
     # TODO: allows jump into another project's folder by evaluating its .bash_env file
-    bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"`
+    #bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'`
+    bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##"`
 fi
 
 if [ "$list" == "1" ]; then
-    echo "$bookmarks"
+    echo "$bookmarks"| grep --color "^\|$relpath *$\|$relpath *#.*"
     return
 fi
 
@@ -95,10 +102,10 @@ n=0
 if [ $# == 1 ]
 then
     n=`echo "$bookmarks" | grep $1 | awk '{ printf "%-2s %-60s\n", NR, $0 }' | wc -l`
-    echo "$bookmarks" | grep $1 | awk '{ printf "%-2s %-60s\n", NR, $0 }'
+    echo "$bookmarks" | grep $1 | awk '{ printf "%-2s %-60s\n", NR, $0 }'| grep --color "^\|$relpath *$\|$relpath *#.*"
 else
     n=`echo "$bookmarks" | awk '{ printf "%-2s %-60s\n", NR, $0 }' | wc -l`
-    echo "$bookmarks" | awk '{ printf "%-2s %-60s\n", NR, $0 }'
+    echo "$bookmarks" | awk '{ printf "%-2s %-60s\n", NR, $0 }'| grep --color "^\|$relpath *$\|$relpath *#.*"
 fi
 
 if [ "$n" == 0 ]
@@ -128,7 +135,7 @@ fi
 if [ $global == "0" ]; then
     cd "$PROJECT_PATH/${bpath}"
 else
-    cd "${bpath}"
+    cd "$HOME/${bpath}"
 fi
 
 # TODO: apply destination project env

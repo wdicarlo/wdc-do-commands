@@ -234,6 +234,8 @@ alias do-cd-path='. ~/bin/do_cd_path'
 alias do-cd-bookmark='. ~/bin/do_cd_bookmark'
 alias do-cd-link='. ~/bin/do_cd_link'
 
+alias do-bookmark-list='do-cd-bookmark -l'
+
 alias cd=cdenv 
 alias gh=gohome
 alias do-activate-project='. ~/bin/do_activate_project'
