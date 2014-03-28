@@ -19,16 +19,25 @@ if [ $cpath == $HOME ]; then
     exit
 fi
 
+if [ "$PROJECT" == "" ]; then
+    relpath=`echo $cpath|sed "s#$HOME/##"`
+else
+    relpath=`echo $cpath|sed "s#$PROJECT_PATH/##"`
+fi
 
  # check if the bookmark is not already present
 n=`cat $bookmarks | awk -F"#" '/1/2 { print $1 }' | sed 's# *$##' | grep -E "^$cpath$" | wc -l`
 
-if [ $n == 0 ]; then
-    #add bookmark
+if [ $n == 0 ] || [ $# -gt 0 ]; then
+    #add bookmarks
     if [ $# == 0 ]; then
         echo "$cpath" >> $bookmarks
     else
-        echo "$cpath   # $@" >> $bookmarks
+        tags=`cat $bookmarks | grep "^$cpath$\|^$cpath *#"| awk -F"#" '/1/2 { print $2 }' | sed 's# *# #'`
+        tags=`echo "$@ $tags"|sed  "s# #\n#g"|grep -v "^$" |sort -u| tr "\n" " "`
+        updated=`cat $bookmarks | grep -v "^$cpath$\|^$cpath *#"`
+        echo "$updated" > $bookmarks
+        echo "$cpath   # $tags" >> $bookmarks
     fi
 
     # filter bookmark file
@@ -37,9 +46,7 @@ fi
 
 # highlight the added path
 if [ "$PROJECT" == "" ]; then
-    relpath=`echo $cpath|sed "s#$HOME/##"`
     cat $bookmarks | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##" | grep -v "^$HOME$"| grep --color "^\|$relpath$\|$relpath *#.*"
 else
-    relpath=`echo $cpath|sed "s#$PROJECT_PATH/##"`
     cat $bookmarks | grep "$PROJECT_PATH/" | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'|  sed "s#$PROJECT_PATH/##" | grep --color "^\|$relpath$\|$relpath *#.*"
 fi
