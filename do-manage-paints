@@ -11,4 +11,10 @@ if [ ! -d "$1" ]; then
     exit
 fi
 
+app_to_check=`which mirage`
+if [ ! "$app_to_check" ]; then
+    echo "Application mirage is missing, please install it"
+    exit
+fi
+
 mirage "$1"&
