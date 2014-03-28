@@ -1,22 +1,35 @@
 #!/usr/bin/env bash
 
+cmd=`basename $0`
+
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-h" ]; then
+        echo "Usage: $cmd [-h] [tag1..[tagn]]"
+        exit
+    fi
+fi
+
 
 cpath=`pwd`
 bookmarks=~/.bookmarks
 
 if [ $cpath == $HOME ]; then
     #cat $bookmarks | sed "s#$HOME/##" 
-    cat $bookmarks | grep -v $PROJECTS | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| sed "s#$HOME/##" | grep -v "^$HOME$"
+    cat $bookmarks | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##" | grep -v "^$HOME$"
     exit
 fi
 
 
  # check if the bookmark is not already present
-n=`cat $bookmarks | grep -E "^$cpath$" | wc -l`
+n=`cat $bookmarks | awk -F"#" '/1/2 { print $1 }' | sed 's# *$##' | grep -E "^$cpath$" | wc -l`
 
 if [ $n == 0 ]; then
     #add bookmark
-    echo "$cpath" >> $bookmarks
+    if [ $# == 0 ]; then
+        echo "$cpath" >> $bookmarks
+    else
+        echo "$cpath   # $@" >> $bookmarks
+    fi
 
     # filter bookmark file
     file=`cat $bookmarks`;echo  "$file" | sort > $bookmarks
@@ -25,8 +38,8 @@ fi
 # highlight the added path
 if [ "$PROJECT" == "" ]; then
     relpath=`echo $cpath|sed "s#$HOME/##"`
-    cat $bookmarks | grep -v $PROJECTS | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| sed "s#$HOME/##" | grep -v "^$HOME$"| grep --color "^\|$relpath$"
+    cat $bookmarks | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##" | grep -v "^$HOME$"| grep --color "^\|$relpath$\|$relpath *#.*"
 else
     relpath=`echo $cpath|sed "s#$PROJECT_PATH/##"`
-    cat $bookmarks | grep "$PROJECT_PATH/" | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"|  sed "s#$PROJECT_PATH/##" | grep --color "^\|$relpath$"
+    cat $bookmarks | grep "$PROJECT_PATH/" | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'|  sed "s#$PROJECT_PATH/##" | grep --color "^\|$relpath$\|$relpath *#.*"
 fi
