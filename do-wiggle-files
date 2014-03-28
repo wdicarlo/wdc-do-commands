@@ -1,8 +1,8 @@
 #!/bin/bash
 
-cmd=`which wiggle`
+app_to_check=`which wiggle`
 
-if [ -z "$cmd" ]; then
+if [ -z "$app_to_check" ]; then
     echo "wiggle command not installed!!!"
     exit
 fi

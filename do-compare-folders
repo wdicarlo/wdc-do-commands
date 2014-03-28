@@ -18,9 +18,9 @@ then
     exit
 fi
 
-cmd=`which meld`
+app_to_check=`which meld`
 
-if [ -z "$cmd" ]; then
+if [ -z "$app_to_check" ]; then
     echo "meld command is not installed"
     exit
 fi
