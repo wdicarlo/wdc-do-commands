@@ -34,7 +34,7 @@ if [ $n == 0 ] || [ $# -gt 0 ]; then
         echo "$cpath" >> $bookmarks
     else
         tags=`cat $bookmarks | grep "^$cpath$\|^$cpath *#"| awk -F"#" '/1/2 { print $2 }' | sed 's# *# #'`
-        tags=`echo "$@ $tags"|sed  "s# #\n#g"|grep -v "^$" |sort -u| tr "\n" " "`
+        tags=`echo "$@ $tags"|sed  "s# #\n#g"|grep -v "^$" |sort | uniq --count | grep " 1 " | awk '{ print $2 }' | tr "\n" " "`
         updated=`cat $bookmarks | grep -v "^$cpath$\|^$cpath *#"`
         echo "$updated" > $bookmarks
         echo "$cpath   # $tags" >> $bookmarks
