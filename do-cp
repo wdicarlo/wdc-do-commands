@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+if [  $# -lt 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <src> <dst>"
+    echo "       Creates <dst> folder if it does not exists"
+    exit
+fi
+
+dest="${@: -1}" # get last parameter
+
+folder=`basename $dest`
+n=`echo $folder|grep "\." |wc -l`
+
+if [ $n -gt 0 ]; then
+    echo "Folder's name with dot: $folder"
+    echo "Are you sure it is the name of the destination folder?"
+    exit
+fi
+
+
+
+#check if dest folder exists
+if [ ! -d $dest ]; then
+    mkdir -p $dest
+fi
+
+
+cmd="cp $@"
+echo "> $cmd"
+eval $cmd
+
