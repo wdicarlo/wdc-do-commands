@@ -78,7 +78,7 @@ if [ "$env_name" == "$PROJECT_ENV" ]; then
 fi
 
 # reset environment 
-PATH=~/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+PATH=~/bin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:.
 PROJECT_VARS=
 export PROJECT_ENV=$env_name
 echo "Applying settings: $PROJECT_ENV"
