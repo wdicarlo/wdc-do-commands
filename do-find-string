@@ -84,7 +84,6 @@ string=$1
 # postproc='xargs -I@ dirname @ | sort | uniq'
 #cmd="find \"$root\" -maxdepth \"$depth\" \( -path \"*/.svn\" -prune -o -type f -name \"$file\" \)| xargs -I@ grep \"$pars\" \"$string\" @"
 #cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type f -name \"$file\" \) | xargs -I@ grep \"$pars\" \"$string\" @"
-echo "exclude=$exclude"
 if [ "$exclude" == "" ]; then
     cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" | xargs -I@ \grep --color \"$pars\" \"$string\" @"
 else
