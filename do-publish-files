@@ -4,15 +4,18 @@ cmd=`basename $0`
 store=`echo ~/.do_publish_files`
 
 function usage () {
-    echo "Usage: $cmd [-p] <src-files> <dest-folder>"
+    echo "Usage: $cmd [options] [-a] <src-files> <dest-folder>"
     echo "            copies <src-files> into <dest-folder>"
     echo "            and store current folder and parameters"
     echo ""
-    echo "       $cmd [-p]"
+    echo "            -a              just add to the list of publishing entries"
+    echo ""
+    echo "       $cmd [options]"
     echo "            repeat last command if only one is available"
     echo "            in the current folder, otherwise present a"
     echo "            list of different options."
     echo ""
+    echo "       where option may be:"
     echo "            -p              partial publishing"
     echo "            -m              move files"
     echo "            -s              skip existing files"
@@ -32,6 +35,12 @@ function doprocess() {
     echo "$cpath \"$dest\" \"$srcs\"" >> $store
     # filter publish file
     file=`cat $store`;echo  "$file" | sort | uniq  > $store
+
+    if [ $add -eq 1 ]; then
+        echo "Added publish record: "
+        echo "$cpath \"$dest\" \"$srcs\"" 
+        exit
+    fi
 
     # check if all source files are present
     if [ $partial -eq 0 ]; then
@@ -77,11 +86,11 @@ function doprocess() {
                 fi
             else
                 # just list file details
-                src_show=`ls -lh $file |awk '{ printf "%-4s %-4s %-4s %-4s %-40s", $5, $6, $7, $8, $9}'`
+                src_show=`ls -lh $file |awk '{ printf "%-4s %-3s %-2s %-5s %-50s", $5, $6, $7, $8, $9}'`
                 dst_show=""
                 cmd="echo \"$src_show   -->  $dest\""
                 if [ -f "$dest/$destfile" ]; then
-                    dst_show=`ls -lh $dest/$destfile |awk '{ printf "%-4s %-4s %-4s %-4s %-40s", $5, $6, $7, $8, $9}'`
+                    dst_show=`ls -lh $dest/$destfile |awk '{ printf "%-4s %-3s %-2s %-5s %-50s", $5, $6, $7, $8, $9}'`
                     cmd="echo \"$src_show   -->  $dst_show\""
                 fi
                 eval "$cmd"
@@ -98,9 +107,13 @@ partial=0
 move=0
 skip=0
 show=0
-while getopts hpmsl flag
+add=0
+while getopts hpmsla flag
 do
     case $flag in
+        a)
+            add=1
+            ;;
         l)
             show=1
             ;;
@@ -134,6 +147,13 @@ if [ ! -f "$store" ]; then
     fi
     touch "$store"
 
+fi
+
+if [ $add -eq 1 ]; then
+    if [ $# -lt 2 ]; then
+        echo "To add a publishing record it is necessary to specify source and destionation"
+        exit
+    fi
 fi
 
 cpath=`pwd`
