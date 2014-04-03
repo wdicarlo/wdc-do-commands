@@ -2,6 +2,12 @@
 
 cmd="do-super"
 
-cmd="$cmd sh -c \"lsof -i&& netstat -lptu&& netstat -tulpn\""
+
+if [ ! `which lsof` ]; then
+    echo "Missing lsof command"
+    cmd="$cmd sh -c \"netstat -lptu&& netstat -tulpn && ss\""
+else
+    cmd="$cmd sh -c \"lsof -i&& netstat -lptu&& netstat -tulpn && ss\""
+fi
 echo "> $cmd"
 eval $cmd
