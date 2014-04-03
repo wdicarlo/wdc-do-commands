@@ -15,12 +15,14 @@ function usage () {
     echo ""
     echo "            -p              partial publishing"
     echo "            -m              move files"
+    echo "            -s              skip existing files"
+    echo "            -l              just list source and destination files"
     echo ""
 }
 
 function doprocess() {
     cpath=$1
-    dest=`echo $2|sed "s#\"##g"`
+    dest=`echo $2|sed "s#\"##g"|sed "s#/\\$##"`
     srcs=`echo ${@: 3}|sed "s#\"##g"`
     if [ ! -d $dest ]; then
         echo "Missing destination folder: $dest"
@@ -57,16 +59,33 @@ function doprocess() {
     for file in $srcs
     do
         if [ ! -f $file ]; then
-            echo "Skipping file: $file"
+            echo "Skipping missing file: $file"
         else
-            if [ $move -eq 0 ]; then
-                cmd="cp $file $dest"
-            else
-                cmd="mv $file $dest"
-            fi
             destfile=`basename $file`
-            if [ -f "$dest/$destfile" ]; then
-                cmd+=" # overwriting"
+            if [ $show == 0 ]; then
+                if [ $move -eq 0 ]; then
+                    cmd="cp $file $dest"
+                else
+                    cmd="mv $file $dest"
+                fi
+                if [ -f "$dest/$destfile" ]; then
+                    if [ $skip -eq 1 ]; then
+                        echo "Skipping existing file: $destfile"
+                        continue
+                    fi
+                    cmd+=" # overwriting"
+                fi
+            else
+                # just list file details
+                src_show=`ls -lh $file |awk '{ printf "%-4s %-4s %-4s %-4s %-40s", $5, $6, $7, $8, $9}'`
+                dst_show=""
+                cmd="echo \"$src_show   -->  $dest\""
+                if [ -f "$dest/$destfile" ]; then
+                    dst_show=`ls -lh $dest/$destfile |awk '{ printf "%-4s %-4s %-4s %-4s %-40s", $5, $6, $7, $8, $9}'`
+                    cmd="echo \"$src_show   -->  $dst_show\""
+                fi
+                eval "$cmd"
+                continue
             fi
             echo "> $cmd"
             eval $cmd
@@ -77,9 +96,17 @@ function doprocess() {
 
 partial=0
 move=0
-while getopts hpm flag
+skip=0
+show=0
+while getopts hpmsl flag
 do
     case $flag in
+        l)
+            show=1
+            ;;
+        s)
+            skip=1
+            ;;
         m)
             move=1
             ;;
