@@ -6,3 +6,11 @@ Use relative paths in require command
 	local folderOfThisFile = (...):match("(.-)[^%.]+$") -- returns 'lib.foo.'
 	require(folderOfThisFile .. 'baz')     -- require('lib.foo.baz')
 	require(folderOfThisFile .. 'bazinga') -- require('lib.foo.bazinga')
+Portable sleep implementation
+	require "socket"
+
+	function sleep(sec)
+		socket.select(nil, nil, sec)
+	end
+
+	sleep(0.2)
