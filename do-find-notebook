@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+
+
+cd ~/.notebook/
+find . -name "*.nb" | sed "s#^\.\/##" | xargs -I@ \grep --color -Hn $@ @
