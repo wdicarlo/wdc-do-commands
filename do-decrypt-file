@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# == 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <in-file> <out-file>"
+    exit
+fi
+openssl aes-256-cbc -d -in $1 -out $2
