@@ -2,3 +2,5 @@ Commands to evaluate:
     multistrap
     ss
     mount --bind
+Integrate vim notebooks
+Evaluate command history by folder

@@ -8,9 +8,15 @@ Use relative paths in require command
 	require(folderOfThisFile .. 'bazinga') -- require('lib.foo.bazinga')
 Portable sleep implementation
 	require "socket"
-
 	function sleep(sec)
 		socket.select(nil, nil, sec)
 	end
-
 	sleep(0.2)
+Access lua table from c code
+	Table in the Lua universe:
+		foo = { ["bar"] = 3 }
+	C code to get number 3:
+		lua_getglobal(L, "foo"); // puts the table foo on top of the stack
+		lua_pushstring(L, "bar"); // now the string "bar" is just above the table on the stack
+		lua_gettable(L, -2); // finds the table foo in stack position -2, pops "bar" off the stack, pushes on foo["bar"]
+		int n = lua_tonumber(L, -1); // n should now be equal to 3
