@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+
+
+find . -type f \( -name "*.$1" -o -name "*.$2" \) | sed "s#\.$1##" | sed "s#\.$2##" | sort | uniq --count | grep "^.*$3 "
