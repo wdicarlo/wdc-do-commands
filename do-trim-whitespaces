@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+cat | sed 's#^ *##' | sed 's# *\$##' | sed -r 's# +# #'
