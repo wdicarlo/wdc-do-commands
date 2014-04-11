@@ -20,3 +20,7 @@ Access lua table from c code
 		lua_pushstring(L, "bar"); // now the string "bar" is just above the table on the stack
 		lua_gettable(L, -2); // finds the table foo in stack position -2, pops "bar" off the stack, pushes on foo["bar"]
 		int n = lua_tonumber(L, -1); // n should now be equal to 3
+Requiring optional module
+	local has_lfs,lfs = pcall(require,"lfs")
+Check how many arguments to the C function are present
+	n = lua_gettop(L)
