@@ -4,12 +4,14 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-i] [-r <root>] [-n <depth>] <file-pattern>"
+    echo "Usage: $cmd [-i] [-r <root>] [-n <depth>] [-s <size-filter>] <file-pattern>"
     echo "where:"
     echo "       -i                 : ignore case"
     echo "       -r <root>          : start from <root> folder"
     echo "       -f <filter>        : filter result with grep <filter>"
     echo "       -n <depth>         : max <depth> to search into"
+    echo "       -s <size-filter>   : filter for file size:"
+    echo "                             [-+]<val>[cwbkMG]"
     exit
 }
 
@@ -22,11 +24,13 @@ pars="-Hn"
 root="."
 file="*"
 depth=99
-
-while getopts ir:n:f: flag
+while getopts ir:n:f:s: flag
 do
     case $flag in
 
+        s)
+            size=$OPTARG
+            ;;
         i)
             pars+="i"
 #            echo pars is $pars
@@ -60,8 +64,14 @@ fi
 #cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type f -name \"$file\" \) | xargs -I@ grep \"$pars\" \"$string\" @"
 #cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" "
 cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\""
+if [ -n "$size" ]; then
+    cmd="$cmd -size \"$size\" "
+fi
 if [ -n "$filter" ]; then
-    cmd="$cmd | grep $pars $filter "
+    cmd="$cmd | grep --color $pars $filter "
+fi
+if [ -n "$size" ]; then
+    cmd="$cmd | xargs -I@ ls -lh @  | awk '{ printf \"%-5s  %-60s\n\", \$5, \$9}'"
 fi
 #find "$root" -maxdepth "$depth" -type f -name "$file"| xargs -I@ grep "$pars" "$string" @
 echo "> $cmd"
