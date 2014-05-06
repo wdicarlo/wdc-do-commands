@@ -4,3 +4,5 @@ Commands to evaluate:
     mount --bind
 Integrate vim notebooks
 Evaluate command history by folder
+Add todo management
+Develop Lua simple type checking
