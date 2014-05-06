@@ -19,4 +19,4 @@ fi
 
 mkdir "$PROJECTS/$1"
 
-source ~/bin/do_cd_project $1
+source ~/bin/do_activate_project $1
