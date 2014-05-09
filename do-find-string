@@ -22,6 +22,7 @@ function usage() {
     echo "       -n <depth>         : max depth to search into"
     echo "       -f <file-pattern>  : filename pattern to use"
     echo "       -e <exclude-patt>  : exclude pattern"
+    echo "       -q                 : quiet"
     exit
 }
 
@@ -36,10 +37,15 @@ file="*"
 depth=99
 postproc=""
 exclude=""
-while getopts icpr:n:f:e: flag
+quiet=0
+while getopts qicpr:n:f:e: flag
 do
     case $flag in
 
+        q)
+            quiet=1
+#            echo pars is $pars
+            ;;
         e)
             exclude=$OPTARG
 #            echo pars is $pars
@@ -87,11 +93,13 @@ string=$1
 if [ "$exclude" == "" ]; then
     cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" | xargs -I@ \grep --color \"$pars\" \"$string\" @"
 else
-    cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" | xargs -I@ \grep --color \"$pars\" \"$string\" @| \grep -v \"$exclude\"|\grep --color \"$string\""
+    cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" | xargs -I@ sh -c \"\grep --color \\\"$pars\\\" \\\"$string\\\" @| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
 fi
 if [ ! "$postproc" == "" ]; then
     cmd+="|$postproc"
 fi
 #find "$root" -maxdepth "$depth" -type f -name "$file"| xargs -I@ grep "$pars" "$string" @
-echo "> $cmd"
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
 eval $cmd
