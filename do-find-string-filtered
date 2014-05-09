@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+
+#TODO: pass parameters to do-find-string command
+
+#do-find-string -q  "$1" | sed "s/\(.*\)\([a-z_-]*$1[a-z_-]*\)\(.*\)/\2/g" | sort | uniq
+cmd="do-find-string -q  \"$1\" | sed \"s/\(.*\)\([a-z_-]*$1[a-z_-]*\)\(.*\)/\2/g\" | sort | uniq"
+
+echo "> $cmd"
+eval "$cmd"
