@@ -1,12 +1,12 @@
 #!/bin/bash
 
-log_cmd="do-git-log | grep -E \".*\\(tag:|\\(HEAD\""
+log_cmd="do-git-log | grep \"(.*).*—.*(.*)\""
 if [ $# -gt 0 ]
 then
     if [ "$1" == "-h" ]
     then
         cmd=`basename $0`
-        echo "Usage: $cmd [-r] [<grep-pattern>]"
+        echo "Usage: $cmd [-raw] [<grep-pattern>]"
         echo "       -raw    raw format"
         exit
     fi
