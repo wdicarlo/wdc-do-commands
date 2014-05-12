@@ -1,0 +1,24 @@
+#/usr/bin/env bash
+
+
+# filter a piped list using grep
+
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: <cmds> | $cmd <term1> [<term2>] ..."
+    exit
+fi
+
+
+patt=""
+for term in $@
+do
+    patt="$patt.*$term"
+done
+#echo $patt
+if [ $# == 0 ]; then
+    exit
+fi
+cat - | grep "$patt"
+
