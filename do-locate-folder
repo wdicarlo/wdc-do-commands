@@ -2,9 +2,10 @@
 
 function usage () {
     c=`basename $0`
-    echo "Usage: $c [-l] <folder>"
+    echo "Usage: $c [-l] [-r <root>] <folder>"
     echo "       where:"
-    echo "              -l      locate locally"
+    echo "              -l            locate locally"
+    echo "              -r <root>     locate under root folder"
 }
 
 if [ $# -eq 0 ]; then
@@ -14,9 +15,14 @@ fi
 
 if [ "$1" == "-l" ]; then
     shift
-    cmd="locate \"\$1\"| \grep \"\$1$\"| \grep \"^\$PWD\""
+    cmd="locate \"$1\"| \grep \"$1$\"| \grep \"^$PWD\""
 else
-    cmd="locate \"\$1\"| \grep \"\$1$\""
+    if [ "$1" == "-r" ]; then
+        shift
+        cmd="locate \"$2\"| \grep \"$2$\"| \grep \"^$1\""
+    else
+        cmd="locate \"$1\"| \grep \"$1$\""
+    fi
 fi
 
 
