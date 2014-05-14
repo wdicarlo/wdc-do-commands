@@ -4,19 +4,24 @@ cmd=`basename $0`
 cpath=`pwd`
 
 
-#function usage() {
-#    echo "Usage: $cmd [-g] [-l] [<string>]"
-#    echo "where:"
-#    echo "       -g                 : globals - do not restrict to current project"
-#    #echo "       -b                 : just consider the basename"
-#    echo "       -l                 : list bookmarks"
-#    return
-#}
+function usage() {
+    echo "Usage: $cmd [-g] [-l] [<string>]"
+    echo "         where:"
+    echo "                  -g                 : globals - do not restrict to current project"
+    #echo "       -b                 : just consider the basename"
+    #echo "                 -s                 : just consider subdirs"
+    echo "                  -l                 : list bookmarks"
+    return
+}
 
 global="0"
 list="0"
 
 while [ $# -gt 0 ]; do
+    if [ "$1" == "-h" ]; then
+        usage
+        return
+    fi
     if [ "$1" == "-g" ]; then
         global="1"
         shift

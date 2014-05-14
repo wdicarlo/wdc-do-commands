@@ -11,8 +11,8 @@ n=0
 maxdepth=5
 if [ $# == 1 ]
 then
-    n=`find $prj_root -maxdepth $maxdepth -type d | grep $1 | awk '{ print NR, $0 }' | wc -l`
-    find $prj_root -maxdepth $maxdepth -type d | grep $1 | awk '{ print NR, $0 }'
+    n=`find $prj_root -maxdepth $maxdepth -type d -name "$1" | awk '{ print NR, $0 }' | wc -l`
+    find $prj_root -maxdepth $maxdepth -type d -name "$1" | awk '{ print NR, $0 }'
 else
     usage
     return
@@ -32,6 +32,9 @@ else
     read -p "Folder Num: " num
 fi
 
+if [ "$num" == "" ]; then
+    return
+fi
 
 if [ $# == 1 ]
 then
