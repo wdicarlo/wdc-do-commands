@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+function usage () {
+    c=`basename $0`
+    echo "Usage: $c [-l] <folder>"
+    echo "       where:"
+    echo "              -l      locate locally"
+}
+
+if [ $# -eq 0 ]; then
+    usage
+    exit
+fi
+
+if [ "$1" == "-l" ]; then
+    shift
+    cmd="locate \"\$1\"| \grep \"\$1$\"| \grep \"^\$PWD\""
+else
+    cmd="locate \"\$1\"| \grep \"\$1$\""
+fi
+
+
+echo "> $cmd"
+eval $cmd
+
