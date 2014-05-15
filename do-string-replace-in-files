@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ $# -lt 3 ]; then
+    exit
+fi
+
+from="$1"
+to="$2"
+shift
+shift
+
+sed -i "s/$from/$to/g" $@
