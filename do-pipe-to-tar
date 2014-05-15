@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+if [ $# -ne 1 ]; then
+    cmd=`basename $0`
+    echo "Usage: ... | $cmd <tar-name>"
+    exit
+fi
+
+tar="$1.tar"
+ctar="$tar.bz2"
+
+if [ -f "$tar" ]; then
+    echo "File $tar already exists"
+    exit
+fi
+
+if [ -f "$ctar" ]; then
+    echo "File $ctar already exists"
+    exit
+fi
+
+cat | xargs -I@ tar -rf "$tar" @ 
+bzip2  "$tar"
