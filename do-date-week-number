@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# return the week number of today
+date +%V
