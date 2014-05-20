@@ -24,3 +24,5 @@ Requiring optional module
 	local has_lfs,lfs = pcall(require,"lfs")
 Check how many arguments to the C function are present
 	n = lua_gettop(L)
+Requiring optional module
+	if not pcall(require, 'checks') then function package.preload.checks() function checks() end end end

@@ -11,8 +11,8 @@ n=0
 maxdepth=5
 if [ $# == 1 ]
 then
-    n=`find $prj_root -maxdepth $maxdepth -type d -name "$1" | awk '{ print NR, $0 }' | wc -l`
-    find $prj_root -maxdepth $maxdepth -type d -name "$1" | awk '{ print NR, $0 }'
+    n=`find $prj_root -maxdepth $maxdepth -type d -name "*$1*" | awk '{ print NR, $0 }' | wc -l`
+    find $prj_root -maxdepth $maxdepth -type d -name "*$1*" | awk '{ print NR, $0 }'
 else
     usage
     return
@@ -38,7 +38,7 @@ fi
 
 if [ $# == 1 ]
 then
-    prj=`find $prj_root -maxdepth $maxdepth -type d -name "$1" | awk '{ print NR, $0 }' |grep "^$num"|awk '{print $2}'`
+    prj=`find $prj_root -maxdepth $maxdepth -type d -name "*$1*" | awk '{ print NR, $0 }' |grep "^$num"|awk '{print $2}'`
 fi
 cd "$prj"
 if [ ! -f .bash_env ]; then
