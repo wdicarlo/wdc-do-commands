@@ -1,0 +1,7 @@
+gnu debugger
+	gdb is the command to start the gnu debugger
+Configuration files
+	~/.gdbinit and ./.gdbinit are the configuration files
+Upload commands
+	Commands can be uploaded in gdb by sourcing a text file in one of the config file"
+source ./mycommands.gdb
