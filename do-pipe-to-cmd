@@ -1,4 +1,7 @@
 #!/bin/bash
+verbose=0
+
+
 
 if [ -t 0 ]; then
     cmd=`basename $0`
@@ -7,9 +10,25 @@ if [ -t 0 ]; then
     exit
 fi
 
-if [ ! $# == 1 ]; then
-    echo "Missing command to execute"
+if [ $# == 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: <pipe> | $cmd [-v] <cmd>"
+    echo "      where:"
+    echo "             -v               verbose"
     exit
 fi
 
+if [ "$1" == "-v" ]; then
+    verbose=1
+    shift
+    if [ $# == 0 ]; then
+        echo "Missing command to execute"
+        exit
+    fi
+fi
+
+if [ $verbose -eq 1 ]; then
 xargs -I@ sh -c "echo @; $1 @"
+else
+xargs -I@ sh -c "$1 @"
+fi
