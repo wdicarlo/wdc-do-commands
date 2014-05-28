@@ -9,6 +9,13 @@ fi
 max_files=15
 tmp_file=/tmp/vim_paths.txt
 
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-f" ]; then
+        max_files=50
+        shift
+    fi
+fi
+
 cat > $tmp_file 
 n=`cat $tmp_file | wc -l`
 
