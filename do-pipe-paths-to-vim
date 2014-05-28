@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+max_files=15
+tmp_file=/tmp/vim_paths.txt
+
+cat > $tmp_file 
+n=`cat $tmp_file | wc -l`
+
+if [ $n -gt $max_files ]; then
+    echo "Too many files to edit: required $n while max is $max_files "
+    exit
+fi
+
+vim -p `cat $tmp_file` < /dev/tty
