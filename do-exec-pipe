@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+max_files=1
+tmp_file=/tmp/pipe_paths.txt
+
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-f" ]; then
+        max_files=2
+        shift
+    fi
+fi
+
+cat > $tmp_file 
+n=`cat $tmp_file | wc -l`
+
+if [ $n -gt $max_files ]; then
+    echo "Too many files to execute: requested $n while max is $max_files "
+    exit
+fi
+
+# TODO: exec all lines sequencially
+cmd=`cat $tmp_file | head -1`
+echo "> $cmd $@"
+eval "$cmd" $@
