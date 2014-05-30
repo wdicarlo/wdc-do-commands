@@ -87,7 +87,7 @@ List all commits containing changes of a specific file (history of a file)
 	git log --oneline arch/arm/mach-gitdemos/gitdemos_devel_board.c
 List graph of all commit containing changes of a file
 	git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative arch/arm/mach-gitdemos/gitdemos_devel_board.c
-Undo changes of a file un-stagged
+Undo changes (revert) of a file un-stagged
 	git checkout arch/arm/mach-gitdemos/clock.c
 Display simplified git status
 	git status -s
