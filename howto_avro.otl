@@ -1,0 +1,56 @@
+Apache Avro
+	A tool/format/protocol to encode/decode data
+Create a schema from a json file
+	char jsonfile[] = "interop.json";
+	char jsontext[4096];
+	avro_schema_t schema;
+
+    fp = fopen(jsonfile, "r");
+    if (!fp) {
+        fprintf(stderr, "can't open!\n");
+        exit(EXIT_FAILURE);
+    }
+    nbytes = fread(jsontext, 1, sizeof(jsontext) - 1, fp);
+    fclose(fp);
+    jsontext[nbytes] = '\0';
+
+    printf("JSON file: \n%s\n",jsontext);
+
+    test_rval =
+        avro_schema_from_json(jsontext, 0, &schema, NULL);
+Read data from a binary file
+	avro_schema_t  wschema;
+	avro_value_iface_t  *iface;
+	avro_file_reader_t  reader;
+	avro_value_t  value;
+	int rval;
+
+    fp = fopen(inpath, "rb");
+
+    if (fp == NULL) {
+        fprintf(stderr, "Error opening %s:\n  %s\n",
+            inpath, strerror(errno));
+        exit(1);
+    }
+	if (avro_file_reader_fp(fp, inpath, 0, &reader)) {
+		fprintf(stderr, "Error opening %s:\n  %s\n",
+			inpath, avro_strerror());
+        fclose(fp);
+		exit(1);
+	}
+
+	wschema = avro_file_reader_get_writer_schema(reader);
+	iface = avro_generic_class_from_schema(wschema);
+	avro_generic_value_new(iface, &value);
+
+	rval = avro_file_reader_read_value(reader, &value);
+Generate json from a avro value object
+	avro_value_t  value;
+    char  *json;
+
+    if (avro_value_to_json(&value, 1, &json)) {
+        fprintf(stderr, "Error converting value to JSON: %s\n",
+            avro_strerror());
+    } else {
+        printf("Record: %s\n", json);
+    }
