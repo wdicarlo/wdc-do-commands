@@ -77,3 +77,13 @@ Execute a Lua script from C code
 
     lua_pop(L, 1);  /* Take the returned value out of the stack */
     lua_close(L);   /* Cya, Lua */
+luarocks configuration can be obtained with
+	luarocks help
+luarocks /etc/luarocks/config.lua
+	rocks_servers = {
+	   [[http://luarocks.org/repositories/rocks]]
+	}
+	rocks_trees = {
+	   home..[[/.luarocks]],
+	   [[/usr/share]]
+	}

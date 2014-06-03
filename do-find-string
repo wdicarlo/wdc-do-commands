@@ -91,9 +91,11 @@ string=$1
 #cmd="find \"$root\" -maxdepth \"$depth\" \( -path \"*/.svn\" -prune -o -type f -name \"$file\" \)| xargs -I@ grep \"$pars\" \"$string\" @"
 #cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type f -name \"$file\" \) | xargs -I@ grep \"$pars\" \"$string\" @"
 if [ "$exclude" == "" ]; then
-    cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" | xargs -I@ \grep --color \"$pars\" \"$string\" @"
+    #cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" | xargs -I@ \grep --color \"$pars\" \"$string\" @"
+    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ \grep --color \"$pars\" \"$string\" @"
 else
-    cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" | xargs -I@ sh -c \"\grep --color \\\"$pars\\\" \\\"$string\\\" @| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
+    #cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" | xargs -I@ sh -c \"\grep --color \\\"$pars\\\" \\\"$string\\\" @| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
+    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ sh -c \"\grep --color \\\"$pars\\\" \\\"$string\\\" @| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
 fi
 if [ ! "$postproc" == "" ]; then
     cmd+="|$postproc"

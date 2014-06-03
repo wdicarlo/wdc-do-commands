@@ -7,6 +7,7 @@ if [ ! $# == 2 ]; then
 fi
 
 # TODO: check reference folder/file
+# TODO: check PWD is under git control
 
 for REV in $(git rev-list --all $1); do
     git checkout -q $REV
