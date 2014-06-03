@@ -2,8 +2,31 @@
 
 
 LUAROCKS_ROOT=~/.luarocks
-if [ $# == 0 ]; then
-    $LUAROCKS_ROOT/bin/luarocks --tree=`echo $LUAROCKS_ROOT` | less
+LUAROCKS_CONFIG=${LUAROCKS_ROOT}/config.lua
+
+
+if [ ! -f $LUAROCKS_CONFIG ]; then
+    mkdir -p $LUAROCKS_ROOT
+    cat > $LUAROCKS_CONFIG <<LUAROCKS_CONFIG
+           rocks_servers={
+              "http://luarocks.giga.puc-rio.br/";
+           }
+LUAROCKS_CONFIG
+fi
+
+if [ -f $LUAROCKS_ROOT/bin/luarocks ]; then
+    cmd=$LUAROCKS_ROOT/bin/luarocks
 else
-    $LUAROCKS_ROOT/bin/luarocks --tree=`echo $LUAROCKS_ROOT` $@
+    cmd=`which luarocks`
+    if [ "$cmd" == ""  ]; then
+        echo "Missing luarocks command"
+        exit
+    fi
+fi
+
+
+if [ $# == 0 ]; then
+    $cmd --tree=`echo $LUAROCKS_ROOT` | less
+else
+    $cmd --tree=`echo $LUAROCKS_ROOT` $@
 fi
