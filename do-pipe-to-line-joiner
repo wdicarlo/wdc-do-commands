@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+
+# join two consecutive lines
+cat | sed 'N;s/\n/ /g'
