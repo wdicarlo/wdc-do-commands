@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+quiet=0
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-q" ]; then
+        quiet=1
+        shift
+    fi
+fi
+
+if [ $# == 0 ]; then 
+    echo "Missing command to execute"
+    exit
+fi
+
+cmd=`echo "$1"| sed -e 's/|/\\\\|/g' -e 's/;/\\\\;/g'`
+shift
+
+isok=`echo "$cmd" | grep "@@"`
+if [ "$isok" == "" ]; then
+    echo "Missing parametric hook @@"
+    exit
+fi
+
+# reset temp file
+echo > /tmp/cmds.txt
+
+cat | xargs -I@_ bash -c "echo  $cmd|sed 's#@@#@_#g' >> /tmp/cmds.txt"
+
+if [ $quiet -eq 0 ]; then
+    cat /tmp/cmds.txt | xargs -I@ bash -c "echo \"> @\"; eval \"@\""
+else
+    cat /tmp/cmds.txt | xargs -I@ bash -c "eval \"@\""
+fi
+
