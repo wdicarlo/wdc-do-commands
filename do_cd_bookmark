@@ -11,11 +11,13 @@ function usage() {
     #echo "       -b                 : just consider the basename"
     #echo "                 -s                 : just consider subdirs"
     echo "                  -l                 : list bookmarks"
+    echo "                  -a                 : returns absolute paths"
     return
 }
 
 global="0"
 list="0"
+absolute="0"
 
 while [ $# -gt 0 ]; do
     if [ "$1" == "-h" ]; then
@@ -24,29 +26,41 @@ while [ $# -gt 0 ]; do
     fi
     if [ "$1" == "-g" ]; then
         global="1"
-        shift
+    fi
+
+    if [ "$1" == "-a" ]; then
+        absolute="1"
     fi
 
     if [ "$1" == "-l" ]; then
         list="1"
-        shift
     fi
-    if [ ! "${1:0,1}" == "-" ]; then
+
+    #if [ ! "${1:0,1}" == "-" ]; then
+    if [ ! "$1" == "-h" ] && [ ! "$1" == "-l" ] && [ ! "$1" == "-a" ] && [ ! "$1" == "-g" ]; then
         break
     fi
+    shift
 done
-#while getopts gl flag
+
+#while getopts aglh flag
 #do
 #    case $flag in
+#
+#        a)
+#            absolute="1"
+#            ;;
 #        g)
 #            global="1"
-#echo "global=$global"
 #            ;;
 #        l)
 #            list="1"
-#echo "list=$list"
 #            ;;
-#        \?)
+#        h)
+#            usage
+#            return
+#            ;;
+#        ?)
 #            usage
 #            return
 #            ;;
@@ -70,15 +84,27 @@ else
     relpath=`echo $cpath|sed "s#$PROJECT_PATH/##"`
 fi
 
+
+postproc="cat"
+if [ $absolute == "0" ]; then
+    if [ $global == "0" ]; then
+        postproc="sed \"s#$PROJECT_PATH/##\""
+    else
+        postproc="sed \"s#$HOME/##\""
+    fi
+fi
+
 bookmarks=""
 
 if [ $global == "0" ]; then
     #bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| sed "s#$PROJECT_PATH/##"`
-    bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$PROJECT_PATH/##"`
+    #bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$PROJECT_PATH/##"`
+    bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
 else
     # TODO: allows jump into another project's folder by evaluating its .bash_env file
     #bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'`
-    bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##"`
+    #bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##"`
+    bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
 fi
 
 if [ "$list" == "1" ]; then
