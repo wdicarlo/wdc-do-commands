@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+function usage {
+    cmd=`basename $0`
+    echo "Usage: <pipe-commands> | $cmd [<sed-range-address>]"
+    echo  -E "
+       <address|address-range>[!]
+       !      the command shall only be executed if the address (or address-range) does not match.
+
+       number Match only the specified line number.
+
+       first~step
+              Match  every  step'th  line  starting with line first.  For example, ``sed -n 1~2p'' will print all the odd-numbered lines in the input stream, and the address 2~5 will match every fifth line,
+              starting with the second.  first can be zero; in this case, sed operates as if it were equal to step.  (This is an extension.)
+ 
+       $      Match the last line.
+ 
+       /regexp/
+              Match lines matching the regular expression regexp.
+ 
+       \cregexpc
+              Match lines matching the regular expression regexp.  The c may be any character.
+ 
+       0,addr2
+              Start out in "matched first address" state, until addr2 is found.  This is similar to 1,addr2, except that if addr2 matches the very first line of input the 0,addr2 form will be at the end  of
+              its range, whereas the 1,addr2 form will still be at the beginning of its range.  This works only when addr2 is a regular expression.
+ 
+       addr1,+N
+              Will match addr1 and the N lines following addr1.
+ 
+       addr1,~N
+              Will match addr1 and the lines following addr1 until the next line whose input line number is a multiple of N.
+              "
+}
+
+
+if [ $# == 0 ]; then
+    usage
+    exit
+else if [ $# == 1 ]; then
+    if [ "$1" == "-h" ]; then
+        usage
+        exit
+    fi
+#    if [ "$1" == "-c" ]; then
+#        shift 
+#        cmd=$1
+#        shift
+#        cat | sed ${1}d | xargs -I@ `$cmd @`
+#        exit
+#    fi
+    cat | sed ${1}!d
+        else
+    cat
+    fi
+fi
+
