@@ -108,7 +108,11 @@ else
 fi
 
 if [ "$list" == "1" ]; then
-    echo "$bookmarks"| grep --color "^\|$relpath *$\|$relpath *#.*"
+    if [ $# -gt 0 ]; then
+        echo "$bookmarks"| grep $1 | grep --color "^\|$relpath *$\|$relpath *#.*"
+    else
+        echo "$bookmarks"| grep --color "^\|$relpath *$\|$relpath *#.*"
+    fi
     return
 fi
 

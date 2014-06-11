@@ -4,3 +4,5 @@ Replace $PWD with pwd command
 	pwd -P
 Get absolute path of a file/link
 	readlink -f <file|link>
+Concatenate output of two or more commands
+	(do-find-files -r ../../lua-5.1.5-src/ Makefile ; pwd) | grep avro
