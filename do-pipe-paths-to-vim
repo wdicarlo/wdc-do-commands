@@ -9,12 +9,36 @@ fi
 max_files=15
 tmp_file=/tmp/vim_paths.txt
 
-if [ $# -gt 0 ]; then
-    if [ "$1" == "-f" ]; then
-        max_files=50
-        shift
-    fi
-fi
+#if [ $# -gt 0 ]; then
+#    if [ "$1" == "-f" ]; then
+#        max_files=50
+#        shift
+#    fi
+#fi
+opts="-p"
+while getopts Oofh flag
+do
+    case $flag in
+        O)
+            opts="-O"
+            ;;
+        o)
+            opts="-o"
+            ;;
+        f)
+            max_files=50
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        \?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 cat > $tmp_file 
 n=`cat $tmp_file | wc -l`
@@ -24,4 +48,5 @@ if [ $n -gt $max_files ]; then
     exit
 fi
 
-vim -p `cat $tmp_file` < /dev/tty
+#vim -p `cat $tmp_file` < /dev/tty
+vim $opts `cat $tmp_file` < /dev/tty
