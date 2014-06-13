@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [\"<folder1> ... [<foldern>]\"]"
+}
+
+while getopts h flag
+do
+    case $flag in
+
+        h)
+            usage
+            ;;
+        ?)
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift past the last flag or argument
+
+home=$PWD
+
+folders="$home"
+if [ $# -gt 0 ]; then
+    folders="$@"
+fi
+
+for folder in $folders
+do
+    cd $folder
+    curdir=`pwd`
+    (find `pwd` -name "*.h" ; \
+    find `pwd` -name "*.hpp" ; \
+    find `pwd` -name "*.c" ; \
+    find `pwd` -name "*.cpp" ; \
+    find `pwd` -name "*.S" ; \
+    find `pwd` -name "*.s" ; \
+    find `pwd` -name "*.const" ; \
+    find `pwd` -name Makefile ; \
+    find `pwd` -name makefile ; \
+    find `pwd` -name Kconfig ) | sort
+    cd $home
+done
+
