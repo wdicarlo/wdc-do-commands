@@ -95,13 +95,41 @@ function gohome() {
 
 function last() {
     opts="-1t"
+    quiet=0
     if [ $# -gt 0 ]
     then
         if [ "$1" == "-h" ]
         then
-            cmd=`basename $0`
-            echo "Usage: $cmd [<ls-options>]"
-            exit
+            echo "Usage: last [-q|-p|-s|-l|<ls-options>] [<path>]"
+            echo "       where:"
+            echo "               -q       : quiet"
+            echo "               -p       : like -1dt"
+            echo "               -s       : like -1sht"
+            echo "               -l       : like -last"
+            return
+        fi
+        if [ "$1" == "-q" ]
+        then
+            quiet=1
+            shift
+        fi
+        if [ "$1" == "-p" ]
+        then
+            shift
+            p="."
+            if [ $# -gt 0 ]; then
+                p="$1"
+            fi
+            if [ $quiet -eq 0 ]; then
+                echo "> ls -1dt $p/* | head -20"
+            fi
+            ls -1dt $p/* | head -20
+            return
+        fi
+        if [ "$1" == "-s" ]
+        then
+            opts="-1sht"
+            shift
         fi
         if [ "$1" == "-l" ]
         then
@@ -110,7 +138,12 @@ function last() {
         fi
     fi
     #ls -last $@ | head -20
-    ls $opts $@ | head -20
+    cmd="ls $opts $@ | head -20"
+
+    if [ $quiet -eq 0 ]; then
+        echo "> $cmd"
+    fi
+    eval $cmd
 }
 
 function do_activate_release() {
