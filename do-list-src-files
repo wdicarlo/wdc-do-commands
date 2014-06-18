@@ -3,13 +3,28 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [\"<folder1> ... [<foldern>]\"]"
+    echo "Usage: $cmd [-j|-c] [\"<folder1> ... [<foldern>]\"]"
+    echo "       where:"
+    echo "              -j             for java source code"
+    echo "              -c [default]   for c/cpp source code"
 }
 
-while getopts h flag
+
+exts="h hpp c cpp S s const"
+quite=0
+while getopts qcjh flag
 do
     case $flag in
 
+        c)
+            exts="h hpp c cpp S s const"
+            ;;
+        j)
+            exts="java"
+            ;;
+        q)
+            quite=1
+            ;;
         h)
             usage
             ;;
@@ -27,20 +42,35 @@ if [ $# -gt 0 ]; then
     folders="$@"
 fi
 
+files="Makefile makefile Kconfig"
+
 for folder in $folders
 do
     cd $folder
     curdir=`pwd`
-    (find `pwd` -name "*.h" ; \
-    find `pwd` -name "*.hpp" ; \
-    find `pwd` -name "*.c" ; \
-    find `pwd` -name "*.cpp" ; \
-    find `pwd` -name "*.S" ; \
-    find `pwd` -name "*.s" ; \
-    find `pwd` -name "*.const" ; \
-    find `pwd` -name Makefile ; \
-    find `pwd` -name makefile ; \
-    find `pwd` -name Kconfig ) | sort
+    if [ $quite -eq 0 ]; then
+        echo "> find $curdir -type f -name \"*.{$exts}\""
+    fi
+    #(find `pwd` -name "*.h" ; \
+    #find `pwd` -name "*.hpp" ; \
+    #find `pwd` -name "*.c" ; \
+    #find `pwd` -name "*.cpp" ; \
+    #find `pwd` -name "*.S" ; \
+    #find `pwd` -name "*.s" ; \
+    #find `pwd` -name "*.const" ; \
+    #find `pwd` -name Makefile ; \
+    #find `pwd` -name makefile ; \
+    #find `pwd` -name Kconfig ) | sort
+    (
+        for ext in $exts 
+        do 
+            find `pwd` -type f -name "*.$ext" 
+        done;
+        for file in $files
+        do
+            find `pwd` -type f -name $file
+        done
+    ) | sort
     cd $home
 done
 
