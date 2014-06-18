@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+function usage ()
+{
+    echo "Usage: $cmd <word-pattern> [<root>]"
+}
+
+
+if [ $# -eq 0 ]; then
+    usage
+    exit
+fi
+
+if [ $# -gt 2 ]; then
+    usage
+    exit
+fi
+
+root="."
+
+if [ $# == 2 ]; then
+    root="$2"
+fi
+
+\grep -Ro "\w*$1\w*" $root 
