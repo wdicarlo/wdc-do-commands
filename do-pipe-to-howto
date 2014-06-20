@@ -1,0 +1,26 @@
+#!/bin/bash
+
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+if [ ! $# == 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <category> <title>"
+    exit
+fi
+
+howto=`echo ~/bin/howto_$1.otl`
+
+if [ ! -f $howto ]; then
+    echo "Missing howto file for: $1"
+    echo "Availanble howto:"
+    do-howto-list
+    exit
+fi
+
+echo $2 >> $howto
+cat | sed 's/^/\t/' >> $howto
