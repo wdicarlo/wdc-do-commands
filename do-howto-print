@@ -17,7 +17,9 @@ fi
 howto=`echo ~/bin/howto_$1.otl`
 shift
 if [ ! -f $howto ]; then
-    echo "Missing howto file: $howto"
+    echo "Missing howto file for: $1"
+    echo "Availanble howto:"
+    do-howto-list
     exit
 fi
 
