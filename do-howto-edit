@@ -12,15 +12,20 @@ then
         exit
     fi
     # TODO: improve filtering considering only the filename but maintaining the path
-    list=`find $folders/ -name "howto_*" | grep "$@"`
+    if [ -f "$folders/howto_$1.otl" ]; then
+        vim "$folders/howto_$1.otl" < `tty`
+        exit
+    fi
+
+    list=`find $folders/ -name "howto_*$1*\.otl"`
     num=`ls -1 $list|wc -l`
     if [ "$num" == 1 ]
     then
         vim `echo $list` < `tty` 
     else
-        ls -1 $list
+        do-howto-list | grep $1
     fi
 else
-    find $folders -name "howto_*" | sed "s#$folders/##"
+    do-howto-list 
 fi
 
