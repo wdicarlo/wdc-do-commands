@@ -6,3 +6,15 @@ Macro to find the struct containing the specified member element
 	#define container_of(ptr, type, member) ({ \
                 const typeof( ((type *)0)->member ) *__mptr = (ptr); \
                 (type *)( (char *)__mptr - offsetof(type,member) );})
+Macro to find size of a struct's member
+	#define SIZEOF(st,m) ((size_t) sizeof(((st *)0)->m))
+Macro to test the alignment of a type
+	#define ALIGNMENT_OF( t ) offsetof( struct { char x; t test; }, test )
+Macro to find the number of elements of an array
+	#define SIZEOF_ARR(arr)  sizeof(arr)/sizeof(arr[0])
+Macro to cast the value at the specified address
+	#define VALUEAT(addr,size)   size == 1 ? (uint8_t)*addr : \
+	                                 size == 2 ? (uint16_t)*addr : \
+	                                     size == 4 ? (uint32_t)*addr : \
+	                                         size == 8 ? (uint64_t)*addr : \
+	                                            (size_t)*addr
