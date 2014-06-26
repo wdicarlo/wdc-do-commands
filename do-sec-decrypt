@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# commands from http://askubuntu.com/questions/95920/encrypt-tar-gz-file-on-create
+
+function usage() {
+    cmd=`basename $0`
+    echo "Usage: $cmd <in> <out>"
+}
+
+
+if [ ! $# -eq 2 ]; then
+    usage
+    exit
+fi
+
+key_dir=~/.keys
+key=key.pem
+key_file=$key_dir/$key
+pkey=pkey.pem
+pkey_file=$key_dir/$pkey
+pass=key.txt
+pass_file=$pass
+
+
+input=$1
+output=$2
+
+if [ ! -f $key_file ]; then
+    echo "Missing private key"
+    exit
+fi
+
+if [ ! -f $pass_file.enc ]; then
+    echo "Missing encrypted passphrase file"
+    exit
+fi
+
+# Decrypt encrypted passphrase with private key
+openssl rsautl -decrypt -inkey $key_file < $pass_file.enc > $pass_file
+
+# Decrypt file
+openssl enc -aes-256-cbc -d -pass file:$pass_file < $input > $output
+

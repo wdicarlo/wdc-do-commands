@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# commands from http://askubuntu.com/questions/95920/encrypt-tar-gz-file-on-create
+
+curdate="`date '+%y%m%d-%H%M%S'`"
+
+function usage() {
+    cmd=`basename $0`
+    echo "Usage: $cmd <in> <out>"
+}
+
+
+if [ ! $# -eq 2 ]; then
+    usage
+    exit
+fi
+
+key_dir=~/.keys
+key=key.pem
+key_file=$key_dir/$key
+pkey=pkey.pem
+pkey_file=$key_dir/$pkey
+pass=key.txt
+pass_file=$pass
+
+
+input=$1
+output=$2
+
+
+if [ ! -f $key_file ]; then
+    mkdir -p $key_dir
+
+    # generate public and private keys only once
+    openssl genrsa -out $key_file 2048
+    openssl rsa -in $key_file -out $pkey_file -outform PEM -pubout
+fi
+
+# generate random passphrase
+openssl rand 32 -out $pass_file
+
+
+# encrypt file with passphase
+
+openssl enc -aes-256-cbc -pass file:$pass_file < $input > $output
+
+
+# encrypt passphrase with public key
+openssl rsautl -encrypt -pubin -inkey $pkey_file < $pass_file > $pass_file.enc
+
+# Then save encrypted.dat AND enc.key.txt where desired.
