@@ -14,6 +14,31 @@ export SHARED_FOLDER=/media/sf_Shared
 #set -o vi
 echo "Customizing bash"
 
+
+function vim_launcher() {
+opts=""
+for opt in $@
+do
+    if [ -f $opt ]; then
+        if [ `file $opt | grep -o executable` ]; then
+            # make sure it is a binary file
+            if [ ! `file $opt | grep -o text` ]; then
+                for file in `ls $opt.*`
+                do
+                    if [ `file $file | grep -o text` ]; then
+                        opts="$opts -p $file"
+                    fi
+                done
+                continue
+            fi
+        fi
+    fi
+    opts="$opts $opt"
+done
+vim --servername wdcvimsrvr $opts
+}
+
+
 #. ~/bin/do_setup_env_for_okl4sdk-5.1.8m4
 #. ~/bin/do_setup_env okl4sdk-5.1.8m4
 . ~/bin/do_setup_env 
@@ -46,6 +71,28 @@ function setup_env() {
 }
 function gohome() {
     # find upword the following: .git, project folder, user home
+    if [ $# -gt 0 ]
+    then
+        if [ "$1" == "-h" ]
+        then
+            echo "Usage: gh [-p|-u]"
+            echo "       where:"
+            echo "               -p       : go to project home"
+            echo "               -u       : go to user home"
+            return
+        fi
+        if [ "$1" == "-p" ]; then
+           \cd $PROJECT_PATH 
+           setup_env
+           return
+        fi
+        if [ "$1" == "-u" ]; then
+            \cd `echo ~`
+            setup_env
+            return
+        fi
+    fi
+
     path=`dirname $PWD`
     folder=`basename $PWD`
     if [ $folder == "/" ]
@@ -241,7 +288,8 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 
-alias vi='vim --servername wdcvimsrvr'
+#alias vi='vim --servername wdcvimsrvr'
+alias vi='vim_launcher $@'
 
 alias cac="copy_and_cd $@"
 #alias last="last $@"
