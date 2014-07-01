@@ -32,6 +32,18 @@ do
                 continue
             fi
         fi
+    else
+        n=0
+        for file in `ls $opt*`
+        do
+                    if [ `file $file | grep -o text` ]; then
+                        opts="$opts -p $file"
+                        n=$((n+1))
+                    fi
+        done
+        if [ $n -gt 0 ]; then
+            continue
+        fi
     fi
     opts="$opts $opt"
 done

@@ -21,3 +21,7 @@ objcopy rule
 	$(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
 		@echo " [OC]  -- $< --> $@"
 		$(VERB)$(OBJCPY) -O binary $< $@	
+Example of pattern rule
+	%.dat: %.avsc
+		do-avro random --count 10 --schema-file $< $@
+		do-avro tojson --pretty $@
