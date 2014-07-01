@@ -3,39 +3,54 @@
 
 function usage() {
     cmd=`basename $0`
-    echo "Usage: $cmd <in> <out>"
+    echo "Usage: $cmd <in>"
 }
 
 
-if [ ! $# -eq 2 ]; then
+if [ ! $# -eq 1 ]; then
     usage
     exit
 fi
+
+# check enc is the extension of the input file
+ext=enc
+file=${1%".$ext"}
+
+if [ $file == $1 ]; then
+    echo "File with missing extension $ext"
+    exit
+fi
+
+
+
+# check it is not the pass file key.enc
+
 
 key_dir=~/.keys
 key=key.pem
 key_file=$key_dir/$key
 pkey=pkey.pem
 pkey_file=$key_dir/$pkey
-pass=key.txt
+pass=$file.key
 pass_file=$pass
 
 
 input=$1
-output=$2
+output=$file
+
 
 if [ ! -f $key_file ]; then
     echo "Missing private key"
     exit
 fi
 
-if [ ! -f $pass_file.enc ]; then
-    echo "Missing encrypted passphrase file"
+if [ ! -f $pass_file.$ext ]; then
+    echo "Missing encrypted passphrase file: $pass_file.$ext"
     exit
 fi
 
 # Decrypt encrypted passphrase with private key
-openssl rsautl -decrypt -inkey $key_file < $pass_file.enc > $pass_file
+openssl rsautl -decrypt -inkey $key_file < $pass_file.$ext > $pass_file
 
 # Decrypt file
 openssl enc -aes-256-cbc -d -pass file:$pass_file < $input > $output
