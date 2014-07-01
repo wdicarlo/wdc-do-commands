@@ -2,6 +2,7 @@ Commands to evaluate:
     multistrap
     ss
     mount --bind
+    fasd
 Integrate vim notebooks
 Evaluate command history by folder
 Add todo management

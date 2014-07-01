@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env  bash
 
 prj_root=`echo ~/projects/`
 n=0
@@ -12,13 +12,13 @@ else
 fi
 
 num=-1
-if [ "$n" == 0 ]
+if [ "$n" -eq 0 ]
 then
     echo "Project/s not found!!!"
     return
 fi
 
-if [ "$n" == 1 ]
+if [ "$n" -eq 1 ]
 then
     num=1
 else
@@ -30,7 +30,7 @@ if [ "$num" == "" ]; then
     return
 fi
 
-if [ $# == 1 ]
+if [ $# -eq 1 ]
 then
     prj=`ls -1 $prj_root | grep $1 | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
 else

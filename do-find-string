@@ -100,6 +100,7 @@ fi
 if [ ! "$postproc" == "" ]; then
     cmd+="|$postproc"
 fi
+cmd+=" 2>/dev/null"
 #find "$root" -maxdepth "$depth" -type f -name "$file"| xargs -I@ grep "$pars" "$string" @
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
