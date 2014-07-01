@@ -5,7 +5,7 @@ then
     echo "Usage: $cmd <do-command-command-pattern"
     exit
 fi
-folders=`echo ~/bin`
+folders=`echo ~/bin/`
 
 if [ $# == 1 ]
 then
@@ -20,9 +20,9 @@ then
     # TODO: improve filtering considering only the filename but maintaining the path
     list=`find $folders -name "do-*" | grep "$@"`
     num=`ls -1 $list|wc -l`
-    if [ "$num" == 1 ]
+    if [ "$num" -lt 10 ]
     then
-        vim `echo $list` < `tty` 
+        vim -p `echo $list` < `tty` 
     else
         ls -1 $list
     fi
