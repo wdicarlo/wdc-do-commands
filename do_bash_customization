@@ -14,6 +14,24 @@ export SHARED_FOLDER=/media/sf_Shared
 #set -o vi
 echo "Customizing bash"
 
+make()
+{
+  # see http://stackoverflow.com/questions/6436563/how-can-i-highlight-the-warning-and-error-lines-int-the-make-output
+
+  #pathpat="(/[^/]*)+:[0-9]+"
+  pathpat="^.*$"
+  ccred=$(echo -e "\033[0;31m")
+  ccgreen=$(echo -e "\033[0;32m")
+  ccyellow=$(echo -e "\033[0;33m")
+  ccend=$(echo -e "\033[0m")
+  /usr/bin/make "$@" 2>&1 | sed -E \
+      -e "/^cc/ s%$pathpat%$ccgreen&$ccend%g" \
+      -e "/[Ee]rror[: ]/ s%$pathpat%$ccred&$ccend%g" \
+      -e "/[Uu]ndefined/ s%$pathpat%$ccred&$ccend%g" \
+      -e "/[Ff]ault/ s%$pathpat%$ccred&$ccend%g" \
+      -e "/[Ww]arning[: ]/ s%$pathpat%$ccyellow&$ccend%g"
+  return ${PIPESTATUS[0]}
+}
 
 function vim_launcher() {
 opts=""
