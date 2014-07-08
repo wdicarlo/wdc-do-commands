@@ -2,10 +2,15 @@
 
 cmd=`basename $0`
 
+list=0
 if [ $# -gt 0 ]; then
     if [ "$1" == "-h" ]; then
-        echo "Usage: $cmd [-h] [tag1..[tagn]]"
+        echo "Usage: $cmd [-h] [-l] [tag1..[tagn]]"
         exit
+    fi
+    if [ "$1" == "-l" ]; then
+        list=1
+        shift
     fi
 fi
 
@@ -19,6 +24,7 @@ if [ $cpath == $HOME ]; then
     exit
 fi
 
+
 if [ "$PROJECT" == "" ]; then
     relpath=`echo $cpath|sed "s#$HOME/##"`
 else
@@ -28,20 +34,22 @@ fi
  # check if the bookmark is not already present
 n=`cat $bookmarks | awk -F"#" '/1/2 { print $1 }' | sed 's# *$##' | grep -E "^$cpath$" | wc -l`
 
-if [ $n == 0 ] || [ $# -gt 0 ]; then
-    #add bookmarks
-    if [ $# == 0 ]; then
-        echo "$cpath" >> $bookmarks
-    else
-        tags=`cat $bookmarks | grep "^$cpath$\|^$cpath *#"| awk -F"#" '/1/2 { print $2 }' | sed 's# *# #'`
-        tags=`echo "$@ $tags"|sed  "s# #\n#g"|grep -v "^$" |sort | uniq --count | grep " 1 " | awk '{ print $2 }' | tr "\n" " "`
-        updated=`cat $bookmarks | grep -v "^$cpath$\|^$cpath *#"`
-        echo "$updated" > $bookmarks
-        echo "$cpath   # $tags" >> $bookmarks
-    fi
+if [ $list -eq 0 ]; then
+    if [ $n == 0 ] || [ $# -gt 0 ]; then
+        #add bookmarks
+        if [ $# == 0 ]; then
+            echo "$cpath" >> $bookmarks
+        else
+            tags=`cat $bookmarks | grep "^$cpath$\|^$cpath *#"| awk -F"#" '/1/2 { print $2 }' | sed 's# *# #'`
+            tags=`echo "$@ $tags"|sed  "s# #\n#g"|grep -v "^$" |sort | uniq --count | grep " 1 " | awk '{ print $2 }' | tr "\n" " "`
+            updated=`cat $bookmarks | grep -v "^$cpath$\|^$cpath *#"`
+            echo "$updated" > $bookmarks
+            echo "$cpath   # $tags" >> $bookmarks
+        fi
 
-    # filter bookmark file
-    file=`cat $bookmarks`;echo  "$file" | sort > $bookmarks
+        # filter bookmark file
+        file=`cat $bookmarks`;echo  "$file" | sort > $bookmarks
+    fi
 fi
 
 # highlight the added path
