@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+do-git-list-other | do-pipe-aggregated-lines | do-pipe-to-command $@ "ls -1t @@"
