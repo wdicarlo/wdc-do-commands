@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+
+git help -g | head -n -3  # filter out last three lines
+git help -a
