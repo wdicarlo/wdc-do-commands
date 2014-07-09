@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+
+# join all consecutive lines
+cat | tr '\n' ' '

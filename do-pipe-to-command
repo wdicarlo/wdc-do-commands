@@ -8,6 +8,10 @@ if [ -t 0 ]; then
 fi
 quiet=0
 if [ $# -gt 0 ]; then
+    if [ "$1" == "-h" ]; then
+        echo "Usage: <pipe> | do-pipe-to-command [-h] [-q] \"<command-with-@@>\""
+        exit
+    fi
     if [ "$1" == "-q" ]; then
         quiet=1
         shift
