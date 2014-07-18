@@ -1,10 +1,11 @@
 #!/bin/bash
 
-cmd="git status"
+cmd="git status ."
 
 if [ ! $# == 0 ]
 then
-    cmd="git status | grep -e \"$1\|# \w\" "
+    # by default get the status of the local folders
+    cmd+=" | grep -e \"$1\|# \w\" "
 fi
 echo "> $cmd"
 eval $cmd

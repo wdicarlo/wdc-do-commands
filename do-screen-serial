@@ -14,9 +14,9 @@ sd=`which sudo`
 
 cmd=
 if [ -z "$group" ]; then
-    cmd="do-super"
+    cmd="do-super "
     if [ "$1" == "-b" ]; then
-        cmd="do-super -H"
+        cmd="do-super -H "
     fi
 fi
 

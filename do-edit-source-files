@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+
+list=`ls -1 *.c *.h *.lua`
+max=15
+
+n=`echo $list |tr " " "\n" | wc -l `
+
+if [ $n -gt $max ]; then
+    echo "Too many files to edit: $n out of $max"
+    exit
+fi
+
+vi -p $list
