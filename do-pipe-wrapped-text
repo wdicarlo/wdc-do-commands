@@ -7,4 +7,4 @@ if [ -t 0 ]; then
 fi
 
 
-cat | sed "s/^/\"/" | sed "s/$/\"/"
+cat | sed "s/\"/\\\\\"/g" | sed "s/^/\"/" | sed "s/$/\"/"
