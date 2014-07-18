@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+    ascii | tail -17
+    exit
+fi
+
+# convert single ascii character into the hexadecimal representation
+
+echo "$1" | tr -d "\n" | od -An -t xC
+
+# convert single ascii character into the hexadecimal representation
+
+echo "$1" | tr -d "\n" | od -An -t dC
