@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# print differences ready to be committed (staged in the index)
+git diff --cached $@
