@@ -354,8 +354,9 @@ alias do-activate-release='. ~/bin/do_activate_release'
 alias do-activate-test='. ~/bin/do_activate_test'
 alias do-setup-env='. ~/bin/do_setup_env -s'
 
-# TODO: move the following into a common script
-export http_proxy=
+alias do-history-update='. ~/bin/do_history_update'
+alias do-history-add-last='. ~/bin/do_history_add_last'
+
 export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
 export rsync_proxy=$http_proxy

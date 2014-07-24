@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+quiet=0
+if [ $# -gt 0 ]; then
+    if [ $1 == "-q" ]; then
+        quiet=1
+    fi
+fi
+
+if [ $quiet -eq 0 ]; then
+    cat | xargs -I@ bash -c "echo \"> @\";eval \"@\""
+else
+    cat | xargs -I@ bash -c "eval \"@\""
+fi
