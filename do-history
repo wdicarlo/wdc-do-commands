@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+hist_file=`echo ~/bin/history.txt`
+
+if [ $# -eq 0 ]; then
+    cat $hist_file
+else
+    cat $hist_file | grep $@
+fi
