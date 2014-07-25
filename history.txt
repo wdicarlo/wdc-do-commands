@@ -1,0 +1,4 @@
+cat README.md | grep http|do-filter-rows-by-terms direct link | do-select-columns 7 | sed "s/^.*http/http/" | sed "s/)//" | do-pipe-to-cmd wget
+do-find-string -f"*.c" -i netinet | tail -1 | do-pipe-cfile-to-vim netinet
+do-find-string "^#include" | sed "s/.*:[0-9]*://" | grep -v avro | grep -v jansson | sort | uniq 
+cat SVI_sizes.c | grep case | sort | grep -e "_[S,G]ET_RE[Q,S]"
