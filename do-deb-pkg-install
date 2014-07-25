@@ -1,9 +1,33 @@
 #!/bin/bash
 
-if [ ! $# == 1 ]; then
+function usage () {
     cmd=`basename $0`
-    echo "Usage: $cmd <debian-pkg-to-install>"
+    echo "Usage: $cmd [-b] <debian-pkg-to-install>"
+    echo "      -b            : consider backported package"
+}
+
+if [ $# -lt 1 -o $# -gt 2 ];  then
+    usage
     exit
 fi
 
-do-super "apt-get install $1"
+backport=0
+if [ $# -eq 2 ]; then
+    if [ $1 == "-b" ]; then
+        backport=1
+        shift
+    fi
+fi
+
+if [ $# -ne 1 ]; then
+    usage
+    exit
+fi
+
+
+if [ $backport -eq 0 ]; then
+    do-super "apt-get install $1"
+else
+    # TODO: generalize
+    do-super "apt-get -t wheezy-backports install $1"
+fi
