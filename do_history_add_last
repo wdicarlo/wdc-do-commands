@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+hist_file=`echo ~/bin/history.txt`
+
+history | tail -2 | head -1 | sed "s/^[0-9]*  //">> $hist_file 
+
+echo "Updated commands history with:"
+tail $hist_file | tail -1

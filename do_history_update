@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+echo "ATTENTION: command still under development"
+
+hfile=`echo ~/bin/history.txt`
+
+
+
+if [ $# == 0 ]; then
+    n=20
+else
+    n=`history | wc -l`
+fi
+m=`expr $n - 1`
+
+if [ $# -gt 0 ]; then
+    list=`history  | tail -$n | head -$m | do-filter-rows-by-terms $@`
+else
+    list=`history  | tail -$n | head -$m `
+fi
+
+list=`echo "$list" | sed "s/^[0-9]*  //"`
+
+if [ `echo "$list" | wc -l` == 1 ]; then
+    echo "$list" >> $hfile
+    echo "$list"
+    return
+fi
+
+echo "$list"
