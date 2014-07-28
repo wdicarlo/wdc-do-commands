@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# -eq 1 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <decrypted-folder> to unmount"
+    exit
+
+fi
+
+fusermount -u $1

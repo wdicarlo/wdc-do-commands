@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# -eq 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <encryptped-folder> <decrypted-folder>"
+    exit
+
+fi
+
+
+# mount encrypted folde, use absolute paths
+encfs $1 $2
