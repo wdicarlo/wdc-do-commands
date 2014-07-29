@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+if [ $# -eq 0 ]; then
+    echo "Usage: <pipe> | do-pipe-words <word1> [...<wordn>]"
+    exit
+fi
+
+
+words=""
+for word in $@ 
+do
+    if [ "$words" == "" ]; then
+        words="[a-zA-Z0-9_-]*$word[a-zA-Z0-9_-]*"
+    else
+        words="$words\|[a-zA-Z0-9_-]*$word[a-zA-Z0-9_-]*"
+    fi
+done
+
+cat | sed "s/.*\($words\).*/\1/p"
