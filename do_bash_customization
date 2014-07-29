@@ -37,13 +37,13 @@ function vim_launcher() {
 opts=""
 for opt in $@
 do
-    if [ -f $opt ]; then
-        if [ `file $opt | grep -o executable` ]; then
+    if [ -f "$opt" ]; then
+        if [ `file "$opt" | grep -o executable` ]; then
             # make sure it is a binary file
-            if [ ! `file $opt | grep -o text` ]; then
-                for file in `ls $opt.*`
+            if [ ! `file "$opt" | grep -o text` ]; then
+                for file in `ls "$opt".*`
                 do
-                    if [ `file $file | grep -o text` ]; then
+                    if [ `file "$file" | grep -o text` ]; then
                         opts="$opts -p $file"
                     fi
                 done
@@ -52,9 +52,9 @@ do
         fi
     else
         n=0
-        for file in `ls $opt*`
+        for file in `ls "$opt"*`
         do
-                    if [ `file $file | grep -o text` ]; then
+                    if [ `file "$file" | grep -o text` ]; then
                         opts="$opts -p $file"
                         n=$((n+1))
                     fi
