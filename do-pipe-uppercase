@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+if [ $# -gt 0 ]; then
+    echo "Usage: <pipe> | do-pipe-uppercase"
+    exit
+fi
+
+
+cat | tr [a-z] [A-Z]
