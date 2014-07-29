@@ -1,31 +1,104 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if [ $# -gt 0 ]
-then
-    if [ "$1" == "-h" ]
-    then
-        app=`basename $0`
-        echo "Usage: $app [-h|<root-folder> [<maxdepth> [<grep-pattern>]]]"
-        exit
-    fi
+cmd=`basename $0`
+
+function usage() {
+    #echo "Usage: $cmd [-i] [-p] [-c ][-r <root>] [-n <depth>] [-f <file-pattern>] <string>"
+    echo "Usage: $cmd [-h] [-i] [-q] [[-r <folder>] ...] <string>"
+    echo "where:"
+    echo "       -i                 : ignore case"
+    #echo "       -c                 : just count occurences"
+    #echo "       -p                 : just print the paths"
+    echo "       -r <folder>          : add folder to the search"
+    #echo "       -n <depth>         : max depth to search into"
+    #echo "       -f <file-pattern>  : filename pattern to use"
+    #echo "       -e <exclude-patt>  : exclude pattern"
+    echo "       -q                 : quiet"
+    exit
+}
+
+pars=""
+file="*"
+depth=99
+postproc=""
+exclude=""
+quiet=0
+
+
+
+#while getopts qicpr:n:f:e: flag
+while getopts qhir: flag
+do
+    case $flag in
+
+        q)
+            quiet=1
+#            echo pars is $pars
+            ;;
+#        e)
+#            exclude=$OPTARG
+##            echo pars is $pars
+#            ;;
+        i)
+            pars="-i"
+#            echo pars is $pars
+            ;;
+#        p)
+#            pars="-l"
+##            echo pars is $pars
+#            ;;
+#        c)
+#            # just count occurences, filter out files with not matching the string and revert sort the list
+#            pars="-Hnc"
+#            postproc="grep -v \":0\"| sort -t \":\" -nr -k 2"
+##            echo pars is $pars
+#            ;;
+#        f)
+#            file=$OPTARG
+##            echo file-pattern is $file
+#            ;;
+        r)
+            root="$root $OPTARG"
+#            echo root is $root
+            ;;
+#        n)
+#            depth=$OPTARG
+##            echo depth is $depth
+#            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ "$root" == "" ]; then
+    root="."
 fi
 
-case $# in
-    "0")
-    find . -maxdepth 1 -type d
-    ;;
-    "1")
-    find "$1" -maxdepth 1 -type d
-    ;;
-    "2")
-    find "$1" -maxdepth "$2" -type d
-    ;;
-    *)
-    root="$1"
-    shift
-    depth="$1"
-    shift
-    find $root -maxdepth $depth -type d|grep $@
-    ;;
-esac
+gpat=""
+if [ $# -gt 0 ]; then
+    for pat in $@ 
+    do
+        if [ "$gpat" == "" ]; then
+            gpat="$pat"
+        else
+            gpat="$gpat\|$pat"
+        fi
+    done
+fi
+
+
+
+if [ "$gpat" == "" ]; then
+    cmd="find $root \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d "
+else
+    cmd="find $root \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d | \grep --color $pars \"/[a-zA-Z0-9_-]*$gpat[a-zA-Z0-9_-]*$\""
+fi
+
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd
 
