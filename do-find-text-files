@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+
+# find all text files
+# see http://stackoverflow.com/questions/4767396/linux-command-how-to-find-only-text-files
+# The -I option to grep tells it to immediately ignore binary files and the . option along with 
+# the -l will make it immediately match text files so it goes very fast.
+
+find . -type f -exec grep -Il . {} \;
