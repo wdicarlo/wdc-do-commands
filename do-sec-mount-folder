@@ -8,6 +8,14 @@ if [ ! $# -eq 2 ]; then
 
 fi
 
+cmd=`which encfs`
+if [ -z "$cmd" ]; then
+    echo "Missing encfs command, please install encfs package"
+    exit
+fi
+
+src=`echo $(cd $(dirname $1); pwd)/$(basename $1)`
+dst=`echo $(cd $(dirname $2); pwd)/$(basename $2)`
 
 # mount encrypted folde, use absolute paths
-encfs $1 $2
+encfs $src $dst
