@@ -7,3 +7,4 @@ Integrate vim notebooks
 Evaluate command history by folder
 Add todo management
 Develop Lua simple type checking
+Evaluate tools for backup: irsync, rsnapshot, rbackup, 
