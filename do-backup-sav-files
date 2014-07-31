@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+
+function usage () {
+    cmd=`basename $0`
+    echo "Usage: $cmd [-q] [-r <root>] [<post-fix>]"
+    echo "       where:"
+    echo "                 -q              : quiet"
+    echo "                 -d              : delete backuped files"
+    echo "                 -l              : just list files to be backuped"
+    echo "                 -r <root>       : backup sav files under specified root folder"
+    exit
+}
+
+pars=""
+file="*.sav"
+depth=99
+delete=0
+list=0
+quiet=0
+
+#while getopts qicpr:n:f:e: flag
+while getopts qldhr: flag
+do
+    case $flag in
+
+        q)
+            quiet=1
+#            echo pars is $pars
+            ;;
+        d)
+            delete=1
+#            echo pars is $pars
+            ;;
+        l)
+            list=1
+#            echo pars is $pars
+            ;;
+#        p)
+#            pars="-l"
+##            echo pars is $pars
+#            ;;
+#        c)
+#            # just count occurences, filter out files with not matching the string and revert sort the list
+#            pars="-Hnc"
+#            postproc="grep -v \":0\"| sort -t \":\" -nr -k 2"
+##            echo pars is $pars
+#            ;;
+#        f)
+#            file=$OPTARG
+##            echo file-pattern is $file
+#            ;;
+        r)
+            root="$root $OPTARG"
+#            echo root is $root
+            ;;
+#        n)
+#            depth=$OPTARG
+##            echo depth is $depth
+#            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+    list=1
+fi
+
+
+if [ "$root" == "" ]; then
+    root="."
+fi
+
+if [ ! -d "$root/.svn" ] && [ ! -d "$root/.git" ]
+then
+    # TODO: do we really need this?
+    echo "Please, specify a root folder which is a source code repository"
+    exit
+fi
+
+
+bakfile="backup"
+curdate="`date '+%y%m%d-%H%M%S'`"
+bakdir=`echo ~/backups/savevers`
+
+
+find_cmd="find $root \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"*.sav\""
+#MY_FILES=`find $root \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name "*.sav"`
+MY_FILES=`eval $find_cmd`
+#echo -e "Files to be included into the backup:\n$MY_FILES"
+
+if [ ${#MY_FILES} -eq 0 ]
+then
+  echo "No files to backup."
+  exit
+fi
+
+if [ ! -d $bakdir ]; then
+    mkdir -p $bakdir
+fi
+
+
+name="savevers"
+
+if [ $1 ]; then
+	tarfile="$bakfile-$name-$curdate-$1.tar.bz2"
+else
+	tarfile="$bakfile-$name-$curdate.tar.bz2"
+fi
+
+#cmd="tar -cvjf $bakdir/$tarfile --exclude=.git --exclude=.svn $MY_FILES"
+cmd="tar -cvjf $bakdir/$tarfile $MY_FILES"
+
+if [ $list -eq 1 ]; then
+    if [ $quiet -eq 0 ]; then
+        echo "> $find_cmd"
+    fi
+    echo "$MY_FILES"
+    exit
+fi
+
+
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd
+
+if [ $delete -eq 1 ]; then
+    cmd="rm $MY_FILES"
+    if [ $quiet -eq 0 ]; then
+        echo "> $cmd"
+    fi
+    eval $cmd
+fi
