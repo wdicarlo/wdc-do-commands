@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+bin_dir=`echo ~/bin`
+
+if [ ! $# == 1 ]; then
+    echo "Usage: $cmd <new-bin-cmd>"
+    exit
+fi
+
+cd $bin_dir
+
+if [ ! -f $1 ]; then
+    echo "Missing file in $bin_dir/$1"
+    exit
+fi
+
+# TODO: check if the command is not already present in the git repository
+
+git add $1
+git commit -m "Added $1 command"
