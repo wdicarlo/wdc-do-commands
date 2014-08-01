@@ -1,33 +1,68 @@
-#!/bin/sh
+#!/usr/bin/env bash 
 
 now=`date +%Y%m%d%H%M%S`
 
-if [  $# != 3 ]
-then
-    echo "Usage: do-build-patch <folder> <folder> <output>"
-    return
-fi
+function usage() {
+    echo "Usage: do-build-patch [-q] [-x <file-pattern>] <folder> <folder> <output>"
+    echo "where:"
+    echo "       -x <exclude-patt>  : exclude pattern"
+    echo "       -q                 : quiet"
+}
 
+exclude=" --exclude=\".git\" --exclude=\".svn\""
+quiet=0
+while getopts hx:q flag
+do
+    case $flag in
+        q)
+            quiet=1
+#            echo pars is $pars
+            ;;
+        x)
+            exclude="$exclude --exclude=\"$OPTARG\" "
+#            echo pars is $pars
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! $# -eq 3 ]; then
+    usage
+    exit
+fi
 
 if [ ! -d "$1" ]
 then    
     echo "$1 is not a folder"
-    return
+    exit
 fi
 
 
 if [ ! -d "$2" ]
 then
     echo "$2 is not a folder"
-    return
+    exit
 fi
 
-output=$3.patch
+output=$3-$now.patch
 
-if [ -f $output ]
-then
-    mv $output $output-$now
+
+if [ "$exclude" == "" ]; then
+    cmd="diff -rupN $1 $2 > $output"
+else
+    cmd="diff $exclude -rupN $1 $2 > $output"
 fi
 
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd
 
-diff -rupN $1 $2 > $3.patch
