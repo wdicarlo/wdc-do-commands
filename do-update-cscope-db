@@ -54,6 +54,7 @@ then
         find `pwd` -name "*.const" >> $home/cscope.files
         find `pwd` -name Makefile >> $home/cscope.files
         find `pwd` -name Kconfig >> $home/cscope.files
+        find `pwd` -name "*.cfg" >> $home/cscope.files
         cd $home
     done
 fi
