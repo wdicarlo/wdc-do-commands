@@ -2,3 +2,7 @@ cat README.md | grep http|do-filter-rows-by-terms direct link | do-select-column
 do-find-string -f"*.c" -i netinet | tail -1 | do-pipe-cfile-to-vim netinet
 do-find-string "^#include" | sed "s/.*:[0-9]*://" | grep -v avro | grep -v jansson | sort | uniq 
 cat SVI_sizes.c | grep case | sort | grep -e "_[S,G]ET_RE[Q,S]"
+grep "SVI_[a-zA-Z_]*_OPC" `do-find-text-files | grep -v "\.d$"` | sed "s/.*\(SVI_[a-zA-Z_]*_OPC\).*/\1/p" | grep -v "cscope" | do-pipe-trimmed | sort | uniq 
+do-find-text-files | xargs -I@  grep "sizeof.*SVI_[a-zA-Z_]*_msg" @ | do-pipe-words "SVI_[a-zA-Z_0-9]*_msg" | sort | uniq
+cat SVI_msgs.txt | sed "s/SVI\|msg//g" | tr -d "_" | do-pipe-splitted-words [A-Z] | do-pipe-uppercase 
+cat XMLstruct.c | grep "sizeof.*Req_msg" -A 13 | do-pipe-trimmed | grep "Req_msg\|REQ_OPC" 

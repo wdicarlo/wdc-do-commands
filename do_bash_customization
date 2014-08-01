@@ -41,7 +41,7 @@ do
         if [ `file "$opt" | grep -o executable` ]; then
             # make sure it is a binary file
             if [ ! `file "$opt" | grep -o text` ]; then
-                for file in `ls "$opt".*`
+                for file in `ls "$opt".*| grep -v "\.sav$"`
                 do
                     if [ `file "$file" | grep -o text` ]; then
                         opts="$opts -p $file"
@@ -52,7 +52,7 @@ do
         fi
     else
         n=0
-        for file in `ls "$opt"*`
+        for file in `ls "$opt"*|grep -v ".sav$"`
         do
                     if [ `file "$file" | grep -o text` ]; then
                         opts="$opts -p $file"
