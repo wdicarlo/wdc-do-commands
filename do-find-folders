@@ -4,21 +4,21 @@ cmd=`basename $0`
 
 function usage() {
     #echo "Usage: $cmd [-i] [-p] [-c ][-r <root>] [-n <depth>] [-f <file-pattern>] <string>"
-    echo "Usage: $cmd [-h] [-i] [-q] [[-r <folder>] ...] <string>"
+    echo "Usage: $cmd [-h] [-i] [-q] [-f] [[-r <folder>] ...] <string>"
     echo "where:"
     echo "       -i                 : ignore case"
     #echo "       -c                 : just count occurences"
     #echo "       -p                 : just print the paths"
     echo "       -r <folder>          : add folder to the search"
     #echo "       -n <depth>         : max depth to search into"
-    #echo "       -f <file-pattern>  : filename pattern to use"
+    echo "       -f <file-pattern>  : filename pattern to use"
     #echo "       -e <exclude-patt>  : exclude pattern"
     echo "       -q                 : quiet"
     exit
 }
 
 pars=""
-file="*"
+file=""
 depth=99
 postproc=""
 exclude=""
@@ -27,7 +27,7 @@ quiet=0
 
 
 #while getopts qicpr:n:f:e: flag
-while getopts qhir: flag
+while getopts qhir:f: flag
 do
     case $flag in
 
@@ -53,10 +53,10 @@ do
 #            postproc="grep -v \":0\"| sort -t \":\" -nr -k 2"
 ##            echo pars is $pars
 #            ;;
-#        f)
-#            file=$OPTARG
-##            echo file-pattern is $file
-#            ;;
+        f)
+            file=$OPTARG
+#            echo file-pattern is $file
+            ;;
         r)
             root="$root $OPTARG"
 #            echo root is $root
@@ -90,11 +90,16 @@ if [ $# -gt 0 ]; then
 fi
 
 
-
 if [ "$gpat" == "" ]; then
-    cmd="find $root \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d "
+    cmd="find $root/ \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d "
+    if [ !  $file == "" ]; then
+        cmd="find $root/ \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ dirname @ | sort | uniq"
+    fi
 else
-    cmd="find $root \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d | \grep --color $pars \"/[a-zA-Z0-9_-]*$gpat[a-zA-Z0-9_-]*$\""
+    cmd="find $root/ \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d | \grep --color $pars \"/[a-zA-Z0-9_-]*$gpat[a-zA-Z0-9_-]*$\""
+    if [ !  $file == "" ]; then
+        cmd="find $root/ \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ dirname @ | sort | uniq | \grep --color $pars \"/[a-zA-Z0-9_-]*$gpat[a-zA-Z0-9_-]*$\""
+    fi
 fi
 
 if [ $quiet -eq 0 ]; then
