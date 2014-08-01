@@ -2,9 +2,10 @@
 
 function usage () {
     cmd=`basename $0`
-    echo "Usage: $cmd [-q] [-r <root>] [<post-fix>]"
+    echo "Usage: $cmd [-q] [-f] [-r <root>] [<post-fix>]"
     echo "       where:"
     echo "                 -q              : quiet"
+    echo "                 -f              : force backup"
     echo "                 -d              : delete backuped files"
     echo "                 -l              : just list files to be backuped"
     echo "                 -r <root>       : backup sav files under specified root folder"
@@ -17,9 +18,10 @@ depth=99
 delete=0
 list=0
 quiet=0
+force=0
 
 #while getopts qicpr:n:f:e: flag
-while getopts qldhr: flag
+while getopts qfldhr: flag
 do
     case $flag in
 
@@ -33,6 +35,10 @@ do
             ;;
         l)
             list=1
+#            echo pars is $pars
+            ;;
+        f)
+            force=1
 #            echo pars is $pars
             ;;
 #        p)
@@ -74,11 +80,13 @@ if [ "$root" == "" ]; then
     root="."
 fi
 
-if [ ! -d "$root/.svn" ] && [ ! -d "$root/.git" ]
-then
-    # TODO: do we really need this?
-    echo "Please, specify a root folder which is a source code repository"
-    exit
+if [ $force -eq 0 ]; then
+    if [ ! -d "$root/.svn" ] && [ ! -d "$root/.git" ]
+    then
+        # TODO: do we really need this?
+        echo "Please, specify a root folder which is a source code repository"
+        exit
+    fi
 fi
 
 
@@ -102,8 +110,8 @@ if [ ! -d $bakdir ]; then
     mkdir -p $bakdir
 fi
 
-
-name="savevers"
+folder=`basename $PWD`
+name="$folder-sav"
 
 if [ $1 ]; then
 	tarfile="$bakfile-$name-$curdate-$1.tar.bz2"
