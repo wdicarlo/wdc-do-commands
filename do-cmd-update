@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+bin_dir=`echo ~/bin`
+
+if [ ! $# == 1 ]; then
+    echo "Usage: $cmd <improved-bin-cmd>"
+    exit
+fi
+
+cd $bin_dir
+
+if [ ! -f $1 ]; then
+    echo "Missing file in $bin_dir/$1"
+    exit
+fi
+
+# TODO: check if the command is already present in the git repository
+# TODO: check if the command has changes
+
+git add $1
+git commit -m "Improved $1 command"
