@@ -15,7 +15,12 @@ if [ ! -f $1 ]; then
 fi
 
 # TODO: check if the command is already present in the git repository
-# TODO: check if the command has changes
+# check if the command has changes
+n=`git diff $bin_dir/$1 | wc -l`
+if [ $n -eq 0 ]; then
+    echo "Command without changes: $1"
+    exit
+fi
 
 git add $1
 git commit -m "Improved $1 command"
