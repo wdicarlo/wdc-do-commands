@@ -1,8 +1,15 @@
-#!/bin/bash
-if [ $# != 1 ]
-then
+#!/usr/bin/env bash
+
+function usage() {
     cmd=`basename $0`
-    echo "Usage: $cmd <do-command-command-pattern"
+    echo "Usage: $cmd <do-command-name-pattern>"
+    echo "Examples:"
+    echo "   $cmd   \"list\""
+}
+
+if [ $# -ne 1 ]
+then
+    usage
     exit
 fi
 folders=`echo ~/bin/`
@@ -11,10 +18,7 @@ if [ $# == 1 ]
 then
     if [ "$1" == "-h" ] || [ "$1" == "--help" ]
     then
-        cmd=`basename $0`
-        echo "Usage: $cmd <do-command-command-pattern"
-        echo "Examples:"
-        echo "   $cmd   \"list\""
+        usage
         exit
     fi
     # TODO: improve filtering considering only the filename but maintaining the path
