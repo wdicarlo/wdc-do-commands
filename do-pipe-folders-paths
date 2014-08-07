@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+function usage() {
+    echo "Usage: do-pipe-folders-paths  [-p] [-h]"
+    echo "where:"
+    echo "       -p                 : print absolute paths"
+    echo "       -h                 : print this help"
+}
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+absolute=0
+while getopts ph flag
+do
+    case $flag in
+
+        p)
+            absolute=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! $# -eq 0 ]; then
+    usage
+    exit
+fi
+
+postproc=""
+if [ $absolute -eq 1 ]; then
+    postproc=" | sed 's#^./##' | xargs -I@ echo $(cd $(dirname @); pwd)/$(basename @)"
+fi
+
+
+cmd="cat | xargs -I@ dirname @ | sort | uniq $postproc"
+
+eval $cmd
