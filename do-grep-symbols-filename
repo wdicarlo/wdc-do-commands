@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# == 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <elf-file> <grep-pattern>"
+    exit
+fi
+
+if [ ! -f $1 ]; then
+    echo "Missing $1"
+    exit
+fi
+
+nm -a $1 | grep " a " | \grep --color $2
