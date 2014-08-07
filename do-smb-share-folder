@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+samba_shares_dir=/vobs
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-l] [-q] <folder> <symbolic-link-name>"
+    echo "where:"
+    echo "       -l                 : list shared folders"
+    echo "       -q                 : quiet"
+    exit
+}
+
+function absolute() {
+    echo $(cd $(dirname $1); pwd)/$(basename $1)
+}
+
+if [ $# == 0 ]; then
+    usage
+    exit
+fi
+
+quiet=0
+list=0
+while getopts hlq flag
+do
+    case $flag in
+
+        l)
+            list=1
+            ;;
+        q)
+            quiet=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $list -eq 1 ]; then
+    find $samba_shares_dir -maxdepth 1 -type l | xargs file
+    exit
+fi
+
+
+if [ ! $# -eq 2 ]; then
+    usage
+    exit
+fi
+
+if [ ! -d "$1" ]; then
+    echo "Not a folder: $1"
+    exit
+fi
+
+if [ -h "$samba_shares_dir/$2" ]; then
+    echo "Link already present: "; file "$samba_shares_dir/$2"
+    exit
+fi
+
+src=`absolute $1`
+dst=`absolute $samba_shares_dir/$2`
+
+cmd="ln -s $src $dst"
+
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+do-super eval $cmd
