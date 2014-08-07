@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+hist_file=`echo ~/bin/history.txt`
+
+vi $hist_file
