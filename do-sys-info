@@ -1,3 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-file /usr/bin/file | awk '{ print $3 " GNU/Linux " $18 }'
+check=`which inxi`
+
+if [ -z $check ]; then
+    uname -a
+    file /usr/bin/file | awk '{ print $3 " GNU/Linux " $18 }'
+    cat /proc/meminfo | head -2
+    df -lh --output="size,used,target"
+    exit
+fi
+
+inxi -c 13 -b
