@@ -16,6 +16,8 @@ fi
 cmd="tar"
 ext=".tar.gz"
 opt="zf"
+tst="t"
+pst=""
 check=`echo $1 | grep $ext`
 if [ -z "$check" ]; then
     ext=".tar.bz2"
@@ -24,7 +26,9 @@ if [ -z "$check" ]; then
     if [ -z "$check" ]; then
         cmd="unzip"
         ext=".zip"
-        opt=""
+        opt="qq"
+        tst="l"
+        pst="| awk '{ print \$NF }'"
         check=`echo $1 | grep $ext`
         if [ -z "$check" ]; then
             echo "Error: unknow extension"
@@ -36,7 +40,9 @@ fi
 file=${1%$ext}
 
 
-$cmd -t${opt} "$1" | head -20
+# list content of archive
+cmd_exe="$cmd -${tst}${opt} $1 $pst | head -20"
+eval $cmd_exe
 
 #TODO: check if a folder will be created
 
@@ -45,22 +51,23 @@ echo "..."
 read -p "Untar? <y|n>" ans
 
 
-if [ $ans == "y" ] || [ $ans == "Y" ]; then
+if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
     # check if destination folder already exists
-    folder=`tar -t${opt}f "$1" | head -1`
+    folder=`eval $cmd_exe | head -1`
     if [ -d "$folder" ]; then
         echo "Error: $folder already exists"
         exit
     fi
 
     if [ $cmd=="tar" ]; then
-        $cmd -x${opt} "$1"
+        cmd_exe="$cmd -x${opt} $1"
     else
         if [ $cmd=="unzip" ]; then
-            $cmd ${opt} "$1"
+            cmd_exe="$cmd ${opt} $1"
         fi
     fi
-
+    echo "> $cmd_exe"
+    eval $cmd_exe
     # TODO: cd into the untarred folder
 fi
 
