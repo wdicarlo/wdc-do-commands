@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+# filter terminal control characters
+cat | tr -d '[:cntrl:]' | sed "s#\[0m#\n#g"
