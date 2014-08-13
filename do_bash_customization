@@ -35,6 +35,16 @@ make()
 
 function vim_launcher() {
 opts=""
+if [ $# -eq 1 ]; then
+    if [ -f "$1" ]; then
+        n=`cat "$1" | wc -l`
+        if [ $n -gt 5000 ]; then
+            opts="--noplugin $1"
+            shift
+        fi
+    fi
+fi
+
 for opt in $@
 do
     if [ -f "$opt" ]; then
@@ -65,7 +75,9 @@ do
     fi
     opts="$opts $opt"
 done
-vim --servername wdcvimsrvr $opts
+cmd="vim --servername wdcvimsrvr $opts"
+echo "> $cmd"
+eval $cmd
 }
 
 
@@ -320,6 +332,7 @@ alias l='ls -CF'
 
 #alias vi='vim --servername wdcvimsrvr'
 alias vi='vim_launcher $@'
+alias vinp='vim --noplugin $@'
 
 alias cac="copy_and_cd $@"
 #alias last="last $@"
@@ -356,6 +369,9 @@ alias do-setup-env='. ~/bin/do_setup_env -s'
 
 alias do-history-update='. ~/bin/do_history_update'
 alias do-history-add-last='. ~/bin/do_history_add_last'
+
+alias mkall='make clean all'
+alias mk='make all'
 
 export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
