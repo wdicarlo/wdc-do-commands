@@ -4,12 +4,13 @@ cmd=`basename $0`
 
 function usage() {
     #echo "Usage: $cmd [-i] [-p] [-c ][-r <root>] [-n <depth>] [-f <file-pattern>] <string>"
-    echo "Usage: $cmd [-h] [-i] [-q] [-f] [-n <depth>] [[-r <folder>] ...] <string>"
+    echo "Usage: $cmd [-h] [-i] [-q] [-s] [-f] [-n <depth>] [[-r <folder>] ...] <string>"
     echo "where:"
     echo "       -i                 : ignore case"
     #echo "       -c                 : just count occurences"
     #echo "       -p                 : just print the paths"
-    echo "       -r <folder>          : add folder to the search"
+    echo "       -s                 : strict folder name"
+    echo "       -r <folder>        : add folder to the search"
     echo "       -n <depth>         : max depth to search into"
     echo "       -f <file-pattern>  : filename pattern to use"
     #echo "       -e <exclude-patt>  : exclude pattern"
@@ -23,17 +24,19 @@ depth=99
 postproc=""
 exclude=""
 quiet=0
-
+strict=0
 
 
 #while getopts qicpr:n:f:e: flag
-while getopts qhir:f:n: flag
+while getopts sqhir:f:n: flag
 do
     case $flag in
 
+        s)
+            strict=1
+            ;;
         q)
             quiet=1
-#            echo pars is $pars
             ;;
 #        e)
 #            exclude=$OPTARG
@@ -41,7 +44,6 @@ do
 #            ;;
         i)
             pars="-i"
-#            echo pars is $pars
             ;;
 #        p)
 #            pars="-l"
@@ -55,11 +57,9 @@ do
 #            ;;
         f)
             file=$OPTARG
-#            echo file-pattern is $file
             ;;
         r)
             root="$root $OPTARG"
-#            echo root is $root
             ;;
         n)
             depth=$OPTARG
@@ -95,9 +95,17 @@ if [ "$gpat" == "" ]; then
         cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ dirname @ | sort | uniq"
     fi
 else
-    cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d | \grep --color $pars \"/[a-zA-Z0-9_-]*$gpat[a-zA-Z0-9_-]*$\""
+    if [ $strict -eq 0 ]; then
+        cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d | \grep --color $pars \"/[a-zA-Z0-9_-]*$gpat[a-zA-Z0-9_-]*$\""
+    else
+        cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d | \grep --color $pars \"/$gpat$\""
+    fi
     if [ !  $file == "" ]; then
-        cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ dirname @ | sort | uniq | \grep --color $pars \"/[a-zA-Z0-9_-]*$gpat[a-zA-Z0-9_-]*$\""
+        if [ $strict -eq 0 ]; then
+            cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ dirname @ | sort | uniq | \grep --color $pars \"/[a-zA-Z0-9_-]*$gpat[a-zA-Z0-9_-]*$\""
+        else
+            cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ dirname @ | sort | uniq | \grep --color $pars \"/$gpat$\""
+        fi
     fi
 fi
 
