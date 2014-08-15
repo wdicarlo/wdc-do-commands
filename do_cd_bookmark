@@ -5,19 +5,21 @@ cpath=`pwd`
 
 
 function usage() {
-    echo "Usage: $cmd [-g] [-l] [<string>]"
+    echo "Usage: $cmd [-g] [-l] [-t] [<string>]"
     echo "         where:"
     echo "                  -g                 : globals - do not restrict to current project"
     #echo "       -b                 : just consider the basename"
     #echo "                 -s                 : just consider subdirs"
     echo "                  -l                 : list bookmarks"
     echo "                  -a                 : returns absolute paths"
+    echo "                  -t                 : print the available tags"
     return
 }
 
 global="0"
 list="0"
 absolute="0"
+tags=0
 
 while [ $# -gt 0 ]; do
     if [ "$1" == "-h" ]; then
@@ -34,6 +36,9 @@ while [ $# -gt 0 ]; do
 
     if [ "$1" == "-l" ]; then
         list="1"
+    fi
+    if [ "$1" == "-t" ]; then
+        tags="1"
     fi
 
     #if [ ! "${1:0,1}" == "-" ]; then
@@ -73,6 +78,15 @@ bookmarks_file=`echo ~/.bookmarks`
 
 if [ ! -f $bookmarks_file ]; then
     echo "No Bookmark/s not found!!!"
+    return
+fi
+
+if [ $tags == "1" ]; then
+    if [ "$PROJECT" == "" ]; then
+        cat $bookmarks_file | grep -v $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+    else
+        cat $bookmarks_file | grep $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+    fi
     return
 fi
 
