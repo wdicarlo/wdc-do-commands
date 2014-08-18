@@ -26,10 +26,10 @@ make()
   ccend=$(echo -e "\033[0m")
   /usr/bin/make "$@" 2>&1 | sed -E \
       -e "/^cc/ s%$pathpat%$ccgreen&$ccend%g" \
-      -e "/[Ee]rror[: ]/ s%$pathpat%$ccred&$ccend%g" \
-      -e "/[Uu]ndefined/ s%$pathpat%$ccred&$ccend%g" \
-      -e "/[Ff]ault/ s%$pathpat%$ccred&$ccend%g" \
-      -e "/[Ww]arning[: ]/ s%$pathpat%$ccyellow&$ccend%g"
+      -e "/[Ee]rror:/ s%$pathpat%$ccred&$ccend%g" \
+      -e "/[Uu]ndefined reference to/ s%$pathpat%$ccred&$ccend%g" \
+      -e "/core dumped/ s%$pathpat%$ccred&$ccend%g" \
+      -e "/[Ww]arning:/ s%$pathpat%$ccyellow&$ccend%g"
   return ${PIPESTATUS[0]}
 }
 
@@ -370,8 +370,8 @@ alias do-setup-env='. ~/bin/do_setup_env -s'
 alias do-history-update='. ~/bin/do_history_update'
 alias do-history-add-last='. ~/bin/do_history_add_last'
 
-alias mkall='make clean all'
-alias mk='make all'
+alias mkca='make clean all'
+alias mka='make all'
 
 export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
