@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+    mkfile=Makefile
+    if [ ! -f $mkfile ]; then
+        mkfile=makefile
+        if [ ! -f $mkfile ]; then
+            echo "No valid makefile"
+            exit
+        fi
+    fi
+    # by default without any argument print the list of targets
+    cat $mkfile | grep -v "[#=]" | grep "^[a-zA-Z_ ]*:"| sed "s/^\([a-zA-Z_]*\) *:.*$/\1/"|sort
+    exit
+fi
+
+# print all executed shell commands
+cmd="make SHELL=\"bash -x\" $@"
+echo "> $cmd"
+eval $cmd
