@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+grep "\`which *[a-zA-Z_-]*\`" ~/bin/* | sed "s/.*which *\([a-zA-Z_-]*\).*/\1/g" | sort | uniq
