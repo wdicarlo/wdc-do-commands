@@ -315,7 +315,8 @@ fi
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
+    alias ls='\ls --color=auto'
+    alias lf='\ls -1 | grep -v "sav$" | tr "\n" " " ; echo'
     #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
 
@@ -373,6 +374,7 @@ alias do-history-add-last='. ~/bin/do_history_add_last'
 alias mkca='make clean all'
 alias mka='make all'
 
+export http_proxy=
 export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
 export rsync_proxy=$http_proxy

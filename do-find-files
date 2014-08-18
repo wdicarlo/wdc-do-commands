@@ -69,7 +69,7 @@ fi
 #cmd="find \"$root\" -maxdepth \"$depth\" \( -path \"*/.svn\" -prune -o -type f -name \"$file\" \)| xargs -I@ grep \"$pars\" \"$string\" @"
 #cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type f -name \"$file\" \) | xargs -I@ grep \"$pars\" \"$string\" @"
 #cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" "
-cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .git -prune -o -type d -name .svn -prune \) -o -type f -name \"$file\" -print"
+cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .git -prune -o -type d -name .svn -prune \) -o -type f -name \"$file\" -print 2>/dev/null"
 if [ -n "$size" ]; then
     cmd="$cmd -size \"$size\" "
 fi
