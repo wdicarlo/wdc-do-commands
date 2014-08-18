@@ -3,6 +3,7 @@
 function usage() {
     echo "Usage: do-pipe-folders-paths  [-p] [-h]"
     echo "where:"
+    echo "       -e                 : remove empty paths"
     echo "       -p                 : print absolute paths"
     echo "       -h                 : print this help"
 }
@@ -14,10 +15,14 @@ if [ -t 0 ]; then
 fi
 
 absolute=0
-while getopts ph flag
+empty=1
+while getopts eph flag
 do
     case $flag in
 
+        e)
+            empty=0
+            ;;
         p)
             absolute=1
             ;;
@@ -43,7 +48,11 @@ if [ $absolute -eq 1 ]; then
     postproc=" | sed 's#^./##' | xargs -I@ echo $(cd $(dirname @); pwd)/$(basename @)"
 fi
 
+empty_proc="| grep \"\/$\""
+if [ $empty -eq 0 ]; then
+    empty_proc=" | xargs -I@ dirname @"
+fi
 
-cmd="cat | xargs -I@ dirname @ | sort | uniq $postproc"
+cmd="cat $empty_proc | sort | uniq $postproc"
 
 eval $cmd
