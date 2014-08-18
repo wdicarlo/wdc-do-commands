@@ -13,26 +13,35 @@ fi
 
 
 # check extension: tar.bz2, tar.gz
+
 cmd="tar"
-ext=".tar.gz"
+ext=".tgz"
 opt="zf"
 tst="t"
 pst=""
 check=`echo $1 | grep $ext`
 if [ -z "$check" ]; then
-    ext=".tar.bz2"
-    opt="jf"
+    cmd="tar"
+    ext=".tar.gz"
+    opt="zf"
+    tst="t"
+    pst=""
     check=`echo $1 | grep $ext`
     if [ -z "$check" ]; then
-        cmd="unzip"
-        ext=".zip"
-        opt="qq"
-        tst="l"
-        pst="| awk '{ print \$NF }'"
+        ext=".tar.bz2"
+        opt="jf"
         check=`echo $1 | grep $ext`
         if [ -z "$check" ]; then
-            echo "Error: unknow extension"
-            exit
+            cmd="unzip"
+            ext=".zip"
+            opt="qq"
+            tst="l"
+            pst="| awk '{ print \$NF }'"
+            check=`echo $1 | grep $ext`
+            if [ -z "$check" ]; then
+                echo "Error: unknow extension"
+                exit
+            fi
         fi
     fi
 fi
