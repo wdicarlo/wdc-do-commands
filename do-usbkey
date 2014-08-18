@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+mount_point=/mnt
+
+
+function usage() {
+    echo "Usage: $cmd [-h] [-e]"
+    echo "where:"
+    echo "       -h                 : print this help"
+    echo "       -e <folder>        : mount encrypted folder /mnt/<folder>_enc in /mnt/<folder>"
+    exit
+}
+
+folder=""
+
+while getopts he: flag
+do
+    case $flag in
+
+        e)
+            folder=$OPTARG
+#            echo pars is $pars
+            ;;
+        h)
+            usage
+            exit
+#            echo pars is $pars
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+# sticky block special
+usb_dev=/dev/sdb1
+
+# TODO: check if the usb key is present
+
+is_mnt=`ls $mount_point|wc -l`
+
+enc_folder=""
+dec_folder=""
+if [ ! $folder == "" ]; then
+    enc_folder="$mount_point/${folder}_enc"
+    dec_folder="$mount_point/${folder}"
+fi
+
+if [ $is_mnt -eq 0 ]; then
+    echo "Mounting USB key"
+    # mount the usb key
+    do-super mount -t vfat /dev/sdb1 /mnt
+
+    # mount de-crypted folder
+    if [ ! $folder == "" ]; then
+        if [ ! -d $enc_folder ]; then
+            echo "Missing folder $enc_folder"
+            exit
+        fi
+
+        if [ ! -d $dec_folder ]; then
+            echo "Missing folder $dec_folder"
+            exit
+        fi
+        do-sec-mount-folder $enc_folder $dec_folder
+    fi
+else
+    echo "Unmounting USB key"
+    # umount de-crypted folder
+    if [ -d $dec_folder ]; then
+        do-sec-umount-folder $dec_folder
+    fi
+
+    # umount usb key
+    do-super umount /mnt
+fi
