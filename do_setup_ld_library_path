@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# TODO: use in pipes
+#if [ -t 0 ]; then
+#    cmd=`basename $0`
+#    echo "Usage: $cmd must be used in a pipe"
+#    exit
+#fi
+
+# TODO: use named pipe
+#FIFO="/tmp/fifo.$$"
+#if [ ! -p "$FIFO" ]; then
+#    mkfifo "$FIFO"
+#fi
+#
+#rm "$FIFO"
+
+roots="."
+if [ $# -gt 0 ]; then
+    roots="$@"
+fi
+
+export LD_LIBRARY_PATH=""
+for root in $roots
+do
+    PATHS=$(find $root -type f -name "*.so" | do-pipe-folders-paths -e -q | tr "\n" ":";echo .)
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$PATHS"
+done
+
+echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"

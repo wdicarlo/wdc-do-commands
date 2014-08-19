@@ -367,6 +367,7 @@ alias do-activate-project='. ~/bin/do_activate_project'
 alias do-activate-release='. ~/bin/do_activate_release'
 alias do-activate-test='. ~/bin/do_activate_test'
 alias do-setup-env='. ~/bin/do_setup_env -s'
+alias do-setup-ld-library-path='. ~/bin/do_setup_ld_library_path $@'
 
 alias do-history-update='. ~/bin/do_history_update'
 alias do-history-add-last='. ~/bin/do_history_add_last'
