@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
 function usage() {
-    echo "Usage: do-pipe-folders-paths  [-p] [-h]"
+    echo "Usage: do-pipe-folders-paths [-e] [-p] [-h] [-q]"
+    echo "Default: Filter out paths ending with /"
     echo "where:"
-    echo "       -e                 : remove empty paths"
+    echo "       -q                 : quiet"
+    echo "       -e                 : list paths containing files"
     echo "       -p                 : print absolute paths"
     echo "       -h                 : print this help"
 }
@@ -16,10 +18,14 @@ fi
 
 absolute=0
 empty=1
-while getopts eph flag
+quiet=0
+while getopts qeph flag
 do
     case $flag in
 
+        q)
+            quiet=1
+            ;;
         e)
             empty=0
             ;;
@@ -55,4 +61,7 @@ fi
 
 cmd="cat $empty_proc | sort | uniq $postproc"
 
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
 eval $cmd
