@@ -3,9 +3,10 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-I <paths>] <c-file>"
+    echo "Usage: $cmd [[-I<paths>]..] <c-file>"
     echo "where:"
-    echo "       -I                 : include paths"
+    echo "       -d                 : dump tree mode"
+    echo "       -I <path>          : include path"
     echo "       -q                 : quiet"
     exit
 }
@@ -15,15 +16,18 @@ if [ $# == 0 ]; then
     exit
 fi
 
+mode=0  # 0=preprocess, 1=dump-tree
 quiet=0
 paths=""
-while getopts qI: flag
+while getopts dqI: flag
 do
     case $flag in
 
+        d)
+            mode=1
+            ;;
         q)
             quiet=1
-#            echo pars is $pars
             ;;
         I)
             if [ "$paths" == "" ]; then
@@ -31,7 +35,6 @@ do
             else
                 paths="$paths -I$OPTARG"
             fi
-#            echo pars is $pars
             ;;
         ?)
             usage
@@ -41,11 +44,36 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-if [ "$paths" == "" ]; then
-    cmd="gcc -P -E $@"
-else
-    cmd="gcc $paths  -P -E $@"
+if [ ! $# == 1 ]; then
+    usage
+    exit
 fi
+
+file=$1
+if [ ! -f "$file" ]; then
+    echo "Missing file $file"
+    exit
+fi
+
+if [ "$paths" == "" ]; then
+    cmd="gcc "
+else
+    cmd="gcc $paths "
+fi
+
+case $mode in
+    0)
+        cmd="$cmd -P -E $@"
+        ;;
+    1)
+        cmd="$cmd -fdump-tree-cfg $file 2>&1; cat $file*.cfg && rm $file*.cfg"
+        ;;
+    ?)
+        echo "Unknow mode"
+        exit
+        ;;
+esac
+
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
