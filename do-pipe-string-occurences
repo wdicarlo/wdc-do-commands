@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+function usage() {
+    echo "Usage: do-pipe-string-occurrences [-h] [-q] [-r] <pre> <string> <post>"
+    echo "where:"
+    echo "       -h                 : print this help"
+    echo "       -d                 : debug"
+    echo "       -q                 : quiet"
+}
+
+quiet=0
+debug=0
+while getopts qhd flag
+do
+    case $flag in
+        q)
+            quiet=1
+            ;;
+        d)
+            debug=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! $# -eq 3 ]; then
+    usage
+    exit
+fi
+
+pre=$1
+string="$2"
+post=$3
+
+if [ $debug -eq 0 ]; then
+    cmd="cat | grep \"$pre$string$post\"|sed \"s/.*\\($string\\).*/\\1/\"|sort | uniq -c | sort -n"
+else
+    cmd="cat | grep \"$pre$string$post\" | do-pipe-trimmed | sort | uniq -c | sort -n"
+fi
+
+
+
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd
