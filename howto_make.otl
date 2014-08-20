@@ -25,3 +25,9 @@ Example of pattern rule
 	%.dat: %.avsc
 		do-avro random --count 10 --schema-file $< $@
 		do-avro tojson --pretty $@
+Print commands executed by the shell
+	make SHELL="bash -x"
+Print commands without excuting them
+	make -n
+Execute make commands in parallel using <n> different processes
+	make -j<n>
