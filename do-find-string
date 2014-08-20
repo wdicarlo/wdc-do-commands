@@ -5,8 +5,9 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-i] [-b] [-p] [-c ][-r <root>] [-n <depth>] [-f <file-pattern>] <string>"
+    echo "Usage: $cmd [-h] [-i] [-b] [-p] [-c ][-r <root>] [-n <depth>] [-f <file-pattern>] <string>"
     echo "where:"
+    echo "       -h                 : print this help"
     echo "       -i                 : ignore case"
     echo "       -b                 : include binary files"
     echo "       -c                 : just count occurences"
@@ -17,7 +18,6 @@ function usage() {
     echo "       -e <exclude-patt>  : exclude pattern"
     echo "       -a                 : use ack-grep"
     echo "       -q                 : quiet"
-    exit
 }
 
 if [ $# == 0 ]; then
@@ -34,7 +34,7 @@ exclude=""
 quiet=0
 binary=0
 grep_cmd="\grep"
-while getopts abqicpr:n:f:e: flag
+while getopts habqicpr:n:f:e: flag
 do
     case $flag in
         a)
@@ -72,6 +72,10 @@ do
             ;;
         n)
             depth=$OPTARG
+            ;;
+        h)
+            usage
+            exit
             ;;
         ?)
             usage
