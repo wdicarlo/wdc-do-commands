@@ -24,6 +24,9 @@ depth=99
 postproc=""
 exclude=""
 quiet=0
+if [ ! -t 1 ]; then
+    quiet=1
+fi
 strict=0
 
 
