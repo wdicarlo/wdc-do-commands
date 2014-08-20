@@ -3,6 +3,7 @@ Commands to evaluate:
     ss
     mount --bind
     fasd
+    httpie
 Integrate vim notebooks
 Evaluate command history by folder
 Add todo management
