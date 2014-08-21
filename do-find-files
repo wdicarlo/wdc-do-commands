@@ -26,6 +26,10 @@ root="."
 file="*"
 depth=99
 quiet=0
+if [ ! -t 1 ]; then
+    # stdout is not the terminal, so be quiet
+    quiet=1
+fi
 while getopts qir:n:f:s: flag
 do
     case $flag in
