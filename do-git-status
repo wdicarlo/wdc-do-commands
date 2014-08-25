@@ -1,7 +1,7 @@
 #!/usr/bin/env   bash
 
 cmd=`basename $0`
-execmd="git status ."
+execmd="(do-git-log -q | head -5);git status ."
 
 function usage() {
     echo "Usage: $cmd [-u] [-q] <string>"
