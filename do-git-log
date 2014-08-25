@@ -1,4 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-echo "> git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative $@"
+quiet=0
+if [ $# -eq 1 ]; then
+    if [ "$1" == "-q" ]; then
+        quiet=1
+    fi
+fi
+
+
+if [ $quiet -eq 0 ]; then
+    echo "> git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative $@"
+fi
 git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative $@
