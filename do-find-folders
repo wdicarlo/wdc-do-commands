@@ -93,9 +93,9 @@ fi
 
 
 if [ "$gpat" == "" ]; then
-    cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d "
+    cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type d | \grep -v \"\.git\|\.svn\""
     if [ !  $file == "" ]; then
-        cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ dirname @ | sort | uniq"
+        cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | \grep -v \"\.git\|\.svn\" | xargs -I@ dirname @ | sort | uniq"
     fi
 else
     if [ $strict -eq 0 ]; then
