@@ -227,7 +227,7 @@ function last() {
         fi
     fi
     #ls -last $@ | head -20
-    cmd="ls $opts $@ | head -20"
+    cmd="ls $opts $@ 2>/dev/null | head -20"
 
     if [ $quiet -eq 0 ]; then
         echo "> $cmd"
