@@ -375,8 +375,20 @@ alias do-history-add-last='. ~/bin/do_history_add_last'
 alias mkca='make clean all'
 alias mka='make all'
 
+alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
+
+# default proxy setup
 export http_proxy=
 export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
 export rsync_proxy=$http_proxy
 export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+
+if [ -f ~/bin/do_proxy_setup ]; then
+    source  ~/bin/do_proxy_setup
+    echo "http_proxy=$http_proxy"
+    echo "https_proxy=$https_proxy"
+    echo "ftp_proxy=$ftp_proxy"
+    echo "rsync_proxy=$rsync_proxy"
+    echo "no_proxy=$no_proxy"
+fi
