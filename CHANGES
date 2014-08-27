@@ -1,0 +1,265 @@
+Version 0.1.0
+ - Improved do_bash_customization command
+ - Improved do-git-log command
+ - Added do-git-bump-version command
+ - Improved do_bash_customization command
+ - Improved do-find-folders command
+ - Improved do-make command
+ - Improved do-git-status command
+ - Improved do-git-log command
+ - Improved do-cmd-update command
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Added do_bash_add_die_functions command
+ - Updated TODO file
+ - Improved howto_make.otl command
+ - Improved do-find-folders command
+ - Improved do-find-files command
+ - Added do-pipe-string-occurences command
+ - Improved do-pipe-aggregated-lines command
+ - Improved do-find-string command
+ - Added do-setup-ld-library-path command
+ - Improved do-pipe-folders-paths command
+ - Improved do-gcc-preprocess command
+ - Improved do-pipe-folders-paths command
+ - Added do-cmd-list-dependencies command
+ - Added do-usbkey command
+ - Improved do-find-files command
+ - Improved do_bash_customization command
+ - Added do-make command
+ - Improved do-arc-extract-files command
+ - Improved do_cd_bookmark command
+ - Improved do-bookmark command
+ - Improved do-find-folders command
+ - Added do-pipe-num-text-lines command
+ - Improved do_bash_customization command
+ - Improved do-find-string command
+ - Added do-pipe-cntlrless-text command
+ - Improved do-find-folders command
+ - Improved do-pipe-uniq command
+ - Improved do-sys-info command
+ - Improved archiving commands
+ - Added howto_smb.otl file
+ - Added do-smb-share-folder command
+ - Added do-grep-symbols-filename command
+ - Added do-history-edit command
+ - Added do-pipe-folders-paths command
+ - Improved do-cmd-update command
+ - Improved do-cmd-edit command
+ - Renamed commands about do command management
+ - Improved do-find-string command
+ - Added few commands improvements
+ - Added do-bookmark-list-projects command
+ - Added do-bin-add-new command
+ - Added do-git-list-tracked-to-be-ignored command
+ - Improved do-update-cscope-db command
+ - Improved do-build-patch command
+ - Improved do-backup-sav-files command
+ - Added .gitignore
+ - Improved do-find-folders command
+ - Added do-backup-sav-files
+ - Updated TODO file
+ - Added commands to process words in pipes
+ - Improved Vim launcher
+ - Improved do-sec-mount-folder command
+ - Added do-find-text-files command
+ - Improved do-find-folders command
+ - Added commands to mount/unmount the content of a crypted folder
+ - Added history.txt file with some used commands
+ - Added do-history command
+ - Added do-deb-pkg-list command and added support for backports in do-deb-pkg-install command
+ - Added do-git-amend-author command
+ - Added do-git-diff-cached command
+ - Added do-pipe-cmd-to-bash command
+ - Improved do-git-status and do-git-ls commands
+ - Added do-ascii-dump command
+ - Added do-edit-source-files command
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Added do-pipe-aggregated-lines and do-git-list-other-last commands
+ - Added do-pipe-aggregated-lines and do-git-list-other-last commands
+ - Added do-git-help command
+ - Improved do-bookmark command
+ - Added support to colorize output of the make command
+ - Added vim howtos
+ - Minor changes
+ - Added do-filter-empty-lines and do-pipe-trimmed commands
+ - Added do-pipe-uniq and do-pipe-arrays-sizes commands
+ - Minor changes
+ - Improved do-sec-* commands
+ - Improved some bash customization
+ - Added commands do encrypt/decrypt a file
+ - Updated c howtos
+ - Improved do-gcc-preprocess command to manage multiple -I options
+ - Added do-gcc-preprocess command
+ - Added do-pipe-to-howto command
+ - Added howto_c.otl and improved some howto management commands
+ - Added svn howto
+ - Added do-find-word command
+ - Improved do-list-src-files command with option to select the programming language
+ - Improved last command
+ - Added do-pipe-wrapped-text command
+ - Added do-list-src-files command
+ - Renamed some commands about pdf management
+ - Renamed do-list-howtos in do-howto-list
+ - Minor improvements
+ - Improved do-pipe-paths-to-vim command
+ - Added do-pipe-rows command
+ - Improved do_cd_bookmark command
+ - Minor improvement to do-find-files
+ - Added do-pipe-to-line-joiner command
+ - Added do-pipe-to-command command
+ - Minor improvements to various commands
+ - Improved do-howto-print command
+ - Updated git and lua howto files
+ - Added howto_avro.otl
+ - Minor improvements to some commands for pipe processing
+ - Added do-exec-pipe command
+ - Added do-filter-whitespaces command
+ - Added do-pipe-paths-to-vim command
+ - Updated howto_gdb
+ - Renamed do-edit-howto to do-howto-edit and added howto_gdb.txt
+ - Renamed commands about howtos management
+ - Improved do_cd_folder command and updated howto_lua
+ - Added do-date-week-number command
+ - Added do-string-replace-in-files command
+ - Added do-pipe-to-tar command
+ - Solved issue of do_cd_folder command
+ - Improved commands do_cd_folder and do_cd_bookmark
+ - Improved do-locate-folder command
+ - Added do-locate-folder command
+ - Added do-filter-rows-by-terms command
+ - Improved do-git-list-tags command
+ - Improved do-find-string with do-find-string-filtered command
+ - Solved issue in do_create_project to cd into created project
+ - Merged do-rm-securely command
+ - Updated lua howto
+ - Added do-rm-securely command
+ - Improved do-find-files with option to filter by file size
+ - Added do-pipe-cfile-to-vim command
+ - Added do-find-twin-files command
+ - Added do-trim-whitespaces command
+ - Updated TODO and some howto
+ - Added do-encrypt-file and do-decrypt-file commands
+ - Added do-find-notebook command
+ - Updated howto for lua
+ - Added ss command in do-list-netstat script
+ - Added TODO file
+ - Improved do-publishing-files command by copying files maintaining the timestamp
+ - Improved do-publishing-files command by adding option to just add a publishing record
+ - Improved do-publish-files command and other minor changes
+ - Minor changes to do_setup_env and new do-cp command
+ - Added exclude pattern option to do-find-string command
+ - In do-publish-files added option to move the files to publish
+ - Added possibility to remove a bookmark tag and added command do-edit-bookmarks
+ - Improved check of missing commands
+ - Improved tags management in bookmark commands
+ - Added tags support to bookmark commands
+ - Improved do-list-duplicated-symbols command
+ - Solved issue with do-publish-files command
+ - Small improvement to bookmark commands
+ - Minor changes
+ - Renamed do-cd-project into do-activate-project
+ - Small improvement to bookmark commands
+ - Added do-publish-files command to speed repeating copy operations
+ - Improved do-find-string with option to just count the occurences of the string
+ - Added command do-find-file-upward
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Improved do-print-file-path command
+ - Improve do-xephyr-awesome command
+ - Added awesome windows manager commands
+ - Filtered missing folders in bookmarks commands
+ - Added do-exec-in-folders command
+ - Added do-search-stackoverflow command
+ - Added do-exec-parametric-command command
+ - Added do-list-duplicated-symbols command
+ - Small improvements to bookmark and project commands
+ - Added do-pipe-to-cmd command
+ - Added do-ls-octal-perms command
+ - Added command do-bookmark-list
+ - Improved do-bookmark command
+ - Improved commands to manage folder bookmarks
+ - Improved do-cd-bookmark and do-bookmark commands
+ - Improved do-ls-last-file command
+ - Added initial version of do-chroot command
+ - Solved minor issue in do-git-find-best-match-release command
+ - Improved do_crete_project command
+ - Improved output of do-gits-print-rev command
+ - Improved command do-select-column
+ - Avoided to store the same bookmark with do-bookmark command
+ - Added support for newest subversion repositories in gohome function
+ - Solved issue with parameter processing of do-cd-bookmark command
+ - Improvements to commands for bookmarks and lua
+ - Added commands to manage bookmarks of folders and to cd into the specified file/folder path
+ - Added do-grep-less command
+ - Added lua commands do-lua and do-luarocks
+ - Added lua howto file
+ - Added do-rename-files command
+ - Improved do-screen-serial command
+ - Added do-gits-print-rev command
+ - Added proxy environment variables in the bash customization script
+ - Added do-compare-folders command
+ - Added do-filter-rows command
+ - Added do-git-find-best-match-release command
+ - Added lua commands
+ - Improved do-screen-serial command
+ - Minor changes to do-update-cscope-db
+ - Minor changes to do-find-string
+ - Added do-git-log-file command
+ - Added do-grep-{end|begin} commands
+ - Added do-untar command
+ - :Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Added do-git-print-user-profile
+ - Added do-print-file-path command
+ - Added do-du command
+ - Added do-screen-serial command
+ - Changes few referenced folders
+ - Minor changes
+ - Added do-sql-create-db
+ - Added do-create-project
+ - Minor improvements
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Solved issue with do-git-export command and improved do-find-dos-files
+ - Solved issue with do-git-export command and improved do-find-dos-files
+ - Improved do-wiggle-files command
+ - Completed do-find-do-command
+ - Added do-find-dos-files and do-grep-pointers
+ - Added alias to use vim with command vi
+ - Added do-cd-folder and renamed other do-cd-xxx commands
+ - Improvements to several commands and few additions
+ - Improved do-tar-folder
+ - Added commands to add user to the system
+ - Renamed do-git-crete-clone-command
+ - Added command do-edit-paint
+ - Improved management of active test
+ - Added do-grep-context to filter a line ad its context
+ - Added do-git-conf-author to specify the author of a git tree
+ - Added system command to add user and the bash customization
+ - Minor changes
+ - Renamed do-git-create-clone-command to do-git-print-clone-command
+ - Added do-edit-paint
+ - Improved do-tar-folder
+ - Removed absolute paths from do_bash_customization
+ - Solved issue causing do command with admin privileges to be not run in ubuntu
+ - Added many new commands and minor chages to existing one
+ - Minor changes
+ - Added do-git-clone command to force author settings locally
+ - Improved do-list-netstatus
+ - Minor changes
+ - Avoid to change environment variables in subfolders and other minor changes
+ - Added do-pipe-to-vim command
+ - Added do-list-netstatus command
+ - Improved bash environment variables management
+ - Added do-find-files command and refactored do-prepare-release
+ - Added new do commands to clean and update debian system
+ - Added git how to
+ - Improved do-find-string command
+ - Added commands specific for Debian distribution
+ - Added many other commands and adjusted some other
+ - Some improvements to existing scripts
+ - Added git command to generate the clone command
+ - New commands and some minor changes to others
+ - Updated bash customization and added command to list matching files
+ - New commands and improved bash customization
+ - Improved listining of git tags
+ - Initial scripts
+ - Initial commit
+
