@@ -7,3 +7,4 @@ do-find-text-files | xargs -I@  grep "sizeof.*SVI_[a-zA-Z_]*_msg" @ | do-pipe-wo
 cat SVI_msgs.txt | sed "s/SVI\|msg//g" | tr -d "_" | do-pipe-splitted-words [A-Z] | do-pipe-uppercase 
 cat XMLstruct.c | grep "sizeof.*Req_msg" -A 13 | do-pipe-trimmed | grep "Req_msg\|REQ_OPC" 
 do-find-files -q "*.d" | do-pipe-folders-paths | grep -v "obj" | xargs -I@ svn propset svn:ignore "*.d"  @
+cat svi_schemas.h | grep OPC | grep -v _NTF_ | sort | sed "s/RE[QS]_OPC//" | uniq -c | sort -n | grep -v " 1 " | tr -d ","
