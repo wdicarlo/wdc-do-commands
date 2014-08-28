@@ -14,6 +14,41 @@ export SHARED_FOLDER=/media/sf_Shared
 #set -o vi
 echo "Customizing bash"
 
+# spinner got from http://fitnr.com/showing-a-bash-spinner.html
+# When you have a task to run that will take a large (or unknown) amount of time invoke it in a background subshell like this:
+# 
+# (a_long_running_task) &
+# 
+# Then, immediately following that invocation, call the spinner and pass it the PID of the subshell you invoked.
+# 
+# spinner $!
+# 
+# The $! is a bash internal variable for the PID of the last job run in the background. 
+#
+# TODO: evaluate pv (pipe viewer) command
+#
+spinner()
+{
+    local pid=$1
+    local delay=0.175
+    local spinstr='|/-\'
+    tput civis;
+    local infotext=$2
+    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+        local temp=${spinstr#?}
+        printf " [%c] %s" "$spinstr" "$infotext"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b\b"
+        for i in $(seq 1 ${#infotext}); do
+            printf "\b"
+        done
+    done
+    printf " \b\b\b\b"
+    tput cnorm;
+}
+alias spinner='sleep 3 && spinner $! "Doing something big..."'
+
 make()
 {
   # see http://stackoverflow.com/questions/6436563/how-can-i-highlight-the-warning-and-error-lines-int-the-make-output
