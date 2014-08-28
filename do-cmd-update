@@ -11,15 +11,15 @@ fi
 
 cd $bin_dir
 
-if [ ! -f $1 ]; then
-    echo "Missing file in $bin_dir/$1"
-    exit
-fi
-
 file=0
 if [ "$1" == "-f" ]; then
     file=1
     shift
+fi
+
+if [ ! -f $1 ]; then
+    echo "Missing file in $bin_dir/$1"
+    exit
 fi
 
 # TODO: check if the command is already present in the git repository

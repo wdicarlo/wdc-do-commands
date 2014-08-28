@@ -77,6 +77,11 @@ if [ $# -eq 1 ]; then
             opts="--noplugin $1"
             shift
         fi
+    else
+        if [ -d "$1" ]; then
+            opts="$1"
+            shift
+        fi
     fi
 fi
 
