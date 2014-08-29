@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# -eq 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <sd-devname> <dest-file>"
+    exit
+
+fi
+
+
+cmd="do-super dd if=/dev/$1  of=$2"
+
+echo "> $cmd"
+# TODO: add spinner 
+eval $cmd
