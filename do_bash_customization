@@ -27,7 +27,7 @@ echo "Customizing bash"
 #
 # TODO: evaluate pv (pipe viewer) command
 #
-spinner()
+function spinner()
 {
     local pid=$1
     local delay=0.175
@@ -49,7 +49,7 @@ spinner()
 }
 alias spinner='sleep 3 && spinner $! "Doing something big..."'
 
-make()
+function make()
 {
   # see http://stackoverflow.com/questions/6436563/how-can-i-highlight-the-warning-and-error-lines-int-the-make-output
 
@@ -344,12 +344,12 @@ PROMPT_COMMAND=prompt_command
 if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
     #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
     #PS1='\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
-    PS1='\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]\$ '
+    PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]\$ '
 else
     #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
     #PS1='`basename \w` \$ '
     #PS1='$TYPE:$PROJECT:\W \$ '
-    PS1='$TYPE:$PROJECT:$LOCATION \$ '
+    PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
 fi
 
 # enable color support of ls and also add handy aliases
