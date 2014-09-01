@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 
-if [ ! $# == 1 ]; then
+if [ ! $#  -gt 0 ]; then
     cmd=`basename $0`
-    echo "Usage: $cmd <projectname>"
+    echo "Usage: $cmd <projectname> [<env>]"
     return
 fi
 
@@ -17,6 +17,27 @@ if [ -d "$PROJECTS/$1" ]; then
     return
 fi
 
-mkdir "$PROJECTS/$1"
+env_root=`echo ~/bin`
+if [ $# -gt 1 ]; then
+    env="$2"
+    n=`ls -1 $env_root/do_setup_env_for_* | grep $env | wc -l`
+    if [ $n -eq 1 ]; then
+        mkdir "$PROJECTS/$1"
+        echo "do-setup-env $env" > "$PROJECTS/$1/.bash_env"
+    else 
+        if [ $n -gt 1 ]; then
+            echo "Specified ambiguous environment name"
+            ls -1 $env_root/do_setup_env_for_* | sed "s#$env_root/do_setup_env_for_##"| grep $env
+        else
+            echo "Specified missing environment name"
+            echo "Available environment name:"
+            ls -1 $env_root/do_setup_env_for_* | sed "s#$env_root/do_setup_env_for_##"
+        fi
+        return
+    fi
+else
+    mkdir "$PROJECTS/$1"
+fi
+
 
 source ~/bin/do_activate_project $1
