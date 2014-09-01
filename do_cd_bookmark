@@ -83,9 +83,9 @@ fi
 
 if [ $tags == "1" ]; then
     if [ "$PROJECT" == "" ]; then
-        cat $bookmarks_file | grep -v $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+        cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep -v $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
     else
-        cat $bookmarks_file | grep $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+        cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
     fi
     return
 fi
@@ -113,12 +113,12 @@ bookmarks=""
 if [ $global == "0" ]; then
     #bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| sed "s#$PROJECT_PATH/##"`
     #bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$PROJECT_PATH/##"`
-    bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
+    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
 else
     # TODO: allows jump into another project's folder by evaluating its .bash_env file
     #bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'`
     #bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##"`
-    bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
+    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
 fi
 
 if [ "$list" == "1" ]; then
