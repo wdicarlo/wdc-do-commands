@@ -352,6 +352,9 @@ else
     PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
 fi
 
+
+alias do-bash-customization='. ~/bin/do_bash_customization'
+
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
