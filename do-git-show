@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+function usage() {
+    cmd=`basename $0`
+    echo "Usage: $cmd <rev> [<path>]"
+}
+
+if [ ! $# -gt 0 ]; then
+    usage
+    exit
+fi
+
+rev=$1
+shift
+
+cmd="git show $rev:$@"
+echo "> $cmd"
+eval $cmd
+
