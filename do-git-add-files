@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+
+function usage() {
+    cmd=`basename $0`
+    echo "Usage: $cmd [-n] <file-to-add>"
+    echo "             -n              : dry-run"
+    echo ""
+}
+
+
+if [ ! $# -gt 0 ]; then
+    usage
+    exit
+fi
+
+
+proc="xargs -I@ git add @ "
+if [ "$1" == "-n" ]; then
+    proc="cat"
+    shift
+fi
+
+
+cmd="do-git-ls | grep ?? | grep $1 | do-select-columns 2 | $proc "
+echo "> $cmd"
+eval $cmd
