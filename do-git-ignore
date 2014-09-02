@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+
+function usage() {
+    cmd=`basename $0`
+    echo "Usage: $cmd [-n] [-l] <file-extension-to-ignore>"
+    echo "             -n              : dry-run"
+    echo "             -l              : list .gitignore files"
+    echo ""
+    echo "          example: $cmd o"
+}
+
+
+if [ ! $# -gt 0 ]; then
+    usage
+    exit
+fi
+
+out="@/.gitignore"
+if [ "$1" == "-n" ]; then
+    out="/dev/tty"
+    shift
+fi
+
+cmd="do-git-ls | grep ?? | do-select-columns 2 | grep \"\.$1\" | do-pipe-folders-paths -q -e | xargs -I@ bash -c \"echo -e \\\"*.$1\\n\\\" >> $out\""
+if [ "$1" == "-l" ]; then
+    cmd="do-find-files -q .gitignore | xargs -I@ sh -c \"echo @;cat @\""
+fi
+
+echo "> $cmd"
+eval $cmd
