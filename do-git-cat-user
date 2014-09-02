@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+
+
+cat .git/config | grep user -A 2
