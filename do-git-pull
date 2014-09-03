@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# TODO: use git fetch to check if changes are available
+
+git stash save
+git pull origin
+git stash pop
