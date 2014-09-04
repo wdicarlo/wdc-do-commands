@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 
+if [ $# == 0 ]; then
 # return the week number of today
-date +%V
+    date +%V
+else
+    # YYYYMMDD
+    date -d "$1" +%V
+fi
