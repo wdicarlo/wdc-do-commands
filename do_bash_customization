@@ -14,6 +14,13 @@ export SHARED_FOLDER=/media/sf_Shared
 #set -o vi
 echo "Customizing bash"
 
+function edit_last()
+{
+cmd=`history |grep "^[0-9]* *vi "|tail -1|sed "s/^[0-9]* *//"`
+echo "> $cmd"
+eval $cmd
+}
+
 # spinner got from http://fitnr.com/showing-a-bash-spinner.html
 # When you have a task to run that will take a large (or unknown) amount of time invoke it in a background subshell like this:
 # 
@@ -417,6 +424,8 @@ alias do-history-add-last='. ~/bin/do_history_add_last'
 
 alias mkca='make clean all'
 alias mka='make all'
+
+alias do-edit-last='edit_last'
 
 alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
 
