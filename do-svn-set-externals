@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=`basename $0`
+    echo "Usage: $cmd <name> <url>"
+
+}
+
+if [ ! $# -eq 2 ]; then
+    usage
+    exit
+fi
+
+
+svn propset svn:externals "$1  $2" .
+
+svn propget svn:externals .
