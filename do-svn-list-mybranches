@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=`basename $0`
+    echo "Usage: $cmd "
+
+}
+
+if [ $# -gt 0 ]; then
+    if [ $1 == "-h" ]; then
+        usage
+        exit
+    fi
+fi
+
+
+if [ -z $SVN_USER ]; then
+    echo "SVN_USER not defined"
+    exit
+fi
+
+repo=$(svn info 2>&1 | grep Root | grep Repo | do-select-columns 3)
+
+if [ $repo == "" ]; then
+    echo "Not in a Subversion working copy"
+    exit
+fi
+
+branches="$repo/branches/$SVN_USER/"
+
+svn ls $branches
