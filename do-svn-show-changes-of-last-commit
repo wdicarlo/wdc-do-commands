@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=`basename $0`
+    echo "Usage: $cmd <file-url>"
+}
+
+if [ ! $# -eq 1 ]; then
+    usage
+    exit
+fi
+
+if [ ! -f $1 ]; then
+    echo "Missing file: $1"
+    exit
+fi
+
+rev=$(svn info $1 | grep "Last Changed Rev" | awk '{print $4 }')
+
+svn diff -c $rev $1
