@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=`basename $0`
+    echo "Usage: $cmd <new-branch-name>"
+
+}
+
+if [ $# -gt 0 ]; then
+    if [ $1 == "-h" ]; then
+        usage
+        exit
+    fi
+else
+    usage
+    exit
+fi
+
+
+if [ -z $SVN_USER ]; then
+    echo "SVN_USER not defined"
+    exit
+fi
+
+# TODO: check $1 is a valid branch name without spaces and capitals
+
+repo=$(svn info 2>&1 | grep Root | grep Repo | do-select-columns 3)
+
+if [ $repo == "" ]; then
+    echo "Not in a Subversion working copy"
+    exit
+fi
+
+#replace spaces
+name=$(echo $@|tr ' ' '_')
+branches="$repo/branches/$SVN_USER"
+branch="$branches/branch_${SVN_USER}_${name}_dev"
+# replace capitals
+branch=$(echo $branch |  tr '[:upper:]' '[:lower:]')
+wc=$(svn info 2>&1 | grep "^URL" | do-select-columns 2)
+
+
+cmd="svn copy $wc $branch"
+
+echo "> $cmd"
+read -p "Create New Branch? <y|n>" ans
+if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+    eval $cmd
+    cmd="svn switch $branch"
+    echo "> $cmd"
+    read -p "Switch to Branch? <y|n>" ans
+    if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+        eval $cmd
+        svn info
+    else
+        do-svn-list-mybranches
+    fi
+fi
