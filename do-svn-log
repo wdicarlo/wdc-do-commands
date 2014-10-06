@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+verbose=0
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-v" ]; then
+        verbose=1
+    fi
+fi
+
+svn info | grep "^URL"
+if [ $verbose -eq 0 ]; then
+    svn log -v -r1:HEAD | grep "^r[0-9]*" -B2 | grep -v "^--"| sed "s/^$/No comment/g"| while read line1; do read line2; echo "$line1 | $line2"; done
+else
+    svn log -v
+fi
