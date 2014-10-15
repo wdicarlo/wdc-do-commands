@@ -172,7 +172,7 @@ fi
 cpath=`pwd`
 
 # find current path
-list=`cat "$store"|grep "$cpath "`
+list=`cat "$store" | xargs -I@ sh -c "echo \"@\"" |grep "$cpath "`
 
 if [ $# == 1 ]; then
     list=`echo "$list"|grep $1`
@@ -184,7 +184,7 @@ if [ $# == 0 ]; then
         echo "____________________________________________"
         echo "You must be in one of the following folders:"
         echo "--------------------------------------------"
-        cat $store| awk '{ print $1 }'
+        cat $store | xargs -I@ sh -c "echo \"@\"" | xargs -I@ sh -c "echo \"@\"" | awk '{ print $1 }'
         exit
     fi
     n=`echo "$list"|wc -l`
