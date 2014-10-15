@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+if [ $# -gt 0 ]; then
+    if [ $1 == "-h" ]; then
+        cmd=`basename $0`
+        echo "Usage: $cmd [YYYYMMDD]"
+        exit
+    fi
+fi
+
 if [ $# == 0 ]; then
 # return the week number of today
     date +%V
