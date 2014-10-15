@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+do-find-files "*.lua" | xargs -I@ sh -c "echo @;cat @ |  grep \"[a-zA-Z_0-9]*\.[a-zA-Z_]*()\"" | \grep --color "^\|[a-zA-Z_0-9]*\.[a-zA-Z_]*()" 
