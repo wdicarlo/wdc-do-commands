@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-v] [-l] [-c] [-g] [<lua-parameters>]"
+    echo "where:"
+    echo "       -h                 : help"
+    echo "       -v                 : verbose"
+    echo "       -l                 : trace lines"
+    echo "       -c                 : trace calls"
+    echo "       -g                 : trace globals"
+    echo "       -p <pkg-path>      : package path to add"
+    exit
+}
+
+
+opts=
+verbose=0
+
+if [ "$WEB_HOME" == "" ]; then
+   echo "Missing WEB_HOME environment variable"
+   exit
+fi
+
+if [ ! -d $WEB_HOME ]; then
+   echo "Missing WEB_HOME folder: $WEB_HOME"
+   exit
+fi
+
+cd $WEB_HOME
+
+if [ ! -f start.lua ]; then
+   #if [ ! -d WebCT ]; then
+      echo "Cannot find start.lua file"
+      exit
+   #fi
+   #cd WebCT 
+fi
+
+export WEBCT_HOME=`pwd`
+export LUA_HOME=${WEBCT_HOME}/..
+export LUA_PATH=""
+export LUA_TESTS=$LUA_HOME/tests
+
+while getopts hvlcgp: flag
+do
+    case $flag in
+
+        v)
+            verbose=1
+            ;;
+        l)
+            opts+=" -ltrace-lines"
+            ;;
+        c)
+            opts+=" -ltrace-calls"
+            ;;
+        g)
+            opts+=" -ltrace-globals"
+            ;;
+        p)
+            pkg_path=$OPTARG
+            if [ -d "$pkg_path" ]; then
+                echo "Added path: $pkg_path"
+                update_path $pkg_path
+            fi
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+export LUA_PATH=`echo "?.lua;?/init.lua;$LUA_HOME/share/?.lua;$LUA_HOME/share/?/init.lua;$LUA_TESTS/?.lua;$WEBCT_HOME/WebCT/?.lua"`
+export LUA_CPATH=`echo "$LUA_HOME/lib/?.so;$LUA_HOME/lib/?/?.so;./?.so;?/?.so"`
+
+
+export LUA_INIT=`echo "package.path = '${LUA_PATH};'..package.path"`
+
+
+if [ "$verbose" == 1 ]; then
+    echo "PATH      = $PATH"
+    echo "LUA_PATH  = $LUA_PATH"
+    echo "LUA_CPATH = $LUA_CPATH"
+    echo "LUA_INIT  = $LUA_INIT"
+    echo "WEBCT_HOME=$WEBCT_HOME"
+    echo "options   = $opts"
+    echo
+fi
+
+
+LUA_PATH=$LUA_PATH LUA_CPATH=$LUA_CPATH LD_LIBRARY_PATH=$LUA_HOME/lib $LUA_HOME/bin/lua $WEBCT_HOME/start.lua 
+
