@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+svn propget svn:mergeinfo
