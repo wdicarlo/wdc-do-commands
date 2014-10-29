@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+svn diff -x --ignore-all-space $@
