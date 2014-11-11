@@ -983,7 +983,7 @@ autocmd BufReadPost *
 "installing/getting latest version of vim on Linux (replace tiny-vim) [N]
 yum install vim-common vim-enhanced vim-minimal
 ----------------------------------------
-# using gVIM with Cygwin on a Windows PC
+" using gVIM with Cygwin on a Windows PC
 if has('win32')
 source $VIMRUNTIME/mswin.vim
 behave mswin
@@ -1002,17 +1002,25 @@ __END__
 " read webpage source html into vim
 gvim http://www.zzapper.co.uk/vimtips.html &
 ----------------------------------------
-updated version at http://www.zzapper.co.uk/vimtips.html
+" updated version at http://www.zzapper.co.uk/vimtips.html
 ----------------------------------------
-Please email any errors, tips etc to
-vim@rayninfo.co.uk
+" Please email any errors, tips etc to
+" vim@rayninfo.co.uk
 " Information Sources
 ----------------------------------------
-www.vim.org
-Vim Wiki *** VERY GOOD *** [N]
-Vim Use VIM newsgroup [N]
-comp.editors
-groups.yahoo.com/group/vim "VIM" specific newsgroup
-VIM Webring
-VimTips PDF Version (PRINTABLE!)
-Vimtips in Belarusian 
+" www.vim.org
+" Vim Wiki *** VERY GOOD *** [N]
+" Vim Use VIM newsgroup [N]
+" comp.editors
+" groups.yahoo.com/group/vim "VIM" specific newsgroup
+----------------------------------------
+" replace a column of numbers with a sequence
+" Ex.
+"     UniqueID2       = lview.focusedItem.subItems.opIndex(0).text;
+"     Parent          = lview.focusedItem.subItems.opIndex(0).text;
+"     Children        = lview.focusedItem.subItems.opIndex(0).text;
+" 
+:'<,'>s/opIndex(\zs\d\+\ze)/\=line('.')-line("'<") " or
+:let n=0 | g/opIndex(\zs\d+/s//\=n/|let n+=1 " or
+" search the pattern with / and then
+:let n=0|g//s//\=n/|let n+=1 
