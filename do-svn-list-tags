@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=`basename $0`
+    echo "Usage: $cmd [-r]"
+    echo "             -r          : list releases tags"
+}
+
+subpath="tags"
+if [ $# -gt 0 ]; then
+    if [ $1 == "-h" ]; then
+        usage
+        exit
+    fi
+    if [ $1 == "-r" ]; then
+      subpath="releases"
+    fi
+
+
+fi
+
+
+
+repo=$(svn info 2>&1 | grep Root | grep Repo | do-select-columns 3)
+
+if [ $repo == "" ]; then
+    echo "Not in a Subversion working copy"
+    exit
+fi
+
+branches="$repo/$subpath"
+
+svn ls $branches
