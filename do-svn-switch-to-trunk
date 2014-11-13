@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=`basename $0`
+    echo "Usage: $cmd [-h]"
+    echo "            -h            : this help"
+
+}
+
+paths=0
+all=0
+
+while getopts h flag
+do
+   case $flag in
+      q)
+         quiet=1
+         ;;
+      h)
+         usage
+         exit
+         ;;
+      ?)
+         usage
+         exit
+         ;;
+   esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! -d .svn ]; then
+   echo "Not in the root folder of a subversion repository"
+   exit
+fi
+
+repo=$(svn info 2>&1 | grep Root | grep Repo | do-select-columns 3)
+if [ $repo == "" ]; then
+    echo "Not in a Subversion working copy"
+    exit
+fi
+
+curr=$(svn info | grep "^URL" | do-select-columns 2)
+trunk="$repo/trunk"
+
+if [ "$curr" == "$trunk" ]; then
+   echo "Already in the trunk"
+   exit
+fi
+
+nc=$(svn status | grep "^M" | wc -l)
+if [ $nc -gt 0 ]; then
+   echo "There are uncommitted changes"
+   svn status | grep "^M"
+   exit
+fi
+
+svn switch $trunk
