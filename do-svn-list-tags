@@ -3,23 +3,45 @@
 function usage() 
 {
     cmd=`basename $0`
-    echo "Usage: $cmd [-r]"
+    echo "Usage: $cmd [-h] [-r] [-p]"
+    echo "             -h          : this help"
     echo "             -r          : list releases tags"
+    echo "             -p          : print full path"
 }
 
 subpath="tags"
+paths=0
+while getopts hrp flag
+do
+   case $flag in
+      r)
+         subpath="releases"
+         ;;
+
+      p)
+         paths=1
+         ;;
+      q)
+         quiet=1
+         ;;
+      h)
+         usage
+         exit
+         ;;
+      ?)
+         usage
+         exit
+         ;;
+   esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+filter="^"
 if [ $# -gt 0 ]; then
-    if [ $1 == "-h" ]; then
-        usage
-        exit
-    fi
-    if [ $1 == "-r" ]; then
-      subpath="releases"
-    fi
-
-
+   filter=$1
+   shift
 fi
-
 
 
 repo=$(svn info 2>&1 | grep Root | grep Repo | do-select-columns 3)
@@ -29,6 +51,10 @@ if [ $repo == "" ]; then
     exit
 fi
 
-branches="$repo/$subpath"
+branches="$repo/$subpath/"
 
-svn ls $branches
+if [ $paths -eq 0 ]; then
+   svn ls $branches | \grep --color "$filter"
+else
+   svn ls $branches | sed "s#^#$branches#" | \grep --color "$filter"
+fi
