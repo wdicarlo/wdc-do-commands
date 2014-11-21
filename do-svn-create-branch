@@ -7,16 +7,21 @@ function usage()
     echo "       Create the branch <repo>/branches/[<author>]/branch_[<author>_]<branch-name>_dev"
     echo "            -h            : this help"
     echo "            -g            : global branch"
+    echo "            -s            : switch to branch"
 }
 
 paths=0
 global=0
+switch=0
 
-while getopts hg flag
+while getopts hgs flag
 do
    case $flag in
       g)
          global=1
+         ;;
+      s)
+         switch=1
          ;;
       q)
          quiet=1
@@ -77,4 +82,22 @@ if [ ! -d .svn ]; then
    exit
 fi
 
-echo "svn copy ${repo}/trunk ${branches}/${name}"
+url=$(svn info 2>&1 | grep "^URL" | do-select-columns 2)
+if [ ! $url == "$repo/trunk" ]; then
+   echo "Not in the working copy of the trunk"
+   exit
+fi
+
+
+changes=$(svn status | grep -v "^?" | wc -l )
+
+if [ $changes -gt 0 ]; then
+   echo "Working copy with changes"
+   exit
+fi
+
+eval "svn copy ${repo}/trunk ${branches}/${name}"
+
+if [ $switch -eq 1 ]; then
+   eval "svn switch ${branches}/${name}"
+fi
