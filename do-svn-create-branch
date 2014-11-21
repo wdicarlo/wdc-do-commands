@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=`basename $0`
+    echo "Usage: $cmd [-h] [-g] <branch-name>"
+    echo "       Create the branch <repo>/branches/[<author>]/branch_[<author>_]<branch-name>_dev"
+    echo "            -h            : this help"
+    echo "            -g            : global branch"
+}
+
+paths=0
+global=0
+
+while getopts hg flag
+do
+   case $flag in
+      g)
+         global=1
+         ;;
+      q)
+         quiet=1
+         ;;
+      h)
+         usage
+         exit
+         ;;
+      ?)
+         usage
+         exit
+         ;;
+   esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+# filter="^"
+# if [ $# -gt 0 ]; then
+#    filter=$1
+#    shift
+# fi
+
+if [ ! $# -eq 1 ]; then
+   echo "Bad input parameters"
+   usage
+   exit
+fi
+
+repo=$(svn info 2>&1 | grep Root | grep Repo | do-select-columns 3)
+if [ $repo == "" ]; then
+    echo "Not in a Subversion working copy"
+    exit
+fi
+
+# TODO: replace whitespaces with underscores
+
+branches="$repo/branches"
+name="branch_${1}_dev"
+if [ ! -z $SVN_USER ]; then
+   branches="$repo/branches/$SVN_USER"
+   name="branch_${SVN_USER}_${1}_dev"
+fi
+
+if [ $global -eq 1 ]; then
+   branches="$repo/branches"
+   name="branch_${1}_dev"
+fi
+
+
+# if [ $filter == "^" ]; then
+#    echo "Repository: $repo"
+#    echo "User:       $SVN_USER"
+#    echo ""
+# fi
+
+if [ ! -d .svn ]; then
+   echo "Not in the root folder of the subversion repository"
+   exit
+fi
+
+echo "svn copy ${repo}/trunk ${branches}/${name}"
