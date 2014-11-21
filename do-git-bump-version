@@ -13,6 +13,8 @@
 # a file called CHANGES (under the title of the new version
 # number) and create a GIT tag.
 
+remote=$(git remote -v|head -1| awk '{print $1}')
+
 if [ -f VERSION ]; then
     BASE_STRING=`cat VERSION`
     BASE_LIST=(`echo $BASE_STRING | tr '.' ' '`)
@@ -38,7 +40,9 @@ if [ -f VERSION ]; then
     git add CHANGES VERSION
     git commit -m "Version bump to $INPUT_STRING"
     git tag -a -m "Tagging version $INPUT_STRING" "v$INPUT_STRING"
-    git push origin --tags
+    if [ $remote == "origin" ]; then
+       git push origin --tags
+    fi
 else
     echo "Could not find a VERSION file"
     read -p "Do you want to create a version file and start from scratch? [y]" RESPONSE
@@ -56,7 +60,9 @@ else
         git add VERSION CHANGES
         git commit -m "Added VERSION and CHANGES files, Version bump to v0.1.0"
         git tag -a -m "Tagging version 0.1.0" "v0.1.0"
-        git push origin --tags
+        if [ $remote == "origin" ]; then
+           git push origin --tags
+        fi
     fi
 
 fi
