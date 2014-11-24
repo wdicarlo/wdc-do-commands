@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+
+cmd=`which bc`
+if [ -z "$cmd" ]; then
+    echo "Missing bc command"
+    exit
+fi
+
+cat |  paste -sd+ | bc
+
