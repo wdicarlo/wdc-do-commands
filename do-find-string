@@ -34,6 +34,9 @@ exclude=""
 quiet=0
 binary=0
 grep_cmd="\grep"
+if [ ! -t 1 ]; then
+    quiet=1
+fi
 while getopts habqicpr:n:f:e: flag
 do
     case $flag in
@@ -91,10 +94,12 @@ bin_filter="| xargs file | grep text | cut -d: -f1"
 if [ $binary -eq 1 ]; then
     bin_filter=""
 fi
+
+sav_filter="| grep -v \".sav$\""
 if [ "$exclude" == "" ]; then
-    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" $bin_filter | xargs -I@ $grep_cmd --color \"$pars\" \"$string\" @"
+    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" $bin_filter $sav_filter | xargs -I@ $grep_cmd --color \"$pars\" \"$string\" @"
 else
-    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" $bin_filter | xargs -I@ sh -c \"$grep_cmd --color \\\"$pars\\\" \\\"$string\\\" @| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
+    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" $bin_filter $sav_filter | xargs -I@ sh -c \"$grep_cmd --color \\\"$pars\\\" \\\"$string\\\" @| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
 fi
 if [ ! "$postproc" == "" ]; then
     cmd+="|$postproc"
