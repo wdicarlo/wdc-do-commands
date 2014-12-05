@@ -40,7 +40,7 @@ if [ -f VERSION ]; then
     git add CHANGES VERSION
     git commit -m "Version bump to $INPUT_STRING"
     git tag -a -m "Tagging version $INPUT_STRING" "v$INPUT_STRING"
-    if [ $remote == "origin" ]; then
+    if [ "$remote" == "origin" ]; then
        git push origin --tags
     fi
 else
@@ -60,7 +60,7 @@ else
         git add VERSION CHANGES
         git commit -m "Added VERSION and CHANGES files, Version bump to v0.1.0"
         git tag -a -m "Tagging version 0.1.0" "v0.1.0"
-        if [ $remote == "origin" ]; then
+        if [ "$remote" == "origin" ]; then
            git push origin --tags
         fi
     fi
