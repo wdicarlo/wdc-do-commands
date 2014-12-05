@@ -64,6 +64,7 @@
 :%s//joe/igc                : Substitute what you last searched for [N]
 :%s/~/sue/igc               : Substitute your last replacement string [N]
 :%s/\r//g                   : Delete DOS returns ^M
+:%s/^M//g                   : Delete DOS returns ^M, type <ctrl-v><ctrl-m> to get ^M
 " Is your Text File jumbled onto one line? use following
 :%s/\r/\r/g                 : Turn DOS returns ^M into real returns
 :%s=  *$==                  : delete end of line blanks
@@ -1024,3 +1025,6 @@ gvim http://www.zzapper.co.uk/vimtips.html &
 :let n=0 | g/opIndex(\zs\d+/s//\=n/|let n+=1 " or
 " search the pattern with / and then
 :let n=0|g//s//\=n/|let n+=1 
+" hide dos carriage return
+:match Ignore /\r$/
+
