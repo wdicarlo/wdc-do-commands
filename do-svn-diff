@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 
 
-svn diff -x --ignore-all-space $@
+cmd="svn diff -x --ignore-all-space $@"
+echo "> $cmd"
+eval $cmd
