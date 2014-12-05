@@ -3,18 +3,20 @@
 function usage() 
 {
     cmd=`basename $0`
-    echo "Usage: $cmd [-h] [-g] <branch-name>"
+    echo "Usage: $cmd [-h] [-g] [-r] <branch-name>"
     echo "       Create the branch <repo>/branches/[<author>]/branch_[<author>_]<branch-name>_dev"
     echo "            -h            : this help"
     echo "            -g            : global branch"
+    echo "            -r            : create release tag"
     echo "            -s            : switch to branch"
 }
 
 paths=0
 global=0
 switch=0
+release=0
 
-while getopts hgs flag
+while getopts hgsr flag
 do
    case $flag in
       g)
@@ -22,6 +24,9 @@ do
          ;;
       s)
          switch=1
+         ;;
+      r)
+         release=1
          ;;
       q)
          quiet=1
@@ -70,6 +75,10 @@ if [ $global -eq 1 ]; then
    name="branch_${1}_dev"
 fi
 
+if [ $release -eq 1 ]; then
+   branches="$repo/releases"
+   name="${1}"
+fi
 
 # if [ $filter == "^" ]; then
 #    echo "Repository: $repo"
@@ -96,8 +105,24 @@ if [ $changes -gt 0 ]; then
    exit
 fi
 
-eval "svn copy ${repo}/trunk ${branches}/${name}"
+
+if [ $release -eq 1 ]; then
+   echo "Creating release: ${branches}/${name}"
+   read -p "Are you sure? Yes/[no] " answer
+   if [ ! "$answer" == "Yes" ]; then
+      echo "Aborted release creation!"
+      exit
+   fi
+fi
+
+cmd="svn copy ${repo}/trunk ${branches}/${name}"
+echo "> $cmd"
+#eval "svn copy ${repo}/trunk ${branches}/${name}"
+eval "$cmd"
 
 if [ $switch -eq 1 ]; then
-   eval "svn switch ${branches}/${name}"
+   #eval "svn switch ${branches}/${name}"
+   cmd="svn switch ${branches}/${name}"
+   echo "> $cmd"
+   eval "$cmd"
 fi
