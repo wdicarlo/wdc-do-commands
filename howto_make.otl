@@ -31,3 +31,15 @@ Print commands without excuting them
 	make -n
 Execute make commands in parallel using <n> different processes
 	make -j<n>
+Condition source code compilation
+	In Makefile
+		DEBUG=0
+		...
+		gcc CFLAGS+=-DDEBUG=${DEBUG}
+	In source code
+	    #if DEBUG
+		#  warning "Debugging is enabled now, expect funny results"
+			// debug code
+		#endif
+	Then use command
+		make DEBUG=1
