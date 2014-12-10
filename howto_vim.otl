@@ -1027,4 +1027,8 @@ gvim http://www.zzapper.co.uk/vimtips.html &
 :let n=0|g//s//\=n/|let n+=1 
 " hide dos carriage return
 :match Ignore /\r$/
-
+" find NUL characters (^@)
+/\%x00
+" remove NUL characters (^@)
+:%s/\%x00//g
+:%s/^@//g     " using <ctrl-v-2>
