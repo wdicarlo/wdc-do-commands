@@ -430,6 +430,7 @@ u@.              : execute command JUST typed in
 :sort /.*\%2v/   : sort all lines on second column [N]
 " number lines  (linux or cygwin only)
 :new | r!nl #                  [N]
+:'<,'>!sort -k3 -n   : sort numerically the third column of the selected lines
 ----------------------------------------
 " Multiple Files Management (Essential)
 :bn              : goto next buffer
