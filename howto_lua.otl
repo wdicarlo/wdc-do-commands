@@ -87,3 +87,5 @@ luarocks /etc/luarocks/config.lua
 	   home..[[/.luarocks]],
 	   [[/usr/share]]
 	}
+Print the Global Environment
+	for k,v in pairs(_G) do print(k,v) end
