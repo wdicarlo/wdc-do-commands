@@ -32,10 +32,16 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-if [ ! $# -eq 2 ]; then
+if [ ! $# -ge 2 ]; then
     usage
     exit
 fi
 
-cmd="cat | grep -Pzo \"^.*$1.*\\n.*$2.*$\" | grep --color \"$1\\\|$2\""
+if [ $# -eq 2 ]; then
+    cmd="cat | grep -Pzo \"^.*$1.*\\n.*$2.*$\" | grep --color \"$1\\\|$2\""
+else
+    if [ $# -eq 3 ]; then
+        cmd="cat | grep -Pzo \"^.*$1.*\\n.*$2.*\\n.*$3.*$\" | grep --color \"$1\\\|$2\\\|$3\""
+    fi
+fi
 eval "$cmd"
