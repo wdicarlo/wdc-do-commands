@@ -421,6 +421,7 @@ alias do-setup-ld-library-path='. ~/bin/do_setup_ld_library_path $@'
 
 alias do-history-update='. ~/bin/do_history_update'
 alias do-history-add-last='. ~/bin/do_history_add_last'
+alias do-history-diagram='. ~/bin/do_history_diagram'
 
 alias mkca='make clean all'
 alias mka='make all'
