@@ -5,11 +5,11 @@ cpath=`pwd`
 
 
 function usage() {
-    echo "Usage: $cmd [-g] [-l] [-t] [<string>]"
+    echo "Usage: $cmd [-g] [-l] [-a] [-t] [-s] [<string>]"
     echo "         where:"
     echo "                  -g                 : globals - do not restrict to current project"
     #echo "       -b                 : just consider the basename"
-    #echo "                 -s                 : just consider subdirs"
+    echo "                  -s                 : input is a tag"
     echo "                  -l                 : list bookmarks"
     echo "                  -a                 : returns absolute paths"
     echo "                  -t                 : print the available tags"
@@ -19,7 +19,8 @@ function usage() {
 global="0"
 list="0"
 absolute="0"
-tags=0
+tags="0"
+symbol="0"
 
 while [ $# -gt 0 ]; do
     if [ "$1" == "-h" ]; then
@@ -41,8 +42,12 @@ while [ $# -gt 0 ]; do
         tags="1"
     fi
 
+    if [ "$1" == "-s" ]; then
+        symbol="1"
+    fi
+
     #if [ ! "${1:0,1}" == "-" ]; then
-    if [ ! "$1" == "-h" ] && [ ! "$1" == "-l" ] && [ ! "$1" == "-a" ] && [ ! "$1" == "-g" ]; then
+    if [ ! "$1" == "-h" ] && [ ! "$1" == "-l" ] && [ ! "$1" == "-a" ] && [ ! "$1" == "-g" ] && [ ! "$1" == "-s" ]; then
         break
     fi
     shift
@@ -121,9 +126,13 @@ else
     bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
 fi
 
+patt=$1
+if [ $symbol == "1" ]; then
+   patt="#.*$1"
+fi
 if [ "$list" == "1" ]; then
     if [ $# -gt 0 ]; then
-        echo "$bookmarks"| grep $1 | grep --color "^\|$relpath *$\|$relpath *#.*"
+        echo "$bookmarks"| grep $patt | grep --color "^\|$relpath *$\|$relpath *#.*"
     else
         echo "$bookmarks"| grep --color "^\|$relpath *$\|$relpath *#.*"
     fi
@@ -150,8 +159,8 @@ num=-1
 n=0
 if [ $# == 1 ]
 then
-    n=`echo "$bookmarks" | grep $1 | awk '{ printf "%-2s %-60s\n", NR, $0 }' | wc -l`
-    echo "$bookmarks" | grep $1 | awk '{ printf "%-2s %-60s\n", NR, $0 }'| grep --color "^\|$relpath *$\|$relpath *#.*"
+    n=`echo "$bookmarks" | grep $patt | awk '{ printf "%-2s %-60s\n", NR, $0 }' | wc -l`
+    echo "$bookmarks" | grep $patt | awk '{ printf "%-2s %-60s\n", NR, $0 }'| grep --color "^\|$relpath *$\|$relpath *#.*"
 else
     n=`echo "$bookmarks" | awk '{ printf "%-2s %-60s\n", NR, $0 }' | wc -l`
     echo "$bookmarks" | awk '{ printf "%-2s %-60s\n", NR, $0 }'| grep --color "^\|$relpath *$\|$relpath *#.*"
@@ -176,7 +185,7 @@ fi
 
 if [ $# == 1 ]
 then
-    bpath=`echo "$bookmarks" | grep $1 | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+    bpath=`echo "$bookmarks" | grep $patt | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
 else
     bpath=`echo "$bookmarks" | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
 fi
