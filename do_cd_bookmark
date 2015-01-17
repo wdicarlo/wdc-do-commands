@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-cmd=`basename $0`
+#cmd=`basename $0`
 cpath=`pwd`
 
 
 function usage() {
-    echo "Usage: $cmd [-g] [-l] [-a] [-t] [-s] [<string>]"
+    echo "Usage: do-cd-bookmark [-g] [-l] [-a] [-t] [-s] [<string>]"
     echo "         where:"
     echo "                  -g                 : globals - do not restrict to current project"
-    #echo "       -b                 : just consider the basename"
+#echo "       -b                 : just consider the basename"
     echo "                  -s                 : input is a tag"
     echo "                  -l                 : list bookmarks"
     echo "                  -a                 : returns absolute paths"
