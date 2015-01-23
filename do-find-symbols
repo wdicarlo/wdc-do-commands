@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] <string>"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -q                          : quiet"
+}
+
+if [ $# == 0 ]; then
+    usage
+    exit
+fi
+
+pars="-Hn"
+root=""
+file="*"
+depth=99
+postproc=""
+exclude=""
+quiet=0
+binary=0
+grep_cmd="\grep"
+ss=""
+if [ ! -t 1 ]; then
+    quiet=1
+fi
+while getopts hr: flag
+do
+    case $flag in
+        q)
+            quiet=1
+            ;;
+        i)
+            pars+="i"
+            ;;
+        r)
+            root+="$OPTARG "
+            ;;
+        n)
+            depth=$OPTARG
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ "$root" == "" ]; then
+   root="."
+fi
+
+string=$1
+
+cmd="find $root | grep \"\.o$\" | xargs -I@ grep -Hc $string @| grep -v \":0$\" | sed \"s/:[0-9]//\" | xargs -I@ sh -c \"echo @; nm @\" | grep \"\.o$\|$string\" | grep --color \"^\|$string\"" 
+if [ $quiet -eq 0 ]; then
+   echo "> $cmd"
+fi
+eval $cmd
