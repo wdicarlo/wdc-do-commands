@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+if [ ! $# -eq 2 ]; then
+   echo "Please, specify master and slave pattern"
+   exit
+fi
+
+cat  | grep "$1\|$2" | grep "$2" -B1 | grep -v "\-\-" | grep --color "$1\|$2"
