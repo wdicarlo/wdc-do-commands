@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# TODO: use $PROJECT and BOOKMARK_ROOT_1/10 when adding a new bookmark
+# TODO: adjust tag updating
+
+
 cmd=`basename $0`
 
 function usage() {
