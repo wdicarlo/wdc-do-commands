@@ -3,29 +3,46 @@
 function usage() 
 {
     cmd=`basename $0`
-    echo "Usage: $cmd [-h] [-a] [-u] [-m]"
+    echo "Usage: $cmd [-h] [-a] [-u] [-m|-d]"
     echo "            -h            : this help"
     echo "            -a            : print all"
     echo "            -u            : show updates"
     echo "            -m            : show merges"
-
+    echo "            -d            : show diffs"
 }
 
 all=0
 updates=0
 merges=0
+diffs=0
+used=0
 
-while getopts haum flag
+while getopts haumd flag
 do
    case $flag in
       a)
          all=1
          ;;
+      d)
+         if [ $used -eq 1 ]; then
+            echo "ERROR: either -d or -m option can be used"
+            usage
+            exit
+         fi
+         diffs=1
+         used=1
+         ;;
       u)
          updates=1
          ;;
       m)
+         if [ $used -eq 1 ]; then
+            echo "ERROR: either -d or -m option can be used"
+            usage
+            exit
+         fi
          merges=1
+         used=1
          ;;
       q)
          quiet=1
@@ -50,6 +67,11 @@ fi
 cmd="svn status $opts | grep -v \"^?\""
 if [ $merges -eq 1 ]; then
    cmd="svn merge --dry-run -r BASE:HEAD ."
+fi
+
+if [ $diffs -eq 1 ]; then
+   cmd="svn diff -r BASE:HEAD ."
+   all=0
 fi
 
 echo "> $cmd"
