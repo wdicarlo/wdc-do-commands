@@ -14,6 +14,12 @@ export SHARED_FOLDER=/media/sf_Shared
 #set -o vi
 echo "Customizing bash"
 
+function cd_folder()
+{
+   # check it is present the # symbol, otherwise use the standard cd command
+   echo "WARNING: STILL UNDER DEVELOPMENT"
+}
+
 function edit_last()
 {
 cmd=`history |grep "^[0-9]* *vi "|tail -1|sed "s/^[0-9]* *//"`
