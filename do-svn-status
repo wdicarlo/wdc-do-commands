@@ -3,19 +3,29 @@
 function usage() 
 {
     cmd=`basename $0`
-    echo "Usage: $cmd [-h] [-a]"
+    echo "Usage: $cmd [-h] [-a] [-u] [-m]"
     echo "            -h            : this help"
     echo "            -a            : print all"
+    echo "            -u            : show updates"
+    echo "            -m            : show merges"
 
 }
 
 all=0
+updates=0
+merges=0
 
-while getopts ha flag
+while getopts haum flag
 do
    case $flag in
       a)
          all=1
+         ;;
+      u)
+         updates=1
+         ;;
+      m)
+         merges=1
          ;;
       q)
          quiet=1
@@ -32,7 +42,16 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-cmd="svn status | grep -v \"^?\""
+opts=""
+if [ $updates -eq 1 ]; then
+   opts="$opts -u"
+fi
+
+cmd="svn status $opts | grep -v \"^?\""
+if [ $merges -eq 1 ]; then
+   cmd="svn merge --dry-run -r BASE:HEAD ."
+fi
+
 echo "> $cmd"
 eval $cmd
 
