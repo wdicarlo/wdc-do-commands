@@ -59,18 +59,24 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+target="."
+if [ $# -gt 0 ]; then
+   target="$@"
+fi
+
+
 opts=""
 if [ $updates -eq 1 ]; then
    opts="$opts -u"
 fi
 
-cmd="svn status $opts | grep -v \"^?\""
+cmd="svn status $opts $target | grep -v \"^?\""
 if [ $merges -eq 1 ]; then
-   cmd="svn merge --dry-run -r BASE:HEAD ."
+   cmd="svn merge --dry-run -r BASE:HEAD $target"
 fi
 
 if [ $diffs -eq 1 ]; then
-   cmd="svn diff -r BASE:HEAD ."
+   cmd="svn diff -r BASE:HEAD $target"
    all=0
 fi
 
