@@ -147,9 +147,32 @@ function mterm() {
     xterm -fn 10x20
 }
 function cdenv() {
+    if [ $1 == "?" ]; then
+       env | grep "PROJECT_ROOT" | sort | grep --color "PROJECT_ROOT[0-9]*"
+       return
+    fi
+    if [ $1 == "-" ]; then
+       \cd -
+       return
+    fi
     # TODO: evaluate to replace this with smartcd tool
+    NEW_PATH=$1
+    if [ -z "${1##[0-9]*}" ]; then
+       PROJECT_ROOT=$(eval "echo \$$(echo PROJECT_ROOT${1})")
+       if [ ! -z $PROJECT_ROOT ]; then
+          PROJECT_ROOT=$PROJECT_PATH/$PROJECT_ROOT
+          if [ -d "$PROJECT_ROOT" ]; then
+             NEW_PATH="$PROJECT_ROOT"
+          fi
+       fi
+    fi
+    if [ ! -d $NEW_PATH ]; then
+       echo "Missing folder: $NEW_PATH"
+       return
+    fi
 
-    \cd $1
+    \cd $NEW_PATH
+    pwd
     if [ -f .bash_env ]
     then
         cat .bash_env
@@ -218,6 +241,7 @@ function gohome() {
             [ -h "$path/.git" ] ||
             [ -d "$path/.svn" ] ||
             [ -h "$path/.svn" ] ||
+            [ -d "$path/src" ] ||
             [ -f "$path/.bash_env" ] ||
             [ -d "$parent/$folder.git" ] ||
             [ "$parent_folder" == "projects" ] ||
@@ -232,6 +256,7 @@ function gohome() {
     done
     echo "$path"
     \cd `echo $path`
+    ls
     setup_env
 }
 

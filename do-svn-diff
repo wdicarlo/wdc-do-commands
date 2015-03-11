@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
+quiet=0
+if [ ! -t 1 ]; then
+    quiet=1
+fi
 
 cmd="svn diff -x --ignore-all-space $@"
-echo "> $cmd"
+if [ $quiet -eq 0 ]; then
+   echo "> $cmd"
+fi
 eval $cmd
