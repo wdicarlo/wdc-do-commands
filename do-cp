@@ -29,4 +29,4 @@ fi
 cmd="cp $@"
 echo "> $cmd"
 eval $cmd
-
+ls -l $dest

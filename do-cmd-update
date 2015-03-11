@@ -33,7 +33,7 @@ fi
 git add $1
 
 if [ $file -eq 0 ]; then
-    git commit -m "Improved $1 command"
+    git commit -m "Improved $1 command. $2"
 else
-    git commit -m "Update $1 file"
+    git commit -m "Update $1 file. $2"
 fi
