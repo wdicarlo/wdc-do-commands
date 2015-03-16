@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+do-find-string -c "$1" | sort -n  -t ":" -k 2  | sed "s/:.*$//" | xargs -I@ sh -c "echo -n '@ ';cat @|wc -l"
