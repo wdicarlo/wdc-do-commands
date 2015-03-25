@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+\vi -c ":silent make" -c ":silent copen"
