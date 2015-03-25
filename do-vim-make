@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 
 
-\vi -c ":silent make" -c ":silent copen"
+if [ $# == 1 ]; then
+   \vi -c ":silent make" -c ":silent copen" -c ":let @/=\"$1\"" -c ":nunmap n" -c ":silent exe \":normal n\""
+else
+   \vi -c ":silent make" -c ":silent copen" 
+fi
