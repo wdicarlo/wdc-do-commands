@@ -43,3 +43,9 @@ Condition source code compilation
 		#endif
 	Then use command
 		make DEBUG=1
+Use spaces instead of tabs for commands before targets
+	ifeq ($(SVIPROXY_TEST_TYPE),SVIPROXY_TEST_ALARM_SIM_WEB_LUA)
+		SVIPROXY_TEST_CFLAGS+=-D$(SVIPROXY_TEST_TYPE)
+	else
+	   $(error Wrong SVIPROXY_TEST_TYPE=$(SVIPROXY_TEST_TYPE)) # here use spaces instead of tabs
+	endif
