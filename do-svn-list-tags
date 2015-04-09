@@ -54,7 +54,7 @@ fi
 branches="$repo/$subpath/"
 
 if [ $paths -eq 0 ]; then
-   svn ls $branches | \grep --color "$filter"
+   svn ls $branches | sort -V | \grep --color "$filter"
 else
-   svn ls $branches | sed "s#^#$branches#" | \grep --color "$filter"
+   svn ls $branches | sort -V | sed "s#^#$branches#" | \grep --color "$filter"
 fi
