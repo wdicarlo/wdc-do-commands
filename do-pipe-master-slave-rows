@@ -6,9 +6,44 @@ if [ -t 0 ]; then
     exit
 fi
 
+function usage() {
+    echo "Usage: do-pipe-master-slave-rows [-h] [-n <n>] <master-string> <slave-string>"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -n <n>                      : only display <n> slaves"
+}
+
+nslaves=-1
+while getopts hn: flag
+do
+    case $flag in
+        n)
+            nslaves=$OPTARG
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
 if [ ! $# -eq 2 ]; then
-   echo "Please, specify master and slave pattern"
+   usage
    exit
 fi
 
-cat  | grep "$1\|$2" | grep "$2" -B1 | grep -v "\-\-" | grep --color "$1\|$2"
+#cmd="cat  | grep \"$1\\\\|$2\" | grep \"$2\" -B1 | grep -v \"\\-\\-\" | grep --color \"$1\|$2\""
+cmd="cat  | grep \"$1\\\\|$2\" | grep \"$2\" -B1 "
+if [ $nslaves -ne -1 ]; then
+   cmd="$cmd | grep \"$1\" -A $nslaves"
+fi
+
+cmd="$cmd | grep -v \"\\-\\-\"| grep --color \"$1\|$2\""
+
+eval $cmd
