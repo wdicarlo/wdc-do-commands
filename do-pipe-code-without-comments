@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+# TODO: detect if first column is filepath:linenumber:, i.e. result of a grep
+
+# TODO: detect programming language
+# detect !/usr/bin/env lua
+lang=lua
+
+comm_single="[ /t]*--"
+comm_multiple_start="[ \t]*--[["
+comm_multiple_end="[ \t]*]]"
+
+cat | grep -v "$comm_single" | sed -e '/$comm_multiple_start/,/$comm_multiple_end/d'
