@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+
+# HEAP        OWNER
+# 0x0C3f87c4  0x00100008 (blk: main)
+# -------------
+# PER PROCESS SUMMARY FOR HEAP 0x073F87C4
+# nbufs  reqsize  actsize pid      process name
+# 16682 89648468 89982048          <shared>
+# 57037  4986399  5816768 0010010a p1
+#  6088   319864   398496 00100108 p2
+#    27   166296   166688 00100047 p3
+#   147   105002   107264 00100028 p4
+#   345    97482   101784 0010001a p5
+#   136    84486    86464 00100029 p6
+#   689    40147    49800 0010010b p7
+#   212    38958    41928 00100013 p8
+#    13    16433    16608 001000fd p9
+#     6    16014    16096 001000fe p10
+#    11    10267    10416 00200145 p11
+#    18     7846     8104 00100066 p12
+#    97     5919     7096 0010001f p13
+#    23     3167     3472 00100143 p14
+#    21     3083     3344 00200141 p15
+#    72     2366     3288 001000ec p16
+#    20     2943     3216 00100044 p17
+#    48     2495     3096 00100132 p18
+#    48     2495     3096 00100135 p19
+#    14     2184     2408 0010002a p20
+#     1     2048     2064 0010003d p21
+#     1     2048     2064 0010003c p22
+# SUMMARY FOR HEAP 0x073F87C4
+# Total size      7415472
+# Total requested 2407842,   7% of total
+# Total used      3652136,   8% of total
+# Overhead and internal
+# fragmentation    244294,   1% of total requested
+#                             1% of total used
+# Total free       763336,   4% of total
+# Largest free      24440,   1% of total
+# External fragmentation     75% (100% - largest free / total free)
+# Private buffers    3702
+# Shared buffers     6677
+# Fragments:
+# Address 0x261b1021 size 1048544
+# Address 0x26033022 size 1048544
+# Address 0x25e7b021 size 1802208
+# Address 0x25d94024 size 946144
+# Address 0x25ca0026 size 999392
+# Address 0x25bf2022 size 712672
+# 0x074096c8  0x0010002d (pha: netsharedheap)
+# -------------
+# PER PROCESS SUMMARY FOR HEAP 0x0B4096C5
+# nbufs  reqsize  actsize pid      process name
+#   898   172835   186859          <shared>
+# SUMMARY FOR HEAP 0x074096C5
+# Total size       223289
+# Total requested   17285,   8% of total
+# Total used        18687,   8% of total
+# Overhead and internal
+# fragmentation      1402,   8% of total requested
+#                             8% of total used
+# Total free       204606,  92% of total
+# Largest free      15908,   7% of total
+# External fragmentation     92% (100% - largest free / total free)
+# Private buffers        0
+# Shared buffers       901
+# Fragments:
+# Address 0x26401020 size 57312
+# Address 0x263f3020 size 57312
+# Address 0x22500020 size 28668
+
+
+function usage() {
+    echo "Usage: do-pipe-dumph-synthesis -s"
+    echo "where:"
+    echo "       -s                 : summary"
+    echo "       -n                 : networking"
+    echo "       -f                 : fragments"
+    echo "       -h                 : print this help"
+}
+
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+summary=0
+module=0
+clean=0
+fragments=0
+all=0
+while getopts afcsnh flag
+do
+    case $flag in
+
+        a)
+            all=1
+            ;;
+        f)
+            summary=1
+            fragments=1
+            ;;
+        c)
+            clean=1
+            ;;
+        s)
+            summary=1
+            ;;
+        n)
+            module=1
+            summary=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+uniq_cmd='| uniq -c'
+if [ $all -eq 1 ]; then
+   uniq_cmd=''
+fi
+
+module_tag="blk: main"
+if [ $module -eq 1 ]; then
+   module_tag="pha: osenet_shared_heap"
+fi
+
+
+if [ $summary -eq 0 ]; then
+   cmd="cat | sed -e '/$module_tag/,/^SUMMARY/!d' | sed -e '/^PER PROCESS/,/^SUMMARY/!d' | grep -v \"SUMMARY\|nbufs\|shell\|dump\" | sort -s -k4,4 2>/dev/null $uniq_cmd"
+else
+if [ $fragments -eq 1 ]; then
+   cmd="cat | grep \"blk: main\|pha: osenet\|Address\" | sed -e 's/^Address .*/Fragments/' $uniq_cmd  | grep -A1 \"$module_tag\" | grep Fragments"
+else
+if [ $clean -eq 1 ]; then
+   cmd="cat | sed -e '/$module_tag/,/^Fragments/!d' | sed -e '/^SUMMARY/,/^Fragments/!d' | grep -v \"SUMMARY\|Fragments\|Overhead\"| sed -e '/blk: main/,/^Fragments/d' | sed -e 's/^fragmentation/frag   tation/' | sort -s -k1,2 2>/dev/null $uniq_cmd"
+else
+   cmd="cat | sed -e '/$module_tag/,/^Fragments/!d' | sed -e '/^SUMMARY/,/^Fragments/!d' | grep -v \"SUMMARY\|Fragments\|Overhead\"| sed -e 's/^fragmentation/frag   tation/'| sort -s -k1,2 2>/dev/null $uniq_cmd"
+fi
+fi
+fi
+
+echo "> $cmd"
+eval $cmd
