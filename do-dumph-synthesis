@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+   echo "Missing log filename (without log extension)"
+   exit
+fi
+
+function usage() {
+    echo "Usage: do-dumph-synthesis [-a] <filename>"
+    echo "where:"
+    echo "       -p                 : generate plot images"
+    echo "       -a                 : do not make uniq entries"
+    echo "       -c                 : clean before generation"
+    echo "       -C                 : only clean"
+    echo "       -h                 : print this help"
+}
+
+opts=""
+plot=0
+clean=0
+onlyclean=0
+col_pid=5
+col_mem=4
+while getopts acCph flag
+do
+    case $flag in
+
+        C)
+            onlyclean=1
+            clean=1
+            ;;
+        c)
+            clean=1
+            ;;
+        p)
+            plot=1
+            ;;
+        a)
+            opts="-a"
+            col_pid=4
+            col_mem=3
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+log=$1.log
+log_processes=$1_synt_processes.txt
+log_summary=$1_synt_summary.txt
+log_networking=$1_synt_networking.txt
+log_data_processes_lua=$1_data_processes_lua.txt
+log_data_processes_ltpd=$1_data_processes_ltpd.txt
+log_data_processes_shared=$1_data_processes_shared.txt
+log_data_networking_shared=$1_data_networking_shared.txt
+log_data_summary_shared=$1_data_summary_shared.txt
+log_data_summary_private=$1_data_summary_private.txt
+
+if [ ! -f $log ]; then
+   echo "Missing $log file"
+   exit
+fi
+
+if [ $clean -eq 1 ]; then
+   echo "Cleaning..."
+   rm `ls $1_synt_*.txt 2>/dev/null` > /dev/null 2>&1
+   rm `ls $1_data_*.txt 2>/dev/null` > /dev/null 2>&1
+   rm `ls $1_data_*.png 2>/dev/null` > /dev/null 2>&1
+   if [ $onlyclean -eq 1 ]; then
+      exit
+   fi
+fi
+
+echo "Extractiong data..."
+cat $log | do-pipe-dumph-synthesis $opts > $log_processes
+cat $log | do-pipe-dumph-synthesis $opts -s > $log_summary
+cat $log | do-pipe-dumph-synthesis $opts -s -f >> $log_summary
+cat $log | do-pipe-dumph-synthesis $opts -n > $log_networking
+cat $log | do-pipe-dumph-synthesis $opts -n -f >> $log_networking
+
+if [ $plot -eq 0 ]; then
+   exit
+fi
+
+echo "Generating plots..."
+lua_pid=`cat $log_processes | do-pipe-trimmed -a | grep lua 2>/dev/null | head -1 | do-pipe-columns $col_pid`
+cat $log_processes | do-pipe-trimmed -a | grep $lua_pid | do-pipe-columns $col_mem | do-numerate > $log_data_processes_lua
+
+ltpd_pid=`cat $log_processes | do-pipe-trimmed -a | grep LTPD 2>/dev/null | head -1 | do-pipe-columns $col_pid`
+cat $log_processes | do-pipe-trimmed -a | grep $ltpd_pid | do-pipe-columns $col_mem | do-numerate > $log_data_processes_ltpd
+
+cat $log_processes | do-pipe-trimmed -a | grep "\[shared\]" | do-pipe-columns $col_mem | do-numerate > $log_data_processes_shared
+
+cat $log_networking | do-pipe-trimmed -a | grep "Shared buffers" | do-pipe-columns $col_mem | do-numerate > $log_data_networking_shared
+
+cat $log_summary | do-pipe-trimmed -a | grep "Shared buffers" | do-pipe-columns $col_mem | do-numerate >  $log_data_summary_shared
+cat $log_summary | do-pipe-trimmed -a | grep "Private buffers" | do-pipe-columns $col_mem | do-numerate > $log_data_summary_private
+
+#        f(x) = a*x + b
+#        fit f(x) '${FILE}' using 1:2 via a,b
+#        plot "${FILE}" using 1:2 with lines title "$FILE graph, f(x)"
+
+for FILE in `ls $1_data_*.txt`; do
+    gnuplot <<- EOF
+        set xlabel "Counter"
+        set ylabel "$FILE"
+        set term png
+        set output "${FILE}.png"
+        plot "${FILE}" using 1:2 with lines title "$FILE graph"
+EOF
+done
