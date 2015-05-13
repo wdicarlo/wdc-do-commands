@@ -9,6 +9,7 @@ function usage()
     echo "            -u            : show updates"
     echo "            -m            : show merges"
     echo "            -d            : show diffs"
+    echo "            -q            : quiet"
 }
 
 all=0
@@ -16,8 +17,12 @@ updates=0
 merges=0
 diffs=0
 used=0
+quiet=0
 
-while getopts haumd flag
+if [ ! -t 1 ]; then
+    quiet=1
+fi
+while getopts haumdq flag
 do
    case $flag in
       a)
@@ -80,7 +85,9 @@ if [ $diffs -eq 1 ]; then
    all=0
 fi
 
-echo "> $cmd"
+if [ $quiet -eq 0 ]; then
+   echo "> $cmd"
+fi
 eval $cmd
 
 if [ $all -eq 1 ]; then
@@ -88,6 +95,8 @@ if [ $all -eq 1 ]; then
    echo ""
    echo "# Untracked files:"
    echo ""
-   echo "> $cmd"
+   if [ $quiet -eq 0 ]; then
+      echo "> $cmd"
+   fi
    eval $cmd
 fi
