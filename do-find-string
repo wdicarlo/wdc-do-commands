@@ -5,19 +5,20 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-i] [-b] [-p] [-c ][-r <root>] [-n <depth>] [-f <file-pattern>] <string>"
+    echo "Usage: $cmd [-h] [-a] [-i] [-b] [-p] [-c ] [-s "substitute-string"][-e <exclude-patt>] [-r <root>] [-n <depth>] [-f <file-pattern>] <string>"
     echo "where:"
-    echo "       -h                 : print this help"
-    echo "       -i                 : ignore case"
-    echo "       -b                 : include binary files"
-    echo "       -c                 : just count occurences"
-    echo "       -p                 : just print the paths"
-    echo "       -r <root>          : start from root folder"
-    echo "       -n <depth>         : max depth to search into"
-    echo "       -f <file-pattern>  : filename pattern to use"
-    echo "       -e <exclude-patt>  : exclude pattern"
-    echo "       -a                 : use ack-grep"
-    echo "       -q                 : quiet"
+    echo "       -h                          : print this help"
+    echo "       -i                          : ignore case"
+    echo "       -b                          : include binary files"
+    echo "       -c                          : just count occurences"
+    echo "       -p                          : just print the paths"
+    echo "       -r <root>                   : start from root folder"
+    echo "       -n <depth>                  : max depth to search into"
+    echo "       -f <file-pattern>           : filename pattern to use"
+    echo "       -e <exclude-patt>           : exclude pattern"
+    echo "       -a                          : use ack-grep"
+    echo "       -s \"substitute-string\"    : substitute <string> with substitute-string"
+    echo "       -q                          : quiet"
 }
 
 if [ $# == 0 ]; then
@@ -34,10 +35,11 @@ exclude=""
 quiet=0
 binary=0
 grep_cmd="\grep"
+ss=""
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts habqicpr:n:f:e: flag
+while getopts habqicpr:n:f:e:s: flag
 do
     case $flag in
         a)
@@ -55,6 +57,12 @@ do
             ;;
         e)
             exclude=$OPTARG
+            ;;
+        s)
+            ss=$OPTARG
+            pars="-l"
+            postproc="xargs -I@ sed -i -e 's#$string#$ss#g' @"
+            binary=0
             ;;
         i)
             pars+="i"
@@ -108,4 +116,4 @@ cmd+=" 2>/dev/null"
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
-eval $cmd
+eval $cmd | tee ~/.bash_output
