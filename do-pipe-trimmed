@@ -1,12 +1,42 @@
 #!/usr/bin/env bash
 
 
+function usage() {
+    echo "Usage: do-pipe-trimmed"
+    echo "       -a          - remove all superfluous spaces"
+}
+
 if [ -t 0 ]; then
     cmd=`basename $0`
-    echo "Usage: $cmd must be used in a pipe"
+    echo "$cmd must be used in a pipe"
+    usage
     exit
 fi
 
+all=0
+while getopts ha flag
+do
+    case $flag in
+        a)
+            all=1
+            echo "trim all spaces"
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 # trim 
 #cat | sed "s/^[[:space:]]*\(.*\)[[:space:]]*$/\1/g"
-cat | sed "s/^[[:space:]]*//;s/[[:space:]]*$//"
+if [ $all -eq 0 ]; then
+   cat | sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null
+else
+   cat | sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null| sed -e "s/[ ]\+/ /g" 2>/dev/null
+fi
