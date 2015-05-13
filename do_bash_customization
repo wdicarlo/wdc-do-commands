@@ -461,6 +461,23 @@ alias do-edit-last='edit_last'
 
 alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
 
+alias _fs='do-find-string'
+alias _fsv='cat ~/.bash_output|do-pipe-cfile-to-vim'
+alias _ff='do-find-files'
+alias _cb='do-cd-bookmark'
+
+alias _ss='do-svn-status'
+alias _sse='do-svn-set-externals'
+alias _slb='do-svn-list-branches'
+alias _slt='do-svn-list-tags'
+
+alias _af='do-arc-folder'
+alias _ae='do-arc-extract-files'
+
+alias _pf='do-publish-files'
+
+
+
 # default proxy setup
 export http_proxy=
 export https_proxy=$http_proxy
