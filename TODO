@@ -4,6 +4,8 @@ Commands to evaluate:
     mount --bind
     fasd
     httpie
+    lumail
+    pwstore (in sqlite db)
 Integrate vim notebooks
 Evaluate command history by folder
 Add todo management
