@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+
+cmd=`which shellcheck`
+if [ -z "$cmd" ]; then
+    echo "Missing shellcheck command"
+    exit
+fi
+find . -name "do*" | xargs -I@ sh -c "echo @: \`shellcheck -f gcc @ | do-pipe-columns 2| sort | tr ':' ' '|uniq -c|do-pipe-to-line-joiner\`"
+
