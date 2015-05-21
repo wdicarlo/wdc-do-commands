@@ -9,6 +9,7 @@ function usage() {
     echo "Usage: do-dumph-synthesis [-a] <filename>"
     echo "where:"
     echo "       -p                 : generate plot images"
+    echo "       -P                 : only generate plot images"
     echo "       -a                 : do not make uniq entries"
     echo "       -c                 : clean before generation"
     echo "       -C                 : only clean"
@@ -17,11 +18,12 @@ function usage() {
 
 opts=""
 plot=0
+onlyplot=0
 clean=0
 onlyclean=0
 col_pid=5
 col_mem=4
-while getopts acCph flag
+while getopts acCpPh flag
 do
     case $flag in
 
@@ -31,6 +33,10 @@ do
             ;;
         c)
             clean=1
+            ;;
+        P)
+            plot=1
+            onlyplot=1
             ;;
         p)
             plot=1
@@ -68,51 +74,64 @@ if [ ! -f $log ]; then
    exit
 fi
 
-if [ $clean -eq 1 ]; then
-   echo "Cleaning..."
-   rm `ls $1_synt_*.txt 2>/dev/null` > /dev/null 2>&1
-   rm `ls $1_data_*.txt 2>/dev/null` > /dev/null 2>&1
-   rm `ls $1_data_*.png 2>/dev/null` > /dev/null 2>&1
-   if [ $onlyclean -eq 1 ]; then
+if [ $onlyplot -eq 0 ]; then 
+   if [ $clean -eq 1 ]; then
+      echo "Cleaning..."
+      rm `ls $1_synt_*.txt 2>/dev/null` > /dev/null 2>&1
+      rm `ls $1_data_*.txt 2>/dev/null` > /dev/null 2>&1
+      rm `ls $1_data_*.png 2>/dev/null` > /dev/null 2>&1
+      if [ $onlyclean -eq 1 ]; then
+         exit
+      fi
+   fi
+
+   echo "Synthesizing log..."
+   cat $log | do-pipe-dumph-synthesis $opts > $log_processes
+   cat $log | do-pipe-dumph-synthesis $opts -s > $log_summary
+   cat $log | do-pipe-dumph-synthesis $opts -s -f >> $log_summary
+   cat $log | do-pipe-dumph-synthesis $opts -n > $log_networking
+   cat $log | do-pipe-dumph-synthesis $opts -n -f >> $log_networking
+
+   if [ $plot -eq 0 ]; then
       exit
    fi
+
+   echo "Extractiong data..."
+   lua_pid=`cat $log_processes 2>/dev/null | do-pipe-trimmed -a | grep lua 2>/dev/null | head -1 | do-pipe-columns $col_pid`
+   cat $log_processes | do-pipe-trimmed -a | grep $lua_pid | do-pipe-columns $col_mem | do-numerate > $log_data_processes_lua
+
+   ltpd_pid=`cat $log_processes 2>/dev/null | do-pipe-trimmed -a | grep LTPD 2>/dev/null | head -1 | do-pipe-columns $col_pid`
+   cat $log_processes | do-pipe-trimmed -a | grep $ltpd_pid | do-pipe-columns $col_mem | do-numerate > $log_data_processes_ltpd
+
+   cat $log_processes 2>/dev/null | do-pipe-trimmed -a | grep "\[shared\]" | do-pipe-columns $col_mem | do-numerate > $log_data_processes_shared
+
+   cat $log_networking 2>/dev/null | do-pipe-trimmed -a | grep "Shared buffers" | do-pipe-columns $col_mem | do-numerate > $log_data_networking_shared
+
+   cat $log_summary 2>/dev/null | do-pipe-trimmed -a | grep "Shared buffers" | do-pipe-columns $col_mem | do-numerate >  $log_data_summary_shared
+   cat $log_summary 2>/dev/null | do-pipe-trimmed -a | grep "Private buffers" | do-pipe-columns $col_mem | do-numerate > $log_data_summary_private
 fi
-
-echo "Extractiong data..."
-cat $log | do-pipe-dumph-synthesis $opts > $log_processes
-cat $log | do-pipe-dumph-synthesis $opts -s > $log_summary
-cat $log | do-pipe-dumph-synthesis $opts -s -f >> $log_summary
-cat $log | do-pipe-dumph-synthesis $opts -n > $log_networking
-cat $log | do-pipe-dumph-synthesis $opts -n -f >> $log_networking
-
-if [ $plot -eq 0 ]; then
-   exit
-fi
-
-echo "Generating plots..."
-lua_pid=`cat $log_processes | do-pipe-trimmed -a | grep lua 2>/dev/null | head -1 | do-pipe-columns $col_pid`
-cat $log_processes | do-pipe-trimmed -a | grep $lua_pid | do-pipe-columns $col_mem | do-numerate > $log_data_processes_lua
-
-ltpd_pid=`cat $log_processes | do-pipe-trimmed -a | grep LTPD 2>/dev/null | head -1 | do-pipe-columns $col_pid`
-cat $log_processes | do-pipe-trimmed -a | grep $ltpd_pid | do-pipe-columns $col_mem | do-numerate > $log_data_processes_ltpd
-
-cat $log_processes | do-pipe-trimmed -a | grep "\[shared\]" | do-pipe-columns $col_mem | do-numerate > $log_data_processes_shared
-
-cat $log_networking | do-pipe-trimmed -a | grep "Shared buffers" | do-pipe-columns $col_mem | do-numerate > $log_data_networking_shared
-
-cat $log_summary | do-pipe-trimmed -a | grep "Shared buffers" | do-pipe-columns $col_mem | do-numerate >  $log_data_summary_shared
-cat $log_summary | do-pipe-trimmed -a | grep "Private buffers" | do-pipe-columns $col_mem | do-numerate > $log_data_summary_private
 
 #        f(x) = a*x + b
 #        fit f(x) '${FILE}' using 1:2 via a,b
 #        plot "${FILE}" using 1:2 with lines title "$FILE graph, f(x)"
 
+#        plot "${FILE}" using 1:2 with lines title "$FILE graph"
+#        stats '${FILE}' using 1:2 prefix "STATS" nooutput
+n=$(ls $1_data_*.txt 2>/dev/null|wc -l)
+if [ $n -eq 0 ]; then
+   echo "Missing data files"
+   exit
+fi
+echo "Generating plots..."
 for FILE in `ls $1_data_*.txt`; do
     gnuplot <<- EOF
         set xlabel "Counter"
         set ylabel "$FILE"
         set term png
         set output "${FILE}.png"
-        plot "${FILE}" using 1:2 with lines title "$FILE graph"
+        stats '${FILE}' using 1:2 prefix "STATS" nooutput
+        plot "${FILE}" using 1:2 with lines title "$FILE graph", \
+            STATS_mean_y title "  Mean", \
+            STATS_slope * x + STATS_intercept title "Linear fit"
 EOF
 done
