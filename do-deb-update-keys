@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+
+# There is no public key available for the following key ID 
+
+cmd=`which apt-key`
+if [ -z "$cmd" ]; then
+    echo "Missing apt-key command, please install the following packages:"
+    echo "debian-keyring debian-archive-keyring"
+    exit
+fi
+
+do-super apt-key update
