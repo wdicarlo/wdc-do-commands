@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+do-svn-status | do-pipe-trimmed -a | do-pipe-columns 2 | xargs -I@ sh -c "if [ -f @ ]; then do-svn-diff @; fi"  
