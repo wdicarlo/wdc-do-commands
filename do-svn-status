@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+
+# TODO: add option to list modified files
+# do-svn-status | do-pipe-trimmed -a | do-pipe-columns 2 | xargs -I@ sh -c "if [ -f @ ]; then echo @; fi"
+
 function usage() 
 {
     cmd=`basename $0`
