@@ -65,6 +65,20 @@ alias spinner='sleep 3 && spinner $! "Doing something big..."'
 function make()
 {
   # see http://stackoverflow.com/questions/6436563/how-can-i-highlight-the-warning-and-error-lines-int-the-make-output
+  for par in $@ 
+  do
+     if [[ $par == *"clean"* ]]; then
+        echo "==========================================================="
+        echo "                        CLEANING"
+        echo "==========================================================="
+        echo "Are you sure? {Y/N}"
+        read answer
+        if [ "$answer" != "Y" ]
+        then
+           return
+        fi
+     fi
+  done
 
   #pathpat="(/[^/]*)+:[0-9]+"
   pathpat="^.*$"
@@ -263,6 +277,9 @@ function gohome() {
 function last() {
     opts="-1t"
     quiet=0
+    if [ ! -t 1 ]; then
+       quiet=1
+    fi
     if [ $# -gt 0 ]
     then
         if [ "$1" == "-h" ]
