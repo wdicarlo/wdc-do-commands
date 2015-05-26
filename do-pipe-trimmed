@@ -19,7 +19,6 @@ do
     case $flag in
         a)
             all=1
-            echo "trim all spaces"
             ;;
         h)
             usage
@@ -36,7 +35,7 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 # trim 
 #cat | sed "s/^[[:space:]]*\(.*\)[[:space:]]*$/\1/g"
 if [ $all -eq 0 ]; then
-   cat | sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null
+   cat 2>/dev/null | sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null
 else
-   cat | sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null| sed -e "s/[ ]\+/ /g" 2>/dev/null
+   cat 2>/dev/null | sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null| sed -e "s/[ ]\+/ /g" 2>/dev/null
 fi
