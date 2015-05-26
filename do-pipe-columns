@@ -13,4 +13,4 @@ if [ -t 0 ]; then
     exit
 fi
 
-cat | cut -d " " -f $@
+cat 2>/dev/null | cut -d " " -f $@
