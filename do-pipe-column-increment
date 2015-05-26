@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+   echo "Use in pipe"
+   exit
+fi
+
+cat | awk '{if(NR>1){print $1 " " $1-_n};_n=$1}'
