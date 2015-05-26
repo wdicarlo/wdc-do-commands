@@ -475,6 +475,7 @@ qQ@qq                             : Make an existing recording q recursive [N]
 " editing a register/recording
 "qp                               :display contents of register q (normal mode)
 <ctrl-R>q                         :display contents of register q (insert mode)
+<ctrl-R>"                         :display contents of register " containing last yanked text (insert mode)
 " you can now see recording contents, edit as required
 "qdd                              :put changed contacts back into q
 @q                                :execute recording/register q
@@ -1035,3 +1036,7 @@ gvim http://www.zzapper.co.uk/vimtips.html &
 :%s/^@//g     " using <ctrl-v-2>
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cmap w!! w !sudo tee > /dev/null %
+" speedup macros 
+:set lazyredraw
+" key unmapping 
+:nunmap n " unmap n
