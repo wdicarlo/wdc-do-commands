@@ -26,9 +26,9 @@ if [ $global == 0 ]; then
         iself=`file $file|grep -i "elf"|wc -l`
         if [ "$iself" -gt 0 ]; then
             echo "$file"
-            nm $file | grep " T " | do-select-columns 3 | sort | uniq --count | grep -v " 1 "
+            nm $file | grep " T " | do-pipe-columns 3 | sort | uniq --count | grep -v " 1 "
         fi
     done
 else
-    nm $@ | grep " T " | do-select-columns 3 | sort | uniq --count | grep -v " 1 "
+    nm $@ | grep " T " | do-pipe-columns 3 | sort | uniq --count | grep -v " 1 "
 fi
