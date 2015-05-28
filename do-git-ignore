@@ -22,7 +22,7 @@ if [ "$1" == "-n" ]; then
     shift
 fi
 
-cmd="do-git-ls | grep ?? | do-select-columns 2 | grep \"\.$1\" | do-pipe-folders-paths -q -e | xargs -I@ bash -c \"echo -e \\\"*.$1\\n\\\" >> $out\""
+cmd="do-git-ls | grep ?? | do-pipe-columns 2 | grep \"\.$1\" | do-pipe-folders-paths -q -e | xargs -I@ bash -c \"echo -e \\\"*.$1\\n\\\" >> $out\""
 if [ "$1" == "-l" ]; then
     cmd="do-find-files -q .gitignore | xargs -I@ sh -c \"echo @;cat @\""
 fi
