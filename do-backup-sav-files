@@ -71,9 +71,6 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-if [ $# == 0 ]; then
-    list=1
-fi
 
 
 if [ "$root" == "" ]; then
@@ -95,9 +92,9 @@ curdate="`date '+%y%m%d-%H%M%S'`"
 bakdir=`echo ~/backups/savevers`
 
 
-find_cmd="find $root \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"*.sav\""
-#MY_FILES=`find $root \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name "*.sav"`
-MY_FILES=`eval $find_cmd`
+find_cmd="find $root \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"*\\.sav\" -print"
+#echo "$find_cmd"
+MY_FILES=`eval "$find_cmd"`
 #echo -e "Files to be included into the backup:\n$MY_FILES"
 
 if [ ${#MY_FILES} -eq 0 ]
@@ -134,7 +131,7 @@ fi
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
-eval $cmd
+eval $cmd && ls -l $bakdir/$tarfile
 
 if [ $delete -eq 1 ]; then
     cmd="rm $MY_FILES"
