@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# TODO: find files newer then a specified date
+# touch -t `date +%m%d0000` /tmp/$$
+# find /tmefndr/oravl01 -type f -newer /tmp/$$
+# rm /tmp/$$
 
 cmd=`basename $0`
 
