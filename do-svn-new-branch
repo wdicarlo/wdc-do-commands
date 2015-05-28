@@ -25,7 +25,7 @@ fi
 
 # TODO: check $1 is a valid branch name without spaces and capitals
 
-repo=$(svn info 2>&1 | grep Root | grep Repo | do-select-columns 3)
+repo=$(svn info 2>&1 | grep Root | grep Repo | do-pipe-columns 3)
 
 if [ $repo == "" ]; then
     echo "Not in a Subversion working copy"
@@ -38,7 +38,7 @@ branches="$repo/branches/$SVN_USER"
 branch="$branches/branch_${SVN_USER}_${name}_dev"
 # replace capitals
 branch=$(echo $branch |  tr '[:upper:]' '[:lower:]')
-wc=$(svn info 2>&1 | grep "^URL" | do-select-columns 2)
+wc=$(svn info 2>&1 | grep "^URL" | do-pipe-columns 2)
 
 
 cmd="svn copy $wc $branch"
