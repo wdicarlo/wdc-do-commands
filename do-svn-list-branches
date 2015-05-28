@@ -44,7 +44,7 @@ if [ $# -gt 0 ]; then
    shift
 fi
 
-repo=$(svn info 2>&1 | grep Root | grep Repo | do-select-columns 3)
+repo=$(svn info 2>&1 | grep Root | grep Repo | do-pipe-columns 3)
 if [ $repo == "" ]; then
     echo "Not in a Subversion working copy"
     exit
