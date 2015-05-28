@@ -34,13 +34,13 @@ if [ ! -d .svn ]; then
    exit
 fi
 
-repo=$(svn info 2>&1 | grep Root | grep Repo | do-select-columns 3)
+repo=$(svn info 2>&1 | grep Root | grep Repo | do-pipe-columns 3)
 if [ $repo == "" ]; then
     echo "Not in a Subversion working copy"
     exit
 fi
 
-curr=$(svn info | grep "^URL" | do-select-columns 2)
+curr=$(svn info | grep "^URL" | do-pipe-columns 2)
 trunk="$repo/trunk"
 
 if [ "$curr" == "$trunk" ]; then
