@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+
+function usage() {
+    echo "Usage: <commands> | do-pipe-cfile-paths"
+}
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "$cmd must be used in a pipe"
+    usage
+    exit
+fi
+
+
+cat | sed -e 's/^\(.*\):[0-9]\+:.*/\1/' | uniq
