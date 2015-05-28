@@ -22,6 +22,6 @@ if [ "$1" == "-n" ]; then
 fi
 
 
-cmd="do-git-ls | grep ?? | grep $1 | do-select-columns 2 | $proc "
+cmd="do-git-ls | grep ?? | grep $1 | do-pipe-columns 2 | $proc "
 echo "> $cmd"
 eval $cmd
