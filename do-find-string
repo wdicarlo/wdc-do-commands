@@ -116,4 +116,5 @@ cmd+=" 2>/dev/null"
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
-eval $cmd | tee ~/.bash_output
+
+eval $cmd | tee ~/.bash_output  | \grep --color "^\|$string"
