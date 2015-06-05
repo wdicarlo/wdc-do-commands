@@ -68,8 +68,10 @@ function make()
   for par in $@ 
   do
      if [[ $par == *"clean"* ]]; then
+        clean_path=$(pwd)
         echo "==========================================================="
-        echo "                        CLEANING"
+        echo "CLEANING in         : $clean_path"
+        echo "CLEANING with target: $par"
         echo "==========================================================="
         echo "Are you sure? {Y/N}"
         read answer
@@ -163,6 +165,18 @@ function mterm() {
 function cdenv() {
     if [ $1 == "?" ]; then
        env | grep "PROJECT_ROOT" | sort | grep --color "PROJECT_ROOT[0-9]*"
+       return
+    fi
+    if [ $1 == "@" ]; then
+       if [ ! $# -eq 2 ]; then
+          echo "Wrong parameters"
+          return
+       fi
+       cd $(last | xargs -I@ sh -c "[ -d @ ] && echo @" 2>/dev/null|grep $2)
+       return
+    fi
+    if [ $1 == "!" ]; then
+       cd $(last | xargs -I@ sh -c "[ -d @ ] && echo @" 2>/dev/null|head -1)
        return
     fi
     if [ $1 == "-" ]; then
