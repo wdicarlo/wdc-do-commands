@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+filter=""
+if [ $# -gt 0 ]; then
+   filter=$1
+   shift
+fi
+
+if [ $filter == "" ]; then
+   cmd="do-svn-status | grep \"^M \" | do-pipe-trimmed -a | do-pipe-columns 2 | do-pipe-paths-to-vim"
+else
+   cmd="do-svn-status | grep \"^M \" | grep $filter | do-pipe-trimmed -a | do-pipe-columns 2 | do-pipe-paths-to-vim"
+fi
+echo "> $cmd"
+eval $cmd
