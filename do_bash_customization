@@ -144,7 +144,7 @@ do
     fi
     opts="$opts $opt"
 done
-cmd="vim --servername wdcvimsrvr $opts"
+cmd="vim $opts"
 echo "> $cmd"
 eval $cmd
 }
@@ -163,11 +163,11 @@ function mterm() {
     xterm -fn 10x20
 }
 function cdenv() {
-    if [ $1 == "?" ]; then
+    if [ "$1" == "?" ]; then
        env | grep "PROJECT_ROOT" | sort | grep --color "PROJECT_ROOT[0-9]*"
        return
     fi
-    if [ $1 == "@" ]; then
+    if [ "$1" == "@" ]; then
        if [ ! $# -eq 2 ]; then
           echo "Wrong parameters"
           return
@@ -175,11 +175,11 @@ function cdenv() {
        cd $(last | xargs -I@ sh -c "[ -d @ ] && echo @" 2>/dev/null|grep $2)
        return
     fi
-    if [ $1 == "!" ]; then
+    if [ "$1" == "!" ]; then
        cd $(last | xargs -I@ sh -c "[ -d @ ] && echo @" 2>/dev/null|head -1)
        return
     fi
-    if [ $1 == "-" ]; then
+    if [ "$1" == "-" ]; then
        \cd -
        return
     fi
@@ -443,7 +443,7 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 
-#alias vi='vim --servername wdcvimsrvr'
+#alias vi='vim'
 alias vi='vim_launcher $@'
 alias vinp='vim --noplugin $@'
 
