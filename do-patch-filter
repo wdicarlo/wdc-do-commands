@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+
+cmd="cat $1|sed -e '/^Index:.*$2/,/^Index:/!d'|head -n -1"
+echo "> $cmd"
+eval "$cmd"
