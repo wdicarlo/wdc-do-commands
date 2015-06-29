@@ -7,12 +7,13 @@
 function usage() 
 {
     cmd=`basename $0`
-    echo "Usage: $cmd [-h] [-a] [-u] [-m|-d]"
+    echo "Usage: $cmd [-h] [-a] [-u] [-m|-d] [-p]"
     echo "            -h            : this help"
     echo "            -a            : print all"
     echo "            -u            : show updates"
     echo "            -m            : show merges"
     echo "            -d            : show diffs"
+    echo "            -p            : list paths"
     echo "            -q            : quiet"
 }
 
@@ -22,13 +23,17 @@ merges=0
 diffs=0
 used=0
 quiet=0
+paths=0
 
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts haumdq flag
+while getopts haumdqp flag
 do
    case $flag in
+      p)
+         paths=1
+         ;;
       a)
          all=1
          ;;
@@ -89,10 +94,18 @@ if [ $diffs -eq 1 ]; then
    all=0
 fi
 
+if [ $paths -eq 1 ]; then
+   cmd="svn status $opts $target | grep -v \"^?\" | grep -v \"^>\|^Performing\|^[ \\t]*$\" | do-pipe-trimmed -a | do-pipe-columns 2"
+fi
+
 if [ $quiet -eq 0 ]; then
    echo "> $cmd"
 fi
 eval $cmd
+
+if [ $paths -eq 1 ]; then
+   exit
+fi
 
 if [ $all -eq 1 ]; then
    cmd="svn status | grep \"^?\""
