@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] <root> <file-ext> <dest-folder>"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -l                          : just list the found files"
+    echo "       -q                          : quiet"
+}
+
+if [ $# == 0 ]; then
+    usage
+    exit
+fi
+
+quiet=0
+list=0
+if [ ! -t 1 ]; then
+    quiet=1
+fi
+while getopts hql flag
+do
+    case $flag in
+        q)
+            quiet=1
+            ;;
+        l)
+            list=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! $# -eq 3 ]; then
+   echo "Wrong parameters"
+   usage
+   exit
+fi
+
+root="$1"
+dest=$3
+if [ ! -d "$root" ]; then
+   echo "Missing root folder: $root"
+   exit
+fi
+
+if [ ! -d "$dest" ]; then
+   mkdir "$dest" && echo "Created folder: $dest"
+fi
+
+action="| xargs -I@ sh -c \"echo @; cp @ $dest\""
+if [ $list -eq 1 ]; then
+   action=""
+fi
+cmd="find \"$root\" -name \"$2\" $action"
+if [ $quiet -eq 0 ]; then
+   echo "> $cmd"
+fi
+eval "$cmd"
