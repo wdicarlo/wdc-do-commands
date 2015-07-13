@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+
+cat|xargs -I@ sh -c "echo \"File: @\n\";cat @;echo \"\n\"" | grep --color "^File:\|^"
+#cat|xargs -I@ sh -c "echo \"File: @\n\";cat @;echo \"\n\""
