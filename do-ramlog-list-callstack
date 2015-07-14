@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# -eq 1 ]; then
+   echo "Wrong parameters"
+   exit
+fi
+
+trace="$1"
+
+if [ ! -f "$trace" ]; then
+   echo "Missing trace file: $trace"
+   exit
+fi
+
+cat $trace | grep SEH | sed -e '/Callstack/,/Information about/!d' 
+
