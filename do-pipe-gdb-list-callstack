@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# -eq 1 ]; then
+   echo "Wrong parameters"
+   exit
+fi
+
+symbols="$1"
+
+if [ ! -f "$symbols" ]; then
+   echo "Missing symbols file: $symbols"
+   exit
+fi
+
+gdb_cmds=`echo $symbols.gdb`
+
+cat | do-pipe-trimmed -a | do-pipe-columns 3 | grep "^0x[0-9a-f]*" | sed 's/^/list * /' > "$gdb_cmds"
+
+
+gdb --batch -x "$gdb_cmds" "$symbols"
