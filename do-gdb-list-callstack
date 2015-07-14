@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# -eq 2 ]; then
+   echo "Wrong parameters"
+   exit
+fi
+
+trace="$1"
+symbols="$2"
+
+if [ ! -f "$trace" ]; then
+   echo "Missing trace file: $trace"
+   exit
+fi
+
+if [ ! -f "$symbols" ]; then
+   echo "Missing symbols file: $symbols"
+   exit
+fi
+
+gdb_cmds=`echo $trace.gdb`
+
+cat $trace | grep SEH | sed -e '/Callstack/,/Information about/!d' | do-pipe-trimmed -a | do-pipe-columns 3 | grep "^0x[0-9a-f]*" | sed 's/^/list * /' > "$gdb_cmds"
+
+
+gdb --batch -x "$gdb_cmds" "$symbols"
