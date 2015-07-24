@@ -17,13 +17,22 @@ if [ -d "$PROJECTS/$1" ]; then
     return
 fi
 
+
+mkdir "$PROJECTS/$1"
+
+
+cat <<END_OF_TEXT >> "$PROJECTS/$1/.bash_env"
+export EC_HOME=
+export PROJECT_ROOT1=.
+export PROJECT_ROOT2=docs
+END_OF_TEXT
+
 env_root=`echo ~/bin`
 if [ $# -gt 1 ]; then
     env="$2"
     n=`ls -1 $env_root/do_setup_env_for_* | grep $env | wc -l`
     if [ $n -eq 1 ]; then
-        mkdir "$PROJECTS/$1"
-        echo "do-setup-env $env" > "$PROJECTS/$1/.bash_env"
+        echo "do-setup-env $env" >> "$PROJECTS/$1/.bash_env"
     else 
         if [ $n -gt 1 ]; then
             echo "Specified ambiguous environment name"
@@ -35,8 +44,6 @@ if [ $# -gt 1 ]; then
         fi
         return
     fi
-else
-    mkdir "$PROJECTS/$1"
 fi
 
 
