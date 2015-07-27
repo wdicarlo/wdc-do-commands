@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+cmd=$(basename $0)
+
+function usage() 
+{
+	echo "Usage: $cmd [-h] [-l] <root-folder> <file-pattern>"
+}
+function print_link() 
+{
+	if [ ! $# -eq 1 ]; then
+		echo "Wrong parameters: $@"
+		return
+	fi
+
+	target=$(basename $1)
+	echo "$1 -> $target"
+}
+
+general_ans=c
+function link_target() 
+{
+	if [ ! $# -eq 2 ]; then
+		echo "Wrong parameters: $@"
+		return
+	fi
+
+	echo "Linking: $1 -> $2"
+	read -p "Are you sure to link $1? [y/n/a=all/e=exit]" ans
+
+	if [ "$ans" == "e" ]; then
+		exit
+	fi
+	if [ "$ans" == "y" ]; then
+		ln -s "$2" "$1"
+	fi
+}
+
+function link() 
+{
+	if [ ! $# -eq 1 ]; then
+		echo "Wrong parameters: $@"
+		return
+	fi
+
+	target=$(basename $1)
+
+	echo "Linking: $1 -> $target"
+
+	ln -s "$1"
+}
+
+
+list=0
+while getopts hl flag
+do
+    case $flag in
+        l)
+	    list=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -lt 2 ]; then
+    echo "Wrong number of parameters: $#"
+    usage
+    exit
+fi
+
+if [ $list -eq 1 ]; then
+	find "$1" -type f -name "$2" -exec bash -c 'echo "$0 --> `basename $0`"' {} \;|column -t
+else
+	find "$1" -type f -name "$2" -exec ln -s {} \;
+	find . -type l -exec file {} \;
+fi
+
