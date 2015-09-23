@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 
 
-if [ $# == 0 ]; then
-    cmd=`basename $0`
-    echo "Usage: $cmd <file> [<file>...]"
-    exit
-fi
+if [ ! -t 0 ]; then
+cat | xargs -I@ sh -c "readlink -f @"
+else
+    if [ $# == 0 ]; then
+        cmd=`basename $0`
+        echo "Usage: $cmd <file> [<file>...]"
+        exit
+    fi
 
-for file in $@
-do
-    # print absolute path of the file
-    #echo `readlink -f $file`
-    echo $(cd $(dirname $file); pwd)/$(basename $file)
-done
+    for file in $@
+    do
+        # print absolute path of the file
+        #echo `readlink -f $file`
+        echo $(cd $(dirname $file); pwd)/$(basename $file)
+    done
+fi
