@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+if [ ! $# -eq 2 ]; then
+	cmd=`basename $0`
+	echo "Usage: $cmd <ref-folder> <target-folder>"
+	exit
+fi
+
+if [ ! -d "$1" ]; then
+	echo "Missing folder: $1"
+	exit
+fi
+if [ ! -d "$2" ]; then
+	echo "Missing folder: $2"
+	exit
+fi
+
+# (find "$1/"|grep -v "\.git" |xargs -I@ basename @;find "$2/"|grep -v "\.git"|xargs -I@ basename @)| sort|uniq -c|do-pipe-trimmed |grep "^1" | do-pipe-columns 2
+FILES=$(find "$1/" -type f)
+MISSING_FILES=$(for FILE in $FILES; do 
+	FILENAME=$(basename $FILE) 
+	if [ ! -f "$2/$FILENAME" ]; then 
+		echo "$FILENAME" 
+	fi 
+done 
+)
+echo "$MISSING_FILES"|sort
