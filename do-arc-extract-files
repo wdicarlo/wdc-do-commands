@@ -78,5 +78,22 @@ if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
     echo "> $cmd_exe"
     eval $cmd_exe
     # TODO: cd into the untarred folder
+    return
 fi
 
+
+read -p "Untar in $file? <y|n>" ans
+if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+	mkdir "$file"
+	cd "$file"
+	
+	if [ $cmd=="tar" ]; then
+		cmd_exe="$cmd -x${opt} ../$1"
+	else
+		if [ $cmd=="unzip" ]; then
+			cmd_exe="$cmd ${opt} ../$1"
+		fi
+	fi
+	echo "> $cmd_exe"
+	eval $cmd_exe
+fi
