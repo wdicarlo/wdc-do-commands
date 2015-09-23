@@ -96,5 +96,5 @@ if [ "$verbose" == 1 ]; then
 fi
 
 
-LUA_PATH=$LUA_PATH LUA_CPATH=$LUA_CPATH LD_LIBRARY_PATH=$LUA_HOME/lib $LUA_HOME/bin/lua $WEBCT_HOME/start.lua 
+LUA_PATH=$LUA_PATH LUA_CPATH=$LUA_CPATH LD_LIBRARY_PATH=$LUA_HOME/lib $LUA_HOME/bin/lua $opts $WEBCT_HOME/start.lua 
 
