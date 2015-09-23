@@ -1,0 +1,40 @@
+#!/bin/bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [<post-fix>] <files>"
+}
+
+if [ $# == 0 ]
+then
+    usage
+    exit
+fi
+
+postfix=""
+if [ ! -f "$1" ]; then
+   postfix="$1"
+   shift
+fi
+if [ $# == 0 ]
+then
+    usage
+    exit
+fi
+
+
+folder_path=`pwd`
+filename=`basename $folder_path`
+curdate="`date '+%y%m%d-%H%M%S'`"
+
+if [ $postfix ]; then
+	tarfile="$filename-$postfix-$curdate.tar.bz2"
+else
+	tarfile="$filename-$curdate.tar.bz2"
+fi
+
+
+cmd="tar -cjf ${tarfile}  --exclude=.git --exclude=.svn --exclude=initramfs --exclude=initramfs_dbg --exclude=*.boot $@"
+echo "> $cmd"
+eval $cmd
