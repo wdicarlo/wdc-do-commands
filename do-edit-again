@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+
+if [ ! -t 0 ]; then
+    echo "Usage: $cmd <grep-pattern>"
+    return
+fi
+
+if [ $# -eq 0 ]; then
+    echo "Usage: $cmd <grep-pattern>"
+    exit
+fi
+
+
+do-vim-list-paths | grep $@ | do-print-file-path |do-pipe-paths-to-vim 
