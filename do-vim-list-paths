@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+
+if [ $# -gt 0 ]; then
+    cat ~/.viminfo | grep "^>" | tr -d '> ' | sort | uniq | grep $@
+else
+    cat ~/.viminfo | grep "^>" | tr -d '> ' | sort | uniq 
+fi
