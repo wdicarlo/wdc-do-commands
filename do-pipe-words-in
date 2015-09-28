@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "$cmd must be used in a pipe"
+    exit
+fi
+
+
+if [ $# -lt 1 ]; then
+    echo "Usage: <list-of-words> | do-pipe-words-in [-m] <file>"
+    echo "        -m             - list missing words"
+    exit
+fi
+
+missing=0
+while getopts hm flag
+do
+    case $flag in
+        m)
+            missing=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+file=$1
+shift
+
+words=""
+pars=$(cat)
+
+for par in $pars;
+do
+    n=$(cat $file|grep $par|wc -l)
+    if [ $missing -eq 1 ]; then
+        if [ $n -eq 0 ]; then
+            words="$words $par"
+        fi
+    else
+        if [ $n -gt 0 ]; then
+            words="$words $par"
+        fi
+    fi
+done
+
+echo "$words"| do-pipe-trimmed | tr ' ' '\n'
