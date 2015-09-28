@@ -23,4 +23,4 @@ do
     fi
 done
 
-cat | sed "s/.*\($words\).*/\1/p"
+cat | grep $words | sed "s/.*\($words\).*/\1/p"
