@@ -2,11 +2,21 @@
 
 #TODO: use only two inout <path/filename> <other-root-path>
 
-if [ ! $# -eq 3 ]
+if [ ! $# -ge 3 ]
 then
     app=`basename $0`
     echo "Usage: $app <root1> <root2> <common-path>"
     exit
 fi
 
-vimdiff --noplugin $1/$3 $2/$3
+path1=$1
+path2=$2
+
+shift
+shift
+
+for file in $@;
+do
+    vimdiff --noplugin $path1/$file $path2/$file
+done
+
