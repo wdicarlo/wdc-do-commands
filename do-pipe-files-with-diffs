@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+function usage() {
+    echo "Usage: <command-to-list-filenames> | do-pipe-files-with-changes <folder1> <folder2>"
+}
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "$cmd must be used in a pipe"
+    usage
+    exit
+fi
+
+if [ $# -ne 2 ]; then
+    usage
+    exit
+fi
+
+
+
+cat |xargs -I@ bash -c "[ -f $1/@ ] && [ -f $2/@ ] && diff $1/@ $2/@|wc -l|while read a; do if [ \$a -gt 0 ]; then echo @; fi; done"
