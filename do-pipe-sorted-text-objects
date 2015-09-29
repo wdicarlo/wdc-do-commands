@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+
+filtered_lines=0
+while getopts ht: flag
+do
+    case $flag in
+        t)
+            filtered_lines=$OPTARG
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! $# -eq 2 ]; then
+    echo "Usage: <text> | do-pipe-sorted-text-objects [-t <filtered-lines>] <begin-pattern> <end-pattern>"
+    exit
+fi
+
+
+text=$(cat)
+
+items=$(echo "$text" |do-pipe-words "$1"|sort)
+
+
+for item in $items;
+do
+    if [ "$filtered_lines" -gt 0 ]; then
+        echo -e "$text"|do-pipe-text-object "$item" "SVI_.*_OPC"|head -n -$filtered_lines
+    else
+        echo -e "$text"|do-pipe-text-object "$item" "SVI_.*_OPC"
+    fi
+done
