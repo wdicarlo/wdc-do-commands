@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 function usage() {
-    echo "Usage: <command-to-list-filenames> | do-pipe-files-with-changes <folder1> <folder2>"
+    echo "Usage: <command-to-list-filenames> | do-pipe-files-with-changes [-v] <folder1> <folder2>"
+    echo "       -v                 : verbose output"
 }
 
 if [ -t 0 ]; then
@@ -11,11 +12,18 @@ if [ -t 0 ]; then
     exit
 fi
 
+verbose_cmd=""
+if [ $# -ge 3 ]; then
+    if [ "$1" == "-v" ]; then
+        verbose_cmd="echo \"Cheching @...\";"
+        shift
+    fi
+fi
+
 if [ $# -ne 2 ]; then
     usage
     exit
 fi
 
 
-
-cat |xargs -I@ bash -c "[ -f $1/@ ] && [ -f $2/@ ] && diff $1/@ $2/@|wc -l|while read a; do if [ \$a -gt 0 ]; then echo @; fi; done"
+cat |xargs -I@ bash -c "[ -f $1/@ ] && [ -f $2/@ ] && $verbose_cmd diff -upNw $1/@ $2/@|wc -l|while read a; do if [ \$a -gt 0 ]; then echo @; fi; done"
