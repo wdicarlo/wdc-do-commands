@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# TODO: check first row is full
+# TODO: check each row has the same number of values
+
+ma=""
+mb=""
+cat | while read a b; \
+do \
+   if [ "$a" == "" ]; then \
+      a=$ma; \
+   fi; \
+   if [ "$b" == "" ]; then \
+      b=$mb; \
+   fi; \
+   echo "$a $b"; \
+   ma=$a; \
+   mb=$b; \
+done
