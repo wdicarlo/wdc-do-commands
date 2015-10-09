@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+cmd=`basename $0`
+function usage() {
+    echo "Usage: $cmd [-h] <trace-file> <elf-file>"
+}
+
 
 if [ ! $# -eq 2 ]; then
-   echo "Wrong parameters"
+   usage
    exit
 fi
 
