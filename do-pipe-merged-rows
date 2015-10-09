@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+# Example of input:
+# 012f1764 T FCGX_Finish
+# 012f1a74
+# 012f1aa8
+# 012f1adc
+# 012f1b10
+# 0136191c t mallocWithAlarm
+# 01361a3c
+# 013620d4 T sqlite3_free
+# 0136216c
+
+# Example of output:
+# 012f1764:T:FCGX_Finish
+# 012f1a74:T:FCGX_Finish
+# 012f1aa8:T:FCGX_Finish
+# 012f1adc:T:FCGX_Finish
+# 012f1b10:T:FCGX_Finish
+# 0136191c:t:mallocWithAlarm
+# 01361a3c:t:mallocWithAlarm
+# 013620d4:T:sqlite3_free
+# 0136216c:T:sqlite3_free
+
+# TODO: check first row is full
+# TODO: check each row has the same number of values
+
+ma=""
+mb=""
+mc=""
+cat | while read a b c; \
+do \
+   if [ "$a" == "" ]; then \
+      a=$ma; \
+   fi; \
+   if [ "$b" == "" ]; then \
+      b=$mb; \
+   fi; \
+   if [ "$c" == "" ]; then \
+      c=$mc; \
+   fi; \
+   echo "$a $b $c"; \
+   ma=$a; \
+   mb=$b; \
+   mc=$c; \
+done
