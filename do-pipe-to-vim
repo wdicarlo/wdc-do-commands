@@ -6,4 +6,40 @@ if [ -t 0 ]; then
     exit
 fi
 
-vim -R -
+
+vcmd=":vnew"
+while getopts hoOp flag
+do
+    case $flag in
+        o)
+            vcmd=":new"
+            ;;
+        O)
+            vcmd=":vnew"
+            ;;
+        p)
+            vcmd=":tabnew"
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+cmds=""
+for file in $@;
+do
+    if [ -f "$file" ]; then
+        cmds="$cmds -c \"$vcmd $file\""
+    fi
+done
+
+
+cmd="vim -R $cmds -"
+eval "cat|$cmd"
