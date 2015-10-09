@@ -5,6 +5,8 @@ function usage() {
     echo "       where:"
     echo "                 -h            : print this help"
     echo "                 -u            : print only the unique input elements"
+    echo "                 -c            : print also the number of occurences"
+    echo "                 -d            : print only duplicated items"
 }
 
 if [ -t 0 ]; then
@@ -15,20 +17,29 @@ if [ -t 0 ]; then
 fi
 
 opts=""
-while [ $# -gt 0 ]; do
-    if [ "$1" == "-h" ]; then
-        usage
-        exit
-    fi
-    if [ "$1" == "-u" ]; then
-        opts="$opts -u"
-        shift
-    fi
-    if [ "$1" == "-c" ]; then
-        opts="$opts -c"
-        shift
-    fi
+while getopts hucd flag
+do
+    case $flag in
+        u)
+            opts="$opts -u"
+            ;;
+        c)
+            opts="$opts -c"
+            ;;
+        d)
+            opts="$opts -d"
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
 done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 
 cat | sort | uniq $opts
