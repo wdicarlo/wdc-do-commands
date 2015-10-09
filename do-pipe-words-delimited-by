@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+if [ $# -ne 2 ]; then
+    echo "Usage: <pipe> | do-pipe-words <char1> <char2>"
+    exit
+fi
+
+
+
+cat | sed "s/.*$1\([a-zA-Z_0-9]*\)$2.*/\1/"
