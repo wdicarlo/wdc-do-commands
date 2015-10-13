@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+svn propget -Rv svn:externals .
