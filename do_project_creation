@@ -47,4 +47,4 @@ if [ $# -gt 1 ]; then
 fi
 
 
-source ~/bin/do_activate_project $1
+source ~/bin/do_project_activation $1
