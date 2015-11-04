@@ -1,9 +1,10 @@
 #!/bin/bash
 
+cmd=$(basename $0)
 
 if [ ! $# == 2 ]
 then
-    echo "Usage: do-prepare-project <ref-project> <project-name>"
+    echo "Usage: $cmd <ref-project> <project-name>"
     exit
 
 fi

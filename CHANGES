@@ -48,7 +48,7 @@ Version 0.1.0
  - Renamed commands about do command management
  - Improved do-find-string command
  - Added few commands improvements
- - Added do-bookmark-list-projects command
+ - Added do-project-list-bookmarked command
  - Added do-bin-add-new command
  - Added do-git-list-tracked-to-be-ignored command
  - Improved do-update-cscope-db command
@@ -129,7 +129,7 @@ Version 0.1.0
  - Added do-filter-rows-by-terms command
  - Improved do-git-list-tags command
  - Improved do-find-string with do-find-string-filtered command
- - Solved issue in do_create_project to cd into created project
+ - Solved issue in do_project_creation to cd into created project
  - Merged do-rm-securely command
  - Updated lua howto
  - Added do-rm-securely command
@@ -157,7 +157,7 @@ Version 0.1.0
  - Solved issue with do-publish-files command
  - Small improvement to bookmark commands
  - Minor changes
- - Renamed do-cd-project into do-activate-project
+ - Renamed do-cd-project into do-project-activation
  - Small improvement to bookmark commands
  - Added do-publish-files command to speed repeating copy operations
  - Improved do-find-string with option to just count the occurences of the string
@@ -214,7 +214,7 @@ Version 0.1.0
  - Changes few referenced folders
  - Minor changes
  - Added do-sql-create-db
- - Added do-create-project
+ - Added do-project-creation
  - Minor improvements
  - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
  - Solved issue with do-git-export command and improved do-find-dos-files

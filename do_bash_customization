@@ -463,7 +463,7 @@ alias cd-projects='cd ~/projects/'
 alias cd-tests='cd ~/tests/'
 alias cd-releases='cd /media/sf_Shared/releases/'
 
-alias do-create-project='. ~/bin/do_create_project'
+alias do-project-creation='. ~/bin/do_project_creation'
 alias do-cd-test='. ~/bin/do_cd_test'
 alias do-cd-release='. ~/bin/do_cd_release'
 alias do-cd-folder='. ~/bin/do_cd_folder'
@@ -475,7 +475,7 @@ alias do-bookmark-list='do-cd-bookmark -l'
 
 alias cd=cdenv 
 alias gh=gohome
-alias do-activate-project='. ~/bin/do_activate_project'
+alias do-project-activation='. ~/bin/do_project_activation'
 alias do-activate-release='. ~/bin/do_activate_release'
 alias do-activate-test='. ~/bin/do_activate_test'
 alias do-setup-env='. ~/bin/do_setup_env -s'
@@ -492,6 +492,8 @@ alias do-edit-last='edit_last'
 
 alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
 
+alias _pa='do-project-activation'
+
 alias _fs='do-find-string'
 alias _fsv='cat ~/.bash_output|do-pipe-cfile-to-vim'
 alias _ff='do-find-files'
@@ -506,8 +508,6 @@ alias _af='do-arc-folder'
 alias _ae='do-arc-extract-files'
 
 alias _pf='do-publish-files'
-
-
 
 # default proxy setup
 export http_proxy=
