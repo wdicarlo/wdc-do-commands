@@ -3,9 +3,12 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] <with-file-ext> <containing> <replace> <with>"
+    echo "Usage: $cmd [-h] [-s] [-e<filename-pattern>] <containing> <replace> <with>"
     echo "where:"
     echo "       -h                          : print this help"
+    echo "       -e                          : filename pattern"
+    echo "       -s                          : just simulate, no changes"
+    echo "       -v                          : verbose"
     echo "       -q                          : quiet"
 }
 
@@ -15,14 +18,26 @@ if [ $# == 0 ]; then
 fi
 
 quiet=0
+simulate=0
+verbose=0
+filenames=""
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts hq flag
+while getopts hqsve: flag
 do
     case $flag in
         q)
             quiet=1
+            ;;
+        e)
+            filenames="$filenames -f \"$OPTARG\""
+            ;;
+        v)
+            verbose=1
+            ;;
+        s)
+            simulate=1
             ;;
         h)
             usage
@@ -36,9 +51,20 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-if [ ! $# -eq 4 ]; then
+if [ ! $# -eq 3 ]; then
    echo "Wrong parameters"
    usage
 fi
 
-do-find-string -p -f "*.$1" $2 | xargs -I@ sed -i'' "s/$3/$4/" @
+sed_opts="-i"
+if [ $simulate -eq 1 ]; then
+    sed_opts=""
+fi
+
+if [ $verbose -eq 0 ]; then
+    do-find-string -p $filenames $1 | xargs -I@ sed $sed_opts "s/$2/$3/" @
+else
+    do-find-string -p $filenames $1 | xargs -I@ sh -c "echo @;sed $sed_opts \"s/$2/$3/\" @"
+fi
+
+
