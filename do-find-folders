@@ -14,6 +14,8 @@ function usage() {
     echo "       -n <depth>         : max depth to search into"
     echo "       -f <file-pattern>  : filename pattern to use"
     #echo "       -e <exclude-patt>  : exclude pattern"
+    echo "       -d <folder>        : replicate found folders in specified folder"
+    echo "       -t                 : just test, no changes"
     echo "       -q                 : quiet"
     exit
 }
@@ -29,9 +31,11 @@ if [ ! -t 1 ]; then
 fi
 strict=0
 
+dest=""
+dryrun=0
 
 #while getopts qicpr:n:f:e: flag
-while getopts sqhir:f:n: flag
+while getopts sqhir:f:n:d:t flag
 do
     case $flag in
 
@@ -40,6 +44,12 @@ do
             ;;
         q)
             quiet=1
+            ;;
+        t)
+            dryrun=1
+            ;;
+        d)
+            dest=$OPTARG
             ;;
 #        e)
 #            exclude=$OPTARG
@@ -110,6 +120,14 @@ else
             cmd="find $root/ -maxdepth $depth \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f -name \"$file\" | xargs -I@ dirname @ | sort | uniq | \grep --color $pars \"/$gpat$\""
         fi
     fi
+fi
+
+if [ ! "$dest" == "" ]; then
+	if [ $dryrun -eq 1 ]; then
+		cmd="$cmd | sed 's#^\./##' | xargs -I@ sh -c \"echo \\\"$dest/@\\\"\""
+	else
+		cmd="$cmd | sed 's#^\./##' | xargs -I@ sh -c \"echo \\\"$dest/@\\\";mkdir -p \\\"$dest/@\\\"\""
+	fi
 fi
 
 if [ $quiet -eq 0 ]; then
