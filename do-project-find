@@ -10,5 +10,5 @@ then
     fi
 fi
 
-folder=`echo ~/projects/$PROJECT`
+folder=`echo $PROJECTS/$PROJECT`
 find $folder $@
