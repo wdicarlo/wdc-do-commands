@@ -17,7 +17,7 @@ if [ -z "$PROJECT" ]
 then
     dest=`echo ~`
 else
-    dest=`echo ~/projects/$PROJECT`
+    dest=`echo $PROJECTS/$PROJECT`
 fi
 
 
