@@ -15,7 +15,7 @@ if [ -z "$PROJECT" ] || [ "$isglobal" == "1" ]
 then
     dest=`echo ~/$DOCS_FOLDER`
 else
-    dest=`echo ~/projects/$PROJECT/$DOCS_FOLDER`
+    dest=`echo $PROJECTS/$PROJECT/$DOCS_FOLDER`
 fi
 
 
