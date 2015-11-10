@@ -15,7 +15,7 @@ fi
 
 echo "project: $project"
 
-dest=`echo ~/projects/$project`
+dest=`echo $PROJECTS/$project`
 
 if [ ! -d "$dest" ]
 then
