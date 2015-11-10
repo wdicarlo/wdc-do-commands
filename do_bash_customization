@@ -4,8 +4,21 @@ force_color_prompt=yes
 
 
 export TESTS=~/tests
+export RELEASES=~/releases
 export PROJECTS=~/projects
-export SHARED_FOLDER=/media/sf_Shared
+export SHARED_FOLDER=/media/share
+if [ -f ~/bin/do_bash_env ]; then
+    echo "Sourcing file: do_bash_env"
+    source  ~/bin/do_bash_env
+    echo "PROJECTS       =  $PROJECTS"
+    echo "TESTS          =  $TESTS"
+    echo "RELEASES       =  $RELEASES"
+    echo "SHARED_FOLDER  =  $SHARED_FOLDER"
+else
+    echo "Missing file: do_bash_env"
+fi
+
+bash_compl_dir=$(echo ~/bin/bash_completion.d)
 
 # to use vim keybindings in bash, 
 # do "set -o vi". Then, you can 
@@ -13,6 +26,20 @@ export SHARED_FOLDER=/media/sf_Shared
 # in vim.
 #set -o vi
 echo "Customizing bash"
+
+function bash_completion()
+{
+	if [ ! -d $bash_compl_dir ]; then
+		echo "Missing $bash_compl_dir folder"
+		return
+	fi
+	FILES=$(ls $bash_compl_dir)
+	for FILE in $FILES; do
+		bash_compl_file="$bash_compl_dir/$FILE"
+		echo "Sourcing file: $bash_compl_file"
+		source $bash_compl_file
+	done	
+}
 
 function cd_folder()
 {
@@ -184,6 +211,8 @@ function cdenv() {
        return
     fi
     # TODO: evaluate to replace this with smartcd tool
+    # use PROJECT_ROOTx vars to define relative paths
+    # format: export PROJECT_ROOTx=<rel_prj_root>/<rel_prj_subfolder>
     NEW_PATH=$1
     if [ -z "${1##[0-9]*}" ]; then
        PROJECT_ROOT=$(eval "echo \$$(echo PROJECT_ROOT${1})")
@@ -389,9 +418,9 @@ function prompt_command()
             ;;
     esac
 
-    export PROJECT_PATH=`echo ~/projects/$PROJECT`
-    export TEST_PATH=`echo ~/tests/$PROJECT`
-    export RELEASE_PATH=`echo ~/releases/$PROJECT`
+    export PROJECT_PATH=`echo $PROJECTS/$PROJECT`
+    export TEST_PATH=`echo $TESTS/$PROJECT`
+    export RELEASE_PATH=`echo $RELEASES/$PROJECT`
     export LOCATION=`basename $PWD`
     if [ "$PROJECT_PATH" == $PWD ]
     then
@@ -421,6 +450,8 @@ else
     PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
 fi
 
+
+bash_completion
 
 alias do-bash-customization='. ~/bin/do_bash_customization'
 
@@ -457,13 +488,13 @@ alias term='xterm -maximized -fn 10x20&'
 #alias miniterm='xfce4-terminal --geometry=80x20'
 alias miniterm='xterm -fn 10x10&'
 
-alias cd-p='cd ~/projects/$PROJECT'
+alias cd-p='cd $PROJECT/$PROJECT'
 
-alias cd-projects='cd ~/projects/'
-alias cd-tests='cd ~/tests/'
+alias cd-projects='cd $PROJECTS'
+alias cd-tests='cd $TESTS'
 alias cd-releases='cd /media/sf_Shared/releases/'
 
-alias do-project-creation='. ~/bin/do_project_creation'
+alias do-create-project='. ~/bin/do_create_project'
 alias do-cd-test='. ~/bin/do_cd_test'
 alias do-cd-release='. ~/bin/do_cd_release'
 alias do-cd-folder='. ~/bin/do_cd_folder'
@@ -475,7 +506,7 @@ alias do-bookmark-list='do-cd-bookmark -l'
 
 alias cd=cdenv 
 alias gh=gohome
-alias do-project-activation='. ~/bin/do_project_activation'
+alias do-activate-project='. ~/bin/do_activate_project'
 alias do-activate-release='. ~/bin/do_activate_release'
 alias do-activate-test='. ~/bin/do_activate_test'
 alias do-setup-env='. ~/bin/do_setup_env -s'
@@ -515,14 +546,16 @@ export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
 export rsync_proxy=$http_proxy
 export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+if [ -f ~/bin/do_proxy_setup ]; then
+    echo "Sourcing file: do_proxy_setup"
+    source  ~/bin/do_proxy_setup
+    echo "http_proxy    = $http_proxy"
+    echo "https_proxy   = $https_proxy"
+    echo "ftp_proxy     = $ftp_proxy"
+    echo "rsync_proxy   = $rsync_proxy"
+    echo "no_proxy      = $no_proxy"
+else
+    echo "Missing file: do_proxy_setup"
+fi
 
 export SVN_EDITOR=vim
-
-if [ -f ~/bin/do_proxy_setup ]; then
-    source  ~/bin/do_proxy_setup
-    echo "http_proxy=$http_proxy"
-    echo "https_proxy=$https_proxy"
-    echo "ftp_proxy=$ftp_proxy"
-    echo "rsync_proxy=$rsync_proxy"
-    echo "no_proxy=$no_proxy"
-fi
