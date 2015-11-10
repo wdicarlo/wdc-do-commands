@@ -506,7 +506,7 @@ alias do-bookmark-list='do-cd-bookmark -l'
 
 alias cd=cdenv 
 alias gh=gohome
-alias do-activate-project='. ~/bin/do_activate_project'
+alias do-project-activation='. ~/bin/do_project_activation'
 alias do-activate-release='. ~/bin/do_activate_release'
 alias do-activate-test='. ~/bin/do_activate_test'
 alias do-setup-env='. ~/bin/do_setup_env -s'
