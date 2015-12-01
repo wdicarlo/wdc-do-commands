@@ -8,6 +8,7 @@ function usage() {
     echo "       -h                          : print this help"
     echo "       -l                          : just list the found files"
     echo "       -s                          : just create symbolic links"
+    echo "       -p                          : use found paths"
     echo "       -q                          : quiet"
 }
 
@@ -19,10 +20,11 @@ fi
 quiet=0
 list=0
 symbolic=0
+paths=0
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts hqls flag
+while getopts hqlsp flag
 do
     case $flag in
         q)
@@ -33,6 +35,9 @@ do
             ;;
         s)
             symbolic=1
+            ;;
+        p)
+            paths=1
             ;;
         h)
             usage
@@ -66,6 +71,10 @@ fi
 action="| xargs -I@ sh -c \"echo @; cp @ $dest\""
 if [ $list -eq 1 ]; then
    action=""
+elif [ $paths -eq 1 ]; then
+   #action="|xargs -I@ sh -c \"echo @; name=$(basename @); fpath=$(echo @|sed 's#$root##'); echo @ $dest/$fpath/$name\""
+   action="|xargs -I@ sh -c \"name=\\\$(basename @); fpath=\\\$(echo @|sed 's#$root##'); cp @ $dest/\\\$fpath \""
+echo "action=$action"
 elif [ $symbolic -eq 1 ]; then
    if [ ! -d "$PWD/$root" ]; then
       echo "Missing folder: $PWD/$root"
