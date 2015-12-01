@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+if [ ! $# -eq 3 ]; then
+    cmd=$(basename $0)
+    echo "Usage: $cmd <src1> <src2> <dest>"
+    exit
+fi
+
+
+src1=$(readlink -f $1)
+src2=$(readlink -f $2)
+dest=$(readlink -f $3)
+
+
+if [ ! -d "$src1" ]; then
+    echo "Missing folder: $src1"
+    exit
+fi 
+if [ ! -d "$src2" ]; then
+    echo "Missing folder: $src2"
+    exit
+fi 
+if [ -d "$dest" ]; then
+    echo "Folder already exists: $dest"
+    exit
+fi 
+
+
+mkdir -p "$dest" 
+
+if [ ! -d "$dest" ]; then
+    echo "Missing folder: $dest"
+    exit
+fi 
+
+home=$(pwd)
+
+cd "$src1"
+files=$(find ./* -type d)
+cd "$dest"
+for file in $files; do
+    cmd="mkdir -p \"$dest/$file\""
+    eval "$cmd"
+done
+
+
+cd "$src2"
+files=$(find ./* -type d)
+
+cd "$dest"
+for file in $files; do
+    cmd="mkdir -p \"$dest/$file\""
+    eval "$cmd"
+done
+
+cd "$src1"
+files=$(find ./* -type f)
+cd "$dest"
+for file in $files; do
+    cmd="ln -s '$src1/$file' '$file'"
+    eval "$cmd"
+done
+
+
+cd "$src2"
+files=$(find ./* -type f)
+
+cd "$dest"
+for file in $files; do
+    cmd="ln -s '$src2/$file' '$file'"
+    eval "$cmd"
+done
+cd "$dest"
+
+
