@@ -191,7 +191,15 @@ function mterm() {
 }
 function cdenv() {
     if [ "$1" == "?" ]; then
-       env | grep "PROJECT_ROOT" | sort | grep --color "PROJECT_ROOT[0-9]*"
+       echo "Usage: cd [<symbol>|folder]"
+       echo "where:"
+       echo "           @ dir   cd at last specified folder, using dir pattern"
+       echo "           !       cd into last modified folder"
+       echo "           ^       cd to project/s root"
+       echo "           -       return to last visited folder"
+       if [ ! -z "$PROJECT" ]; then
+           env | grep "PROJECT_ROOT" | sort | grep --color "PROJECT_ROOT[0-9]*"
+       fi
        return
     fi
     if [ "$1" == "@" ]; then
@@ -210,13 +218,17 @@ function cdenv() {
        \cd -
        return
     fi
+    if [ "$1" == "^" ]; then
+       gh -p
+       return
+    fi
     # TODO: evaluate to replace this with smartcd tool
     # use PROJECT_ROOTx vars to define relative paths
     # format: export PROJECT_ROOTx=<rel_prj_root>/<rel_prj_subfolder>
     NEW_PATH=$1
     if [ -z "${1##[0-9]*}" ]; then
        PROJECT_ROOT=$(eval "echo \$$(echo PROJECT_ROOT${1})")
-       if [ ! -z $PROJECT_ROOT ]; then
+       if [ ! -z "$PROJECT_ROOT" ]; then
           PROJECT_ROOT=$PROJECT_PATH/$PROJECT_ROOT
           if [ -d "$PROJECT_ROOT" ]; then
              NEW_PATH="$PROJECT_ROOT"
@@ -482,6 +494,7 @@ alias cac="copy_and_cd $@"
 #alias last="last $@"
 alias last=last
 
+alias eclipse='eclipse& > /dev/null 2>&1'
 
 #alias term='xfce4-terminal --geometry=100x40'
 alias term='xterm -maximized -fn 10x20&'
