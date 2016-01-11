@@ -196,9 +196,10 @@ function cdenv() {
        echo "           @ dir   cd at last specified folder, using dir pattern"
        echo "           !       cd into last modified folder"
        echo "           ^       cd to project/s root"
+       echo "           $       cd to sources root"
        echo "           -       return to last visited folder"
        if [ ! -z "$PROJECT" ]; then
-           env | grep "PROJECT_ROOT" | sort | grep --color "PROJECT_ROOT[0-9]*"
+           env | grep "PROJECT_ROOT"|sed 's/PROJECT_ROOT//'|sed 's/=/ /'|sort -n
        fi
        return
     fi
@@ -219,7 +220,11 @@ function cdenv() {
        return
     fi
     if [ "$1" == "^" ]; then
-       gh -p
+       gohome -p
+       return
+    fi
+    if [ "$1" == "$" ]; then
+       \cd "$PROJECT_PATH/$SOURCES_ROOT"
        return
     fi
     # TODO: evaluate to replace this with smartcd tool
@@ -507,7 +512,7 @@ alias cd-projects='cd $PROJECTS'
 alias cd-tests='cd $TESTS'
 alias cd-releases='cd /media/sf_Shared/releases/'
 
-alias do-create-project='. ~/bin/do_create_project'
+alias do-project-creation='. ~/bin/do_project_creation'
 alias do-cd-test='. ~/bin/do_cd_test'
 alias do-cd-release='. ~/bin/do_cd_release'
 alias do-cd-folder='. ~/bin/do_cd_folder'
