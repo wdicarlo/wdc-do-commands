@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+function usage() {
+    echo "Usage: <commands> | do-pipe-paths-of [-f] [-d]"
+}
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+opts="-f"
+while getopts fdh flag
+do
+    case $flag in
+        d)
+            opts="-d"
+            ;;
+        f)
+            opts="-f"
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        \?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+cat | xargs -I@ bash -c "[ $opts \"@\" ] && echo @"
