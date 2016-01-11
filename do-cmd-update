@@ -24,7 +24,7 @@ fi
 
 # TODO: check if the command is already present in the git repository
 # check if the command has changes
-n=`git diff $1 | wc -l`
+n=`git diff $bin_dir/$1 | wc -l`
 if [ $n -eq 0 ]; then
     echo "Command without changes: $1"
     exit
