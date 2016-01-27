@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=`basename $0`
+    echo "Usage: $cmd "
+    echo "Note:"
+    echo "       The command must be used in the root folder of the"
+    echo "       subversion repository that must be referenced"
+    echo "       in the svn:externals property in the parent folder"  
+}
+
+if [ ! -d .svn ]; then
+    usage
+    exit
+fi
+
+url=$(svn info|grep "^URL"|awk '{print $2}')
+rel=$(svn info|grep Revision|awk '{print $2}')
+name=$(basename $PWD)
+
+cd ..
+cmd="svn propset svn:externals \"$name -r$rel $url\" ."
+echo "> $cmd"
+eval "$cmd"
+
+svn propget svn:externals .
