@@ -3,7 +3,8 @@
 function usage() 
 {
     cmd=`basename $0`
-    echo "Usage: $cmd "
+    echo "Usage: $cmd [-u]"
+    echo "             -u                    : unlocked (rev is not fixed)"
     echo "Note:"
     echo "       The command must be used in the root folder of the"
     echo "       subversion repository that must be referenced"
@@ -14,13 +15,42 @@ if [ ! -d .svn ]; then
     usage
     exit
 fi
+quiet=0
+unlocked=0
+while getopts hqu flag
+do
+    case $flag in
+
+        q)
+            quiet=1
+            ;;
+        u)
+            unlocked=1
+            #unlocked=$OPTARG
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 url=$(svn info|grep "^URL"|awk '{print $2}')
 rel=$(svn info|grep Revision|awk '{print $2}')
 name=$(basename $PWD)
 
 cd ..
-cmd="svn propset svn:externals \"$name -r$rel $url\" ."
+if [ $unlocked -eq 1 ]; then
+    cmd="svn propset svn:externals \"$name $url\" ."
+else
+    cmd="svn propset svn:externals \"$name -r$rel $url\" ."
+fi
+
 echo "> $cmd"
 eval "$cmd"
 
