@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=`basename $0`
+    echo "Usage: $cmd [-h] [-a] <url-pattern>"
+    echo "            -h            : this help"
+    echo "            -a            : consider all branches"
+}
+
+if [ $# -eq 0 ]; then
+    usage
+    exit
+fi
+
+paths=1
+all=0
+
+while getopts ha flag
+do
+   case $flag in
+      a)
+         all=1
+         ;;
+      q)
+         quiet=1
+         ;;
+      h)
+         usage
+         exit
+         ;;
+      ?)
+         usage
+         exit
+         ;;
+   esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+filter="^"
+if [ $# -gt 0 ]; then
+   filter=$1
+   shift
+fi
+
+repo=$(svn info 2>&1 | grep Root | grep Repo | do-pipe-columns 3)
+if [ $repo == "" ]; then
+    echo "Not in a Subversion working copy"
+    exit
+fi
+
+branches="$repo/branches/"
+if [ ! -z $SVN_USER ]; then
+   branches="$repo/branches/$SVN_USER/"
+fi
+
+if [ $all -eq 1 ]; then
+   branches="$repo/branches/"
+fi
+
+
+#if [ $filter == "^" ]; then
+#   echo "Repository: $repo"
+#   echo "User:       $SVN_USER"
+#   echo ""
+#fi
+list=$(svn ls $branches | sed "s#^#$branches#" | \grep --color "$filter")
+n=$(echo $list|sed 's/ /\n/g'|sed '/^$/d'|wc -l)
+if [ $n -eq 1 ]; then
+    url=$list
+    cmd="svn switch $url"
+    echo "> $cmd"
+    eval "$cmd"
+    svn info
+else
+    echo "Selected too many branches."
+    echo "Please, refine your filter." 
+    echo "Selected branches:"
+    echo $list|sed 's/ /\n/g'|sed '/^$/d'
+fi
