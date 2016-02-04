@@ -11,6 +11,7 @@ function usage() {
     echo "Usage: $cmd [-q] [-i] [-r <root>] [-n <depth>] [-s <size-filter>] <file-pattern>"
     echo "where:"
     echo "       -q                 : quiet"
+    echo "       -v                 : verbose"
     echo "       -i                 : ignore case"
     echo "       -r <root>          : start from <root> folder"
     echo "       -f <filter>        : filter result with grep <filter>"
@@ -26,40 +27,39 @@ if [ $# == 0 ]; then
 fi
 
 pars="-Hn"
-root="."
+root=""
 file="*"
 depth=99
 quiet=0
+verbose=0
 if [ ! -t 1 ]; then
     # stdout is not the terminal, so be quiet
     quiet=1
 fi
-while getopts qir:n:f:s: flag
+while getopts qir:n:f:s:v flag
 do
     case $flag in
 
         s)
             size=$OPTARG
             ;;
+        v)
+            verbose=1
+            ;;
         q)
             quiet=1
-#            echo pars is $pars
             ;;
         i)
             pars+="i"
-#            echo pars is $pars
             ;;
         r)
-            root=$OPTARG
-#            echo root is $root
+            root="$root $OPTARG"
             ;;
         f)
             filter=$OPTARG
-#            echo root is $root
             ;;
         n)
             depth=$OPTARG
-#            echo depth is $depth
             ;;
         ?)
             usage
@@ -73,11 +73,11 @@ if [ -n "$1" ]; then
     file="$1"
 fi
 
-# postproc='xargs -I@ dirname @ | sort | uniq'
-#cmd="find \"$root\" -maxdepth \"$depth\" \( -path \"*/.svn\" -prune -o -type f -name \"$file\" \)| xargs -I@ grep \"$pars\" \"$string\" @"
-#cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type f -name \"$file\" \) | xargs -I@ grep \"$pars\" \"$string\" @"
-#cmd="find \"$root\" -maxdepth \"$depth\" -type f -name \"$file\" | grep -v \".svn\|.git\" "
-cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .git -prune -o -type d -name .svn -prune \) -o -type f -name \"$file\" -print 2>/dev/null"
+if [ "$root" == "" ]; then
+    root="."
+fi
+
+cmd="find $root -maxdepth \"$depth\" \( -type d -name .git -prune -o -type d -name .svn -prune \) -o -type f -name \"$file\" -print 2>/dev/null"
 if [ -n "$size" ]; then
     cmd="$cmd -size \"$size\" "
 fi
@@ -87,7 +87,9 @@ fi
 if [ -n "$size" ]; then
     cmd="$cmd | xargs -I@ ls -lh @  | awk '{ printf \"%-5s  %-60s\n\", \$5, \$9}'"
 fi
-#find "$root" -maxdepth "$depth" -type f -name "$file"| xargs -I@ grep "$pars" "$string" @
+if [ $verbose -eq 1 ]; then
+    quiet=0
+fi
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
