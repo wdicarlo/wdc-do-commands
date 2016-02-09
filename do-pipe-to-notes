@@ -9,15 +9,22 @@ fi
 
 if [ $# == 0 ]; then
     cmd=`basename $0`
-    echo "Usage: $cmd <note-title>"
+    echo "Usage: $cmd [-n] <note-title>"
+    echo "             -n         : just print"
     exit
+fi
+
+noop=0
+if [ "$1" == "-n" ]; then
+    shift
+    noop=1?
 fi
 
 if [ -z "$PROJECT" ]
 then
-    dest=`echo ~`
+    dest=`echo ~/docs`
 else
-    dest=`echo $PROJECTS/$PROJECT`
+    dest=`echo $PROJECTS/$PROJECT/docs`
 fi
 
 
@@ -30,9 +37,14 @@ fi
 cmd=`basename $0`
 curdate=`date '+%y_%m_%d_%H_%M'`
 
-
+if [ $noop -eq 0 ]; then
 echo "Note: $@" >> $dest/notes.otl
 echo -e "\tDate: $curdate" >> $dest/notes.otl
 echo -e "\tReference: $cmd" >> $dest/notes.otl
-#echo -e "\tREFERENCE: $@" >> $dest/notes.otl
 cat -E| xargs -I@ echo -e "\t; @"|sed 's/$$//' >>  $dest/notes.otl
+else
+echo "Note: $@"
+echo -e "\tDate: $curdate"
+echo -e "\tReference: $cmd"
+cat -E| xargs -I@ echo -e "\t; @"|sed 's/$$//'
+fi
