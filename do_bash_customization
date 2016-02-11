@@ -456,12 +456,16 @@ function prompt_command()
     GIT_LOCATION=""
     git status >/dev/null 2>&1 && GIT_LOCATION=$(git status | grep "^# On"|awk '{print $4}')
     REPO_LOCATION=""
+    REPO_SYNT=""
     if [ ! "$SVN_LOCATION" == "" ]; then
         REPO_LOCATION=$SVN_LOCATION
+        REPO_SYNT=$(svn status|grep -v cscope|grep -v ".settings"|grep -v "RTOSE"|grep -v "^Performing"|awk '{print $1}'|sort|uniq|grep -v "X"|tr -d '\n')
     fi
     if [ ! "$GIT_LOCATION" == "" ]; then
         REPO_LOCATION=$GIT_LOCATION
+        REPO_SYNT=""
     fi
+    # TODO: add repo status syntesis: [M|A|?] 
     history -a; history -c; history -r
 }
 PROMPT_COMMAND=prompt_command
@@ -475,7 +479,7 @@ if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
     if [ "$REPO_LOCATION" == "" ]; then
         PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]\$ '
     else
-        PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@${GREEN}$REPO_LOCATION${RESET}\$ '
+        PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@${GREEN}$REPO_LOCATION${RESET}[$REPO_SYNT]\$ '
     fi
 else
     #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
