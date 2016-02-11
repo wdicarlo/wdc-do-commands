@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-q] [-v] [-r <root>] "
+    echo "where:"
+    echo "       -q                 : quiet"
+    echo "       -v                 : verbose"
+    echo "       -r <root>          : start from <root> folder"
+    exit
+}
+
+
+root=""
+depth=99
+quiet=0
+verbose=""
+if [ ! -t 1 ]; then
+    # stdout is not the terminal, so be quiet
+    quiet=1
+fi
+while getopts qir:v flag
+do
+    case $flag in
+
+        v)
+            verbose="-v"
+            ;;
+        q)
+            quiet=1
+            ;;
+        r)
+            root="$root -r $OPTARG"
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+echo "Building list of files..."
+do-find-files $verbose $root "*.[ch]" > cscope.files
+do-find-files $verbose $root "*.cfg" >> cscope.files
+echo "Listed $(cat cscope.files|wc -l) files"
+echo "Building symbols index..."
+cscope -b -q
+echo "Done."
