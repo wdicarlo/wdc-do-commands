@@ -2,9 +2,14 @@
 
 if [  $# -lt 2 ]; then
     cmd=`basename $0`
-    echo "Usage: $cmd <src> <dst>"
+    echo "Usage: $cmd [-m] <src1>...<srcn> <dst>"
     echo "       Creates <dst> folder if it does not exists"
     exit
+fi
+
+move=0
+if [ "$1" == "-m" ]; then
+    move=1
 fi
 
 dest="${@: -1}" # get last parameter
@@ -25,8 +30,30 @@ if [ ! -d $dest ]; then
     mkdir -p $dest
 fi
 
+curdate="`date '+%y%m%d-%H%M%S'`"
+num=$(($# - 1))
+count=0
+for file in $@; do
+    from=$file
+    to=$dest/$from
+    parent=$(dirname $to)
+    if [ ! -d $parent ]; then
+        mkdir -p $parent
+    fi
 
-cmd="cp $@"
-echo "> $cmd"
-eval $cmd
-ls -l $dest
+    if [ -f $to ]; then
+        to="$to-$curdate"
+    fi
+    if [ $move -eq 1 ]; then
+        cmd="mv $from $to"
+    else
+        cmd="cp $from $to"
+    fi
+    echo "> $cmd"
+    eval "$cmd"
+    count=$(($count + 1))
+    if [ $count -eq $num ]; then
+        break #skip last parameter
+    fi
+done
+last $dest
