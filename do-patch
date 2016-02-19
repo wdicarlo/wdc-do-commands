@@ -1,11 +1,28 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 now=`date +%Y%m%d%H%M%S`
 
-if [  $# != 1 ]
+if [  $# -eq 0 ]
 then
-    echo "Usage: do-build-patch <patch>"
-    return
+    cmd=$(basename $0)
+    echo "Usage: $cmd [-R] <patch-file>"
+    echo "             -R               : remove patch"
+    exit
 fi
 
-patch -p1 < $1
+# TODO: check if new file present in the patch are not present in the working copy
+opts=""
+if [ "$1" == "-R" ]; then
+    opts="-R"
+    shift
+fi
+
+if [ ! -f "$1" ]; then
+    echo "Missing patch file: $1"
+    exit
+fi
+
+
+cmd="patch -p0 $opts < $1"
+echo "> $cmd"
+eval "$cmd"
