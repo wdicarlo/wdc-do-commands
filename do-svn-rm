@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+function usage() 
+{
+    cmd=$(basename $0)
+    echo "Usage: $cmd [-f]"
+    echo "             -f                 - force removal of untracked files"
+}
+
+forced=0
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-f" ]; then
+        forced=1
+    else
+        usage
+        exit
+    fi
+fi
+
+cmd="do-svn-status -p -f|do-pipe-to-command \"rm @@\""
+
+if [ $forced -eq 0 ]; then
+    do-svn-status -q -p -f
+    read -p "Remove the listed subversion untracked files? [no]/yes " ans
+    if [ "$ans" == "yes" ]; then
+        echo "> $cmd"
+        eval "$cmd"
+    fi
+else
+    echo "> $cmd"
+    eval "$cmd"
+fi
+
+
