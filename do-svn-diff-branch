@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
 url=$(svn info|grep "^URL"|awk '{print $2}')
-
-b_logs=$(svn log --stop-on-copy $url)
+b_logs=$(svn log --stop-on-copy -r0:HEAD $url)
 b_revs=$(echo "$b_logs" |grep "^r[0-9]*"|awk '{print $1}'|tr -d 'r')
-
 b_first=$(echo $b_revs| tr ' ' '\n' | head -1)
 b_last=$(echo $b_revs| tr ' ' '\n' | tail -1)
 
