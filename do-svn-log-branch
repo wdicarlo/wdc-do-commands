@@ -1,0 +1,1 @@
+svn log --stop-on-copy  -r0:HEAD  .
