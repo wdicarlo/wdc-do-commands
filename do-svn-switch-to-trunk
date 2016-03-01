@@ -3,19 +3,24 @@
 function usage() 
 {
     cmd=`basename $0`
-    echo "Usage: $cmd [-h]"
+    echo "Usage: $cmd [-h] [-f]"
     echo "            -h            : this help"
+    echo "            -f            : force switch even with uncommited changes"
 
 }
 
 paths=0
 all=0
+force=0
 
-while getopts h flag
+while getopts hf flag
 do
    case $flag in
       q)
          quiet=1
+         ;;
+      f)
+         force=1
          ;;
       h)
          usage
@@ -49,10 +54,12 @@ if [ "$curr" == "$trunk" ]; then
 fi
 
 nc=$(svn status | grep "^M" | wc -l)
-if [ $nc -gt 0 ]; then
-   echo "There are uncommitted changes"
-   svn status | grep "^M"
-   exit
+if [ $force -eq 0 ]; then
+    if [ $nc -gt 0 ]; then
+       echo "There are uncommitted changes"
+       svn status | grep "^M"
+       exit
+    fi
 fi
 
 svn switch $trunk
