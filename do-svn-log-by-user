@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-n <num-logs>] [-u <user>] [<URL>]"
+}
+
+n=10
+user=$SVN_USER
+while getopts hn:u: flag
+do
+    case $flag in
+        n)
+            n=$OPTARG
+            ;;
+        u)
+            user=$OPTARG
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -gt 0 ]; then
+    url="$1"
+else
+    url=$(svn info|grep "^URL"|awk '{print $2}')
+fi
+
+b_logs=$(svn log --stop-on-copy $url|grep $user|head -$n)
+b_revs=$(echo "$b_logs" |grep "^r[0-9]*"|awk '{print $1}'|tr -d 'r')
+#b_first=$(echo $b_revs| tr ' ' '\n' | head -1)
+#b_last=$(echo $b_revs| tr ' ' '\n' | tail -1)
+
+cmd="svn log"
+for rev in $b_revs; do
+    cmd="$cmd -r $rev"
+done
+cmd="$cmd $url"
+echo "> $cmd"
+eval "$cmd"
