@@ -12,6 +12,10 @@ if [ -t 0 ]; then
     exit
 fi
 
+if [ -z $PATCHES_DIR ]; then
+    echo "PATCHES_DIR not defined"
+    exit
+fi
 
 curdate="`date '+%y%m%d-%H%M%S'`"
 file="$PATCHES_DIR/$1-$curdate-$2.diff"
