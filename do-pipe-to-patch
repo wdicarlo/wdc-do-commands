@@ -2,7 +2,7 @@
 
 function usage() {
     cmd=`basename $0`
-    echo "Usage: $cmd <root_ref> <patch_name_without_spaces>"
+    echo "Usage: $cmd [-r <root_ref>] <patch_name_without_spaces>"
 }
 
 if [ -t 0 ]; then
@@ -18,11 +18,14 @@ if [ -z $PATCHES_DIR ]; then
 fi
 
 curdate="`date '+%y%m%d-%H%M%S'`"
-file="$PATCHES_DIR/$1-$curdate-$2.diff"
 verbose=0
-while getopts hv flag
+root=$(basename `pwd`)
+while getopts hvr: flag
 do
     case $flag in
+        r)
+            root=$OPTARG
+            ;;
         v)
             verbose=1
             ;;
@@ -38,10 +41,13 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-if [ $# -ne 2 ]; then
+if [ $# -eq 0 ]; then
     usage
     exit
 fi
+
+postfix="$@" # TODO replace white spaces with _
+file="$PATCHES_DIR/$root-$curdate-$postfix.diff"
 
 if [ $verbose -eq 0 ]; then
     cat > $file
