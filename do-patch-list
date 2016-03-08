@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+function usage() {
+    cmd=`basename $0`
+    echo "Usage: $cmd [-h] [-a]"
+    echo "             -h          : help"
+    echo "             -a          : list all patches"
+    echo "             -p          : print paths"
+}
+
+if [ -z $PATCHES_DIR ]; then
+    echo "PATCHES_DIR not defined"
+    exit
+fi
+
+all=0
+paths=0
+while getopts hap flag
+do
+    case $flag in
+        a)
+            all=1
+            ;;
+        p)
+            paths=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+postproc=""
+if [ $paths -eq 1 ]; then
+    postproc="|sed 's#^#$PATCHES_DIR\/#'"
+fi
+
+if [ $all -eq 0 ]; then
+    cmd="ls -1t $PATCHES_DIR | head -20 $postproc"
+else
+    cmd="ls -1 $PATCHES_DIR $postproc"
+fi
+echo "> $cmd"
+eval "$cmd"
