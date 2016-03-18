@@ -189,6 +189,106 @@ function mterm() {
     #xfce4-terminal --geometry=80x20
     xterm -fn 10x20
 }
+function svn_branch() {
+    export SVN_LOCATION=""
+    wdir=$(pwd)
+    # find root folder
+    export SVN_ROOT=""
+    if [ -d ".svn" ]; then
+        SVN_ROOT=$(pwd)
+    else
+        go_repo_root
+        if [ -d ".svn" ]; then
+            SVN_ROOT=$(pwd)
+        fi
+    fi
+    if [ "$SVN_ROOT" == "" ]; then
+        \cd "$wdir"
+        return
+    fi
+    #SVN_LOCATION=$(basename $(svn info|grep "^URL"|awk '{print $2}'))
+    export SVN_LOCATION=$(\svn info|grep "^Relative URL"|awk '{print $3}')
+    SVN_LOCATION=${SVN_LOCATION#"^/branches/$SVN_USER/"}
+    SVN_LOCATION=${SVN_LOCATION#"^/branches/"}
+    #echo "SVN_LOCATION=$SVN_LOCATION"
+    export SVN_SYNT=$(\svn status|grep -v cscope|grep -v ".settings"|grep -v "RTOSE"|grep -v "^Performing"|awk '{print $1}'|sort|uniq|grep -v "X"|tr -d '\n')
+    \cd "$wdir"
+}
+function update_env() {
+    export TYPE=`pwd | sed -e "s/\// /g" | awk '{ print $3}'`
+    # if [ "$TYPE" = "projects" ];
+    # then
+    #     TYPE="p"
+    # fi
+    export PROJECT=""
+    case $TYPE in
+        "projects")
+            TYPE="p"
+            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+            ;;
+        "tests")
+            TYPE="t"
+            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+            ;;
+        "releases")
+            TYPE="r"
+            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+            ;;
+    esac
+
+    export PROJECT_PATH=`echo $PROJECTS/$PROJECT`
+    export TEST_PATH=`echo $TESTS/$PROJECT`
+    export RELEASE_PATH=`echo $RELEASES/$PROJECT`
+    export LOCATION=`basename $PWD`
+    if [ "$PROJECT_PATH" == $PWD ]
+    then
+        LOCATION=""
+    fi
+    if [ "$TEST_PATH" == $PWD ]
+    then
+        LOCATION=""
+    fi
+    if [ "$RELEASE_PATH" == $PWD ]
+    then
+        LOCATION=""
+    fi
+    #svn info >/dev/null 2>&1 && SVN_LOCATION=$(basename $(svn info|grep "^URL"|awk '{print $2}'))
+    export REPO_LOCATION=""
+    export REPO_SYNT=""
+    svn_branch
+    if [ ! "$SVN_LOCATION" == "" ]; then
+        REPO_LOCATION="S:$SVN_LOCATION"
+        REPO_SYNT=$(\svn status |grep -v cscope|grep -v ".settings"|grep -v "RTOSE"|grep -v "^Performing"|awk '{print $1}'|sort|uniq|grep -v "X"|tr -d '\n')
+    fi
+    git status >/dev/null 2>&1 && GIT_LOCATION=$(git status | grep "^# On"|awk '{print $4}')
+    if [ ! "$GIT_LOCATION" == "" ]; then
+        REPO_LOCATION="G:$GIT_LOCATION"
+        REPO_SYNT=$(git status -s | awk '{print $1}'|sort|uniq|tr -d '\n')
+    fi
+    #echo "PROJECT_PATH=$PROJECT_PATH"
+    #echo "REPO_LOCATION=$REPO_LOCATION"
+    #echo "REPO_SYNT=$REPO_SYNT"
+}
+function svn_cmd() {
+    pars=""
+    comment=0
+    for par in "$@"; do
+        if [ $comment -eq 1 ]; then
+            epar=$(echo "\"$par\""|sed 's/"/\"/g')
+            pars="$pars $epar"
+            comment=0
+        else
+            pars="$pars $par"
+        fi
+        if [ "$par" == "-m" ]; then
+            comment=1
+        fi
+    done
+    cmd="$SVN_CMD $pars && cd ."
+    echo -E "> $cmd"
+    eval "$cmd"
+}
+
 function cdenv() {
     if [ "$1" == "?" ]; then
        echo "Usage: cd [<symbol>|folder]"
@@ -198,6 +298,7 @@ function cdenv() {
        echo "           ^       cd to project/s root"
        echo "           $       cd to sources root"
        echo "           -       return to last visited folder"
+       echo "           .       just update the env. variables"
        if [ ! -z "$PROJECT" ]; then
            env | grep "PROJECT_ROOT"|sed 's/PROJECT_ROOT//'|sed 's/=/ /'|sort -n
        fi
@@ -208,23 +309,32 @@ function cdenv() {
           echo "Wrong parameters"
           return
        fi
-       cd $(last | xargs -I@ sh -c "[ -d @ ] && echo @" 2>/dev/null|grep $2)
+       \cd $(last | xargs -I@ sh -c "[ -d @ ] && echo @" 2>/dev/null|grep $2)
+       update_env
        return
     fi
     if [ "$1" == "!" ]; then
-       cd $(last | xargs -I@ sh -c "[ -d @ ] && echo @" 2>/dev/null|head -1)
+       \cd $(last | xargs -I@ sh -c "[ -d @ ] && echo @" 2>/dev/null|head -1)
+       update_env
        return
     fi
     if [ "$1" == "-" ]; then
        \cd -
+       update_env
        return
     fi
     if [ "$1" == "^" ]; then
        gohome -p
+       update_env
        return
     fi
     if [ "$1" == "$" ]; then
        \cd "$PROJECT_PATH/$SOURCES_ROOT"
+       update_env
+       return
+    fi
+    if [ "$1" == "." ]; then
+       update_env
        return
     fi
     # TODO: evaluate to replace this with smartcd tool
@@ -255,36 +365,14 @@ function cdenv() {
         shift $#
         . ~/bin/do_setup_env
     fi
+    update_env
 }
 function setup_env() {
     if [ -f .bash_env ]; then
         . .bash_env
     fi
 }
-function gohome() {
-    # find upword the following: .git, project folder, user home
-    if [ $# -gt 0 ]
-    then
-        if [ "$1" == "-h" ]
-        then
-            echo "Usage: gh [-p|-u]"
-            echo "       where:"
-            echo "               -p       : go to project home"
-            echo "               -u       : go to user home"
-            return
-        fi
-        if [ "$1" == "-p" ]; then
-           \cd $PROJECT_PATH 
-           setup_env
-           return
-        fi
-        if [ "$1" == "-u" ]; then
-            \cd `echo ~`
-            setup_env
-            return
-        fi
-    fi
-
+function go_repo_root() {
     path=`dirname $PWD`
     folder=`basename $PWD`
     if [ $folder == "/" ]
@@ -296,7 +384,6 @@ function gohome() {
         path="/"
         echo "$path"
         \cd `echo $path`
-        setup_env
         return
     fi
     found=0
@@ -315,7 +402,6 @@ function gohome() {
             [ -h "$path/.git" ] ||
             [ -d "$path/.svn" ] ||
             [ -h "$path/.svn" ] ||
-            [ -d "$path/src" ] ||
             [ -f "$path/.bash_env" ] ||
             [ -d "$parent/$folder.git" ] ||
             [ "$parent_folder" == "projects" ] ||
@@ -328,10 +414,107 @@ function gohome() {
             path=$parent
         fi
     done
+    \cd `echo $path`
+}
+function gohome() {
+    # find upword the following: .git, project folder, user home
+    repo=0
+    if [ $# -gt 0 ]
+    then
+        if [ "$1" == "-h" ]
+        then
+            echo "Usage: gh [-p|-u|-r]"
+            echo "       where:"
+            echo "               -p       : go to project home"
+            echo "               -u       : go to user home"
+            echo "               -r       : go to repository home"
+            return
+        fi
+        if [ "$1" == "-p" ]; then
+           \cd $PROJECT_PATH 
+           setup_env
+           update_env
+           return
+        fi
+        if [ "$1" == "-u" ]; then
+            \cd `echo ~`
+            setup_env
+            update_env
+            return
+        fi
+        if [ "$1" == "-r" ]; then
+            repo=1
+        fi
+    fi
+
+    path=`dirname $PWD`
+    folder=`basename $PWD`
+    if [ $folder == "/" ]
+    then
+        return
+    fi
+    if [ $folder == "$user" ]
+    then
+        path="/"
+        echo "$path"
+        \cd `echo $path`
+        setup_env
+        update_env
+        return
+    fi
+    found=0
+    user=`whoami`
+    while [ $found -eq 0 ]
+    do
+        folder=`basename $path`
+        parent=`dirname $path`
+        parent_folder=`basename $parent`
+
+        #echo $path
+        #echo $folder
+        #echo $parent
+        if [ $repo -eq 0 ]; then
+            if [ $folder == "$user" ] ||
+                [ -d "$path/.git" ] ||
+                [ -h "$path/.git" ] ||
+                [ -d "$path/.svn" ] ||
+                [ -h "$path/.svn" ] ||
+                [ -d "$path/src" ] ||
+                [ -f "$path/.bash_env" ] ||
+                [ -d "$parent/$folder.git" ] ||
+                [ "$parent_folder" == "projects" ] ||
+                [ "$parent_folder" == "releases" ] ||
+                [ "$parent_folder" == "tests" ] ||
+                [ $folder == "/" ] 
+            then
+                found=1
+            else
+                path=$parent
+            fi
+        else
+            if [ $folder == "$user" ] ||
+                [ -d "$path/.git" ] ||
+                [ -h "$path/.git" ] ||
+                [ -d "$path/.svn" ] ||
+                [ -h "$path/.svn" ] ||
+                [ -f "$path/.bash_env" ] ||
+                [ -d "$parent/$folder.git" ] ||
+                [ "$parent_folder" == "projects" ] ||
+                [ "$parent_folder" == "releases" ] ||
+                [ "$parent_folder" == "tests" ] ||
+                [ $folder == "/" ] 
+            then
+                found=1
+            else
+                path=$parent
+            fi
+        fi
+    done
     echo "$path"
     \cd `echo $path`
     ls
     setup_env
+    update_env
 }
 
 function last() {
@@ -414,60 +597,85 @@ parse_git_branch() {
 
 function prompt_command()
 {
-    export TYPE=`pwd | sed -e "s/\// /g" | awk '{ print $3}'`
-    # if [ "$TYPE" = "projects" ];
-    # then
-    #     TYPE="p"
-    # fi
-    export PROJECT=""
-    case $TYPE in
-        "projects")
-            TYPE="p"
-            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
-            ;;
-        "tests")
-            TYPE="t"
-            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
-            ;;
-        "releases")
-            TYPE="r"
-            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
-            ;;
-    esac
-
-    export PROJECT_PATH=`echo $PROJECTS/$PROJECT`
-    export TEST_PATH=`echo $TESTS/$PROJECT`
-    export RELEASE_PATH=`echo $RELEASES/$PROJECT`
-    export LOCATION=`basename $PWD`
-    if [ "$PROJECT_PATH" == $PWD ]
-    then
-        LOCATION=""
-    fi
-    if [ "$TEST_PATH" == $PWD ]
-    then
-        LOCATION=""
-    fi
-    if [ "$RELEASE_PATH" == $PWD ]
-    then
-        LOCATION=""
-    fi
-    SVN_LOCATION=""
-    svn info >/dev/null 2>&1 && SVN_LOCATION=$(basename $(svn info|grep "^URL"|awk '{print $2}'))
-    GIT_LOCATION=""
-    git status >/dev/null 2>&1 && GIT_LOCATION=$(git status | grep "^# On"|awk '{print $4}')
-    REPO_LOCATION=""
-    REPO_SYNT=""
-    if [ ! "$SVN_LOCATION" == "" ]; then
-        REPO_LOCATION=$SVN_LOCATION
-        REPO_SYNT=$(svn status|grep -v cscope|grep -v ".settings"|grep -v "RTOSE"|grep -v "^Performing"|awk '{print $1}'|sort|uniq|grep -v "X"|tr -d '\n')
-    fi
-    if [ ! "$GIT_LOCATION" == "" ]; then
-        REPO_LOCATION=$GIT_LOCATION
-        REPO_SYNT=""
-    fi
+#    export TYPE=`pwd | sed -e "s/\// /g" | awk '{ print $3}'`
+#    # if [ "$TYPE" = "projects" ];
+#    # then
+#    #     TYPE="p"
+#    # fi
+#    export PROJECT=""
+#    case $TYPE in
+#        "projects")
+#            TYPE="p"
+#            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+#            ;;
+#        "tests")
+#            TYPE="t"
+#            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+#            ;;
+#        "releases")
+#            TYPE="r"
+#            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+#            ;;
+#    esac
+#
+#    export PROJECT_PATH=`echo $PROJECTS/$PROJECT`
+#    export TEST_PATH=`echo $TESTS/$PROJECT`
+#    export RELEASE_PATH=`echo $RELEASES/$PROJECT`
+#    export LOCATION=`basename $PWD`
+#    if [ "$PROJECT_PATH" == $PWD ]
+#    then
+#        LOCATION=""
+#    fi
+#    if [ "$TEST_PATH" == $PWD ]
+#    then
+#        LOCATION=""
+#    fi
+#    if [ "$RELEASE_PATH" == $PWD ]
+#    then
+#        LOCATION=""
+#    fi
+#    SVN_LOCATION=""
+#    svn info >/dev/null 2>&1 && SVN_LOCATION=$(basename $(svn info|grep "^URL"|awk '{print $2}'))
+#    GIT_LOCATION=""
+#    git status >/dev/null 2>&1 && GIT_LOCATION=$(git status | grep "^# On"|awk '{print $4}')
+#    REPO_LOCATION=""
+#    REPO_SYNT=""
+#    if [ ! "$SVN_LOCATION" == "" ]; then
+#        REPO_LOCATION=$SVN_LOCATION
+#        REPO_SYNT=$(svn status|grep -v cscope|grep -v ".settings"|grep -v "RTOSE"|grep -v "^Performing"|awk '{print $1}'|sort|uniq|grep -v "X"|tr -d '\n')
+#    fi
+#    if [ ! "$GIT_LOCATION" == "" ]; then
+#        REPO_LOCATION=$GIT_LOCATION
+#        REPO_SYNT=""
+#    fi
     # TODO: add repo status syntesis: [M|A|?] 
     history -a; history -c; history -r
 }
+function fsv()
+{
+    if [ $# -eq 0 ]; then
+        cfile=$(ls -1t ~/.do-find-string|head -1)
+    else
+        if [ "$1" == "-l" ]; then
+            ls -1t ~/.do-find-string
+            return
+        fi
+        cfile=$(ls -1t ~/.do-find-string|grep $1|head -1)
+    fi
+    cfile=$(echo ~/.do-find-string/$cfile)
+    if [ ! -f "$cfile" ]; then
+        echo "Missing cfile"
+        return
+    fi
+    cat "$cfile"|do-pipe-cfile-to-vim
+}
+export PATCHES_DIR=""
+export SVN_LOCATION=""
+export SVN_SYNT=""
+export GIT_LOCATION=""
+export GIT_SYNT=""
+export REPO_LOCATION=""
+export REPO_SYNT=""
 PROMPT_COMMAND=prompt_command
 GREEN="$(tput setaf 2)"
 RESET="$(tput sgr0)"
@@ -476,11 +684,7 @@ RESET="$(tput sgr0)"
 if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
     #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
     #PS1='\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
-    if [ "$REPO_LOCATION" == "" ]; then
-        PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]\$ '
-    else
-        PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@${GREEN}$REPO_LOCATION${RESET}[$REPO_SYNT]\$ '
-    fi
+    PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@${GREEN}$REPO_LOCATION${RESET}[$REPO_SYNT]\$ '
 else
     #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
     #PS1='`basename \w` \$ '
@@ -491,7 +695,7 @@ fi
 
 bash_completion
 
-alias do-bash-customization='. ~/bin/do_bash_customization'
+alias do-bash-customization='. ~/bin/do_bash_customization && cd .'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -506,6 +710,8 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+unalias svn
+SVN_CMD=$(which svn)
 
 # some more ls aliases
 alias ll='ls -l'
@@ -565,7 +771,8 @@ alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-car
 alias _pa='do-project-activation'
 
 alias _fs='do-find-string'
-alias _fsv='cat ~/.bash_output|do-pipe-cfile-to-vim'
+#alias _fsv='cat ~/.bash_output|do-pipe-cfile-to-vim'
+alias _fsv='fsv'
 alias _ff='do-find-files'
 alias _cb='do-cd-bookmark'
 
@@ -578,6 +785,8 @@ alias _af='do-arc-folder'
 alias _ae='do-arc-extract-files'
 
 alias _pf='do-publish-files'
+
+alias svn="svn_cmd $@"
 
 # default proxy setup
 export http_proxy=
