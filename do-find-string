@@ -126,8 +126,12 @@ if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
 
+#TODO: remove whitespaces and special characters from $string
+output_file=$(echo ~/.do-find-string/$string)
+
 if [ $justgrep -eq 0 ]; then
-    eval $cmd | tee ~/.bash_output  | \grep --color "^\|$string"
+    #eval $cmd | tee ~/.bash_output  | \grep --color "^\|$string"
+    eval $cmd | tee $output_file  | \grep --color "^\|$string"
 else
     eval $cmd 
 fi
