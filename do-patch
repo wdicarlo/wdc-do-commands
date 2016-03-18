@@ -2,27 +2,67 @@
 
 now=`date +%Y%m%d%H%M%S`
 
-if [  $# -eq 0 ]
-then
+function usage()
+{
     cmd=$(basename $0)
-    echo "Usage: $cmd [-R] <patch-file>"
+    echo "Usage: $cmd [-R] [-n] [-l] <patch-file>"
     echo "             -R               : remove patch"
-    exit
-fi
+    echo "             -n               : just print the patch"
+    echo "             -l               : consider the last patch"
+}
 
 # TODO: check if new file present in the patch are not present in the working copy
 opts=""
-if [ "$1" == "-R" ]; then
-    opts="-R"
-    shift
-fi
+dryrun=0
+last=0
+while getopts hRn flag
+do
+    case $flag in
+        l)
+            last=1
+            ;;
+        n)
+            dryrun=1
+            ;;
+        R)
+            opts="-R"
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-if [ ! -f "$1" ]; then
-    echo "Missing patch file: $1"
+if [  $# -eq 0 ]
+then
+    usage
     exit
 fi
 
+patchfile="$1"
+if [ ! -f "$patchfile" ]; then
+    npatch=$(ls -1 $PATCHES_DIR|grep $1|wc -l)
+    if [ $npatch -ne 1 ]; then
+#TODO: check if patches with the same name
+        echo "Cannot find uniq patch file with: $1"
+        ls -1 $PATCHES_DIR|grep --color $1
+        exit
+    fi
 
-cmd="patch -p0 $opts < $1"
+    patch=$(ls -1 $PATCHES_DIR|grep $1)
+    patchfile="$PATCHES_DIR/$patch"
+fi
+
+
+
+cmd="patch -p0 $opts < $patchfile"
 echo "> $cmd"
-eval "$cmd"
+if [ $dryrun -eq 0 ]; then
+    eval "$cmd"
+fi
