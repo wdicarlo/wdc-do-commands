@@ -8,17 +8,28 @@ export RELEASES=~/releases
 export PROJECTS=~/projects
 export SHARED_FOLDER=/media/share
 if [ -f ~/bin/do_bash_env ]; then
+    # do_bash_env example:
+    # #!/usr/bin/env bash
+    # 
+    # export TESTS=~/tests
+    # export RELEASES=~/releases
+    # export PROJECTS=/wc/wdicarlo/projects
+    # export SHARED_FOLDER=/wc/wdicarlo/share
+    # export PATCHES_DIR=/wc/wdicarlo/share/ec/patches
+    # 
+    # export BASH_COMPLETITION_DIR=$(echo ~/bin/bash_completion.d)
     echo "Sourcing file: do_bash_env"
     source  ~/bin/do_bash_env
-    echo "PROJECTS       =  $PROJECTS"
-    echo "TESTS          =  $TESTS"
-    echo "RELEASES       =  $RELEASES"
-    echo "SHARED_FOLDER  =  $SHARED_FOLDER"
+    echo "PROJECTS               =  $PROJECTS"
+    echo "TESTS                  =  $TESTS"
+    echo "RELEASES               =  $RELEASES"
+    echo "SHARED_FOLDER          =  $SHARED_FOLDER"
+    echo "BASH_COMPLETITION_DIR  =  $BASH_COMPLETITION_DIR"
 else
     echo "Missing file: do_bash_env"
 fi
 
-bash_compl_dir=$(echo ~/bin/bash_completion.d)
+bash_compl_dir=$BASH_COMPLETITION_DIR
 
 # to use vim keybindings in bash, 
 # do "set -o vi". Then, you can 
@@ -30,7 +41,6 @@ echo "Customizing bash"
 function bash_completion()
 {
 	if [ ! -d $bash_compl_dir ]; then
-		echo "Missing $bash_compl_dir folder"
 		return
 	fi
 	FILES=$(ls $bash_compl_dir)
