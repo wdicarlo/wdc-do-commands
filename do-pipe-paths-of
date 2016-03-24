@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 function usage() {
-    echo "Usage: <commands> | do-pipe-paths-of [-f] [-d]"
+    echo "Usage: <commands> | do-pipe-paths-of [-f] [-d] [<grep-pattern>"
+    echo "                                      -f              - print only file paths"
+    echo "                                      -d              - print only directories paths"
 }
 
 if [ -t 0 ]; then
@@ -32,4 +34,8 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-cat | xargs -I@ bash -c "[ $opts \"@\" ] && echo @"
+if [ $# -gt 0 ]; then
+    cat | xargs -I@ bash -c "[ $opts \"@\" ] && echo @" | grep --color "$1"
+else
+    cat | xargs -I@ bash -c "[ $opts \"@\" ] && echo @"
+fi
