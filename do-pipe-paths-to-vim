@@ -6,6 +6,15 @@ if [ -t 0 ]; then
     exit
 fi
 
+function usage()
+{
+    echo "Usage: <pipe> | do-pipe-paths-to-vim [-h] [-o|-O] [-f] [<grep-filter>]"
+    echo "                                      -h              : help"
+    echo "                                      -o              : open files in horizontal windows"
+    echo "                                      -O              : open files in vertical windows"
+    echo "                                      -f              : can open up to 50 files"
+}
+
 max_files=15
 tmp_file=/tmp/vim_paths.txt
 
@@ -40,7 +49,12 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-cat > $tmp_file 
+if [ $# -gt 0 ]; then
+    cat | grep "$1" > $tmp_file 
+else
+    cat > $tmp_file 
+fi
+
 n=`cat $tmp_file | wc -l`
 
 if [ $n -gt $max_files ]; then
@@ -48,5 +62,4 @@ if [ $n -gt $max_files ]; then
     exit
 fi
 
-#vim -p `cat $tmp_file` < /dev/tty
 vim $opts `cat $tmp_file` < /dev/tty
