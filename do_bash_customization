@@ -40,6 +40,9 @@ echo "Customizing bash"
 
 function bash_completion()
 {
+    if [ "$bash_compl_dir" == "" ]; then
+        return
+    fi
 	if [ ! -d $bash_compl_dir ]; then
 		return
 	fi
