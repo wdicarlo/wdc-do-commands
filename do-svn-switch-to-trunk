@@ -6,16 +6,25 @@ function usage()
     echo "Usage: $cmd [-h] [-f]"
     echo "            -h            : this help"
     echo "            -f            : force switch even with uncommited changes"
-
+    echo "            -n            : no execute command"
+    echo "            -r            : revision to switch to"
 }
 
 paths=0
 all=0
 force=0
+dryrun=0
+rev=0
 
-while getopts hf flag
+while getopts hfnr: flag
 do
    case $flag in
+      r)
+         rev=$OPTARG
+         ;;
+      n)
+         dryrun=1
+         ;;
       q)
          quiet=1
          ;;
@@ -46,7 +55,12 @@ if [ $repo == "" ]; then
 fi
 
 curr=$(svn info | grep "^URL" | do-pipe-columns 2)
-trunk="$repo/trunk"
+
+if [ -z $SVN_TRUNK ]; then
+    SVN_TRUNK=trunk
+fi
+
+trunk="$repo/$SVN_TRUNK"
 
 if [ "$curr" == "$trunk" ]; then
    echo "Already in the trunk"
@@ -62,4 +76,12 @@ if [ $force -eq 0 ]; then
     fi
 fi
 
-svn switch $trunk
+if [ $rev -eq 0 ]; then
+    cmd="svn switch $trunk"
+else
+    cmd="svn switch -r $rev $trunk"
+fi
+echo "> $cmd"
+if [ $dryrun -eq 0 ]; then
+    eval "$cmd"
+fi
