@@ -23,4 +23,4 @@ do
     fi
 done
 
-cat | grep $words | sed "s/.*\($words\).*/\1/"
+cat | grep --text $words | sed "s/.*\($words\).*/\1/"
