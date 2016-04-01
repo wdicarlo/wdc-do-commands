@@ -281,6 +281,14 @@ function update_env() {
     #echo "PROJECT_PATH=$PROJECT_PATH"
     #echo "REPO_LOCATION=$REPO_LOCATION"
     #echo "REPO_SYNT=$REPO_SYNT"
+    if [ -f .bash_env ]
+    then
+        cat .bash_env
+        source .bash_env
+    else
+        shift $#
+        . ~/bin/do_setup_env
+    fi
 }
 function svn_cmd() {
     pars=""
@@ -370,14 +378,14 @@ function cdenv() {
 
     \cd $NEW_PATH
     pwd
-    if [ -f .bash_env ]
-    then
-        cat .bash_env
-        source .bash_env
-    else
-        shift $#
-        . ~/bin/do_setup_env
-    fi
+    # if [ -f .bash_env ]
+    # then
+    #     cat .bash_env
+    #     source .bash_env
+    # else
+    #     shift $#
+    #     . ~/bin/do_setup_env
+    # fi
     update_env
 }
 function setup_env() {
@@ -670,7 +678,12 @@ function fsv()
         cfile=$(ls -1t ~/.do-find-string|head -1)
     else
         if [ "$1" == "-l" ]; then
-            ls -1t ~/.do-find-string
+            shift
+            if [ $# -gt 0 ]; then
+                ls -1t ~/.do-find-string | grep $1
+            else
+                ls -1t ~/.do-find-string
+            fi
             return
         fi
         cfile=$(ls -1t ~/.do-find-string|grep $1|head -1)
