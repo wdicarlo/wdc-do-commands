@@ -6,6 +6,13 @@ if [ -z "$check" ]; then
     exit
 fi
 
+# TODO: add options to specife type of files to consider
+# -c -> h,c
+# -m -> makefiles, kconfig
+# -s -> s,S
+# -C -> cpp, hpp
+# -g -> cfg, const
+# -a -> all the rest
 
 folders="."
 while getopts cdf: flag
