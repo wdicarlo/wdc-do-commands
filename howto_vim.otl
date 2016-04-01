@@ -949,6 +949,7 @@ g<C-G>                                 # counts words
 :echo line("'b")-line("'a")            # count lines between markers a and b [N]
 :'a,'bs/^//n                           # count lines between markers a and b
 :'a,'bs/somestring//gn                 # count occurences of a string
+:%s/somestring/&/gn                    # count occurences of a string
 ----------------------------------------
 " example of setting your own highlighting
 :syn match DoubleSpace "  "
