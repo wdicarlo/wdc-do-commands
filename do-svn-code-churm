@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+function usage()
+{
+    cmd=$(basename $0)
+    echo "Usage: $cmd [-f <filterdiff-pattern>] <begin-date> <end-date> <url>"
+}
+
+if [ $# == 0 ]; then
+    usage
+    exit
+fi
+
+quiet=0
+if [ ! -t 1 ]; then
+    quiet=1
+fi
+
+filter=""
+while getopts hqf: flag
+do
+    case $flag in
+        f)
+            filter=$OPTARG
+            ;;
+        q)
+            quiet=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -ne 3 ]; then
+    usage
+    exit
+fi
+
+if [ -z $filter ]; then
+    cmd="svn diff --revision {\"$1\"}:{\"$2\"} -x -w $3 | diffstat -m -f 0"
+else
+    cmd="svn diff --revision {\"$1\"}:{\"$2\"} -x -w $3 | filterdiff -x '$filter' | diffstat -m -f 0"
+fi
+
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval "$cmd"
