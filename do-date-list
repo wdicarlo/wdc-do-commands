@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# credits: http://stackoverflow.com/questions/5038812/need-to-get-the-dates-of-all-mondays-in-a-year
+
 datestart=20110101
 dateend=20111231
 day_of_week="Fri"
