@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+datestart=20110101
+dateend=20111231
+day_of_week="Fri"
+
+if [ $# -eq 3 ]; then
+    datestart=$1
+    dateend=$2
+    day_of_week=$3
+fi
+
+
+for tmpd in {0..6}
+do
+  date -d "$datestart $tmpd day" | grep -q $day_of_week
+  if [ $? = 0 ];
+  then
+    break
+  fi
+done
+
+for ((tmpw = $tmpd; $(date -d "$datestart $tmpw day" +%s) <= $(date -d "$dateend" +%s); tmpw += 7))
+do
+  #echo `date -d "$datestart $tmpw day" +%d-%b-%Y`
+  echo `date -d "$datestart $tmpw day" +%Y-%m-%d`
+done
