@@ -23,8 +23,18 @@ if [ $# == 0 ]; then
     exit
 fi
 
-cmd=`echo "$1"| sed -e 's/|/\\\\|/g' -e 's/;/\\\\;/g'`
-shift
+if [ $# == 1 ]; then 
+    cmd=`echo "$1"| sed -e 's/|/\\\\|/g' -e 's/;/\\\\;/g'`
+    shift
+else
+    cmd=""
+    for par in $@;
+    do
+        cmd="$cmd $par"
+        shift
+    done
+    cmd=`echo "$cmd"| sed -e 's/|/\\\\|/g' -e 's/;/\\\\;/g'`
+fi
 
 isok=`echo "$cmd" | grep "@@"`
 if [ "$isok" == "" ]; then
