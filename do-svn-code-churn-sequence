@@ -21,13 +21,17 @@ function code_churn()
 
 stardate="20150701"
 enddate="20160413"
+day_of_week="Fri"
 
-if [ $# -eq 2 ]; then
+if [ $# -ge 2 ]; then
     stardate=$1
     enddate=$2
 fi
+if [ $# -ge 3 ]; then
+    day_of_week=$3
+fi
 
-fridays=$(do-date-list $stardate $enddate Fri)
+fridays=$(do-date-list $stardate $enddate $day_of_week)
 
 code_churn $fridays
 
