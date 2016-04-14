@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+
+quiet=1
+
+function code_churn() 
+{
+    while (($#)); do
+        if [ -z $2 ]; then
+            break
+        fi
+        #echo "$1 <--> $2"
+        cmd="do-svn-code-churn -f \"/static/lib/*,*jquery*\" \"$1\" \"$2\" ."
+        if [ $quiet -eq 0 ]; then
+            echo "> $cmd"
+        fi
+        eval "$cmd"|tail -1|sed "s/^/$1..$2:/" 
+        shift
+    done
+}
+
+stardate="20150701"
+enddate="20160413"
+
+if [ $# -eq 2 ]; then
+    stardate=$1
+    enddate=$2
+fi
+
+fridays=$(do-date-list $stardate $enddate Fri)
+
+code_churn $fridays
+
