@@ -4,7 +4,7 @@ now=`date +%Y%m%d%H%M%S`
 cmd=$(basename $0)
 
 function usage() {
-    echo "Usage: $cmd [-q] [-x <file-pattern>] [-f] [-o] <folder> <folder> <output>"
+    echo "Usage: $cmd [-q] [-x <file-pattern>] [-f] [-o] [-p] <folder> <folder> [<output>]"
     echo "where:"
     echo "       -x <exclude-patt>  : exclude pattern"
     echo "       -f                 : force filename"
@@ -51,9 +51,12 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-if [ ! $# -eq 3 ]; then
+if [ $# -lt 2 ]; then
     usage
     exit
+fi
+if [ $# -eq 2 ]; then
+    print=1
 fi
 
 if [ ! -d "$1" ]
@@ -70,6 +73,11 @@ then
 fi
 
 if [ $print -eq 0 ]; then
+    if [ ! $# -eq 3 ]; then
+        usage
+        exit
+    fi
+
     if [ $force -eq 0 ]; then
         output="$3-$now.patch"
     else
