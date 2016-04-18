@@ -1,26 +1,43 @@
 #!/usr/bin/env bash 
 
 now=`date +%Y%m%d%H%M%S`
+cmd=$(basename $0)
 
 function usage() {
-    echo "Usage: do-build-patch [-q] [-x <file-pattern>] <folder> <folder> <output>"
+    echo "Usage: $cmd [-q] [-x <file-pattern>] [-f] [-o] <folder> <folder> <output>"
     echo "where:"
     echo "       -x <exclude-patt>  : exclude pattern"
+    echo "       -f                 : force filename"
+    echo "       -o                 : overwrite destination file"
+    echo "       -p                 : just print the patch"
     echo "       -q                 : quiet"
 }
 
-exclude=" --exclude=\".git\" --exclude=\".svn\""
 quiet=0
-while getopts hx:q flag
+if [ -t 0 ]; then
+    quiet=1
+fi
+exclude=" --exclude=\".git\" --exclude=\".svn\""
+force=0
+overwrite=0
+print=0
+while getopts hx:qfop flag
 do
     case $flag in
+        p)
+            print=1
+            ;;
+        f)
+            force=1
+            ;;
+        o)
+            overwrite=1
+            ;;
         q)
             quiet=1
-#            echo pars is $pars
             ;;
         x)
             exclude="$exclude --exclude=\"$OPTARG\" "
-#            echo pars is $pars
             ;;
         h)
             usage
@@ -52,13 +69,31 @@ then
     exit
 fi
 
-output=$3-$now.patch
+if [ $print -eq 0 ]; then
+    if [ $force -eq 0 ]; then
+        output="$3-$now.patch"
+    else
+        output="$3.patch"
+    fi
 
+    if [ $overwrite -eq 0 ]; then
+        if [ -f "$output" ]; then
+            echo "File already exists: $output"
+            exit
+        fi
+    fi
 
-if [ "$exclude" == "" ]; then
-    cmd="diff -rupN $1 $2 > $output"
+    if [ "$exclude" == "" ]; then
+        cmd="diff -rupN $1 $2 > $output"
+    else
+        cmd="diff $exclude -rupN $1 $2 > $output"
+    fi
 else
-    cmd="diff $exclude -rupN $1 $2 > $output"
+    if [ "$exclude" == "" ]; then
+        cmd="diff -rupN $1 $2"
+    else
+        cmd="diff $exclude -rupN $1 $2"
+    fi
 fi
 
 if [ $quiet -eq 0 ]; then
