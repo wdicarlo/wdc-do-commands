@@ -1,16 +1,41 @@
 #!/usr/bin/env bash
 
-if [  $# -lt 2 ]; then
+#TODO: add option to avoid to recreate all the folders tree of the source file location
+function usage()
+{
     cmd=`basename $0`
+    echo "$cmd: Copy files recreating the source folders tree and the destination folder"
     echo "Usage: $cmd [-m] <src1>...<srcn> <dst>"
-    echo "       Creates <dst> folder if it does not exists"
+    echo "             -m                   : move the file"
+    echo "             -f                   : just consider the source file/s, not the location"
     exit
-fi
+}
 
 move=0
-if [ "$1" == "-m" ]; then
-    move=1
-fi
+foldertree=1
+while getopts hmqf flag
+do
+    case $flag in
+        m)
+            move=1
+            ;;
+        f)
+            foldertree=0
+            ;;
+        q)
+            quiet=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 dest="${@: -1}" # get last parameter
 
@@ -35,7 +60,11 @@ num=$(($# - 1))
 count=0
 for file in $@; do
     from=$file
-    to=$dest/$from
+    if [ $foldertree -eq 1 ]; then
+        to=$dest/$from
+    else
+        to=$dest/$(basename $from)
+    fi
     parent=$(dirname $to)
     if [ ! -d $parent ]; then
         mkdir -p $parent
