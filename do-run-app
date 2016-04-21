@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+function usage() 
+{
+    cmd=$(basename $0)
+    echo "Usage: $cmd [-c] [-s] [-g] [-l] [-d] [-v] <app> [<args>]"
+    echo "       -c               : use catchsegv"
+    echo "       -s               : use strace"
+    echo "       -g               : use gdb"
+    echo "       -l               : use ltrace"
+    echo "       -d               : use ldd"
+    echo "       -v               : use valgrind"
+    echo "       -q               : quiet"
+}
+
+tool=""
+quiet=0
+if [ ! -t 1 ]; then
+    quiet=1
+fi
+while getopts hqcsgldv flag
+do
+    case $flag in
+        v)
+            tool="valgrind --leak-check=yes --track-origins=yes"
+            ;;
+        g)
+            tool="gdb --args"
+            ;;
+        q)
+            quiet=1
+            ;;
+        s)
+            tool=strace
+            ;;
+        c)
+            tool=catchsegv
+            ;;
+        l)
+            tool=ltrace
+            ;;
+        d)
+            tool=ldd
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -eq 0 ]; then
+    usage
+    exit
+fi
+
+
+cmd="$tool $@"
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval "$cmd"
