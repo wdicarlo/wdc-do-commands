@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+dmesg|grep --color "New USB device found\|USB disconnect\|logical blocks"
