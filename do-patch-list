@@ -2,7 +2,7 @@
 
 function usage() {
     cmd=`basename $0`
-    echo "Usage: $cmd [-h] [-a]"
+    echo "Usage: $cmd [-h] [-a] [<grep-pattern>]"
     echo "             -h          : help"
     echo "             -a          : list all patches"
     echo "             -p          : print paths"
@@ -15,6 +15,7 @@ fi
 
 all=0
 paths=0
+filter=""
 while getopts hap flag
 do
     case $flag in
@@ -36,6 +37,9 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+if [ $# -gt 0 ]; then
+    filter="|grep --color $1"
+fi
 
 postproc=""
 if [ $paths -eq 1 ]; then
@@ -43,9 +47,9 @@ if [ $paths -eq 1 ]; then
 fi
 
 if [ $all -eq 0 ]; then
-    cmd="ls -1t $PATCHES_DIR | head -20 $postproc"
+    cmd="ls -1t $PATCHES_DIR $filter | head -20 $postproc $filter"
 else
-    cmd="ls -1 $PATCHES_DIR $postproc"
+    cmd="ls -1 $PATCHES_DIR $postproc $filter"
 fi
 echo "> $cmd"
 eval "$cmd"
