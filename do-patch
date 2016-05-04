@@ -96,21 +96,24 @@ fi
 
 # TODO: check position extracting folder name from patch filename
 
-adding_files=$(cat $patchfile | grep -B1 "^@@ -0"|grep "^+++"| sed 's/(working copy)//'|do-pipe-trimmed -a | do-pipe-columns 2)
-num_adding_files=$(cat $patchfile | grep -B1 "^@@ -0"|grep "^+++"| sed 's/(working copy)//'|do-pipe-trimmed -a | do-pipe-columns 2|wc -l)
-if [ $num_adding_files -gt 0 ]; then
-    if [ $force -eq 0 ]; then 
-        echo "Adding files already present. Please remove them or force the patch"
-        echo "Adding: "
-        echo "$adding_files"
-        exit
-    else
-        for file in $adding_files; do
-            echo "Removing file: $file"
-            rm $file
-        done
-    fi
+added_files=$(cat $patchfile  |grep "revision 0" |sed 's/--- //'|sed 's/(revision 0)//'|do-pipe-trimmed) 
+if [ ! "$added_files" == "" ]; then
+    for file in $added_files;
+    do
+        if [ -f "$file" ]; then
+            if [ $force -eq 0 ]; then 
+                echo "Adding files already present. Please remove them or force the patch"
+                echo "Adding: "
+                echo "$added_files"
+                exit
+            else
+                echo "Removing file: $file"
+                rm $file
+            fi
+        fi
+    done
 fi
+
 
 
 if [ $paths -eq 1 ]; then
@@ -124,7 +127,7 @@ else
 fi
 echo "> $cmd"
 eval "$cmd"
-added_files=$(cat $patchfile  |grep "revision 0" |sed 's/--- //'|sed 's/(revision 0)//'|do-pipe-trimmed) 
+
 if [ "$added_files" != "" ]; then
     echo "Adding files: "
     echo "$added_files"
