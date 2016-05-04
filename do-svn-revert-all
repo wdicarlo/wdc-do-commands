@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+
+#externals=$(svn status|grep external|sed 's/Performing status on external item at //'|tr -d "'" |tr -d ":"|do-pipe-trimmed|sed 's/\r/ /g')
+externals=$(svn status|grep external|sed 's/Performing status on external item at //'|tr -d "'" |tr -d ":")
+added_files=$(svn status|grep "^A"|do-pipe-trimmed -a|do-pipe-columns 2)
+
+cmd="svn revert -R ."
+echo "> $cmd"
+eval "$cmd"
+for ext in $externals; 
+do
+    cmd="svn revert -R $ext"
+    echo "> $cmd"
+    eval "$cmd"
+done
+
+for file in $added_files; 
+do
+    cmd="rm $file"
+    echo "> $cmd"
+    eval "$cmd"
+done
