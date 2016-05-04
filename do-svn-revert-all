@@ -1,7 +1,45 @@
 #!/usr/bin/env bash
 
+function usage()
+{
+    cmd=$(basename $0)
+    echo "Usage: $cmd [-h] [-n]"
+    echo "             -h               : help"
+    echo "             -n               : do not remove the added files"
+}
 
-#externals=$(svn status|grep external|sed 's/Performing status on external item at //'|tr -d "'" |tr -d ":"|do-pipe-trimmed|sed 's/\r/ /g')
+
+quiet=0
+delete=1
+while getopts hqn flag
+do
+    case $flag in
+        n)
+            delete=0
+            ;;
+        q)
+            quiet=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+svn status
+echo "Are you sure to revert all changes? {Yes/No}?"
+read answer
+if [ ! "$answer" == "Yes" ]
+then
+    exit
+fi
+
 externals=$(svn status|grep external|sed 's/Performing status on external item at //'|tr -d "'" |tr -d ":")
 added_files=$(svn status|grep "^A"|do-pipe-trimmed -a|do-pipe-columns 2)
 
@@ -14,6 +52,10 @@ do
     echo "> $cmd"
     eval "$cmd"
 done
+
+if [ $delete -eq 0 ]; then
+    exit
+fi
 
 for file in $added_files; 
 do
