@@ -3,11 +3,26 @@
 function usage() 
 {
     cmd=$(basename $0)
-    echo "Usage: $cmd [-c] [-s] [-g] [-l] [-d] [-v] <app> [<args>]"
+    echo "Usage: $cmd [-c] [-e] [-s] [-g] [-l] [-L] [-d] [-D <type>] [-d] [-v] <app> [<args>]"
     echo "       -c               : use catchsegv"
+    echo "       -e               : use readelf --dynamic"
     echo "       -s               : use strace"
     echo "       -g               : use gdb"
+    echo "       -G               : use cgdb"
     echo "       -l               : use ltrace"
+    echo "       -L               : use LD_DEBUG=files"
+    echo "       -D <type>        : use LD_DEBUG=<type> default=help"
+    echo "                                       libs        display library search paths"
+    echo "                                       reloc       display relocation processing"
+    echo "                                       files       display progress for input file"
+    echo "                                       symbols     display symbol table processing"
+    echo "                                       bindings    display information about symbol binding"
+    echo "                                       versions    display version dependencies"
+    echo "                                       scopes      display scope information"
+    echo "                                       all         all previous options combined"
+    echo "                                       statistics  display relocation statistics"
+    echo "                                       unused      determined unused DSOs"
+    echo "                                       help        display this help message and exit"
     echo "       -d               : use ldd"
     echo "       -v               : use valgrind"
     echo "       -q               : quiet"
@@ -18,14 +33,26 @@ quiet=0
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts hqcsgldv flag
+while getopts hqcsgGlLdvD:e flag
 do
     case $flag in
         v)
             tool="valgrind --leak-check=yes --track-origins=yes"
             ;;
+        L)
+            tool="LD_DEBUG=files"
+            ;;
+        D)
+            tool="LD_DEBUG=$OPTARG"
+            ;;
+        e)
+            tool="readelf --dynamic"
+            ;;
         g)
             tool="gdb --args"
+            ;;
+        G)
+            tool="cgdb --args"
             ;;
         q)
             quiet=1
@@ -59,9 +86,9 @@ if [ $# -eq 0 ]; then
     exit
 fi
 
-
 cmd="$tool $@"
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
 eval "$cmd"
+
