@@ -124,3 +124,14 @@ else
 fi
 echo "> $cmd"
 eval "$cmd"
+added_files=$(cat $patchfile  |grep "revision 0" |sed 's/--- //'|sed 's/(revision 0)//'|do-pipe-trimmed) 
+if [ "$added_files" != "" ]; then
+    echo "Adding files: "
+    echo "$added_files"
+    for file in $added_files;
+    do
+        cmd="svn add $file"
+        echo "> $cmd"
+        eval "$cmd"
+    done
+fi
