@@ -1,5 +1,24 @@
 #!/usr/bin/env bash
 
+quiet=0
+while getopts hq flag
+do
+    case $flag in
+        q)
+            quiet=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 if [ $# -gt 0 ]; then
     url="$1"
 else
@@ -11,5 +30,7 @@ b_first=$(echo $b_revs| tr ' ' '\n' | head -1)
 b_last=$(echo $b_revs| tr ' ' '\n' | tail -1)
 
 cmd="svn diff -r$b_first:$b_last $url"
-echo "> $cmd"
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
 eval "$cmd"
