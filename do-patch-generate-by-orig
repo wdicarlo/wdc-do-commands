@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+
+orig_files=$(find .| grep "\.orig$")
+
+echo $orig_files
+
+for file in $orig_files;
+do
+    cur_file=${file%.orig}
+    cmd="diff -rupN $cur_file $file"
+    echo "$cmd"
+    eval "$cmd"
+done
