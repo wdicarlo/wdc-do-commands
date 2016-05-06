@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+
+do-svn-diff-branch
+
+externals=$(svn status|grep external|sed 's/Performing status on external item at //'|tr -d "'" |tr -d ":")
+
+home=$(pwd)
+for ext in $externals; 
+do
+    cd "$ext"
+    do-svn-diff-branch -q | sed "s#^Index: #Index: $ext/#" | sed "s#^+++ #+++ $ext/#" | sed "s#^--- #--- $ext/#"  
+    cd $home
+done
+
