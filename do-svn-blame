@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+function usage()
+{
+    cmd=$(basename $0)
+    echo "Usage: $cmd [-e] [-u <user>] <file1>..<filen>"
+    echo "-            -e                   : output in cfile format"
+    echo "-            -u                   : use <user>"
+}
+
+
+
+eformat=0
+user=$SVN_USER
+while getopts heu: flag
+do
+    case $flag in
+        u)
+            user=$OPTARG
+            ;;
+        e)
+            eformat=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ -z $user ]; then
+    echo "SVN_USER is not defined and -u option has not been specified"
+    exit
+fi
+
+for file in $@;
+do
+    if [ -f $file ]; then
+        cmd="svn blame $file|do-pipe-lines-numbers |grep $user"
+        if [ $eformat -eq 1 ]; then
+            cmd="$cmd| sed 's%\(^[0-9]*\) *\([0-9]*\) *[a-z]* \( *.*\)%$file:\1:\3%'"
+        fi
+        echo "> $cmd"
+        eval "$cmd"
+    fi
+done
