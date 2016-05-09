@@ -5,7 +5,7 @@ now=`date +%Y%m%d%H%M%S`
 function usage()
 {
     cmd=$(basename $0)
-    echo "Usage: $cmd [-R] [-n] [-l] <patch-file>"
+    echo "Usage: $cmd [-R] [-n] [-l] [-L] [-p] [-f] <patch-file>"
     echo "             -R               : remove patch"
     echo "             -n               : just print the patch"
     echo "             -l               : consider the last patch"
@@ -107,8 +107,10 @@ if [ ! "$added_files" == "" ]; then
                 echo "$added_files"
                 exit
             else
-                echo "Removing file: $file"
-                rm $file
+                echo "> rm $file"
+                if [ $dryrun -eq 0 ]; then
+                    rm $file
+                fi
             fi
         fi
     done
@@ -135,6 +137,8 @@ if [ "$added_files" != "" ]; then
     do
         cmd="svn add $file"
         echo "> $cmd"
-        eval "$cmd"
+        if [ $dryrun -eq 0 ]; then
+            eval "$cmd"
+        fi
     done
 fi
