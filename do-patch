@@ -20,6 +20,7 @@ dryrun=0
 last=0
 paths=0
 force=0
+prompt=">"
 while getopts hRnlLpf flag
 do
     case $flag in
@@ -37,6 +38,7 @@ do
             ;;
         n)
             dryrun=1
+            prompt="#"
             ;;
         R)
             opts="-R"
@@ -107,7 +109,7 @@ if [ ! "$added_files" == "" ]; then
                 echo "$added_files"
                 exit
             else
-                echo "> rm $file"
+                echo "$prompt rm $file"
                 if [ $dryrun -eq 0 ]; then
                     rm $file
                 fi
@@ -136,7 +138,7 @@ if [ "$added_files" != "" ]; then
     for file in $added_files;
     do
         cmd="svn add $file"
-        echo "> $cmd"
+        echo "$prompt $cmd"
         if [ $dryrun -eq 0 ]; then
             eval "$cmd"
         fi
