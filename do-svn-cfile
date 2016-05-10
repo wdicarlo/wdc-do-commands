@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+
+files=$(do-svn-status -p)
+for file in $files;
+do
+    if [ -f $file ]; then
+        svn cat $file > $file.tmp
+        diff --unchanged-line-format="" --old-line-format="$file:%dn: %L" $file $file.tmp
+        rm $file.tmp
+    fi
+done
