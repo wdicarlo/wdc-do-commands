@@ -1,5 +1,30 @@
 #!/usr/bin/env bash
 
+function usage() {
+    cmd=`basename $0`
+    echo "Usage: $cmd [-h] [-r]"
+    echo "                  -r           : reverse patch"
+}
+
+reverse=0
+while getopts hr flag
+do
+    case $flag in
+        r)
+            reverse=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 
 orig_files=$(find .| grep "\.orig$")
 
@@ -8,7 +33,11 @@ echo $orig_files
 for file in $orig_files;
 do
     cur_file=${file%.orig}
-    cmd="diff -rupN $cur_file $file"
+    if [ $reverse -eq 0 ]; then
+        cmd="diff -rupN $cur_file $file"
+    else
+        cmd="diff -rupN $file $cur_file"
+    fi
     echo "$cmd"
     eval "$cmd"
 done
