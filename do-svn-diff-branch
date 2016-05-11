@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 
+function usage()
+{
+    cmd=$(basename $0)
+    echo "Usage: $cmd [-q] [-f]"
+    echo "             -q               : quiet"
+    echo "             -f               : print also the name of the functions"
+}
+
 quiet=0
-while getopts hq flag
+print_func=0
+while getopts hqf flag
 do
     case $flag in
+        f)
+            print_func=1
+            ;;
         q)
             quiet=1
             ;;
@@ -29,7 +41,11 @@ b_revs=$(echo "$b_logs" |grep "^r[0-9]*"|awk '{print $1}'|tr -d 'r')
 b_first=$(echo $b_revs| tr ' ' '\n' | head -1)
 b_last=$(echo $b_revs| tr ' ' '\n' | tail -1)
 
-cmd="svn diff -r$b_first:$b_last $url"
+if [ $print_func -eq 0 ]; then
+    cmd="svn diff -r$b_first:$b_last $url"
+else
+    cmd="svn diff --diff-cmd diff -x --show-c-function -r$b_first:$b_last $url"
+fi
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
