@@ -5,14 +5,19 @@ function usage()
     cmd=$(basename $0)
     echo "Usage: $cmd [-q] [-f]"
     echo "             -q               : quiet"
+    echo "             -c               : print cfile"
     echo "             -f               : print also the name of the functions"
 }
 
 quiet=0
 print_func=0
-while getopts hqf flag
+cfile=0
+while getopts hqfc flag
 do
     case $flag in
+        c)
+            cfile=1
+            ;;
         f)
             print_func=1
             ;;
@@ -41,12 +46,25 @@ b_revs=$(echo "$b_logs" |grep "^r[0-9]*"|awk '{print $1}'|tr -d 'r')
 b_first=$(echo $b_revs| tr ' ' '\n' | head -1)
 b_last=$(echo $b_revs| tr ' ' '\n' | tail -1)
 
-if [ $print_func -eq 0 ]; then
-    cmd="svn diff -r$b_first:$b_last $url"
+if [ $cfile -eq 0 ]; then
+    if [ $print_func -eq 0 ]; then
+        cmd="svn diff -r$b_first:$b_last $url"
+    else
+        cmd="svn diff --diff-cmd diff -x --show-c-function -r$b_first:$b_last $url"
+    fi
+    if [ $quiet -eq 0 ]; then
+        echo "> $cmd"
+    fi
+    eval "$cmd"
 else
-    cmd="svn diff --diff-cmd diff -x --show-c-function -r$b_first:$b_last $url"
+    files=$(svn diff -r$b_first:$b_last $url |grep "^Index"|sed 's/^Index: //')
+    for file in $files;
+    do
+        if [ -f $file ]; then
+            svn cat -r $b_first $file > $file.tmp1
+            svn cat -r $b_last $file > $file.tmp2
+            diff --unchanged-line-format="" --old-line-format="$file:%dn: %L" --new-line-format="$file:%dn: %L" $file.tmp1 $file.tmp2
+            rm $file.tmp1 $file.tmp2
+        fi
+    done
 fi
-if [ $quiet -eq 0 ]; then
-    echo "> $cmd"
-fi
-eval "$cmd"
