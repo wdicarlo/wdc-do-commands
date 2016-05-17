@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+uniq=0
+while getopts hu flag
+do
+    case $flag in
+        u)
+            uniq=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+#cat | sed 's#[0-9\/\-]* [0-9:]* now=[0-9]* delta=[0-9]*##' | sed 's#^[0-9.]*:##'
+cmd="cat | sed 's#[0-9\/\-]* [0-9:.]*##' | sed 's#<[0-9\/\-]* [0-9:.]*>##' |sed 's#[0-9\/]*-[0-9:.]*##' |sed 's#^[0-9.]*:##' | sed 's#now=[0-9]* delta=[0-9]*##'|sed 's#^[0-9.]* ##'"
+if [ $uniq -eq 1 ]; then
+    cmd="$cmd | uniq -c"
+fi
+echo "> $cmd"
+eval "$cmd"
