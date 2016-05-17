@@ -99,23 +99,23 @@ fi
 # TODO: check position extracting folder name from patch filename
 
 added_files=$(cat $patchfile  |grep "revision 0" |sed 's/--- //'|sed 's/(revision 0)//'|do-pipe-trimmed) 
-if [ ! "$added_files" == "" ]; then
-    for file in $added_files;
-    do
-        if [ -f "$file" ]; then
-            if [ $force -eq 0 ]; then 
-                echo "Adding files already present. Please remove them or force the patch"
-                echo "Adding: "
-                echo "$added_files"
-                exit
-            else
-                echo "$prompt rm $file"
-                if [ $dryrun -eq 0 ]; then
+if [ $dryrun -eq 0 ]; then
+    if [ ! "$added_files" == "" ]; then
+        for file in $added_files;
+        do
+            if [ -f "$file" ]; then
+                if [ $force -eq 0 ]; then 
+                    echo "Adding files already present. Please remove them or force the patch"
+                    echo "Adding: "
+                    echo "$added_files"
+                    exit
+                else
+                    echo "$prompt rm $file"
                     rm $file
                 fi
             fi
-        fi
-    done
+        done
+    fi
 fi
 
 
@@ -132,15 +132,15 @@ fi
 echo "> $cmd"
 eval "$cmd"
 
-if [ "$added_files" != "" ]; then
-    echo "Adding files: "
-    echo "$added_files"
-    for file in $added_files;
-    do
-        cmd="svn add $file"
-        echo "$prompt $cmd"
-        if [ $dryrun -eq 0 ]; then
+if [ $dryrun -eq 0 ]; then
+    if [ "$added_files" != "" ]; then
+        echo "Adding files: "
+        echo "$added_files"
+        for file in $added_files;
+        do
+            cmd="svn add $file"
+            echo "$prompt $cmd"
             eval "$cmd"
-        fi
-    done
+        done
+    fi
 fi
