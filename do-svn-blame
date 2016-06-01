@@ -3,10 +3,11 @@
 function usage()
 {
     cmd=$(basename $0)
-    echo "Usage: $cmd [-e] [-q] [-u <user>] <file1>..<filen>"
+    echo "Usage: $cmd [-e] [-q] [-u <user>] [-l] [-p] <file1>..<filen>"
     echo "             -e                   : output in cfile format"
     echo "             -l                   : list users"
     echo "             -u                   : use <user>"
+    echo "             -p                   : print"
     echo "             -q                   : quiet"
 }
 
@@ -16,11 +17,15 @@ eformat=0
 user=$SVN_USER
 quiet=0
 list=0
-while getopts heu:ql flag
+print=0
+while getopts heu:qlp flag
 do
     case $flag in
         u)
             user=$OPTARG
+            ;;
+        p)
+            print=1
             ;;
         l)
             list=1
@@ -51,12 +56,16 @@ fi
 for file in $@;
 do
     if [ -f $file ]; then
-        cmd="svn blame $file|do-pipe-lines-numbers |grep $user"
-        if [ $eformat -eq 1 ]; then
-            cmd="$cmd| sed 's%\(^[0-9]*\) *\([0-9]*\) *[a-z]* \( *.*\)%$file:\1:\3%'"
-        fi
-        if [ $list -eq 1 ]; then
-            cmd="svn blame $file|do-pipe-trimmed -a|do-pipe-columns 2|sort|uniq -c|sort -r"
+        if [ $print -eq 0 ]; then
+            cmd="svn blame $file|do-pipe-lines-numbers |grep $user"
+            if [ $eformat -eq 1 ]; then
+                cmd="$cmd| sed 's%\(^[0-9]*\) *\([0-9]*\) *[a-z]* \( *.*\)%$file:\1:\3%'"
+            fi
+            if [ $list -eq 1 ]; then
+                cmd="svn blame $file|do-pipe-trimmed -a|do-pipe-columns 2|sort|uniq -c|sort -r"
+            fi
+        else
+            cmd="svn blame $file|do-pipe-lines-numbers"
         fi
         if [ $quiet -eq 0 ]; then
             echo "> $cmd"
