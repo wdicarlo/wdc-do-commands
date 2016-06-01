@@ -3,22 +3,27 @@
 function usage() 
 {
     cmd=`basename $0`
-    echo "Usage: $cmd [-h] [-g] [-r] <branch-name>"
+    echo "Usage: $cmd [-h] [-g] [-r] [-f] <branch-name>"
     echo "       Create the branch <repo>/branches/[<author>]/branch_[<author>_]<branch-name>_dev"
     echo "            -h            : this help"
     echo "            -g            : global branch"
     echo "            -r            : create release tag"
     echo "            -s            : switch to branch"
+    echo "            -f            : force switch to branch"
 }
 
 paths=0
 global=0
 switch=0
 release=0
+force=0
 
-while getopts hgsr flag
+while getopts hgsrf flag
 do
    case $flag in
+      f)
+         force=1
+         ;;
       g)
          global=1
          ;;
@@ -92,17 +97,23 @@ if [ ! -d .svn ]; then
 fi
 
 url=$(svn info 2>&1 | grep "^URL" | do-pipe-columns 2)
-if [ ! $url == "$repo/trunk" ]; then
+trunk=$SVN_TRUNK
+if [ "$trunk" == "" ]; then
+    trunk='trunk'
+fi
+if [ ! $url == "$repo/$trunk" ]; then
    echo "Not in the working copy of the trunk"
    exit
 fi
 
 
-changes=$(svn status | grep -v "^?" | wc -l )
+if [ $force -eq 0 ]; then
+    changes=$(svn status | grep -v "^?" | wc -l )
 
-if [ $changes -gt 0 ]; then
-   echo "Working copy with changes"
-   exit
+    if [ $changes -gt 0 ]; then
+       echo "Working copy with changes"
+       exit
+    fi
 fi
 
 
@@ -115,7 +126,7 @@ if [ $release -eq 1 ]; then
    fi
 fi
 
-cmd="svn copy ${repo}/trunk ${branches}/${name}"
+cmd="svn copy ${repo}/$trunk ${branches}/${name}"
 echo "> $cmd"
 #eval "svn copy ${repo}/trunk ${branches}/${name}"
 eval "$cmd"
