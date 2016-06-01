@@ -9,7 +9,8 @@ fi
 
 svn info | grep "^URL"
 if [ $verbose -eq 0 ]; then
-    svn log -v -r1:HEAD | grep "^r[0-9]*" -B2 | grep -v "^--"| sed "s/^$/No comment/g"| while read line1; do read line2; echo "$line1 | $line2"; done
+    #svn log -v -r1:HEAD | grep "^r[0-9]*" -B2 | grep -v "^--"| sed "s/^$/No comment/g"| while read line1; do read line2; echo "$line1 | $line2"; done
+    svn log --stop-on-copy -r0:HEAD . | perl -l40pe 's/^-+/\n/'
 else
     svn log -v
 fi
