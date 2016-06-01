@@ -12,6 +12,7 @@ function usage()
     echo "             -L               : consider the very last patch"
     echo "             -p               : just print the paths of the patches"
     echo "             -f               : force addition of new files"
+    echo "             -q               : quiet"
 }
 
 # TODO: check if new file present in the patch are not present in the working copy
@@ -21,7 +22,11 @@ last=0
 paths=0
 force=0
 prompt=">"
-while getopts hRnlLpf flag
+quiet=0
+if [ ! -t 1 ]; then
+    quiet=1
+fi
+while getopts hRnlLpfq flag
 do
     case $flag in
         f)
@@ -42,6 +47,9 @@ do
             ;;
         R)
             opts="-R"
+            ;;
+        q)
+            quiet=1
             ;;
         h)
             usage
@@ -129,7 +137,9 @@ else
         cmd="cat $patchfile"
     fi
 fi
-echo "> $cmd"
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
 eval "$cmd"
 
 if [ $dryrun -eq 0 ]; then
