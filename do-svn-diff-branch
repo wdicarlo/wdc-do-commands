@@ -3,18 +3,23 @@
 function usage()
 {
     cmd=$(basename $0)
-    echo "Usage: $cmd [-q] [-f]"
+    echo "Usage: $cmd [-q] [-f] [-c] [-p]"
     echo "             -q               : quiet"
     echo "             -c               : print cfile"
     echo "             -f               : print also the name of the functions"
+    echo "             -p               : print paths of modified files"
 }
 
 quiet=0
 print_func=0
 cfile=0
-while getopts hqfc flag
+paths=0
+while getopts hqfcp flag
 do
     case $flag in
+        p)
+            paths=1
+            ;;
         c)
             cfile=1
             ;;
@@ -48,7 +53,11 @@ b_last=$(echo $b_revs| tr ' ' '\n' | tail -1)
 
 if [ $cfile -eq 0 ]; then
     if [ $print_func -eq 0 ]; then
-        cmd="svn diff -r$b_first:$b_last $url"
+        if [ $paths -eq 0 ]; then
+            cmd="svn diff -r$b_first:$b_last $url"
+        else
+            cmd="svn diff -r$b_first:$b_last $url| grep "^Index" | sed 's#^Index: ##'"
+        fi
     else
         cmd="svn diff --diff-cmd diff -x --show-c-function -r$b_first:$b_last $url"
     fi
