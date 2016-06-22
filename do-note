@@ -1,17 +1,49 @@
 #!/bin/bash
 
+function usage()
+{
+    cmd=$(basename $0)
+    echo "Usage: $cmd [-g] [-c] [-h] [<post_fix_name>]"
+    echo "             -g                    : global"
+    echo "             -c <post_fix_name>    : create new document notes_<post_fix_name>.otl"
+}
+function list() 
+{
+    echo "Available notes:"
+    ls $dest/*.otl
+}
+
 DOCS_FOLDER=docs
 FILENAME=notes.otl
 
-isglobal=0
-if [ $# == 1 ]; then
-    if [ "$1" == "-g" ]; then
-        isglobal=1
-    fi
+global=0
+create=0
+while getopts hgc flag
+do
+    case $flag in
+        g)
+            global=1
+            ;;
+        c)
+            create=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! "$1" == "" ]; then
+    FILENAME="notes_$1.otl"
 fi
 
-
-if [ -z "$PROJECT" ] || [ "$isglobal" == "1" ]
+if [ -z "$PROJECT" ] || [ $global -eq 1 ]
 then
     dest=`echo ~/$DOCS_FOLDER`
 else
@@ -30,5 +62,16 @@ if [ -f "$dest/../$FILENAME" ]; then
     mv "$dest/../$FILENAME" "$dest/../${FILENAME}.bak"
     ln -s "$dest/$FILENAME" "$dest/../$FILENAME"
 fi
-
+if [ ! "$FILENAME" == "notes.otl" ];
+then
+    if [ ! -f "$dest/$FILENAME" ] && [ $create == 0 ];
+    then
+        echo "Missing file: $dest/$FILENAME"
+        echo
+        list
+        echo
+        usage
+        exit
+    fi
+fi
 vi $dest/$FILENAME
