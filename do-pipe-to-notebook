@@ -1,0 +1,32 @@
+#!/bin/bash
+
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+if [ ! $# == 2 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd <notebook> <title>"
+    exit
+fi
+
+notebook=`echo ~/.notebook/$1.nb`
+
+if [ ! -f $notebook ]; then
+    echo "Missing notebook file for: $1"
+    echo "Availanble notebook:"
+    ls ~/.notebook/*.nb|sed 's/\.nb$//' 
+    exit
+fi
+
+curdate=`date '+%y_%m_%d_%H_%M'`
+icmd=$(history -a; tail -n 1)
+echo "Text: $2" >> $notebook
+echo "    : Category:  NOTE" >> $notebook
+echo "    : Reference: $cmd" >> $notebook
+echo "    : Date:      $curdate" >> $notebook
+
+cat | sed 's/^/\t\t; /' >> $notebook
