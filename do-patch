@@ -148,7 +148,7 @@ if [ $dryrun -eq 0 ]; then
         echo "$added_files"
         for file in $added_files;
         do
-            cmd="svn add $file"
+            cmd="svn add --parents $file"
             echo "$prompt $cmd"
             eval "$cmd"
         done
