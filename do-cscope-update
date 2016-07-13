@@ -6,6 +6,15 @@ if [ -z "$check" ]; then
     exit
 fi
 
+function usage()
+{
+    cmd=$(basename $0)
+    echo "Usage: $cmd  [-c] [-d] [-f <folders>]"
+    echo "              -c                      : clean before update"
+    echo "              -d                      : debug mode"
+    echo "              -f                      : folders to consider"
+}
+
 # TODO: add options to specife type of files to consider
 # -c -> h,c
 # -m -> makefiles, kconfig
@@ -15,7 +24,7 @@ fi
 # -a -> all the rest
 
 folders="."
-while getopts cdf: flag
+while getopts hcdf: flag
 do
     case $flag in
 
@@ -32,7 +41,12 @@ do
         f)
             folders=$OPTARG
             ;;
+        h)
+            usage
+            exit
+            ;;
         ?)
+            usage
             exit
             ;;
     esac
@@ -55,6 +69,7 @@ then
         find `pwd` -name "*.h" >> $home/cscope.files
         find `pwd` -name "*.hpp" >> $home/cscope.files
         find `pwd` -name "*.c" >> $home/cscope.files
+        find `pwd` -name "*.cc" >> $home/cscope.files
         find `pwd` -name "*.cpp" >> $home/cscope.files
         find `pwd` -name "*.S" >> $home/cscope.files
         find `pwd` -name "*.s" >> $home/cscope.files
