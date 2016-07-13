@@ -74,4 +74,4 @@ then
         exit
     fi
 fi
-vi $dest/$FILENAME
+\vim $dest/$FILENAME
