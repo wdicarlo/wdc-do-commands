@@ -3,12 +3,15 @@
 
 symbols_patt=$1
 
-folders=$(find . -maxdepth 1 -type d)
+folders=$(find . -maxdepth 1 -type d|grep -v "^\.$")
+
+
+do-find-string -g -n 1 $symbols_patt |grep -v ":[ ]*\-\-"| do-pipe-words $symbols_patt|sed "s#^#$folder #" | awk '{printf "%-30s  %-30s\n",$1,$2}'
 
 for folder in $folders;
 do
     cd $folder
-    do-find-string $symbols_patt | do-pipe-words $symbols_patt|sed "s#^#$folder #" | sed "s#^./##" | awk '{printf "%-30s  %-30s\n",$1,$2}'
+    do-find-string -g $symbols_patt|grep -v ":[ ]*\-\-" | do-pipe-words $symbols_patt|sed "s#^#$folder #" | sed "s#^./##"| awk '{printf "%-30s  %-30s\n",$1,$2}'
     if [ "$folder" == "." ]; then
         continue
     fi
