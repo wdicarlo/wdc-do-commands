@@ -1,4 +1,27 @@
 #!/usr/bin/env bash
 
+function usage()
+{
+    cmd=$(basename $0)
+    echo "Usage: $cmd [-h] [-e]"
+    echo "                  -e            : open diffs in the editor"
+}
 
-do-svn-status | grep "^[MAD]"|sed 's/^[MAD+ ]* //' | do-pipe-trimmed -a | xargs -I@ sh -c "if [ -f @ ]; then do-svn-diff @; fi"  
+edit=0
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-h" ]; then
+        usage
+        exit
+    fi
+    if [ "$1" == "-e" ]; then
+        edit=1
+    fi
+fi
+
+
+
+if [ $edit -eq 1 ]; then
+    do-svn-status | grep "^[MAD]"|sed 's/^[MAD+ ]* //' | do-pipe-trimmed -a | xargs -I@ sh -c "if [ -f @ ]; then do-svn-diff @; fi" | do-pipe-to-vim
+else
+    do-svn-status | grep "^[MAD]"|sed 's/^[MAD+ ]* //' | do-pipe-trimmed -a | xargs -I@ sh -c "if [ -f @ ]; then do-svn-diff @; fi"
+fi
