@@ -34,7 +34,7 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 
 if [ $verbose -eq 1 ]; then
-    cat | grep "\[CP\]\|\[GEN\]\|\[AR\]\|\[CC\]\|\[LD\]\|^==="
+    cat | grep -i "error:\|warning:\|\[CP\]\|\[GEN\]\|\[AR\]\|\[CC\]\|\[LD\]\|^===" #| tee build.log
 else
-    cat | grep "\[AR\]\|\[CC\]\|\[LD\]"
+    cat | grep -i "error:\|warning:\|\[AR\]\|\[CC\]\|\[LD\]" #| tee build.log
 fi
