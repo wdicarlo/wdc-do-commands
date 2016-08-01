@@ -26,7 +26,7 @@ fi
 
 gdb_cmds=`echo $trace.gdb`
 
-cat $trace | grep SEH | sed -e '/Callstack/,/Information about/!d' | do-pipe-trimmed -a | do-pipe-columns 3 | grep "^0x[0-9a-f]*" | sed 's/^/list * /' > "$gdb_cmds"
+cat $trace | grep SEH | sed -e '/Callstack/,/Information about/!d' | do-pipe-trimmed -a | do-pipe-columns 3 | grep "^0x[0-9a-f]*" | grep -v "0x00000000"| sed 's/^/list * /' > "$gdb_cmds"
 
 
 gdb --batch -x "$gdb_cmds" "$symbols"
