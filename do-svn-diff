@@ -3,17 +3,19 @@
 function usage()
 {
     cmd=$(basename $0)
-    echo "Usage: $cmd [-q] [-f] [-r <revs-range>] [<files>]"
+    echo "Usage: $cmd [-q] [-f] [-e] [-r <revs-range>] [<files>]"
     echo "             -q                       : quiet"
     echo "             -f                       : print just the filenames"
     echo "             -r                       : print diff of the specified revs. range"
+    echo "             -e                       : edit"
 }
 
 
 quiet=0
 files=0
 revs=""
-while getopts hqfr: flag
+edit=0
+while getopts hqfr:e flag
 do
     case $flag in
         q)
@@ -21,6 +23,9 @@ do
             ;;
         r)
             revs=$OPTARG
+            ;;
+        e)
+            edit=1
             ;;
         f)
             files=1
@@ -42,12 +47,18 @@ if [ ! -t 1 ]; then
 fi
 
 if [ "$revs" == "" ]; then
-    cmd="svn diff --patch-compatible -x --ignore-all-space $@"
+    cmd="svn diff --patch-compatible -x --ignore-all-space"
 else
-    cmd="svn diff --patch-compatible -x --ignore-all-space -r $revs $@"
+    cmd="svn diff --patch-compatible -x --ignore-all-space -r $revs"
 fi
 if [ $files -eq 1 ]; then
-    cmd="svn diff --patch-compatible -x --ignore-all-space --summarize -r $revs $@"
+    cmd="$cmd --summarize"
+fi
+
+cmd="$cmd $@"
+
+if [ $edit -eq 1 ]; then
+    cmd="$cmd | do-pipe-to-vim"
 fi
 if [ $quiet -eq 0 ]; then
    echo "> $cmd"
