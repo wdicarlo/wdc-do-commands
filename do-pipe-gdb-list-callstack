@@ -15,7 +15,11 @@ fi
 
 gdb_cmds=`echo $symbols.gdb`
 
-cat | do-pipe-trimmed -a | do-pipe-columns 3 | grep "^0x[0-9a-f]*" | sed 's/^/list * /' > "$gdb_cmds"
+#cat | do-pipe-trimmed -a | do-pipe-columns 3 | grep "^0x[0-9a-f]*" | sed 's/^/list * /' > "$gdb_cmds"
+#cat | do-pipe-trimmed -a | do-pipe-columns 3 | grep "^0x[0-9a-f]*" 
+addrs=$(cat | grep SEH | sed -e '/Callstack/,/Information about/!d'|grep "0x[0-9a-f]*"|do-pipe-trimmed -a|do-pipe-columns 3)
 
-
-gdb --batch -x "$gdb_cmds" "$symbols"
+for addr in $addrs; do
+    echo "list * $addr" > /tmp/gdb_cmd.tmp
+    gdb --batch -x /tmp/gdb_cmd.tmp "$symbols"
+done
