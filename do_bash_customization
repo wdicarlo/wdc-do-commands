@@ -372,8 +372,12 @@ function cdenv() {
        fi
     fi
     if [ ! -d $NEW_PATH ]; then
-       echo "Missing folder: $NEW_PATH"
-       return
+       NEW_PATH=$(ls -1t | grep "$1")
+       if [ ! -d $NEW_PATH ]; then
+           echo "Missing folder or ambigus name: $NEW_PATH"
+           $(ls -1t | grep "$1")
+           return
+       fi
     fi
 
     \cd $NEW_PATH
@@ -680,10 +684,24 @@ function fsv()
         if [ "$1" == "-l" ]; then
             shift
             if [ $# -gt 0 ]; then
+                ls -1t ~/.do-find-string | grep $1 | head -20 | grep $1
+            else
+                ls -1t ~/.do-find-string | head -20
+            fi
+            return
+        elif [ "$1" == "-L" ]; then
+            shift
+            if [ $# -gt 0 ]; then
                 ls -1t ~/.do-find-string | grep $1
             else
                 ls -1t ~/.do-find-string
             fi
+            return
+        elif [ "$1" == "-h" ]; then
+            cmd=$(basename $0)
+            echo "Usage: $cmd [-h] [-l] [-L] [<grep-pattern>]"
+            echo "                  -l            : list last available queries"
+            echo "                  -L            : list all available queries"
             return
         fi
         cfile=$(ls -1t ~/.do-find-string|grep $1|head -1)
