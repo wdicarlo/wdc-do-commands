@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "$cmd must be used in a pipe"
+    usage
+    exit
+fi
+
+count=0
+prev_file=""
+prev_num=0
+echo "$@"
+while read line
+do
+    file=$(echo $line|sed 's/^\(.*\):[0-9]*:.*/\1/')
+    n=$(echo $line|sed 's/.*:\([0-9]*\):.*/\1/')
+    if [ "$file"=="$prev_file" ]; then
+        count=$((count+1))
+        if [ $count -ne $n ]; then
+            echo "$line"
+            count=$n
+        fi
+    else
+        # first line of a new file
+        count=$n
+        prev_file=$file
+        echo "$line"
+    fi
+done
+#sed 's/.*:\([0-9]*\):.*/\1/'
