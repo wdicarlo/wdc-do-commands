@@ -3,7 +3,7 @@
 function usage()
 {
     cmd=$(basename $0)
-    echo "Usage: <pipe> | $cmd [-v]"
+    echo "Usage: <pipe> | $cmd [-v] [<grep-pattern>]"
     echo "                      -v            : verbose"
 }
 
@@ -32,9 +32,13 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+filter_patt=""
+if [ $# -gt 0 ]; then
+    filter_patt="\|$1"
+fi
 
 if [ $verbose -eq 1 ]; then
-    cat | grep -i "error:\|warning:\|\[CP\]\|\[GEN\]\|\[AR\]\|\[CC\]\|\[LD\]\|^===" #| tee build.log
+    cat | grep -i "error:\|warning:\|\[CP\]\|\[GEN\]\|\[AR\]\|\[CC\]\|\[LD\]\|^===$filter_patt" #| tee build.log
 else
-    cat | grep -i "error:\|warning:\|\[AR\]\|\[CC\]\|\[LD\]" #| tee build.log
+    cat | grep -i "error:\|warning:\|\[AR\]\|\[CC\]\|\[LD\]$filter_patt"  #| tee build.log
 fi
