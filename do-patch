@@ -5,11 +5,13 @@ now=`date +%Y%m%d%H%M%S`
 function usage()
 {
     cmd=$(basename $0)
-    echo "Usage: $cmd [-R] [-n] [-l] [-L] [-p] [-f] <patch-file>"
+    echo "Usage: $cmd [-R] [-n] [-l] [-L] [-p] [-f] [-t] [-T] <patch-file>"
+    echo "             -l               : list patches"
+    echo "             -L               : list all patches"
     echo "             -R               : remove patch"
     echo "             -n               : just print the patch"
-    echo "             -l               : consider the last patch"
-    echo "             -L               : consider the very last patch"
+    echo "             -t               : consider the last patch"
+    echo "             -T               : consider the very last patch"
     echo "             -p               : just print the paths of the patches"
     echo "             -f               : force addition of new files"
     echo "             -q               : quiet"
@@ -23,19 +25,29 @@ paths=0
 force=0
 prompt=">"
 quiet=0
+list=0
+all=0
+filter=""
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts hRnlLpfq flag
+while getopts hRntTpfqlL flag
 do
     case $flag in
+        l)
+            list=1
+            ;;
+        L)
+            list=1
+            all=1
+            ;;
         f)
             force=1
             ;;
-        L)
+        T)
             last=2
             ;;
-        l)
+        t)
             last=1
             ;;
         p)
@@ -62,6 +74,27 @@ do
     esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $list -eq 1 ]; then
+    filter=""
+    if [ $# -gt 0 ]; then
+        filter="|grep --color $1"
+    fi
+    postproc=""
+    if [ $paths -eq 1 ]; then
+        postproc="|sed 's#^#$PATCHES_DIR\/#'"
+    fi
+    if [ $all -eq 1 ]; then
+        cmd="ls -1 $PATCHES_DIR $postproc $filter"
+    else
+        cmd="ls -1t $PATCHES_DIR $filter | head -20 $postproc $filter"
+    fi
+    if [ $quiet -eq 0 ]; then
+        echo "> $cmd"
+    fi
+    eval "$cmd"
+    exit
+fi
 
 if [  $# -eq 0 ]
 then
