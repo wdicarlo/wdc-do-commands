@@ -42,3 +42,6 @@ if [ ! -f .bash_env ]; then
     shift $#
     . ~/bin/do_setup_env
 fi
+
+# set title of terminal window
+echo -ne "\033]0;$prj\007"
