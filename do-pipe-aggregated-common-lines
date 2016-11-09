@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+current=""
+joined=""
+
+cat | while read a b; 
+do 
+    if [ $a == "$current" ]; then
+        joined="$joined $b"
+    else
+        if [ ! "$current" == "" ]; then
+            echo "$current: $joined"
+        fi
+        joined="$b"
+        current="$a"
+    fi
+done
