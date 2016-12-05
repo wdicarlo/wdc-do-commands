@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# remove control characters (see http://unix.stackexchange.com/a/14699)
+#  \x1b match the Escape preceeding the color code 
+#  \[ matches the first open bracket 
+#  .\{1,5\} matches 1 to 5 of any single character. 
+#  Have to \ the curly braces to keep the shell from mangling them. 
+#  m last character in regex - usually trails the color code. 
+#  // empty string for what to replace everything with. 
+#  g match it multiple times per line.
+
+
+#cat | sed -e "s/\x1b\[[0-9;]\{1,5\}m//g"
+
+# Remove color codes (special characters) with sed (see http://www.commandlinefu.com/commands/view/3584/remove-color-codes-special-characters-with-sed)
+cat | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
