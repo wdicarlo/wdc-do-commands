@@ -25,6 +25,7 @@ if [ -f ~/bin/do_bash_env ]; then
     echo "RELEASES               =  $RELEASES"
     echo "SHARED_FOLDER          =  $SHARED_FOLDER"
     echo "BASH_COMPLETITION_DIR  =  $BASH_COMPLETITION_DIR"
+    echo "PROMPT_VARS            =  $PROMPT_VARS"
 else
     echo "Missing file: do_bash_env"
 fi
@@ -38,6 +39,14 @@ bash_compl_dir=$BASH_COMPLETITION_DIR
 #set -o vi
 echo "Customizing bash"
 
+function update_prompt()
+{
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+        PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@${GREEN}$REPO_LOCATION${RESET}[$REPO_SYNT]{${PROMPT_VARS}}\$ '
+    else
+        PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
+    fi
+}
 function bash_completion()
 {
     if [ "$bash_compl_dir" == "" ]; then
@@ -228,6 +237,7 @@ function svn_branch() {
     \cd "$wdir"
 }
 function update_env() {
+    #export PROMPT_VARS=""
     export TYPE=`pwd | sed -e "s/\// /g" | awk '{ print $3}'`
     # if [ "$TYPE" = "projects" ];
     # then
@@ -287,8 +297,9 @@ function update_env() {
         source .bash_env
     else
         shift $#
-        . ~/bin/do_setup_env
+        source ~/bin/do_setup_env
     fi
+    update_prompt
 }
 function svn_cmd() {
     pars=""
@@ -674,6 +685,7 @@ function prompt_command()
 #        REPO_SYNT=""
 #    fi
     # TODO: add repo status syntesis: [M|A|?] 
+    update_prompt 
     history -a; history -c; history -r
 }
 function fsv()
@@ -723,19 +735,19 @@ export REPO_SYNT=""
 PROMPT_COMMAND=prompt_command
 GREEN="$(tput setaf 2)"
 RESET="$(tput sgr0)"
-#export PS1="\[\033[00m\]\u@\h\[\033[01;34m\] \W \[\033[31m\]\$(parse_git_branch) \[\033[00m\]$\[\033[00m\] "
-#if [ "$color_prompt" = yes ]; then
-if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-    #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-    #PS1='\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
-    PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@${GREEN}$REPO_LOCATION${RESET}[$REPO_SYNT]\$ '
-else
-    #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-    #PS1='`basename \w` \$ '
-    #PS1='$TYPE:$PROJECT:\W \$ '
-    PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
-fi
-
+# #export PS1="\[\033[00m\]\u@\h\[\033[01;34m\] \W \[\033[31m\]\$(parse_git_branch) \[\033[00m\]$\[\033[00m\] "
+# #if [ "$color_prompt" = yes ]; then
+# if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+#     #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+#     #PS1='\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+#     PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@${GREEN}$REPO_LOCATION${RESET}[$REPO_SYNT]\{$PROMPT_VARS\}\$ '
+# else
+#     #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+#     #PS1='`basename \w` \$ '
+#     #PS1='$TYPE:$PROJECT:\W \$ '
+#     PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
+# fi
+update_prompt
 
 bash_completion
 
