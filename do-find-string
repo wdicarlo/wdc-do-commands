@@ -5,7 +5,7 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-a] [-i] [-b] [-p] [-c ] [-s "substitute-string"][-e <exclude-patt>] [-r <root>] [-n <depth>] [-f <file-pattern>] [-g] <string>"
+    echo "Usage: $cmd [-h] [-a] [-i] [-b] [-p] [-c ] [-s "substitute-string"][-e <exclude-patt>] [-r <root>] [-n <depth>] [-f <file-pattern>] [-g] [-C n] <string>"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -i                          : ignore case"
@@ -18,6 +18,7 @@ function usage() {
     echo "       -e <exclude-patt>           : exclude pattern"
     echo "       -a                          : use ack-grep"
     echo "       -s \"substitute-string\"    : substitute <string> with substitute-string"
+    echo "       -C n                        : context like A2 B1 C3..."
     echo "       -g                          : just find string without storing the result"
     echo "       -q                          : quiet"
 }
@@ -41,7 +42,7 @@ justgrep=0
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts habqicpr:n:f:e:s:g flag
+while getopts habqicpr:n:f:e:s:gC: flag
 do
     case $flag in
         a)
@@ -59,6 +60,9 @@ do
             ;;
         q)
             quiet=1
+            ;;
+        C)
+            grep_cmd="$grep_cmd -$OPTARG"
             ;;
         e)
             exclude=$OPTARG
