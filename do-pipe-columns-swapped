@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "$cmd must be used in a pipe"
+    echo "Usage: <pipe> | $cmd"
+    echo "       Swap first and second columns"
+    exit
+fi
+
+
+while getopts h flag
+do
+    case $flag in
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+cat | while read a b; do echo "$b $a"; done
