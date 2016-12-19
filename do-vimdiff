@@ -1,22 +1,70 @@
 #!/bin/sh
 
 #TODO: use only two inout <path/filename> <other-root-path>
-
-if [ ! $# -ge 3 ]
-then
-    app=`basename $0`
+app=`basename $0`
+function usage() {
     echo "Usage: $app <root1> <root2> <common-path>"
+    echo "Usage: $app -f <root> <file1> <file2>"
+}
+
+if [ $# == 0 ]; then
+    usage
     exit
 fi
 
-path1=$1
-path2=$2
-
-shift
-shift
-
-for file in $@;
+multinames=0
+quiet=0
+while getopts qhf flag
 do
-    vimdiff --noplugin $path1/$file $path2/$file
+    case $flag in
+
+        q)
+            quiet=1
+#            echo pars is $pars
+            ;;
+        f)
+            multinames=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
 done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -ne 3 ]; then
+    usage
+    exit
+fi 
+
+
+if [ $multinames -eq 0 ]; then
+    path1=$1
+    path2=$2
+    shift
+    shift
+    for file in $@;
+    do
+        if [ -f $path1/$file ] && [ -f $path2/$file ]; then 
+            vimdiff --noplugin $path1/$file $path2/$file
+        fi
+    done
+else
+    path=$1
+    shift
+    cmd="vimdiff --noplugin "
+    for file in $@;
+    do
+        if [ -f $path/$file ]; then
+            cmd="$cmd $path/$file"
+        fi
+    done
+    echo "$cmd"
+    eval "$cmd"
+fi
 
