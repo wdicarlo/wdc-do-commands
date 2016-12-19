@@ -1,3 +1,11 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 
-cat | sed "s/^\(.*\):\([0-9]*\):.*/\1 \2/"
+text=0
+if [ "$1" == "-t" ]; then
+    text=1
+fi
+if [ $text -eq 1 ]; then
+    cat | tr -d "\r" | sed "s/^\([^:]*\):\([0-9]*\):\(.*\)$/\1 \2 \[\[\3\]\]/"
+else
+    cat | tr -d "\r" | sed "s/^\([^:]*\):\([0-9]*\):.*$/\1 \2/"
+fi
