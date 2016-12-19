@@ -3,7 +3,7 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-v] [-l] [-c] [-g] [<lua-parameters>]"
+    echo "Usage: $cmd [-h] [-v] [-l] [-c] [-g] [-p <path>] [<lua-parameters>]"
     echo "where:"
     echo "       -h                 : help"
     echo "       -v                 : verbose"
@@ -24,12 +24,12 @@ function update_path() {
         LUA_PATH="$1/?.lua;$1/init.lua;$LUA_PATH"
     fi
     echo "Updated LUA_PATH: $LUA_PATH"
-    #if [ -z "$LUA_CPATH" ]; then
-    #    LUA_CPATH="$1/?.so"
-    #else
-    #    LUA_CPATH="$1/?.so;$LUA_PATH"
-    #fi
-    #echo "Updated LUA_CPATH: $LUA_CPATH"
+    if [ -z "$LUA_CPATH" ]; then
+        LUA_CPATH="$1/?.so;$1/lib?.so"
+    else
+        LUA_CPATH="$1/?.so;$1/lib?.so;$LUA_CPATH"
+    fi
+    echo "Updated LUA_CPATH: $LUA_CPATH"
 }
 
 if [ -z $LUA_HOME ]; then
@@ -90,7 +90,7 @@ if [ -z "$LUA_PATH" ]; then
 else
     LUA_PATH=`echo "?.lua;?/init.lua;$LUA_PATH;$LUA_HOME/share/lua/5.1/?.lua;$LUA_HOME/share/lua/5.1/?/init.lua"`
 fi
-export LUA_CPATH=`echo "$LUA_HOME/lib/lua/5.1/?.so;./?.so;?/?.so;$LUA_HOME/lib/lua/5.1/?.so;$LUA_HOME/lib/lua/5.1/loadall.so"`
+export LUA_CPATH=`echo "$LUA_CPATH;$LUA_HOME/lib/lua/5.1/?.so;./?.so;?/?.so;$LUA_HOME/lib/lua/5.1/?.so;$LUA_HOME/lib/lua/5.1/loadall.so"`
 
 
 #export LUA_INIT="package.path = '?;'..package.path"
