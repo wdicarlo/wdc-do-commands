@@ -193,7 +193,8 @@ if [ $# == 0 ]; then
         echo "Available alternatives:"
         echo "-----------------------"
         echo "$list"
-        exit
+        #exit
+        list=`echo "$list"|head -1`
     fi
     # print available publishing options
     doprocess $list
