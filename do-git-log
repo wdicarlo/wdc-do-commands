@@ -1,25 +1,47 @@
 #!/usr/bin/env bash
 
+function usage() {
+	echo "Usage: $cmd [-q] [-r] [-b <branch>]"
+	echo "             -b <branch>            : show log of the branch"
+	echo "             -r                     : raw"
+	echo "             -q                     : quiet"
+}
+
 quiet=0
 raw=0
-if [ $# -eq 1 ]; then
-    if [ "$1" == "-q" ]; then
-        quiet=1
-        shift
-    fi
-    if [ "$1" == "-r" ]; then
-        raw=1
-        shift
-    fi
+branch="--all"
+if [ ! -t 1 ]; then
+    quiet=1
 fi
-
+while getopts hqrb: flag
+do
+    case $flag in
+        r)
+            raw=1
+            ;;
+        q)
+            quiet=1
+            ;;
+        b)
+            branch=$OPTARG
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 if [ $quiet -eq 0 ]; then
-    echo "> git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative $@"
+    echo "> git log --graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative $@"
 fi
 if [ $raw -eq 0 ]; then
-    git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative $@
+    git log --graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative $@
 else
-    #git log --graph --all --abbrev-commit --date=relative --format=format:'%h - (%ar) %s %an %d'
-    git log --graph --all --abbrev-commit --date=relative --format=format:'%h - (%ar) %s %d'
+    git log --graph $branch --abbrev-commit --date=relative --format=format:'%h - (%ar) %s %d'
 fi
