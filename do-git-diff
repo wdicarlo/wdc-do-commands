@@ -1,3 +1,17 @@
 #!/usr/bin/env bash
 
-git diff -w --color=always $@
+piping=1
+quiet=1
+if [ -t 1 ]; then # check if piping to output stream
+	piping=0
+	quiet=0
+fi
+opts=""
+if [ $piping -eq 0 ]; then
+	opts="--color=always"
+fi
+cmd="git diff -w $opts $@"
+if [ $quiet -eq 0 ]; then
+	echo "> $cmd"
+fi
+exec $cmd
