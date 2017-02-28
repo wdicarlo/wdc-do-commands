@@ -54,7 +54,7 @@ if [ $verbose -eq 0 ]; then
 else
     cat | tee $file
 fi
-num_patched=$(cat $file|grep "^Index"|wc -l)
+num_patched=$(cat $file|grep "^Index\|^diff"|wc -l)
 echo "Created patch: $file"
 echo "Patched files: $num_patched"
 cat $file|grep "^Index"|sed "s/^Index: //"
