@@ -1,0 +1,25 @@
+bash scripting howto
+	LIst of bash scripting how to
+Arguments processing
+        quiet=0
+	while getopts hqe: flag
+	do
+	    case $flag in
+		q)
+		    quiet=1
+		    ;;
+		e)
+		    exclude=$OPTARG
+		    ;;
+		h)
+		    usage
+		    exit
+		    ;;
+		?)
+		    usage
+		    exit
+		    ;;
+	    esac
+	done
+	shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
