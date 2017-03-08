@@ -2,12 +2,42 @@
 
 bin_dir=`echo ~/bin`
 
-if [ ! $# == 1 ]; then
-    echo "Usage: $cmd <new-bin-cmd>"
+function usage() {
+    echo "Usage: $cmd [-f] <new-bin-cmd>"
+    echo "where:"
+    echo "            -f          : add file (defualt add command)"
+}
+
+quiet=0
+file=0
+while getopts hqf flag
+do
+	case $flag in
+		q)
+			quiet=1
+			;;
+		f)
+			file=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+cd $bin_dir
+
+if [ ! $# -eq 1 ]; then
+    usage
     exit
 fi
 
-cd $bin_dir
 
 if [ ! -f $1 ]; then
     echo "Missing file in $bin_dir/$1"
@@ -17,4 +47,8 @@ fi
 # TODO: check if the command is not already present in the git repository
 
 git add $1
-git commit -m "Added $1 command"
+if [ $file -eq 0 ]; then
+	git commit -m "Added $1 command"
+else
+	git commit -m "Added $1 file"
+fi
