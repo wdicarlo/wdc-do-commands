@@ -8,3 +8,5 @@ Concatenate output of two or more commands
 	(do-find-files -r ../../lua-5.1.5-src/ Makefile ; pwd) | grep avro
 Grep text file containing NUL character (^@)
    cat afile | grep --text astring
+Echoing without newlines
+   echo -n "Hello "; echo "World"
