@@ -162,4 +162,5 @@ Customize Git Colors
 
 	[color "branch"]
 		remote = yellow
-
+Get common anchestor commit
+	git merge-base <branch1> <branch2>
