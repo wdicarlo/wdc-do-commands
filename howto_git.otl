@@ -153,3 +153,13 @@ Print staged diffs of a file
 	git diff --cached afile.txt
 Unstage files ready to be committed leaving changes in the working copy
 	git reset --mixed
+Customize Git Colors
+	Add the following section in ~/.gitconfig
+	[color "status"]
+		added = green
+		changed = red bold
+		untracked = magenta bold
+
+	[color "branch"]
+		remote = yellow
+
