@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+TASKS_DIR="../.metadata/.mylyn/tasks/local-local/data"
+
+if [ $# -eq 1 ]; then
+	tasknum=$1
+fi
+
+if [ "$tasknum" == "" ]; then
+	grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq
+else
+	grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq|grep "$tasknum"
+fi
