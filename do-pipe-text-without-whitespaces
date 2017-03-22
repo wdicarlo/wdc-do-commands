@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+cat | tr -d ":" | tr "() " "_" | sed "s/[_]\+/_/g"
