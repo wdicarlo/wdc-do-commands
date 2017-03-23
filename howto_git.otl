@@ -17,6 +17,11 @@ Push changes of a branch to remote
 	git push origin GitDemos_1_2_2
 Pull changes from remote
 	git pull origin
+Pull changes from a specific remote branch
+	git pull origin abranch
+Pull changes from a specific remote branch and merge into a different branch
+	git checkout abranch
+	git pull origin anotherbranch
 Undo all changes
 	git checkout HEAD
 	git reset HEAD --hard
@@ -93,7 +98,7 @@ Display simplified git status
 	git status -s
 Remove untracked files and directory together with ignored one. Replace -f with -n to test the command
 	git clean -f -d -x
-Delete last commit
+Delete last commit still not pushed
 	git reset --hard HEAD~1
 Merge a branch squashing its commits into ready-to-be-committed changes
 	git merge --squash branch-temp-oklaomaab-build-parameters
@@ -164,3 +169,7 @@ Customize Git Colors
 		remote = yellow
 Get common anchestor commit
 	git merge-base <branch1> <branch2>
+Show commits which added/removed the function function_name
+	git log -Sfunction_name
+Show details of a commit; date, long id, author, message, diffs
+	git show <commit>
