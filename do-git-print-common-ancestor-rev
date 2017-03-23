@@ -2,12 +2,19 @@
 
 function usage() {
 	cmd=$(basename $0)
-	echo "Usage: $cmd <branch>"
+	echo "Usage: $cmd [-h] [<branch>]"
 }
 
-if [ $# -ne 1 ]; then
-	usage
-	exit
+if [ $# -gt 1 ]; then
+	if [ "$1" == "-h" ]; then	
+		usage
+		exit
+	fi
 fi
 
-git merge-base $1 HEAD
+branch="$1"
+if [ "$branch" == "" ]; then
+	branch="HEAD"
+fi
+
+git merge-base $branch HEAD
