@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+cmd="git reflog show"
+echo "> $cmd"
+eval "$cmd"
