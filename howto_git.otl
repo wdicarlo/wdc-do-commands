@@ -173,3 +173,5 @@ Show commits which added/removed the function function_name
 	git log -Sfunction_name
 Show details of a commit; date, long id, author, message, diffs
 	git show <commit>
+Replace git with http protocol
+	git config --global url."https://".insteadOf git://
