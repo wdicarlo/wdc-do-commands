@@ -8,3 +8,5 @@ Edit image
 	mirage wdt_sw_architecture.png
 Start fluxbox at startup
 	echo "exec startfluxbox" >> ~/.xinitrc
+Add proxy conf for apt
+	echo "Acquire::http::Proxy \"http://proxy:8080\";" >> /etc/apt/apt.conf.d/70debconf
