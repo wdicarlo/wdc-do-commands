@@ -1,26 +1,41 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-log_cmd="do-git-log | grep \"(.*).*—.*(.*)\""
-if [ $# -gt 0 ]
-then
-    if [ "$1" == "-h" ]
-    then
-        cmd=`basename $0`
-        echo "Usage: $cmd [-raw] [<grep-pattern>]"
-        echo "       -raw    raw format"
-        exit
-    fi
-    if [ "$1" == "-raw" ]
-    then
-        log_cmd="git tag -l"
-        shift
-    fi
-fi
+cmd=`basename $0`
 
+function usage() {
+    echo "Usage: $cmd [-h] [<grep-pattern>]"
+    echo "       -h                          : print this help"
+    echo "       -q                          : quiet"
+}
+
+quiet=0
+while getopts hqe: flag
+do
+    case $flag in
+	q)
+	    quiet=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+log_cmd="git tag -l -n1"
 
 if [ $# -gt 0 ]
 then
     log_cmd="$log_cmd | grep $@"
 fi
-echo $log_cmd
+
+if [ $quiet -eq 0 ]; then
+    echo "> $log_cmd"
+fi
 eval $log_cmd
+
