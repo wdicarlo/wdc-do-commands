@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
+# todo: generalize finding type of patch
+
 cat $1 | grep "^Index:"
