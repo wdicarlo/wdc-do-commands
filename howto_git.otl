@@ -175,3 +175,18 @@ Show details of a commit; date, long id, author, message, diffs
 	git show <commit>
 Replace git with http protocol
 	git config --global url."https://".insteadOf git://
+Save into a stash
+	git stash save my_changes
+List saved stashes
+	git stash list
+Show files saved with a stash
+	git stash show my_changes
+Show differences saved with a stash
+	git stash show -p my_changes
+Pop saved stash
+	git stash pop my_changes
+Rename the current branch
+	git branch -m my_new_branch_name
+Rename a branch
+	git branch -m my_current_branch_name my_new_branch_name
+
