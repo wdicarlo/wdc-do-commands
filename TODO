@@ -6,6 +6,7 @@ Commands to evaluate:
     httpie
     lumail
     pwstore (in sqlite db)
+    watch
 Integrate vim notebooks
 Evaluate command history by folder
 Add todo management
