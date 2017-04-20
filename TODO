@@ -7,6 +7,8 @@ Commands to evaluate:
     lumail
     pwstore (in sqlite db)
     watch
+    bash-it
+    fasd
 Integrate vim notebooks
 Evaluate command history by folder
 Add todo management
