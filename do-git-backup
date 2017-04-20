@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+if [ ! -d .git ]; then
+	echo "Not in the project's root folder (.git folder is missing)"
+	exit
+fi
+
+if [ "$BACKUPS_DIR" == "" ]; then
+	echo "BACKUPS_DIR is not defined"
+	exit
+fi
+
+nfiles=$(git diff --name-only --cached|wc -l)
+
+if [ $nfiles -ne 0 ]; then
+	echo "Please, clean your working copy."
+	echo "There are some files ready to be committed."
+	exit
+fi
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [<post-fix>]"
+}
+
+
+postfix=""
+if [ $# -gt 0 ]; then
+   postfix="$postfix-$1"
+   shift
+fi
+
+
+folder_path=`pwd`
+filename=`basename $folder_path`
+filename="$filename-backup"
+curdate="`date '+%y%m%d-%H%M%S'`"
+
+if [ $postfix ]; then
+	tarfile="$filename-$postfix-$curdate.tar.bz2"
+else
+	tarfile="$filename-$curdate.tar.bz2"
+fi
+
+files=$(git ls-files --other --modified| grep -v "\.bz2$")
+
+#cmd="tar -cjf $BACKUPS_DIR/${tarfile} --exclude=.git --exclude=.gitignore --exclude=\"*.bz2\" $files"
+cmd="tar -cjf $BACKUPS_DIR/${tarfile} $files"
+echo "> $cmd"
+eval $cmd
