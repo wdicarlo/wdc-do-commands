@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 1 ]; then
+	echo "Missing text to process."
+	exit
+fi
+
+echo "$1" | tr -d ":" | tr "()/' " "_" | sed "s/[_]\+/_/g"
