@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
-# todo: generalize finding type of patch
+tag="Index:"
+patchfile="/tmp/do-pipe-patched-files.tmp"
+cat >  $patchfile
 
-cat $1 | grep "^Index:"
+if [ $(cat $patchfile|grep "^diff --git"|wc -l) -gt 0 ]; then
+	tag="diff --git"
+fi
+
+
+cat $patchfile | grep "^$tag"
