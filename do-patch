@@ -165,7 +165,11 @@ if [ $paths -eq 1 ]; then
     cmd="ls -l $patchfile"
 else
     if [ $dryrun -eq 0 ]; then
-        cmd="patch -p0 $opts < $patchfile"
+    	popt="-p0"
+	if [ $(cat $patchfile|grep "^diff --git"|wc -l) -gt 0 ]; then
+		popt="-p1"
+	fi
+        cmd="patch $popt $opts < $patchfile"
     else
         cmd="cat $patchfile"
     fi
