@@ -189,4 +189,7 @@ Rename the current branch
 	git branch -m my_new_branch_name
 Rename a branch
 	git branch -m my_current_branch_name my_new_branch_name
-
+Get current branch name
+	git rev-parse --abbrev-ref HEAD
+Print branch last commit and remote reference
+	git branch -vv
