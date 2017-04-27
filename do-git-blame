@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+
+if [ $# -eq 0 ]; then
+	cmd=$(basename $0)
+	echo "Usage: $cmd <pattern> <file>"
+	exit
+fi
+
+if [ $# -eq 1 ]; then
+	file=$1
+	pattern=".*"
+else
+	pattern=$1
+	file=$2
+fi
+git log --pretty -p -M --follow --stat -- $file|grep -v "^+++\|^---"|sed '{N;s/^\(Author.*\)\n\(Date.*\)$/\1 \2/}'|grep "^Author\|^[+-]"|grep "^Author\|$pattern"
