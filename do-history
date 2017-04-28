@@ -53,7 +53,7 @@ if [ ! "$compare" == "" ]; then
 	echo "cmd1=\"$cmd1\""
 	echo "cmd2=\"$cmd2\""
 	read -p "Compare outputs? (y/[n])" ans
-	if [ $ans == "y" ]; then
+	if [ "$ans" == "y" ]; then
 		eval $cmd1 > /tmp/hst1.txt
 		eval $cmd2 > /tmp/hst2.txt
 		vimdiff /tmp/hst1.txt /tmp/hst2.txt
