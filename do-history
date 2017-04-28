@@ -1,9 +1,76 @@
 #!/usr/bin/env bash
 
-hist_file=`echo ~/bin/history.txt`
+personal_history=$(echo ~/bin/history.txt)
+global_history=$(echo ~/.bash_history)
 
-if [ $# -eq 0 ]; then
-    cat $hist_file
-else
-    cat $hist_file | grep $@
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-q] [-s] [-c <hst1>:<hst2>]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -s                          : print shell history"
+    echo "       -c <hst1>:<hst2>            : compare output of history commands"
+    echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+shell=0
+compare=""
+while getopts hqsc: flag
+do
+    case $flag in
+	s)
+	    shell=1
+	    ;;
+	q)
+	    quiet=1
+	    ;;
+	c)
+	    compare=$OPTARG
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! "$compare" == "" ]; then
+	hst1=$(echo $compare|sed 's/\(.*\):.*/\1/')
+	hst2=$(echo $compare|sed 's/.*:\(.*\)/\1/')
+	echo "Comparing $hst1 : $hst2"
+	#cmd1=$(cat $global_history|grep "^ *$hst1")
+	#cmd2=$(cat $global_history|grep "^ *$hst2")
+	cmd1=$(cat $global_history|grep "^ *$hst1[* ]*"|sed "s#^ *$hst1[* ]*\(.*\)#\1#")
+	cmd2=$(cat $global_history|grep "^ *$hst2[* ]*"|sed "s#^ *$hst2[* ]*\(.*\)#\1#")
+	echo "cmd1=\"$cmd1\""
+	echo "cmd2=\"$cmd2\""
+	read -p "Compare outputs? (y/[n])" ans
+	if [ $ans == "y" ]; then
+		eval $cmd1 > /tmp/hst1.txt
+		eval $cmd2 > /tmp/hst2.txt
+		vimdiff /tmp/hst1.txt /tmp/hst2.txt
+	fi
+	exit
 fi
+
+
+cmd="cat $global_history"
+if [ $shell -eq 0 ]; then
+    cmd="cat $personal_history"
+fi
+
+if [ $# -gt 0 ]; then
+    cmd="$cmd | grep $@"
+fi
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd
