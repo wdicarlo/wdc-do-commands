@@ -111,7 +111,7 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 string=$1
 
-bin_filter="| xargs file | grep text | cut -d: -f1"
+bin_filter="| do-pipe-wrapped-text | xargs file | grep text | cut -d: -f1"
 if [ $binary -eq 1 ]; then
     bin_filter=""
 fi
