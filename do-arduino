@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [<prog.ino>]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -i                          : print arduino info"
+    echo "       -m                          : monitor arduino"
+    echo "       -b                          : build"
+    echo "       -u                          : upload"
+    echo "       -v                          : verbose"
+    echo "       -B <board>                  : board to use; arduino:avr:uno, arduino:samd:mkr1000_orig, arduino:samd:mkr1000, esp8266:esp8266:d1"
+    echo "       -P <port-number>            : port to use; 0 (ttyACM0), 1 (ttyACM1)"
+    echo "       -D <dev-port>               : device port, ex.: /dev/ttyACM0, /dev/ttyUSB1"
+    echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+info=0
+prog=""
+monitor=0
+build=0
+upload=0
+verbose=0
+board="arduino:avr:$(cat ~/.arduino15/preferences.txt|grep "^board\w*="|sed "s/.*=\(.*\)/\1/")"
+tty="/dev/ttyACM0"
+while getopts hqimbuvB:P:D: flag
+do
+    case $flag in
+    u)
+        upload=1
+        ;;
+    v)
+        verbose=1
+        ;;
+    b)
+        build=1
+        ;;
+    m)
+        monitor=1
+        ;;
+    i)
+        info=1
+        ;;
+    q)
+        quiet=1
+        ;;
+    B)
+        board=$OPTARG
+        ;;
+    P)
+        tty="/dev/ttyACM$OPTARG"
+        ;;
+    D)
+        tty="$OPTARG"
+        ;;
+    h)
+        usage
+        exit
+        ;;
+    ?)
+        usage
+        exit
+        ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+    if [ $monitor -eq 0 ]; then
+        info=1
+    fi
+else
+    prog=$1
+fi
+
+if [ ! -c $tty ]; then
+    echo "Board not connected to $tty"
+    exit
+fi
+
+if [ $info -eq 1 ]; then
+    echo
+    echo "Arduino Settings:"
+    echo "board = $board"
+    echo "tty = $tty"
+    cat ~/.arduino15/packages/arduino/hardware/samd/1.6.14/boards.txt|grep $board
+    exit
+fi
+
+if [ ! "$prog" == "" ]; then
+    cmd="arduino --board $board --port $tty"
+    if [ $build -eq 1 ]; then
+        cmd="$cmd --verify"
+        if [ $verbose -eq 1 ]; then
+            cmd="$cmd --verbose-build"
+        fi
+    fi
+
+    if [ $upload -eq 1 ]; then
+        cmd="$cmd --upload"
+        if [ $verbose -eq 1 ]; then
+            cmd="$cmd --verbose-upload"
+        fi
+    fi
+    cmd="$cmd $prog"
+
+    # Quieting command output
+    if [ $quiet -eq 0 ]; then
+        echo "> $cmd"
+    fi
+    eval $cmd
+fi
+if [ $monitor -eq 1 ]; then
+    cmd="screen $tty"
+    if [ $quiet -eq 0 ]; then
+        echo "> $cmd"
+    fi
+    eval $cmd
+fi
