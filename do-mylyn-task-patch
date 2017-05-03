@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-q] <task_pattern>"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+while getopts hq flag
+do
+    case $flag in
+	q)
+	    quiet=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+    usage
+    exit
+fi
+n=$(do-mylyn-tasks "$1"|wc -l)
+if [ $n -ne 1 ]; then
+	echo "Number of selected tasks: $n"
+	do-mylyn-tasks | grep --color "^\|$1"
+	exit
+fi
+
+taskname=$(do-mylyn-tasks "$1"|do-pipe-text-without-whitespaces)
+
+cmd="do-git-diff | do-pipe-to-patch $taskname"
+
+# Quieting command output
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd
+
