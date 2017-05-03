@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+# Check it is used correctly	
+	if [ -t 0 ]; then
+	    cmd=`basename $0`
+	    echo "Usage: $cmd must be used in a pipe"
+	    exit
+	fi
+
+
+function usage() {
+    echo "Usage: $cmd [-h] [-c]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -c                          : colorize"
+    echo "       -v                          : verbose"
+}
+
+# Arguments processing
+colorize=0
+verbose=0
+while getopts hcv flag
+do
+    case $flag in
+	v)
+	    verbose=1
+	    ;;
+	c)
+	    colorize=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $verbose -eq 1 ]; then
+	cmd="(git show --oneline @; git diff @~..@)"
+else
+	cmd="git diff @~..@"
+fi
+
+if [ $colorize -eq 0 ]; then
+	#cat | xargs -I@ sh -c "(git show --oneline @; git diff @~..@)|cat"
+	cat | xargs -I@ sh -c "$cmd | cat"
+else
+	#cat | xargs -I@ sh -c "(git show --oneline @; git diff @~..@)| sed 's/^-/\x1b[41m-/;s/^+/\x1b[42m+/;s/^@/\x1b[34m@/;s/$/\x1b[0m/'"
+	cat | xargs -I@ sh -c "$cmd | sed 's/^-/\x1b[41m-/;s/^+/\x1b[42m+/;s/^@/\x1b[34m@/;s/$/\x1b[0m/'"
+fi
+
