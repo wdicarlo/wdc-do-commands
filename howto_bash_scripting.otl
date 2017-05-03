@@ -1,7 +1,16 @@
 bash scripting howto
 	LIst of bash scripting how to
+
 # First line identification
 	#!/usr/bin/env bash
+
+# Check it is used correctly	
+	if [ -t 0 ]; then
+	    cmd=`basename $0`
+	    echo "Usage: $cmd must be used in a pipe"
+	    exit
+	fi
+
 # Usage help function
 	cmd=`basename $0`
 
