@@ -193,3 +193,5 @@ Get current branch name
 	git rev-parse --abbrev-ref HEAD
 Print branch last commit and remote reference
 	git branch -vv
+List all commits of an author
+	git log --oneline --author=walter
