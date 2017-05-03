@@ -49,5 +49,5 @@ fi
 if [ $raw -eq 0 ]; then
     git log $author --graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white) %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative $@
 else
-    git log $author --graph $branch --abbrev-commit --date=relative --format=format:'%h - (%ar) %s %d'
+    git log $author $branch --abbrev-commit --date=relative --format=format:'%h - (%ar) %s %d'
 fi
