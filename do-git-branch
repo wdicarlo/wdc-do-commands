@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# TODO:
+# git cherry -v master mybranch # list commits not merged
+
+
 cmd=`basename $0`
 
 function usage() {
@@ -43,7 +47,7 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 
 if [ "$merge" == "" ]; then
-	cmd="git branch -vv"
+	cmd="echo \"Branches not merged:\"; git branch -vv --no-merged; echo \"Branches already merged:\"; git branch -vv --merged"
 	# Quieting command output
 	if [ $quiet -eq 0 ]; then
 	    echo "> $cmd"
