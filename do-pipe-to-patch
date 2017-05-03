@@ -3,6 +3,7 @@
 function usage() {
     cmd=`basename $0`
     echo "Usage: $cmd [-r <root_ref>] <patch_name_without_spaces>"
+    echo "             -r <root_ref>              : use patch name <root_ref>-<curdate>-<patch_name>.diff"
 }
 
 if [ -t 0 ]; then
