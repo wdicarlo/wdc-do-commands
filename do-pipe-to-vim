@@ -1,16 +1,30 @@
 #!/usr/bin/env bash
 
+function usage() {
+    echo "Usage: pipe | do-pipe-to-vim [-h] [-d] [-o|-O] [-p]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -o|-O                       : H/V split mode"
+    echo "       -p                          : tab mode"
+    echo "       -d                          : use diff filetype"
+}
+
 if [ -t 0 ]; then
     cmd=`basename $0`
-    echo "Usage: $cmd must be used in a pipe"
+    echo "$cmd must be used in a pipe"
+    usage
     exit
 fi
 
 
 vcmd=":vnew"
-while getopts hoOp flag
+diff=0
+while getopts hoOpd flag
 do
     case $flag in
+        d)
+            diff=1 
+            ;;
         o)
             vcmd=":new"
             ;;
@@ -40,6 +54,9 @@ do
     fi
 done
 
+if [ $diff -eq 1 ]; then
+	cmds="$cmds -c \":set filetype=diff\""
+fi
 
 cmd="vim -R $cmds -"
 eval "cat|$cmd"
