@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+DIFF_FORMAT_SVN=1
+DIFF_FORMAT_GIT=2
+
+format=$DIFF_FORMAT_SVN
+tag="Index:"
+patchfile="/tmp/do-pipe-patched-files.tmp"
+cat >  $patchfile
+
+if [ $(cat $patchfile|grep "^diff --git"|wc -l) -gt 0 ]; then
+	tag="diff --git"
+	format=$DIFF_FORMAT_GIT
+fi
+
+if [ $format -eq 2 ]; then
+	cat $patchfile | grep "^$tag" | sed "s#^diff --git .*a/\(.*\) b/.*#\1#"
+else
+	cat $patchfile | grep "^$tag"
+fi
