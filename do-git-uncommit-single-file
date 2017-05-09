@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# See https://github.com/smtlaissezfaire/git-shell-scripts.git
+
+cmd=$(basename $0)
+
+function output_help {
+    echo "Usage: $cmd <sha1> <file>"
+}
+
+if [ $# -ne 2 ]; then
+	output_help
+	exit
+fi
+
+sha1=$1
+file=$2
+
+if [[ $sha1 ]]; then
+    git diff $sha1..$sha1^ -- $file | patch -p1
+else
+    output_help
+fi
