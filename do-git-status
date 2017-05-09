@@ -8,16 +8,20 @@ function usage() {
     echo "where:"
     echo "       -h                 : help"
     echo "       -u                 : equivalent to --untracked-files=no or -uno"
+    echo "       -p                 : list paths"
     echo "       -q                 : quiet"
     exit
 }
 
 quiet=0
 tracked=1
-while getopts quh flag
+paths=0
+while getopts quhp flag
 do
     case $flag in
-
+        p)
+            paths=1
+            ;;
         q)
             quiet=1
             #exclude=$OPTARG
@@ -45,12 +49,17 @@ if [ $tracked -eq 0 ]; then
     execmd+=" -uno"
 fi
 
+if [ $paths -eq 1 ]; then
+	execmd="git status | grep modified | do-pipe-trimmed -a | do-pipe-columns 2"
+fi
 
 if [ ! $# == 0 ]
 then
     # by default get the status of the local folders
     execmd+=" | grep -e \"$1\|# \w\" "
 fi
+
+	
 if [ $quiet -eq 0 ]; then
     echo "> $execmd"
 fi
