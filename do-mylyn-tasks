@@ -2,12 +2,54 @@
 
 TASKS_DIR="../.metadata/.mylyn/tasks/local-local/data"
 
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-q] <task_pattern>"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -w                          : generate names without whitespaces"
+    echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+nowhitespaces=0
+while getopts hqw flag
+do
+    case $flag in
+	w)
+	    nowhitespaces=1
+	    ;;
+	q)
+	    quiet=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 if [ $# -eq 1 ]; then
 	tasknum=$1
 fi
 
 if [ "$tasknum" == "" ]; then
-	grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq
+	if [ $nowhitespaces -eq 0 ]; then
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq
+	else
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq|do-pipe-text-without-whitespaces
+	fi
 else
-	grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq|grep "$tasknum"
+	if [ $nowhitespaces -eq 0 ]; then
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq|grep "$tasknum"
+	else
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq|grep "$tasknum"|do-pipe-text-without-whitespaces
+	fi
 fi
