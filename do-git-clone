@@ -1,35 +1,80 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function usage() {
     cmd=`basename $0`
-    echo "Usage: $cmd <repo-url> [<dest-folder>]"
+    echo "Usage: $cmd [-d] <repo-url> [<dest-folder>]"
+    echo "             -d            : do a deep clone"
+    echo "             -a            : setup author"
 }
 
 
-#if [  $# -lt 1 ] || [ $# -gt 2 ]; then
-if [ ! $# == 2 ]; then
+
+quiet=0
+deep=0
+author=0
+while getopts hqda flag
+do
+    case $flag in
+	q)
+	    quiet=1
+	    ;;
+	a)
+	    author=1
+	    ;;
+	d)
+	    deep=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+if [ $# == 0 ]; then
     usage
     exit
 fi
 
 repo_url=$1
 if [ $# == 1 ]; then
-    # TODO: extract folder name from git url
-#    repo_folder=$2
-    repo_folder=""
+    repo_folder=$(basename $1|sed 's/\.git//')
 else
     repo_folder=$2
 fi
 
-git clone $repo_url $repo_folder
+if [ -d "$repo_folder" ]; then
+	echo "$repo_folder already exists"
+	exit
+fi
 
+cmd="git clone $repo_url $repo_folder"
 
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd
 
-read -p "Name: " name
-read -p "eMail: " email
+if [ $deep -eq 1 ]; then
+	# http://stackoverflow.com/questions/67699/how-to-clone-all-remote-branches-in-git/4754797#4754797
+	cd "$repo_folder"
+	for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do
+	    git branch --track ${branch##*/} $branch
+	done
+	cd ..
+fi
 
-echo -e "
-[user]
-	name = $name
-	email = $email
-" >> $repo_folder/.git/config
+if [ $author -eq 1 ]; then
+	read -p "Name: " name
+	read -p "eMail: " email
+
+	echo -e "
+	[user]
+		name = $name
+		email = $email
+	" >> $repo_folder/.git/config
+fi
