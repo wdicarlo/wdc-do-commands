@@ -6,9 +6,10 @@ TASKS_DIR="../.metadata/.mylyn/tasks/local-local/data"
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] <task_pattern>"
+    echo "Usage: $cmd [-h] [-q] [-t] <task_pattern>"
     echo "where:"
     echo "       -h                          : print this help"
+    echo "       -t                          : print only the local tasks"
     echo "       -w                          : generate names without whitespaces"
     echo "       -q                          : quiet"
 }
@@ -16,11 +17,15 @@ function usage() {
 # Arguments processing
 quiet=0
 nowhitespaces=0
-while getopts hqw flag
+tasks=0
+while getopts hqwt flag
 do
     case $flag in
 	w)
 	    nowhitespaces=1
+	    ;;
+	t)
+	    tasks=1
 	    ;;
 	q)
 	    quiet=1
@@ -39,17 +44,21 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 if [ $# -eq 1 ]; then
 	tasknum=$1
 fi
+type="PSSEPTSW"
+if [ $tasks -eq 1 ]; then
+	type="task:"
+fi
 
 if [ "$tasknum" == "" ]; then
 	if [ $nowhitespaces -eq 0 ]; then
-		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq
 	else
-		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq|do-pipe-text-without-whitespaces
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq|do-pipe-text-without-whitespaces
 	fi
 else
 	if [ $nowhitespaces -eq 0 ]; then
-		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq|grep "$tasknum"
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq|grep "$tasknum"
 	else
-		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "PSSEPTSW"|sort|uniq|grep "$tasknum"|do-pipe-text-without-whitespaces
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq|grep "$tasknum"|do-pipe-text-without-whitespaces
 	fi
 fi
