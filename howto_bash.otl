@@ -10,3 +10,5 @@ Grep text file containing NUL character (^@)
    cat afile | grep --text astring
 Echoing without newlines
    echo -n "Hello "; echo "World"
+grep AND+OR expression
+	cat <file> | grep "<patt1>.*\(<patt2>\|<patt3>\)"
