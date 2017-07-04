@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# git pre-commit script
+# In order to use it as hook script copy it
+# into the file .git/hooks/pre-commit
+
+files=$(git diff --cached --name-only|grep "\.java$")
+
+for file in $files;
+do
+	imports=$(cat $file | grep "^[ \t]*import"|do-pipe-words "\..*;"|tr -d '.;')
+	missing=""
+	for class in $imports;
+	do
+		n=$(cat $file | grep -v "^\s*import" | grep -v "^\s*\/\/" | sed 's|/\*|\n&|g;s|*/|&\n|g'  | sed '/\/\*/,/*\//d' | grep $class | wc -l)
+		if [ $n -eq 0 ]; then
+			missing="$class $missing"
+		fi
+	done
+		
+	if [ ! "$missing" == "" ]; then
+	cat <<\EOF
+Error:  Detected a possible never used import
+EOF
+	echo "File:   $file"
+	echo "Import: $missing"
+		exit 1
+	fi
+done
