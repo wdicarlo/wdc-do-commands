@@ -4,17 +4,22 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] <task_pattern>"
+    echo "Usage: $cmd [-h] [-q] [-c] <task_pattern>"
     echo "where:"
     echo "       -h                          : print this help"
+    echo "       -c                          : commit changes"
     echo "       -q                          : quiet"
 }
 
 # Arguments processing
 quiet=0
-while getopts hq flag
+commit=0
+while getopts hqc flag
 do
     case $flag in
+	c)
+	    commit=1
+	    ;;
 	q)
 	    quiet=1
 	    ;;
@@ -42,8 +47,11 @@ if [ $n -ne 1 ]; then
 fi
 
 taskname=$(do-mylyn-tasks "$1"|do-pipe-text-without-whitespaces)
+commit_comment=$(do-mylyn-tasks "$1")
 
 cmd="git checkout -b $taskname"
+if [ $commit -eq 1 ]; then
+	cmd="$cmd; git add -u; git commit -m \"$commit_comment\""
 
 # Quieting command output
 if [ $quiet -eq 0 ]; then
