@@ -205,3 +205,7 @@ Print differences in the last commit
 	git diff HEAD~
 Use external tool to view differences in the last commit
 	git difftool HEAD~
+Uncommit latest commits without loosing the history
+	git revert --no-commit <sha-1>..HEAD; git commit
+Uncommit latest commits still not pushed (loosing the history)
+	git reset --hard <sha-1>
