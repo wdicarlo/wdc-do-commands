@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+curdate="`date '+%y%m%d-%H%M%S'`"
+
+if [ $# -ne 1 ]; then
+	cmd=$(basename $0)
+	echo "Usage: $cmd <file-to-backup>"
+	echo "       make a copy called <file-to-backup>.bak<timestamp>"
+	exit
+fi
+
+
+bakfile="$1.bak$curdate"
+
+cp $1 $bakfile
+
+ls -l $bakfile
