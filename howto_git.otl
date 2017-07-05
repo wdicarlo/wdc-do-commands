@@ -209,3 +209,9 @@ Uncommit latest commits without loosing the history
 	git revert --no-commit <sha-1>..HEAD; git commit
 Uncommit latest commits still not pushed (loosing the history)
 	git reset --hard <sha-1>
+Checkout files from another branch
+	git checkout <branch> -- <path_of_file>
+Locally prune deleted remote objects
+	git fetch --prune
+Push a new local branch changing the name of the remote branch
+	git push -u origin <local_branch_name>:<remote_branch_name>
