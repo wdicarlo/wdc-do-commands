@@ -8,7 +8,7 @@ files=$(git diff --cached --name-only|grep "\.java$")
 
 for file in $files;
 do
-	imports=$(cat $file | grep "^[ \t]*import"|do-pipe-words "\..*;"|tr -d '.;')
+	imports=$(cat $file | grep "^[ \t]*import"| grep -v "\.\*\s*;" | do-pipe-words "\..*;"|tr -d '.;')
 	missing=""
 	for class in $imports;
 	do
