@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
 function usage() {
-	echo "Usage: $cmd [-q] [-r] [-b <branch>] [-s]"
+	echo "Usage: $cmd [-q] [-r] [-b <branch>] [-s] [-n <num>]"
 	echo "             -b <branch>            : show log of the branch"
 	echo "             -a <author>            : show log of the author"
 	echo "             -r                     : raw"
 	echo "             -s                     : show files' status"
+	echo "             -n <num>               : show just <num> logs"
 	echo "             -q                     : quiet"
 }
 
@@ -14,11 +15,12 @@ raw=0
 branch="--all"
 author=""
 files=0
+num=-1
 if [ ! -t 1 ]; then
     quiet=1
     raw=1
 fi
-while getopts hqrb:a:s flag
+while getopts hqrb:a:sn: flag
 do
     case $flag in
         s)
@@ -36,6 +38,9 @@ do
         b)
             branch=$OPTARG
             ;;
+        n)
+            num=$OPTARG
+            ;;
         h)
             usage
             exit
@@ -50,16 +55,20 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 graph="--graph"
 details="--abbrev-commit"
+opts=""
+if [ $num -gt 0 ]; then
+	opts="-$num"
+fi
 if [ $files -eq 1 ]; then
 	graph=""
 	details="--name-status"
 fi
 
 if [ $quiet -eq 0 ]; then
-    echo "> git log $author $graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white) %an%C(reset)%C(bold yellow)%d%C(reset)' $details --date=relative $@"
+    echo "> git log $opts $author $graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white) %an%C(reset)%C(bold yellow)%d%C(reset)' $details --date=relative $@"
 fi
 if [ $raw -eq 0 ]; then
-    git log $author $graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white) %an%C(reset)%C(bold yellow)%d%C(reset)' $details --date=relative $@
+    git log $opts $author $graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white) %an%C(reset)%C(bold yellow)%d%C(reset)' $details --date=relative $@
 else
-    git log $author $branch $details --date=relative --format=format:'%h - (%ar) %s %d'
+    git log $opts $author $branch $details --date=relative --format=format:'%h - (%ar) %s %d'
 fi
