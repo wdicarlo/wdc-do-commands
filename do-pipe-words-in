@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 function usage() {
-    echo "Usage: <list-of-words> | do-pipe-words-in [-m] <file>"
+    echo "Usage: <list-of-words> | do-pipe-words-in [-m] [-v] <file>"
     echo "        -m             - list missing words"
+    echo "        -v             - verbose"
 }
 
 if [ -t 0 ]; then
@@ -19,9 +20,13 @@ if [ $# -lt 1 ]; then
 fi
 
 missing=0
-while getopts hm flag
+verbose=0
+while getopts hmv flag
 do
     case $flag in
+        v)
+            verbose=1
+            ;;
         m)
             missing=1
             ;;
@@ -44,9 +49,21 @@ shift
 words=""
 pars=$(cat)
 
+
 for par in $pars;
 do
-    n=$(cat $file|grep $par|wc -l)
+
+    #n=$(cat $file|grep $par|wc -l)
+    #cmd="cat $file|grep $par|wc -l"
+    cmd="cat $file|grep $par"
+    if [ ! -f "$file" ]; then
+    	#cmd="grep -RHn $par */*.$file|wc -l"
+    	cmd="grep -RHn $par */*.$file"
+    fi
+    if [ $verbose -eq 1 ]; then
+	    echo "> $cmd"
+    fi
+    n=$(eval $cmd|wc -l)
     if [ $missing -eq 1 ]; then
         if [ $n -eq 0 ]; then
             words="$words $par"
@@ -54,8 +71,14 @@ do
     else
         if [ $n -gt 0 ]; then
             words="$words $par"
+	    if [ $verbose -eq 1 ]; then
+	    	eval $cmd
+	    fi
         fi
     fi
 done
 
+if [ $verbose -eq 1 ]; then
+	echo "================="
+fi
 echo "$words"| do-pipe-trimmed | tr ' ' '\n'
