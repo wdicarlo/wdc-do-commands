@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 
-grep "\`which *[a-zA-Z_-]*\`" ~/bin/* | sed "s/.*which *\([a-zA-Z_-]*\).*/\1/g" | sort | uniq
+grep "\`which *[a-zA-Z_-]*\`" ~/bin/do[-_]* | sed "s#.*/\(do[-_].*\):.*which *\([a-zA-Z_-]*\).*#\2 \1#g" | sort | uniq | awk '{ printf "%-20s %-60s\n", $1, $2}'
