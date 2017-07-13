@@ -1,19 +1,64 @@
 #!/usr/bin/env bash
 
-bin_dir=`echo ~/bin`
+# Usage help function
+cmd=`basename $0`
 
-if [ $# -eq 0 ]; then
-    echo "Usage: $cmd <bin-cmd>"
-    exit
-fi
+function usage() {
+    echo "Usage: $cmd [-h] [-q] [-p] [<cmd_pattern>...]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -p                          : just list the paths"
+    echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+paths=0
+while getopts hqp flag
+do
+    case $flag in
+	q)
+	    quiet=1
+	    ;;
+	p)
+	    paths=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+bin_dir=`echo ~/bin`
+list=""
+cmd="git diff"
 
 cd $bin_dir
 
-if [ ! -f $1 ]; then
-    echo "Missing file in $bin_dir/$1"
-    exit
+if [ $paths -eq 1 ]; then
+	cmd="$cmd --name-only"
 fi
 
-cmd="git diff $1"
-echo "> $cmd"
+if [ $# -eq 1 ]; then
+	if [ -f $1 ]; then
+		cmd="$cmd $1"
+	else
+		cmd="git diff --name-only | grep $1 | xargs -I@ $cmd @"
+	fi
+else
+	cmd="$cmd $@"
+fi
+
+
+# Quieting command output
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
 eval "$cmd"
