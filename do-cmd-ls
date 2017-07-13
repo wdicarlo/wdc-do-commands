@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+
+
+cd ~/bin
+ls -1 | grep "^do[-_]" | \grep --color $@
