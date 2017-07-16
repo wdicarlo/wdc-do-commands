@@ -1,6 +1,11 @@
 #!/bin/bash
 #
 
+filter="$@"
+
+if [ $# -eq 0 ]; then
+    filter="$"
+fi
 
 cd ~/bin
-ls -1 | grep "^do[-_]" | \grep --color $@
+ls -1 | grep "^do[-_]" | \grep --color "$filter"
