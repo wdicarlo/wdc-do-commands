@@ -9,14 +9,19 @@ function usage() {
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -c                          : commit"
+    echo "       -n                          : no run"
     echo "       -q                          : quiet"
 }
 
 quiet=0
 commit=0
-while getopts hqc flag
+run=1
+while getopts hqcn flag
 do
     case $flag in
+	n)
+	    run=0
+	    ;;
 	q)
 	    quiet=1
 	    ;;
@@ -41,12 +46,12 @@ then
     exit
 fi
 
-nbranches=$(git branch | grep -v master | grep -v "^\*" | grep $1 | wc -l)
-branch=$(git branch | grep -v master | grep -v "^\*" | grep $1)
+nbranches=$(git branch -a| grep -v master | grep -v "^\*" | grep $1 | wc -l)
+branch=$(git branch -a| grep -v master | grep -v "^\*" | grep $1)
 if [ $nbranches -ne 1 ]; then
 	echo "Please, specify one branch"
 	if [ $nbranches -eq 0 ]; then
-		echo "$(git branch | grep -v master | grep -v "^\*" )"
+		echo "$(git branch -a| grep -v master | grep -v "^\*" )"
 	else
 		echo "Filtered branches:"
 		echo "$branch"
@@ -54,12 +59,16 @@ if [ $nbranches -ne 1 ]; then
 	exit
 fi
 
+options="--strategy recursive -X ignore-all-space"
+
 if [ $commit -eq 0 ]; then
-	cmd="git merge --no-commit --no-ff $branch"
+	cmd="git merge $options --no-commit --no-ff $branch"
 else
-	cmd="git merge $branch"
+	cmd="git merge $options $branch"
 fi
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
-eval $cmd
+if [ $run -eq 1 ]; then
+	eval $cmd
+fi
