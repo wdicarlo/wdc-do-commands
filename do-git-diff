@@ -3,7 +3,7 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q]"
+    echo "Usage: $cmd [-h] [-q] [-s] [<file>..<file>|file_pattern>]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -s                          : diff of staged changes"
@@ -49,7 +49,11 @@ fi
 
 files="$@"
 if [ $# -eq 1 ]; then
-	if [ ! -f "$1" ]; then
+	rev=$(git rev-list --all| grep $1 | wc -l)
+	if [ $rev -eq 1 ]; then
+		rev=$(git rev-list --all| grep $1)
+		files="$rev~..$rev"
+	elif [ ! -f "$1" ]; then
 		files=$(git diff --name-only|grep $1)
 	fi
 fi
