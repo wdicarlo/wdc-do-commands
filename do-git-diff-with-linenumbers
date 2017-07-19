@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# credits: https://stackoverflow.com/questions/24455377/git-diff-with-line-numbers-git-log-with-line-numbers
+
+# Massage the @@ counts so they are usable
+function prep1() {
+   cat | awk -F',' 'BEGIN { convert = 0; }
+       /^@@ / { convert=1; }
+       /^/  { if ( convert == 1 ) { print $1,$2,$3;
+              } else { print $0;
+              }
+              convert=0;
+             }'
+}
+
+# Extract all new changes added with the line count
+function prep2() {
+  cat | awk 'BEGIN { display=0; line=0; left=0; out=1;}
+     /^@@ / { out=0; inc=0; line=$4; line--; display=line; left=line;        }
+     /^[-]/   { left++; display=left; inc=0; }
+     /^[+]/   { line++; display=line; inc=0; }
+     /^[-+][-+][-+] / { out=0; inc=0; }
+     /^/    { 
+               line += inc;
+               left += inc;
+               display += inc;
+               if ( out == 1 ) {
+                   print display,$0;
+               } else {
+                   print $0;
+               }
+               out = 1;
+               inc = 1;
+               display = line;
+            }'
+} 
+
+git diff -w $@ | prep1 | prep2 
