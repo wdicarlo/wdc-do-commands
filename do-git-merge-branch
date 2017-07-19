@@ -5,7 +5,7 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-c] <branch_name_pattern>"
+    echo "Usage: $cmd [-h] [-q] [-c] [-n] <branch_name_pattern>"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -c                          : commit"
@@ -46,12 +46,12 @@ then
     exit
 fi
 
-nbranches=$(git branch -a| grep -v master | grep -v "^\*" | grep $1 | wc -l)
-branch=$(git branch -a| grep -v master | grep -v "^\*" | grep $1)
+nbranches=$(git branch | grep -v master | grep -v "^\*" | grep $1 | wc -l)
+branch=$(git branch | grep -v master | grep -v "^\*" | grep $1)
 if [ $nbranches -ne 1 ]; then
 	echo "Please, specify one branch"
 	if [ $nbranches -eq 0 ]; then
-		echo "$(git branch -a| grep -v master | grep -v "^\*" )"
+		echo "$(git branch | grep -v master | grep -v "^\*" )"
 	else
 		echo "Filtered branches:"
 		echo "$branch"
