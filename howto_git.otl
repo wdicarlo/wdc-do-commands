@@ -98,8 +98,10 @@ Display simplified git status
 	git status -s
 Remove untracked files and directory together with ignored one. Replace -f with -n to test the command
 	git clean -f -d -x
-Delete last commit still not pushed
+Delete last commit (uncommit) still not pushed
 	git reset --hard HEAD~1
+Uncommit latest commits still not pushed (loosing the history)
+	git reset --hard HEAD~
 Merge a branch squashing its commits into ready-to-be-committed changes
 	git merge --squash branch-temp-oklaomaab-build-parameters
 Delete branch merged using --squash parameter
@@ -215,3 +217,5 @@ Locally prune deleted remote objects
 	git fetch --prune
 Push a new local branch changing the name of the remote branch
 	git push -u origin <local_branch_name>:<remote_branch_name>
+Stop merge commit while in Vim
+	Either remove/comment the message or use the command :cq
