@@ -219,3 +219,7 @@ Push a new local branch changing the name of the remote branch
 	git push -u origin <local_branch_name>:<remote_branch_name>
 Stop merge commit while in Vim
 	Either remove/comment the message or use the command :cq
+List all branches which contains the specified commit
+	git branch [-r|-a] --contains <sha>
+List files with conflicts
+	git diff --name-only --diff-filter=U
