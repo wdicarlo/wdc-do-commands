@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# filter out CR character, leaving the LF character
+
+# Check it is used correctly	
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+cat | tr -d '\015'
