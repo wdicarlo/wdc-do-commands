@@ -4,20 +4,70 @@
 # In order to use it as hook script copy it
 # into the file .git/hooks/pre-commit
 
-files=$(git diff --cached --name-only|grep "\.java$")
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-v] [-V] [<file>..]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -v                          : verbose"
+    echo "       -V                          : a lot verbose"
+}
+
+# Arguments processing
+quiet=0
+verbose=1
+while getopts hvV flag
+do
+    case $flag in
+	v)
+	    verbose=1
+	    ;;
+	V)
+	    verbose=2
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -gt 0 ]; then
+	files="$@"
+else	
+	files=$(git diff --cached --name-only|grep "\.java$")
+fi
+
 
 for file in $files;
 do
+	if [ $verbose -ge 1 ]; then
+		echo -n "Analyzing file: $file..."
+	fi
 	imports=$(cat $file | grep "^[ \t]*import"| grep -v "\.\*\s*;" | do-pipe-words "\..*;"|tr -d '.;')
 	missing=""
 	for class in $imports;
 	do
-		n=$(cat $file | grep -v "^\s*import" | grep -v "^\s*\/\/" | sed 's|/\*|\n&|g;s|*/|&\n|g'  | sed '/\/\*/,/*\//d' | grep $class | wc -l)
+		if [ $verbose -eq 1 ]; then
+			echo -n "." # print dots without newline
+		elif [ $verbose -eq 2 ]; then
+			echo -n "$class," 
+		fi
+		n=$(cat $file | grep -v "^\s*import" | grep -v "^\s*\/\/" | sed "s#\/\*.*\*\/##" | sed 's|/\*|\n&|g;s|*/|&\n|g'  | sed '#\/\*#,#*\/#d' | grep $class | wc -l)
 		if [ $n -eq 0 ]; then
 			missing="$class $missing"
 		fi
 	done
-		
+	if [ $verbose -ge 1 ]; then
+		echo "."
+	fi
 	if [ ! "$missing" == "" ]; then
 	cat <<\EOF
 Error:  Detected a possible never used import
