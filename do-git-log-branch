@@ -1,9 +1,39 @@
 #!/usr/bin/env bash
 
+# Usage help function
+cmd=$(basename $0)
 function usage() {
-	cmd=$(basename $0)
-	echo "Usage: $cmd <parent> <branch>"
+	echo "Usage: $cmd [-h] [-q] [-p] <parent> <branch>"
+	echo "where:"
+	echo "       -h                          : print this help"
+	echo "       -p                          : print patch of commits"
+	echo "       -q                          : quiet"
 }
+
+# Arguments processing
+quiet=0
+patches=0
+while getopts hqp flag
+do
+    case $flag in
+	p)
+	    patches=1
+	    ;;
+	q)
+	    quiet=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 if [ $# -ne 2 ]; then
 	usage
 	exit
@@ -14,5 +44,16 @@ fi
 parent=$1
 branch=$2
 
+options=""
+if [ $patches -eq 1 ]; then
+	options="-p -w"
+fi
+
 #git log --oneline --decorate --first-parent  $parent..HEAD # current branch
-git log --oneline --decorate --first-parent --no-merges $parent..$branch
+cmd="git log --oneline --decorate --first-parent --no-merges $options $parent..$branch"
+
+# Quieting command output
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd
