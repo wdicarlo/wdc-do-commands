@@ -4,23 +4,23 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-v] [-l] [-x] <dot-pattern> [<par>..]"
+    echo "Usage: $cmd [-h] [-v] [-l] [-n] <dot-pattern> [<par>..]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -l                          : list"
-    echo "       -x                          : execute command"
+    echo "       -n                          : do not execute the command"
     echo "       -v                          : verbose"
 }
 
 # Arguments processing
-quiet=1
+quiet=0
 list=0
-exe=0
-while getopts hve:lx flag
+exe=1
+while getopts hvln flag
 do
     case $flag in
 	x)
-	    exe=1
+	    exe=0
 	    ;;
 	l)
 	    list=1
@@ -49,6 +49,7 @@ if [ $exe -eq 0 ]; then
 	quiet=0
 fi
 
+cp=$(pwd)
 cd ~/bin
 
 pattern="do"
@@ -69,12 +70,33 @@ if [ $list -eq 1 ]; then
 	eval $cmd
 	exit
 fi
-cmd=$(ls -1 | grep "$pattern" | head -1)
+
+num=$(ls -1 | grep "$pattern" | wc -l)
+
+if [ $num -gt 1 ]; then
+	ls -1 | grep "$pattern" | awk '{ print NR, $0 }' 
+	read -p "Command?: " selected
+	if [ "$selected" == "" ]; then
+	    exit
+	fi
+	num=$(ls -1 | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}' | wc -l) 
+	if [ $num -ne 1 ]; then
+		echo "Wrong command"
+		exit
+	fi
+	cmd=$(ls -1 | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}') 
+else
+	cmd=$(ls -1 | grep "$pattern")
+fi
+
+
 if [ "$cmd" == "" ]; then
 	echo "Command not found"
 	exit
 fi
 cmd="$cmd $@"
+
+cd "$cp"
 
 # Quieting command output
 if [ $quiet -eq 0 ]; then
