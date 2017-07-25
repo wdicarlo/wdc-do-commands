@@ -51,6 +51,11 @@ bash scripting howto
 	    exit
 	fi
 	arg="$1"
+# Test environment variable
+	if [ "$WEB_HOME" == "" ]; then
+	   echo "Missing WEB_HOME environment variable"
+	   exit
+	fi
 
 # Quieting command output
 	if [ $quiet -eq 0 ]; then
