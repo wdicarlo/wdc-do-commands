@@ -44,7 +44,12 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 if [ $# -eq 1 ]; then
 	tasknum=$1
 fi
-type="PSSEPTSW"
+if [ "$MYLYN_TASKS" == "" ]; then
+   echo "Missing MYLYN_TASKS environment variable"
+   exit
+fi
+
+type="$MYLYN_TASKS"
 if [ $tasks -eq 1 ]; then
 	type="task:"
 fi
