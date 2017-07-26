@@ -7,9 +7,10 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q]"
+    echo "Usage: $cmd [-h] [-q] [-s <ref_branch>] [-n]"
     echo "where:"
     echo "       -h                          : print this help"
+    echo "       -n                          : print the name of current branch"
     echo "       -s <ref_branch>             : print branch merge status"
     echo "       -q                          : quiet"
 }
@@ -21,11 +22,15 @@ function usage() {
 
 quiet=0
 merge=""
-while getopts hqs: flag
+while getopts hqs:n flag
 do
     case $flag in
 	s)
 	    merge=$OPTARG
+	    ;;
+	n)
+	    git rev-parse --abbrev-ref HEAD
+	    exit
 	    ;;
 	q)
 	    quiet=1
