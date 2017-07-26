@@ -34,15 +34,21 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-if [ $# -ne 2 ]; then
-	usage
-	exit
+if [ $# -eq 0 ]; then
+	parent=$(do-git-get-parent-branch)
+	branch=$(do-git-branch -n)
+else
+	if [ $# -eq 2 ]; then
+		parent=$1
+		branch=$2
+	else
+		usage
+		exit
+	fi
 fi
 
-# TODO: find parent of either the specified branch or the current one
 
-parent=$1
-branch=$2
+
 
 options=""
 if [ $patches -eq 1 ]; then
