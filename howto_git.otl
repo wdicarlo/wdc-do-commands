@@ -223,3 +223,7 @@ List all branches which contains the specified commit
 	git branch [-r|-a] --contains <sha>
 List files with conflicts
 	git diff --name-only --diff-filter=U
+Get used credential storage helper
+	git config --global credential.helper
+Force credential update
+	git config credential.helper store
