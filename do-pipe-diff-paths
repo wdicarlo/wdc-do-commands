@@ -10,7 +10,7 @@ cat >  $patchfile
 
 # Usage help function
 function usage() {
-    echo "Usage: <pipe> | do-pipe-diff-paths [-h] [-q] [-f]"
+    echo "Usage: <pipe> | do-pipe-diff-paths [-h] [-q] [-f] <grep-pattern>"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -f                          : filter paths"
@@ -54,11 +54,15 @@ if [ $filter -eq 1 ]; then
 	filter_cmd="| grep \"^$tag\""
 fi
 	
+grep_cmd=""
+if [ $# -gt 0 ]; then
+	grep_cmd="| grep --color $@"
+fi
 
 if [ $format -eq 2 ]; then
-	cmd="cat $patchfile $filter_cmd | sed \"s#^diff --git .*a/\(.*\) b/.*#\1#\""
+	cmd="cat $patchfile $filter_cmd | sed \"s#^diff --git .*a/\(.*\) b/.*#\1#\" $grep_cmd"
 else
-	cmd="cat $patchfile $filter_cmd"
+	cmd="cat $patchfile $filter_cmd $grep_cmd"
 fi
 
 eval $cmd
