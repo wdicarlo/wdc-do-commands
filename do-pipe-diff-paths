@@ -8,13 +8,57 @@ tag="Index:"
 patchfile="/tmp/do-pipe-patched-files.tmp"
 cat >  $patchfile
 
+# Usage help function
+function usage() {
+    echo "Usage: <pipe> | do-pipe-diff-paths [-h] [-q] [-f]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -f                          : filter paths"
+}
+
+# Check it is used correctly	
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    usage
+    exit
+fi
+
+# Arguments processing
+filter=0
+while getopts hf flag
+do
+    case $flag in
+	f)
+	    filter=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 if [ $(cat $patchfile|grep "^diff --git"|wc -l) -gt 0 ]; then
 	tag="diff --git"
 	format=$DIFF_FORMAT_GIT
 fi
 
-if [ $format -eq 2 ]; then
-	cat $patchfile | grep "^$tag" | sed "s#^diff --git .*a/\(.*\) b/.*#\1#"
-else
-	cat $patchfile | grep "^$tag"
+filter_cmd=""
+if [ $filter -eq 1 ]; then
+	filter_cmd="| grep \"^$tag\""
 fi
+	
+
+if [ $format -eq 2 ]; then
+	cmd="cat $patchfile $filter_cmd | sed \"s#^diff --git .*a/\(.*\) b/.*#\1#\""
+else
+	cmd="cat $patchfile $filter_cmd"
+fi
+
+eval $cmd
