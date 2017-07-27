@@ -7,11 +7,12 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-s <ref_branch>] [-n]"
+    echo "Usage: $cmd [-h] [-q] [-s <ref_branch>] [-n] [-l]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -n                          : print the name of current branch"
     echo "       -s <ref_branch>             : print branch merge status"
+    echo "       -l                          : list branch sorted by date"
     echo "       -q                          : quiet"
 }
 
@@ -22,9 +23,18 @@ function usage() {
 
 quiet=0
 merge=""
-while getopts hqs:n flag
+while getopts hqs:nl flag
 do
     case $flag in
+	l)
+		cmd="git for-each-ref --sort=-committerdate refs/heads/ --format='%(HEAD) (%(color:green)%(committerdate)%(color:reset)) %(color:red)%(objectname:short)%(color:reset) - %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) - %(authorname)'"
+		# Quieting command output
+		if [ $quiet -eq 0 ]; then
+		    echo "> $cmd"
+		fi
+		eval $cmd
+		exit
+	    ;;
 	s)
 	    merge=$OPTARG
 	    ;;
