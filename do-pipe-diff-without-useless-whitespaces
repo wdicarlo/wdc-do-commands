@@ -7,4 +7,4 @@ if [ -t 0 ]; then
     exit
 fi
 
-sed "s/^+[ \t]*$/+/g"
+sed "s/^+[[:space:]]*$/+/g" | sed "s/^+\(.*[a-zA-Z0-9;{}>(),.*]\)[[:space:]]*$/+\1/"
