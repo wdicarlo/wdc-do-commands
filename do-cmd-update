@@ -7,17 +7,17 @@ function usage() {
     echo "Usage: $cmd [-f] [-r] <improved-bin-cmd>"
     echo "where:"
     echo "            -f          : update file (defualt update command)"
-    echo "            -r          : review changes before to update"
+    echo "            -r          : avoid review of changes before to update"
 }
 
 quiet=0
 file=0
-review=0
+review=1
 while getopts hqfr flag
 do
 	case $flag in
 		r)
-			review=1
+			review=0
 			;;
 		q)
 			quiet=1
@@ -59,7 +59,7 @@ if [ $n -eq 0 ]; then
 fi
 
 if [ $review -eq 1 ]; then
-	do-git-diff -q $1 | do-pipe-to-vim 
+	do-git-diff -q $1 | do-pipe-to-vim -o $1
 	read -p "Do you Accept the Changes? <y|n>" ans
 	if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
 		echo "Changes accepted!!!"
