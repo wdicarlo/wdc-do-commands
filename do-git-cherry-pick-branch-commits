@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-q] [-f<grep-pattern>] <master> <branch>"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -f <grep-pattern>           : filter commits with <grep-pattern>"
+    echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+grep_pattern=""
+while getopts hqf: flag
+do
+    case $flag in
+	q)
+	    quiet=1
+	    ;;
+	f)
+	    grep_pattern=$OPTARG
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -ne 2 ]; then
+    usage
+    exit
+fi
+
+master="$1"
+branch="$2"
+filter="$"
+
+if [ ! "$grep_pattern" == "" ]; then
+	filter="$grep_pattern"
+fi
+
+cmd="do-git-log-branch $master $branch | grep \"$filter\" | do-pipe-columns 1 | tac | xargs -I@ sh -c \"echo \\\"> git cherry-pick --no-commit @; \\\$(git show --oneline --summary --format=format:\\\" %C(green)%s%C(reset)\\\" @)\\\"; git cherry-pick --no-commit @\""
+
+
+# Quieting command output
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd
+
