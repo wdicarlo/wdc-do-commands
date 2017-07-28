@@ -227,3 +227,5 @@ Get used credential storage helper
 	git config --global credential.helper
 Force credential update
 	git config credential.helper store
+Generate patch emails of commits done in a branch
+	git format-patch <parent> --stdout
