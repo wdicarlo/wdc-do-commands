@@ -51,10 +51,20 @@ bash scripting howto
 	    exit
 	fi
 	arg="$1"
+
 # Test environment variable
 	if [ "$WEB_HOME" == "" ]; then
 	   echo "Missing WEB_HOME environment variable"
 	   exit
+	fi
+
+# Request user confirmation
+	read -p "Are You Sure? <y|n>" ans
+	if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+		echo "Confirmed!!!"
+	else
+		echo "Aborted!!!"
+		exit
 	fi
 
 # Quieting command output
