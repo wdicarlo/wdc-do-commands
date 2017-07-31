@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-q] [-f<file_pattern>] [-l] <commit-id>"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -a                          : print all kind of differences"
+    echo "       -l                          : print the list of files"
+    echo "       -f <file_pattern>           : print diff of filtered files"
+    echo "       -q                          : quiet"
+}
+
+
+piping=1
+quiet=1
+all=0
+file_pattern=""
+list=0
+while getopts hqf:al flag
+do
+    case $flag in
+	f)
+	    file_pattern=$OPTARG
+	    ;;
+	l)
+	    list=1
+	    ;;
+	a)
+	    all=1
+	    ;;
+	q)
+	    quiet=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! $# -eq 1 ]; then
+	usage
+	exit
+fi
+
+commit_id="$1"
+
+if [ -t 1 ]; then # check if piping to output stream
+	piping=0
+	quiet=0
+fi
+
+opts="-w"
+if [ $all -eq 1 ]; then
+	opts=""
+fi
+if [ $piping -eq 0 ]; then
+	opts="$opts --color=always"
+fi
+
+if [ "$file_pattern" == "" ]; then
+	files=$(git diff --name-only $commit_id~..$commit_id)
+else
+	files=$(git diff --name-only $commit_id~..$commit_id | grep "$file_pattern")
+fi
+
+if [ $list -eq 1 ]; then
+	if [ "$file_pattern" == "" ]; then
+		cmd="git diff --name-only $commit_id~..$commit_id"
+	else
+		cmd="git diff --name-only $commit_id~..$commit_id | grep \"$file_pattern\""
+	fi
+else
+	cmd="git diff $opts $commit_id~..$commit_id -- $files"
+fi
+
+if [ $quiet -eq 0 ]; then
+	echo "> $cmd"
+fi
+eval $cmd
