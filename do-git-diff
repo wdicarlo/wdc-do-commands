@@ -3,10 +3,11 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-s] [<file>..<file>|file_pattern>]"
+    echo "Usage: $cmd [-h] [-q] [-s] [-a] [<file>..<file>|file_pattern>]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -s                          : diff of staged changes"
+    echo "       -a                          : show all diffs"
     echo "       -q                          : quiet"
 }
 
@@ -14,9 +15,13 @@ function usage() {
 piping=1
 quiet=1
 staged=0
-while getopts hqs flag
+all=0
+while getopts hqsa flag
 do
     case $flag in
+	a)
+	    all=1
+	    ;;
 	q)
 	    quiet=1
 	    ;;
@@ -39,9 +44,12 @@ if [ -t 1 ]; then # check if piping to output stream
 	piping=0
 	quiet=0
 fi
-opts=""
+opts="-w"
+if [ $all -eq 1 ]; then
+	opts=""
+fi
 if [ $piping -eq 0 ]; then
-	opts="--color=always"
+	opts="$opts --color=always"
 fi
 if [ $staged -eq 1 ]; then
 	opts="$opts --staged"
@@ -59,7 +67,7 @@ if [ $# -eq 1 ]; then
 fi
 
 #cmd="git diff -w $opts $files | sed \"s/^+[[:space:]]*$/+/g\" | sed \"s/^+\\(.*[;}>]\\)[[:space:]]*$/+\\1/\""
-cmd="git diff -w $opts $files | do-pipe-diff-without-useless-whitespaces"
+cmd="git diff $opts $files | do-pipe-diff-without-useless-whitespaces"
 if [ $quiet -eq 0 ]; then
 	echo "> $cmd"
 fi
