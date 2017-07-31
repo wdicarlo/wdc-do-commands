@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-q] [-e <file_pattern>]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -e <file_pattern>           : exclude files with <file_pattern> name"
+    echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+exclude=""
+while getopts hqe: flag
+do
+    case $flag in
+	e)
+	    exclude=$OPTARG
+	    ;;
+	q)
+	    quiet=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+cmd="git diff --staged --name-only"
+if [ ! "$exclude" == "" ]; then
+	cmd="$cmd | grep -v \"$exclude\""
+fi
+
+#do-git-diff-with-linenumbers -b |  sed 's#^+++ b/\(.*\)#File: \1#' | grep --color "^File:\|^[0-9]* +[ \t]*$\|^[0-9]* +.*[a-zA-Z0-9;{}>(),.*][ \t]\+$"
+#git diff --staged --name-only | while read filepath;
+eval $cmd | while read filepath;
+do
+	echo "Processing $filepath..."
+	#do-git-diff-with-linenumbers -s "$filepath"| grep "[0-9]* +.*[ \t]$\|[0-9]* + [ \t]*$"|do-pipe-columns 1|xargs -I@ sed -i "@s/[ \t]*$//" "$filepath"
+	do-git-diff-with-linenumbers -s "$filepath"| grep "^[0-9]* +[[:space:]]\+$"|do-pipe-columns 1|xargs -I@ sed -i "@s/^[ \t]\+$//" "$filepath"
+	do-git-diff-with-linenumbers -s "$filepath"| grep "^[0-9]* +\(.*[a-zA-Z0-9;{}>(),.*]\)[[:space:]]\+$"|do-pipe-columns 1|xargs -I@ sed -i "@s/[ \t]\+$//" "$filepath"
+	done
