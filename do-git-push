@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+
+cmd="git push origin $(do-git-branch -n)"
+echo "> $cmd"
+eval "$cmd"
