@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 function usage() {
-	echo "Usage: $cmd [-q] [-r] [-b <branch>] [-s] [-n <num>]"
+	echo "Usage: $cmd [-q] [-r] [-b <branch>] [-s] [-n <num>] [-g]"
 	echo "             -b <branch>            : show log of the branch"
 	echo "             -a <author>            : show log of the author"
 	echo "             -r                     : raw"
 	echo "             -s                     : show files' status"
 	echo "             -n <num>               : show just <num> logs"
+	echo "             -g                     : force graph representation in pipes"
 	echo "             -q                     : quiet"
 }
 
@@ -16,11 +17,13 @@ branch="--all"
 author=""
 files=0
 num=-1
+piping=0
 if [ ! -t 1 ]; then
     quiet=1
     raw=1
+    piping=1
 fi
-while getopts hqrb:a:sn: flag
+while getopts hqrb:a:sn:g flag
 do
     case $flag in
         s)
@@ -28,6 +31,9 @@ do
             ;;
         r)
             raw=1
+            ;;
+        g)
+            raw=0
             ;;
         q)
             quiet=1
@@ -68,7 +74,11 @@ if [ $quiet -eq 0 ]; then
     echo "> git log $opts $author $graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white) - [%an]%C(reset)%C(bold yellow)%d%C(reset)' $details --date=relative $@"
 fi
 if [ $raw -eq 0 ]; then
-    git log $opts $author $graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white) - [%an]%C(reset)%C(bold yellow)%d%C(reset)' $details --date=relative $@
+	if [ $piping -eq 0 ]; then
+	    git log $opts $author $graph $branch --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white) - [%an]%C(reset)%C(bold yellow)%d%C(reset)' $details --date=relative $@
+    	else
+	    git log $opts $author $graph $branch --format=format:'%h - (%ar) %s - [%an]%d' $details --date=relative $@
+	fi
 else
     git log $opts $author $branch $details --date=relative --format=format:'%h - (%ar) %s - [%an] %d'
 fi
