@@ -66,9 +66,9 @@ if [ $piping -eq 0 ]; then
 fi
 
 if [ "$file_pattern" == "" ]; then
-	files=$(git diff --name-only $commit_id~..$commit_id)
+	files=$(git diff --name-only $commit_id~..$commit_id | do-pipe-wrapped-text)
 else
-	files=$(git diff --name-only $commit_id~..$commit_id | grep "$file_pattern")
+	files=$(git diff --name-only $commit_id~..$commit_id | grep "$file_pattern" | do-pipe-wrapped-text)
 fi
 
 if [ $list -eq 1 ]; then
