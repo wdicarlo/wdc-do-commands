@@ -7,15 +7,24 @@ function usage() {
 	echo "where:"
 	echo "       -h                          : print this help"
 	echo "       -p                          : print patch of commits"
+	echo "       -u                          : consider only unpushed commits"
 	echo "       -q                          : quiet"
 }
+
+# function to find a substring
+# source: https://stackoverflow.com/a/20460402/3676996
+stringContain() { [ -z "${2##*$1*}" ] && [ -z "$1" -o -n "$2" ]; }
 
 # Arguments processing
 quiet=0
 patches=0
-while getopts hqp flag
+unpushed=0
+while getopts hqpu flag
 do
     case $flag in
+	u)
+	    unpushed=1
+	    ;;
 	p)
 	    patches=1
 	    ;;
@@ -55,11 +64,14 @@ if [ $patches -eq 1 ]; then
 	options="-p -w"
 fi
 
-#git log --oneline --decorate --first-parent  $parent..HEAD # current branch
 cmd="git log --oneline --decorate --first-parent --no-merges $options $parent..$branch"
+
+if [ $unpushed -eq 1 ]; then
+	cmd="$cmd | while read line; do if stringContain 'origin' \"\$line\"; then exit; fi; echo \"\$line\"; done"
+fi
 
 # Quieting command output
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
-eval $cmd
+eval "$cmd"
