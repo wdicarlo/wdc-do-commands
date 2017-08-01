@@ -229,3 +229,5 @@ Force credential update
 	git config credential.helper store
 Generate patch emails of commits done in a branch
 	git format-patch <parent> --stdout
+Change old (unpushed) commit message (rebase's reword)
+	git rebase -i HEAD~<num_commits_to_the_target_commit>
