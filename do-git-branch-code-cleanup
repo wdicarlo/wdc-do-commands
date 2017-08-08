@@ -40,12 +40,26 @@ if [ ! "$exclude" == "" ]; then
 	cmd="$cmd | grep -v \"$exclude\""
 fi
 
-#do-git-diff-with-linenumbers -b |  sed 's#^+++ b/\(.*\)#File: \1#' | grep --color "^File:\|^[0-9]* +[ \t]*$\|^[0-9]* +.*[a-zA-Z0-9;{}>(),.*][ \t]\+$"
-#git diff --staged --name-only | while read filepath;
+
+n=$(eval "$cmd" | wc -l)
+if [ $n -eq 0 ]; then
+	echo "No staged files"
+	exit
+fi
+
+# Request user confirmation
+read -p "Cleaning staged files. Are You Sure? <y|n>" ans
+if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+	echo "Confirmed!!!"
+else
+	echo "Aborted!!!"
+	exit
+fi
+
 eval $cmd | while read filepath;
 do
 	echo "Processing $filepath..."
-	#do-git-diff-with-linenumbers -s "$filepath"| grep "[0-9]* +.*[ \t]$\|[0-9]* + [ \t]*$"|do-pipe-columns 1|xargs -I@ sed -i "@s/[ \t]*$//" "$filepath"
 	do-git-diff-with-linenumbers -s "$filepath"| grep "^[0-9]* +[[:space:]]\+$"|do-pipe-columns 1|xargs -I@ sed -i "@s/^[ \t]\+$//" "$filepath"
-	do-git-diff-with-linenumbers -s "$filepath"| grep "^[0-9]* +\(.*[a-zA-Z0-9;{}>(),.*]\)[[:space:]]\+$"|do-pipe-columns 1|xargs -I@ sed -i "@s/[ \t]\+$//" "$filepath"
+	#do-git-diff-with-linenumbers -s "$filepath"| grep "^[0-9]* +\(.*[a-zA-Z0-9;{}>(),.*]\)[[:space:]]\+$"|do-pipe-columns 1|xargs -I@ sed -i "@s/[ \t]\+$//" "$filepath"
+	do-git-diff-with-linenumbers -s "$filepath"| grep "^[0-9]* +\(.*[[:graph:]]\)[[:space:]]\+$"|do-pipe-columns 1|xargs -I@ sed -i "@s/[ \t]\+$//" "$filepath"
 	done
