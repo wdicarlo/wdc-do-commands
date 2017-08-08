@@ -3,11 +3,12 @@
 # Usage help function
 cmd=$(basename $0)
 function usage() {
-	echo "Usage: $cmd [-h] [-q] [-p] <parent> <branch>"
+	echo "Usage: $cmd [-h] [-q] [-p] [-m] [<parent> <branch>]"
 	echo "where:"
 	echo "       -h                          : print this help"
 	echo "       -p                          : print patch of commits"
 	echo "       -u                          : consider only unpushed commits"
+	echo "       -m                          : list also merge commits"
 	echo "       -q                          : quiet"
 }
 
@@ -19,9 +20,13 @@ stringContain() { [ -z "${2##*$1*}" ] && [ -z "$1" -o -n "$2" ]; }
 quiet=0
 patches=0
 unpushed=0
-while getopts hqpu flag
+merges=0
+while getopts hqpum flag
 do
     case $flag in
+	m)
+	    merges=1
+	    ;;
 	u)
 	    unpushed=1
 	    ;;
@@ -64,10 +69,14 @@ if [ $patches -eq 1 ]; then
 	options="-p -w"
 fi
 
-cmd="git log --oneline --decorate --first-parent --no-merges $options $parent..$branch"
+cmd="git log --oneline --decorate --first-parent $options $parent..$branch"
 
 if [ $unpushed -eq 1 ]; then
 	cmd="$cmd | while read line; do if stringContain 'origin' \"\$line\"; then exit; fi; echo \"\$line\"; done"
+else
+	if [ $merges -eq 0 ]; then
+		options="$options --no-merges"
+	fi
 fi
 
 # Quieting command output
