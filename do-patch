@@ -5,16 +5,17 @@ now=`date +%Y%m%d%H%M%S`
 function usage()
 {
     cmd=$(basename $0)
-    echo "Usage: $cmd [-R] [-n] [-l] [-L] [-p] [-f] [-t] [-T] [-x] <patch-file-pattern>"
+    echo "Usage: $cmd [-R] [-n] [-l] [-L] [-p] [-f] [-t] [-T] [-x] [-s <string_patt>] [<patch-file-pattern>]"
     echo "             -l               : list patches"
     echo "             -L               : list all patches"
-    echo "             -R               : remove patch"
+    echo "             -R               : remove/revert patch"
     echo "             -n               : just print the patch"
     echo "             -t               : consider the last patch"
     echo "             -T               : consider the very last patch"
     echo "             -p               : just print the paths of the patches"
     echo "             -f               : force addition of new files"
     echo "             -x               : consider not only diff files"
+    echo "             -s <string_patt> : search <string_patt> in patch files"
     echo "             -q               : quiet"
 }
 
@@ -30,12 +31,16 @@ list=0
 all=0
 filter=""
 ext="\.diff\$"
+search_patt=""
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts hRntTpfqlLx flag
+while getopts hRntTpfqlLxs: flag
 do
     case $flag in
+        s)
+            search_patt="$OPTARG"
+            ;;
         x)
             ext="$"
             ;;
@@ -79,6 +84,20 @@ do
     esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! "$search_patt" == "" ]; then
+    filter=""
+    if [ $# -gt 0 ]; then
+        filter="|grep $1"
+    fi
+    #grep -RHn "^[+-].*$search_patt" $PATCHES_DIR/*|sed "s#$PATCHES_DIR/##"|grep --color "$search_patt"
+    cmd="ls -1 $PATCHES_DIR $filter |sed 's#^#$PATCHES_DIR\/#'| xargs -I@ sh -c \"grep -Hn \\\"^[+-].*$search_patt\\\" @|sed \\\"s#$PATCHES_DIR/##\\\"|grep --color \\\"$search_patt\\\"\""
+    if [ $quiet -eq 0 ]; then
+        echo "> $cmd"
+    fi
+    eval "$cmd"
+    exit
+fi
 
 if [ $list -eq 1 ]; then
     filter=""
