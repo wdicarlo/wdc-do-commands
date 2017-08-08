@@ -6,12 +6,13 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-b] [-s] [-w]"
+    echo "Usage: $cmd [-h] [-q] [-b] [-s] [-w] [-c]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -w                          : exclude whitespaces"
     echo "       -b                          : git diff of the branch"
     echo "       -s                          : git diff of staged changes"
+    echo "       -c                          : output cfile format"
     echo "       -q                          : quiet"
 }
 
@@ -19,11 +20,15 @@ function usage() {
 quiet=0
 mode=0  # 0 = WIP, 1 = STAGED, 2 = BRANCH
 options=""
-while getopts hqbsw flag
+cfile=0
+while getopts hqbswc flag
 do
     case $flag in
 	w)
 	    options="$options -w"
+	    ;;
+	c)
+	    cfile=1
 	    ;;
 	b)
 	    mode=2
@@ -79,18 +84,28 @@ function prep2() {
             }'
 } 
 
+function diff2cfile() {
+	cat | grep -v "^+++ \|^--- \|^@@ \|^[0-9]\+ index"| sed 's#^[0-9]\+ diff --git .*a/\(.*\) b/.*#file: \1#'|awk '/^file/ { afile=$2; next; } /[0-9]* [+-]/ { print afile":"$1":"substr($0, index($0,$2)); }'
+}
+
+prep3="cat"
+if [ $cfile -eq 1 ]; then
+	prep3="diff2cfile"
+fi
+
+
 case $mode in 
 	0)
-		git diff $options $@ | prep1 | prep2 
+		git diff $options $@ | prep1 | prep2 | $prep3
 		;;
 	1)
-		git diff $options --staged $@ | prep1 | prep2 
+		git diff $options --staged $@ | prep1 | prep2 | $prep3
 		;;
 	2)
 		parent=$(do-git-get-parent-branch)
 		branch=$(do-git-branch -n)
 		options="$options -p"
 		cmd="git log --oneline --decorate --first-parent --no-merges $options $parent..$branch $@"
-		eval "$cmd" | prep1 | prep2 
+		eval "$cmd" | prep1 | prep2 | $prep3
 		;;
 esac
