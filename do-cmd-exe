@@ -53,7 +53,7 @@ cp=$(pwd)
 cd ~/bin
 
 pattern="do"
-for patt in $(echo $1| tr '.' '\n')
+for patt in $(echo $1| tr '-' '\n')
 do
 	pattern="$pattern-$patt[a-z]*"
 done
