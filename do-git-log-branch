@@ -76,6 +76,7 @@ if [ $unpushed -eq 1 ]; then
 else
 	if [ $merges -eq 0 ]; then
 		options="$options --no-merges"
+		cmd="git log --oneline --decorate --first-parent $options $parent..$branch"
 	fi
 fi
 
