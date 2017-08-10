@@ -128,9 +128,9 @@ if [ $verbose -eq 1 ]; then
 	verbose_cmd="echo @;"
 fi
 if [ "$exclude" == "" ]; then
-    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f $file $bin_filter $sav_filter | xargs -I@ sh -c \"$verbose_cmd $grep_cmd --color \\\"$pars\\\" \\\"$string\\\" @\""
+    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f $file $bin_filter $sav_filter | xargs -I@ sh -c \"$verbose_cmd $grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"\""
 else
-    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f $file $bin_filter $sav_filter | xargs -I@ sh -c \"$grep_cmd --color \\\"$pars\\\" \\\"$string\\\" @| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
+    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f $file $bin_filter $sav_filter | xargs -I@ sh -c \"$grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
 fi
 if [ ! "$postproc" == "" ]; then
     cmd+="|$postproc"
