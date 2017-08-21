@@ -1,6 +1,67 @@
 #!/bin/bash
 #
 
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-q] <string>"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -a                          : find in all commands (even not versioned)"
+    echo "       -o                          : find only in the options"
+    echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+all=0
+options=0
+while getopts hqao flag
+do
+    case $flag in
+	o)
+	    options=1
+	    ;;
+	a)
+	    all=1
+	    ;;
+	q)
+	    quiet=1
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+    usage
+    exit
+fi
+
+
 
 cd ~/bin
-find . -name "do[-_]*" | sed "s#^\.\/##" | xargs -I@ \grep --color -Hn $@ @
+cmd="git ls-files | grep \"^do[-_].*\""
+if [ $all -eq 1 ]; then
+	cmd="find . -name \"do[-_]*\" | sed 's#^\.\/##'"
+fi
+
+if [ $options -eq 0 ]; then
+	cmd="$cmd | xargs -I@ \grep --color -Hn $@ @"
+else
+	cmd="$cmd | xargs -I@ grep -Hn \"getopts.*h\" @ |sed 's/^\([a-z-]*\):.*/\1/'|sort|uniq|xargs -I@ sh -c \"@ -h\"| \grep --color \"do[-_][a-z_-]*\|$@\""
+fi
+
+# Quieting command output
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval $cmd

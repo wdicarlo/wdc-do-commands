@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 
+
+function usage() {
+    echo "Usage: <list-of-words> | do-pipe-text-without-in <file>"
+}
+
 if [ -t 0 ]; then
     cmd=`basename $0`
     echo "$cmd must be used in a pipe"
+    usage
     exit
 fi
 
 
 if [ $# -lt 1 ]; then
-    echo "Usage: <list-of-words> | do-pipe-text-without-in <file>"
+    usage
     exit
 fi
 

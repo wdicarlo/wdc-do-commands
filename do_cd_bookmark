@@ -16,6 +16,9 @@ function usage() {
     return
 }
 
+
+# TODO: use getopts
+
 global="0"
 list="0"
 absolute="0"
@@ -52,31 +55,6 @@ while [ $# -gt 0 ]; do
     fi
     shift
 done
-
-#while getopts aglh flag
-#do
-#    case $flag in
-#
-#        a)
-#            absolute="1"
-#            ;;
-#        g)
-#            global="1"
-#            ;;
-#        l)
-#            list="1"
-#            ;;
-#        h)
-#            usage
-#            return
-#            ;;
-#        ?)
-#            usage
-#            return
-#            ;;
-#    esac
-#done
-#shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 bookmarks_file=`echo ~/.bookmarks`
 

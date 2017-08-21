@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
 
+
+function usage() {
+	    echo "Usage: do-pipe-wrapped-text [-h] [-q] [-a]"
+	    echo "where:"
+	    echo "       -h                          : print this help"
+	    echo "       -a                          : wrap all words"
+	    echo "       -q                          : quiet"
+}
+
 if [ -t 0 ]; then
     cmd=`basename $0`
     echo "Usage: $cmd must be used in a pipe"
+    usage
     exit
 fi
 

@@ -27,6 +27,7 @@ do
             ;;
         h)
             usage
+	    exit
             ;;
         ?)
             exit

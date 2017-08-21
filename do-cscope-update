@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-check=`which cscope`
-if [ -z "$check" ]; then
-    echo "Error: cannot find cscope command"
-    exit
-fi
-
 function usage()
 {
     cmd=$(basename $0)
@@ -52,6 +46,12 @@ do
     esac
 done
 shift $(( OPTIND - 1 ))  # shift past the last flag or argument
+
+check=`which cscope`
+if [ -z "$check" ]; then
+    echo "Error: cannot find cscope command"
+    exit
+fi
 
 home=$PWD
 

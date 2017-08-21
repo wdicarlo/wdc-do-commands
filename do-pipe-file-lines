@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 #pipe input:             path/filename linenumber
+function usage() {
+    echo "Usage: <filename linenumber> | do-pipe-file-lines [-h] "
+    echo "where:"
+    echo "       -h                          : print this help"
+}
 
 if [ -t 0 ]; then
     cmd=`basename $0`
@@ -8,7 +13,7 @@ if [ -t 0 ]; then
     exit
 fi
 
-while getopts ha flag
+while getopts h flag
 do
     case $flag in
         h)

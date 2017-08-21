@@ -25,7 +25,7 @@ monitor=0
 build=0
 upload=0
 verbose=0
-board="arduino:avr:$(cat ~/.arduino15/preferences.txt|grep "^board\w*="|sed "s/.*=\(.*\)/\1/")"
+board="arduino:avr:$(cat ~/.arduino15/preferences.txt 2>/dev/null|grep "^board\w*="|sed "s/.*=\(.*\)/\1/")"
 tty="/dev/ttyACM0"
 while getopts hqimbuvB:P:D: flag
 do

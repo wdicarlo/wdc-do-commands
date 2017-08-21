@@ -32,19 +32,6 @@ function update_path() {
     echo "Updated LUA_CPATH: $LUA_CPATH"
 }
 
-if [ -z $LUA_HOME ]; then
-    #echo "Please, define LUA_HOME enviroment variable"
-    #LUA_HOME=`readlink -f ~/.luarocks/`
-    #echo "Default: $LUA_HOME"
-    #exit
-    LUA_HOME=`echo ~/.luarocks`
-fi
-
-if [ ! -d $LUA_HOME ]; then
-    echo "Missing folder $LUA_HOME"
-    exit
-fi
-
 opts=
 verbose=0
 
@@ -84,6 +71,19 @@ do
     esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ -z $LUA_HOME ]; then
+    #echo "Please, define LUA_HOME enviroment variable"
+    #LUA_HOME=`readlink -f ~/.luarocks/`
+    #echo "Default: $LUA_HOME"
+    #exit
+    LUA_HOME=`echo ~/.luarocks`
+fi
+
+if [ ! -d $LUA_HOME ]; then
+    echo "Missing folder $LUA_HOME"
+    exit
+fi
 
 if [ -z "$LUA_PATH" ]; then
     LUA_PATH=`echo "?.lua;?/init.lua;$LUA_HOME/share/lua/5.1/?.lua;$LUA_HOME/share/lua/5.1/?/init.lua"`

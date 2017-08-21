@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
+function usage() {
+    echo "Swap first and second columns"
+    echo "Usage: <pipe> | do-pipe-columns-swapped"
+    echo "where:"
+    echo "       -h                          : print this help"
+}
 
 if [ -t 0 ]; then
     cmd=`basename $0`
     echo "$cmd must be used in a pipe"
-    echo "Usage: <pipe> | $cmd"
-    echo "       Swap first and second columns"
+    usage
     exit
 fi
 
