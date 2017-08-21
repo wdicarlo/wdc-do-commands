@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+function usage() {
+    echo "Usage: <text> | do-pipe-sorted-text-objects [-t <filtered-lines>] <begin-pattern> <end-pattern>"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -t <filtered-lines>         : number of lines to print"
+}
+
 if [ -t 0 ]; then
     cmd=`basename $0`
     echo "Usage: $cmd must be used in a pipe"
@@ -27,7 +34,7 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 if [ ! $# -eq 2 ]; then
-    echo "Usage: <text> | do-pipe-sorted-text-objects [-t <filtered-lines>] <begin-pattern> <end-pattern>"
+    usage
     exit
 fi
 

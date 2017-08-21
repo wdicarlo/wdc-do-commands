@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+function usage() {
+    echo "Usage: do-pipe-timeless-log [-h] [-q] [-u]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -u                          : count uniq lines"
+    echo "       -q                          : quiet"
+}
+
 if [ -t 0 ]; then
     cmd=`basename $0`
     echo "Usage: $cmd must be used in a pipe"

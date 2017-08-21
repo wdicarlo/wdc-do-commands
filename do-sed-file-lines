@@ -3,13 +3,18 @@
 #pipe input:             path/filename linenumber
 #input parameters:       "pattern_to_replace" "replace_text"
 
+function usage() {
+    echo "Usage: <filename linenumber> | <cmd> <search-for> <replace-with>"
+}
+
 if [ -t 0 ]; then
     cmd=`basename $0`
-    echo "Usage: $cmd must be used in a pipe"
+    echo "$cmd must be used in a pipe"
+    usage
     exit
 fi
 
-while getopts ha flag
+while getopts h flag
 do
     case $flag in
         h)

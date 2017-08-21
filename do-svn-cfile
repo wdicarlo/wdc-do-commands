@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+function usage() {
+	cmd=$(basename $0)
+	echo "Usage: $cmd [-o|-n] [-q] [-h]"
+	echo "where:"
+	echo "             -o             : remove old"
+	echo "             -n             : remove new"
+	echo "             -q             : quiet"
+	echo "             -h             : help"
+}
+
+
 old=1
 new=1
 while getopts hqon flag

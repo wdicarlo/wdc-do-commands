@@ -4,7 +4,7 @@
 function usage()
 {
     cmd=`basename $0`
-    echo "$cmd: Copy files recreating the source folders tree and the destination folder"
+    echo "Copy files recreating the source folders tree and the destination folder"
     echo "Usage: $cmd [-m] <src1>...<srcn> <dst>"
     echo "             -m                   : move the file"
     echo "             -f                   : just consider the source file/s, not the location"

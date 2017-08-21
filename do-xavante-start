@@ -18,30 +18,6 @@ function usage() {
 opts=
 verbose=0
 
-if [ "$WEB_HOME" == "" ]; then
-   echo "Missing WEB_HOME environment variable"
-   exit
-fi
-
-if [ ! -d $WEB_HOME ]; then
-   echo "Missing WEB_HOME folder: $WEB_HOME"
-   exit
-fi
-
-cd $WEB_HOME
-
-if [ ! -f start.lua ]; then
-   #if [ ! -d WebCT ]; then
-      echo "Cannot find start.lua file"
-      exit
-   #fi
-   #cd WebCT 
-fi
-
-export WEBCT_HOME=`pwd`
-export LUA_HOME=${WEBCT_HOME}/..
-export LUA_PATH=""
-export LUA_TESTS=$LUA_HOME/tests
 
 while getopts hvlcgp: flag
 do
@@ -78,6 +54,30 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+if [ "$WEB_HOME" == "" ]; then
+   echo "Missing WEB_HOME environment variable"
+   exit
+fi
+
+if [ ! -d $WEB_HOME ]; then
+   echo "Missing WEB_HOME folder: $WEB_HOME"
+   exit
+fi
+
+cd $WEB_HOME
+
+if [ ! -f start.lua ]; then
+   #if [ ! -d WebCT ]; then
+      echo "Cannot find start.lua file"
+      exit
+   #fi
+   #cd WebCT 
+fi
+
+export WEBCT_HOME=`pwd`
+export LUA_HOME=${WEBCT_HOME}/..
+export LUA_PATH=""
+export LUA_TESTS=$LUA_HOME/tests
 export LUA_PATH=`echo "?.lua;?/init.lua;$LUA_HOME/share/?.lua;$LUA_HOME/share/?/init.lua;$LUA_TESTS/?.lua;$WEBCT_HOME/WebCT/?.lua"`
 export LUA_CPATH=`echo "$LUA_HOME/lib/?.so;$LUA_HOME/lib/?/?.so;./?.so;?/?.so"`
 
