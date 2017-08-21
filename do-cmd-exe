@@ -55,12 +55,16 @@ cd ~/bin
 pattern="do"
 for patt in $(echo $1| tr '-' '\n')
 do
-	pattern="$pattern-$patt[a-z]*"
+	if [ "${patt: -1}" == "$" ]; then
+		pattern="$pattern-$patt"
+	else
+		pattern="$pattern-$patt[a-z]*"
+	fi
 done
 shift
 
 if [ $list -eq 1 ]; then
-	cmd="ls -1 | grep \"$pattern\""
+	cmd="find . -maxdepth 1 -name \"do-*\" | tr -d './' | grep \"$pattern\""
 	if [ "$cmd" == "" ]; then
 		echo "Command not found"
 		exit
@@ -71,22 +75,22 @@ if [ $list -eq 1 ]; then
 	exit
 fi
 
-num=$(ls -1 | grep "$pattern" | wc -l)
+num=$(find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern" | wc -l)
 
 if [ $num -gt 1 ]; then
-	ls -1 | grep "$pattern" | awk '{ print NR, $0 }' 
+	find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern" | awk '{ print NR, $0 }' 
 	read -p "Command?: " selected
 	if [ "$selected" == "" ]; then
 	    exit
 	fi
-	num=$(ls -1 | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}' | wc -l) 
+	num=$( find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}' | wc -l) 
 	if [ $num -ne 1 ]; then
 		echo "Wrong command"
 		exit
 	fi
-	cmd=$(ls -1 | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}') 
+	cmd=$(find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}') 
 else
-	cmd=$(ls -1 | grep "$pattern")
+	cmd=$(find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern")
 fi
 
 
