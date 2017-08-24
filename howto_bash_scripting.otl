@@ -15,21 +15,31 @@ bash scripting howto
 	cmd=`basename $0`
 
 	function usage() {
-	    echo "Usage: $cmd [-h] [-q] [-s <val>] <arg>"
+	    echo "Usage: $cmd [-h] [-q] [-s <val>] [-n] [-v] <arg>"
 	    echo "where:"
 	    echo "       -h                          : print this help"
+	    echo "       -n                          : dry run"
 	    echo "       -s <val>                    : use <val>"
+	    echo "       -v                          : verbose"
 	    echo "       -q                          : quiet"
 	}
 
 # Arguments processing
         quiet=0
 	exclude=""
-	while getopts hqe: flag
+	dryrun=0
+	verbose=0
+	while getopts hqnve: flag
 	do
 	    case $flag in
+		v)
+		    verbose=1
+		    ;;
 		q)
 		    quiet=1
+		    ;;
+		n)
+		    dryrun=1
 		    ;;
 		e)
 		    exclude=$OPTARG
@@ -68,7 +78,12 @@ bash scripting howto
 	fi
 
 # Quieting command output
+	if [ $verbose -eq 1 ]; then
+	    usage|head -1
+	fi
 	if [ $quiet -eq 0 ]; then
 	    echo "> $cmd"
 	fi
-	eval $cmd
+	if [ $dryrun -eq 0 ]; then
+	    eval "$cmd"
+	fi
