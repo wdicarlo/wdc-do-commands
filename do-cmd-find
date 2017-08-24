@@ -8,7 +8,8 @@ function usage() {
     echo "Usage: $cmd [-h] [-q] <string>"
     echo "where:"
     echo "       -h                          : print this help"
-    echo "       -a                          : find in all commands (even not versioned)"
+    echo "       -c                          : find in all commands (even not versioned)"
+    echo "       -a                          : find in all files (even not versioned)"
     echo "       -o                          : find only in the options"
     echo "       -q                          : quiet"
 }
@@ -17,14 +18,17 @@ function usage() {
 quiet=0
 all=0
 options=0
-while getopts hqao flag
+while getopts hqaoc flag
 do
     case $flag in
 	o)
 	    options=1
 	    ;;
-	a)
+	c)
 	    all=1
+	    ;;
+	a)
+	    all=2
 	    ;;
 	q)
 	    quiet=1
@@ -51,7 +55,9 @@ fi
 cd ~/bin
 cmd="git ls-files | grep \"^do[-_].*\""
 if [ $all -eq 1 ]; then
-	cmd="find . -name \"do[-_]*\" | sed 's#^\.\/##'"
+	cmd="find . -maxdepth 1 -name \"do[-_]*\" | sed 's#^\.\/##'"
+elif [ $all -eq 2 ]; then
+	cmd="find . -not -path \"./.git/*\" -type f | sed 's#^\.\/##'"
 fi
 
 if [ $options -eq 0 ]; then
