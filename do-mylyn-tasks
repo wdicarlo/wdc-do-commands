@@ -6,11 +6,12 @@ TASKS_DIR="../.metadata/.mylyn/tasks/local-local/data"
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-t] <task_pattern>"
+    echo "Usage: $cmd [-h] [-q] [-t] [-w] [-i] [<task_pattern>]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -t                          : print only the local tasks"
     echo "       -w                          : generate names without whitespaces"
+    echo "       -i                          : print only the tasks' id"
     echo "       -q                          : quiet"
 }
 
@@ -18,9 +19,13 @@ function usage() {
 quiet=0
 nowhitespaces=0
 tasks=0
-while getopts hqwt flag
+id=0
+while getopts hqwti flag
 do
     case $flag in
+	i)
+	    id=1
+	    ;;
 	w)
 	    nowhitespaces=1
 	    ;;
@@ -53,17 +58,20 @@ type="$MYLYN_TASKS"
 if [ $tasks -eq 1 ]; then
 	type="task:"
 fi
-
 if [ "$tasknum" == "" ]; then
-	if [ $nowhitespaces -eq 0 ]; then
-		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq
-	else
-		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq|do-pipe-text-without-whitespaces
-	fi
-else
+	tasknum="^" # do not filter anything
+fi
+
+if [ $id -eq 0 ]; then
 	if [ $nowhitespaces -eq 0 ]; then
 		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq|grep "$tasknum"
 	else
 		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq|grep "$tasknum"|do-pipe-text-without-whitespaces
+	fi
+else
+	if [ $nowhitespaces -eq 0 ]; then
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq|grep "$tasknum" | sed 's/^\([A-Z0-9_-]*\):.*/\1/'
+	else
+		grep -RHn "\.task\"" $TASKS_DIR | sed "s/.*tooltip=\"\(.*\)\">/\1/p"|grep "$type"|sort|uniq|grep "$tasknum" | sed 's/^\([A-Z0-9_-]*\):.*/\1/' | do-pipe-text-without-whitespaces
 	fi
 fi
