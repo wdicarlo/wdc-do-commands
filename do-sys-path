@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+
+cmd="echo \$PATH | tr \":\" \"\\n\" | nl"
+
+
+# Quieting command output
+echo "> $cmd"
+eval "$cmd"
