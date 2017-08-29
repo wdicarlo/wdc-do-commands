@@ -14,6 +14,16 @@ function usage() {
     echo "       -t                 : print the available tags"
 }
 
+if [ -z $PROJECTS ]; then
+	echo "WARNING: Missing PROJECTS"
+fi
+if [ -z $PROJECT ]; then
+	echo "WARNING: Missing PROJECT"
+fi
+if [ -z $PROJECT_PATH ]; then
+	echo "WARNING: Missing PROJECT_PATH"
+fi
+
 list=0
 tags=0
 while getopts hlt flag
@@ -40,18 +50,25 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 cpath=`pwd`
 bookmarks=~/.bookmarks
 
+touch "$bookmarks"
+
 if [ $tags -eq 1 ]; then
     if [ "$PROJECT" == "" ]; then
-        cat $bookmarks | grep -v $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+        #cat "$bookmarks" | grep -v $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+        cat "$bookmarks" | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
     else
-        cat $bookmarks | grep $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+        cat "$bookmarks" | grep $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
     fi
     exit
 fi
 
-if [ $cpath == $HOME ]; then
+if [ "$cpath" == "$HOME" ]; then
     #cat $bookmarks | sed "s#$HOME/##" 
-    cat $bookmarks | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##" | grep -v "^$HOME$"
+    if [ "$PROJECTS" == "" ]; then
+	    cat $bookmarks | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##" | grep -v "^$HOME$"
+    else
+	    cat $bookmarks | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##" | grep -v "^$HOME$"
+    fi
     exit
 fi
 
@@ -85,7 +102,11 @@ fi
 
 # highlight the added path
 if [ "$PROJECT" == "" ]; then
-    cat $bookmarks | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##" | grep -v "^$HOME$"| grep --color "^\|$relpath$\|$relpath *#.*"
+    if [ "$PROJECTS" == "" ]; then
+	    cat $bookmarks | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##" | grep -v "^$HOME$"| grep --color "^\|$relpath$\|$relpath *#.*"
+    else
+	    cat $bookmarks | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##" | grep -v "^$HOME$"| grep --color "^\|$relpath$\|$relpath *#.*"
+    fi
 else
     cat $bookmarks | grep "$PROJECT_PATH/" | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'|  sed "s#$PROJECT_PATH/##" | grep --color "^\|$relpath$\|$relpath *#.*"
 fi
