@@ -66,7 +66,11 @@ fi
 
 if [ $tags == "1" ]; then
     if [ "$PROJECT" == "" ]; then
-        cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep -v $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+    	if [ "$PROJECT_PATH" == "" ]; then # missing PROJECT should be missing also PROJECT_PATH
+		cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+	else
+		cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep -v $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
+	fi
     else
         cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep $PROJECT_PATH | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
     fi
@@ -96,12 +100,20 @@ bookmarks=""
 if [ $global == "0" ]; then
     #bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| sed "s#$PROJECT_PATH/##"`
     #bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$PROJECT_PATH/##"`
-    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
+    if [ "$PROJECT_PATH" == "" ]; then
+	    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
+    else
+	    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
+    fi
 else
     # TODO: allows jump into another project's folder by evaluating its .bash_env file
     #bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'`
     #bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##"`
-    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
+    if [ "$PROJECTS" == "" ]; then
+	    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
+    else
+	    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
+    fi
 fi
 
 patt=$1
@@ -171,11 +183,21 @@ fi
 if [ $global == "0" ]; then
     cd "$PROJECT_PATH/${bpath}"
 else
-    cd "$HOME/${bpath}"
+    if [ "$absolute" == "0" ]; then
+    	if [ -d "$HOME/${bpath}" ]; then
+	    cd "$HOME/${bpath}"
+	else
+	    cd "${bpath}"
+	fi
+    else
+	    cd "${bpath}"
+    fi
 fi
 
 # TODO: apply destination project env
 if [ ! -f .bash_env ]; then
-    shift $#
-    . ~/bin/do_setup_env
+	if [ -z PROJECTS ]; then
+			shift $#
+			. ~/bin/do_setup_env
+	fi
 fi
