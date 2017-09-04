@@ -4,24 +4,34 @@ function usage() {
     cmd=`basename $0`
     echo "Usage: $cmd [-l] [-b] <path> <string>"
     echo "             -l                  : list changes"
+    echo "             -L                  : list log changes"
     echo "             -b                  : blame changes"
+    echo "             -r                  : reverse history (oldest first)"
     echo ""
 }
 
 quiet=0
 blame=0
 list=0
-while getopts hqbl flag
+uselog=0
+reverse=0
+while getopts hqblLr flag
 do
 	case $flag in
 		q)
 			quiet=1
+			;;
+		r)
+			reverse=1
 			;;
 		b)
 			blame=1
 			;;
 		l)
 			list=1
+			;;
+		L)
+			uselog=1
 			;;
 		h)
 			usage
@@ -42,13 +52,23 @@ fi
 
 path="$1"
 string="$2"
+reverse_opt=""
+if [ $reverse -eq 1 ]; then
+	reverse_opt="--reverse"
+fi
+
+if [ $uselog -eq 1 ]; then
+	git log -p $reverse_opt --format=format:'%h - (%aI) %s - [%an] %d' "$path"|grep --text "^[a-f0-9]\+ \|$string"|do-pipe-master-slave-rows "^[a-f0-9]\+ " "$string"
+	exit
+fi
+
 
 if [ $list -eq 1 ]; then
-	for REV in $(git rev-list --abbrev-commit --all $1); do
+	for REV in $(git rev-list $reverse_opt --abbrev-commit --all $1); do
 		echo "$path"; git show --oneline --no-patch "$REV"
 	done
 else
-	for REV in $(git rev-list --abbrev-commit --all $1); do
+	for REV in $(git rev-list $reverse_opt --abbrev-commit --all $1); do
 		echo "$path"; git show --oneline --no-patch "$REV"
 		if [ $blame -eq 0 ]; then
 			git diff $REV | grep "^[+-].*$string" | grep --color "$string"
