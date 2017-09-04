@@ -48,6 +48,7 @@ if [ ! "$grep_pattern" == "" ]; then
 	filter="$grep_pattern"
 fi
 
+# tac reverses the order of the input lines
 cmd="do-git-log-branch $master $branch | grep \"$filter\" | do-pipe-columns 1 | tac | xargs -I@ sh -c \"echo \\\"> git cherry-pick --no-commit @; \\\$(git show --oneline --summary --format=format:\\\" %C(green)%s%C(reset)\\\" @)\\\"; git cherry-pick --no-commit @\""
 
 
