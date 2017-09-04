@@ -12,3 +12,7 @@ Echoing without newlines
    echo -n "Hello "; echo "World"
 grep AND+OR expression
 	cat <file> | grep "<patt1>.*\(<patt2>\|<patt3>\)"
+Reverse the order of the input lines
+	<pipe> | tac
+Force grep to consider text input
+	<pipe> | grep --text <grep_pattern>
