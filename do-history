@@ -11,6 +11,7 @@ function usage() {
     echo "       -h                          : print this help"
     echo "       -s                          : print shell history"
     echo "       -c <hst1>:<hst2>            : compare output of history commands"
+    echo "       -u                          : most used commands"
     echo "       -q                          : quiet"
 }
 
@@ -18,9 +19,13 @@ function usage() {
 quiet=0
 shell=0
 compare=""
-while getopts hqsc: flag
+most_used=0
+while getopts hqsc:u flag
 do
     case $flag in
+	u)
+	    most_used=1
+	    ;;
 	s)
 	    shell=1
 	    ;;
@@ -41,6 +46,15 @@ do
     esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $most_used -eq 1 ]; then
+	cmd="cat $global_history | awk '{print \$2}' | sort | uniq -c | sort -n -r | head"
+	if [ $quiet -eq 0 ]; then
+	    echo "> $cmd"
+	fi
+	eval "$cmd"
+	exit
+fi
 
 if [ ! "$compare" == "" ]; then
 	hst1=$(echo $compare|sed 's/\(.*\):.*/\1/')
