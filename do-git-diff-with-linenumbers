@@ -6,12 +6,13 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-b] [-s] [-w] [-c]"
+    echo "Usage: $cmd [-h] [-q] [-b] [-s] [-w] [-c] [-r \"<git_range>\"]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -w                          : exclude whitespaces"
     echo "       -b                          : git diff of the branch"
     echo "       -s                          : git diff of staged changes"
+    echo "       -r \"<git_range>\"          : git diff of specified range"
     echo "       -c                          : output cfile format"
     echo "       -q                          : quiet"
 }
@@ -21,7 +22,8 @@ quiet=0
 mode=0  # 0 = WIP, 1 = STAGED, 2 = BRANCH
 options=""
 cfile=0
-while getopts hqbswc flag
+range=""
+while getopts hqbswcr: flag
 do
     case $flag in
 	w)
@@ -29,6 +31,10 @@ do
 	    ;;
 	c)
 	    cfile=1
+	    ;;
+	r)
+	    range="$OPTARG"
+	    mode=3
 	    ;;
 	b)
 	    mode=2
@@ -106,6 +112,11 @@ case $mode in
 		branch=$(do-git-branch -n)
 		options="$options -p"
 		cmd="git log --oneline --decorate --first-parent --no-merges $options $parent..$branch $@"
+		eval "$cmd" | prep1 | prep2 | $prep3
+		;;
+	3)
+		options="$options -p"
+		cmd="git log --oneline --decorate --first-parent --no-merges $options $range $@"
 		eval "$cmd" | prep1 | prep2 | $prep3
 		;;
 esac
