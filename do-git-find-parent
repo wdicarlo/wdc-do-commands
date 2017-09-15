@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-n <num>]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    echo "       -n <num>                    : list <num> history items (-1 for all)"
+}
+
+# Arguments processing
+branch=$(git rev-parse --abbrev-ref HEAD)
+count=0
+maxcount=20
+
+while getopts hn: flag
+do
+    case $flag in
+	n)
+	    maxcount=$OPTARG
+	    if [ $maxcount -lt 1 ]; then
+	    	maxcount=-1
+	    fi
+	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+
+for commit in $(git log --pretty=format:'%H')
+do
+	num=$(git branch --contains $commit|wc -l)
+	if [ $num -ne 1 ]; then
+		parent=$(git branch --contains $commit|grep -v $branch)
+		echo "$(echo $commit|cut -c1-10) @ $parent"
+		exit
+	fi
+	line=$(git show --oneline --summary $commit)
+	echo "$line"
+	count=$((count+1))
+	if [ $count -eq $maxcount ]; then
+		echo "Truncate!!!"
+		exit
+	fi
+done
