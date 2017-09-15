@@ -48,4 +48,4 @@ if [ $all -eq 1 ]; then
 	options=""
 fi
 
-git branch|grep -v $filter | tr "*" " "| xargs -I@ sh -c "echo \"git log $target..@\"; git log --oneline $options $target..@"
+git branch|grep -v $filter | tr "*" " "| xargs -I@ sh -c "echo \"git log $target..@\"; git log --oneline $options $target..@ | head -10" | grep --color "^\|git log .*"
