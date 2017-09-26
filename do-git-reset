@@ -4,19 +4,29 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] "
+    echo "Usage: $cmd [-h] [-q] [-n] [-l]"
     echo "where:"
     echo "       -h                          : print this help"
+    echo "       -n                          : dry run"
+    echo "       -l                          : just list the files to be reset"
     echo "       -q                          : quiet"
 }
 
 # Arguments processing
 quiet=0
-while getopts hq flag
+dryrun=0
+list=0
+while getopts hqnl flag
 do
     case $flag in
 	q)
 	    quiet=1
+	    ;;
+	l)
+	    list=1
+	    ;;
+	n)
+	    dryrun=1
 	    ;;
 	h)
 	    usage
@@ -30,10 +40,16 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-cmd="git ls-files --others --exclude-standard|xargs -I@ rm @; git reset --hard"
+if [ $list -eq 0 ]; then
+	cmd="git ls-files --others --exclude-standard|xargs -I@ rm @; git reset --hard"
+else
+	cmd="git ls-files -m; git ls-files --others --exclude-standard"
+fi
 
 # Quieting command output
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
-eval $cmd
+if [ $dryrun -eq 0 ]; then
+    eval "$cmd"
+fi
