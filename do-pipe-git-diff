@@ -4,7 +4,8 @@
 if [ -t 0 ]; then
     cmd=`basename $0`
     echo "Usage: $cmd must be used in a pipe"
+    echo "       <git_id> | do-pipe-git-diff"
     exit
 fi
 
-cat | xargs -I@ sh -c "git diff -w @"
+cat | xargs -I@ sh -c "git diff -w @~..@"
