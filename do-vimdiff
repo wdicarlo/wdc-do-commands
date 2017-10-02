@@ -5,6 +5,7 @@ app=`basename $0`
 function usage() {
     echo "Usage: $app <root1> <root2> <common-path>"
     echo "Usage: $app -f <root> <file1> <file2>"
+    echo "Usage: $app -p <file> # edit diff of <file> vs <file>.orig and <file>.rej"
 }
 
 if [ $# == 0 ]; then
@@ -14,13 +15,17 @@ fi
 
 multinames=0
 quiet=0
-while getopts qhf flag
+patchmode=0
+while getopts qhfp flag
 do
     case $flag in
 
         q)
             quiet=1
 #            echo pars is $pars
+            ;;
+        p)
+            patchmode=1
             ;;
         f)
             multinames=1
@@ -37,11 +42,31 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+
+if [ $patchmode -eq 1 ]; then
+	if [ $# -ne 1 ]; then
+	    usage
+	    exit
+	fi 
+	
+	if [ ! -f "$1.orig" ]; then
+		echo "Missing $1.orig file"
+		exit
+	fi
+	if [ -f "$1.rej" ]; then
+		cmd="vim -o $1.rej $1.orig $1 -c \":2,3windo diffthis|:2wincmd k\""
+	else
+		cmd="vimdiff $1 $1.orig"
+	fi
+	echo "> $cmd"
+	eval "$cmd"
+	exit
+fi
+
 if [ $# -ne 3 ]; then
     usage
     exit
 fi 
-
 
 if [ $multinames -eq 0 ]; then
     path1=$1
@@ -64,7 +89,7 @@ else
             cmd="$cmd $path/$file"
         fi
     done
-    echo "$cmd"
+    echo "> $cmd"
     eval "$cmd"
 fi
 
