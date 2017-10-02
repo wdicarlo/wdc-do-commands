@@ -135,7 +135,7 @@ if [ ! -f "$patchfile" ]; then
             npatch=$(ls -1 $PATCHES_DIR | grep $ext |grep $1| sed 's/-[0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]-/-/'|sort|uniq|wc -l)
             if [ $npatch -ne 1 ]; then
                 echo "Cannot find uniq patch file with: $1"
-                $(ls -1t $PATCHES_DIR | grep $ext |grep --color $1)
+                ls -1t $PATCHES_DIR | grep $ext |grep --color $1
                 exit
             else
                 patch=$(ls -1t $PATCHES_DIR | grep $ext |grep $1|head -1)
@@ -144,14 +144,14 @@ if [ ! -f "$patchfile" ]; then
             npatch=$(ls -1t $PATCHES_DIR | grep $ext |grep $1| head -1|wc -l)
             if [ $npatch -ne 1 ]; then
                 echo "Cannot find uniq patch file with: $1"
-                $(ls -1t $PATCHES_DIR | grep $ext |grep --color $1)
+                ls -1t $PATCHES_DIR | grep $ext |grep --color $1
                 exit
             else
                 patch=$(ls -1t $PATCHES_DIR | grep $ext |grep $1|head -1)
             fi
         else
             echo "Cannot find uniq patch file with: $1"
-            $(ls -1t $PATCHES_DIR | grep $ext |grep --color $1)
+            ls -1t $PATCHES_DIR | grep $ext |grep --color $1
             exit
         fi
     else
