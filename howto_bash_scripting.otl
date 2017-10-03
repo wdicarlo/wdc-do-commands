@@ -15,23 +15,28 @@ bash scripting howto
 	cmd=`basename $0`
 
 	function usage() {
-	    echo "Usage: $cmd [-h] [-q] [-s <val>] [-n] [-v] <arg>"
+	    echo "Usage: $cmd [-h] [-q] [-s <val>] [-n] [-v] <arg> [-f]"
 	    echo "where:"
 	    echo "       -h                          : print this help"
 	    echo "       -n                          : dry run"
 	    echo "       -s <val>                    : use <val>"
+	    echo "       -f                          : force"
 	    echo "       -v                          : verbose"
 	    echo "       -q                          : quiet"
 	}
 
 # Arguments processing
-        quiet=0
+	quiet=0
+	force=0
 	exclude=""
 	dryrun=0
 	verbose=0
-	while getopts hqnve: flag
+	while getopts hqnve:f flag
 	do
-	    case $flag in
+	case $flag in
+		f)
+		    force=1
+		    ;;
 		v)
 		    verbose=1
 		    ;;
@@ -69,12 +74,14 @@ bash scripting howto
 	fi
 
 # Request user confirmation
-	read -p "Are You Sure? <y|n>" ans
-	if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
-		echo "Confirmed!!!"
-	else
-		echo "Aborted!!!"
-		exit
+	if [ $force -eq 0 ]; then
+		read -p "Are You Sure? <y|n>" ans
+		if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+			echo "Confirmed!!!"
+		else
+			echo "Aborted!!!"
+			exit
+		fi
 	fi
 
 # Quieting command output
