@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+echo "Usage: $cmd [-h] [-q] [-r] [-l] <file_pattern>"
+echo "where:"
+echo "       -h                          : print this help"
+echo "       -r                          : remove specified rej files"
+echo "       -l                          : list rej files"
+echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+remove=0
+force=0
+list=0
+while getopts hqrl flag
+do
+		  case $flag in
+					 l)
+						list=1
+						;;
+					 r)
+						remove=1
+						;;
+					 q)
+						quiet=1
+						;;
+					 h)
+						usage
+						exit
+						;;
+					 ?)
+						usage
+						exit
+						;;
+		  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $list -eq 1 ]; then
+	find | grep "\.rej$"
+	exit
+fi
+
+n=0
+if [ "$1" == "" ]; then
+		  n=$(git status -s | grep "\.rej$" | wc -l)
+		  cmd="git status -s | grep \"\.rej$\" | do-pipe-columns -t 2| sed 's/\.rej//'"
+else
+		  n=$(git status -s | grep "\.rej$" | grep "$1" | wc -l)
+		  cmd="git status -s | grep \"\.rej$\" | grep \"$1\" | do-pipe-columns -t 2| sed 's/\.rej//'"
+fi
+
+if [ $n -eq 0 ]; then
+	echo "No REJ file found"
+	exit
+fi
+
+if [ $remove -eq 1 ]; then
+		  files=$(eval "$cmd")
+		  for file in $files
+		  do
+					 [ -f "$file.orig" ] && echo "$file.orig"
+					 echo "$file.rej"
+		  done
+		  # Request user confirmation
+		  if [ $force -eq 0 ]; then
+					 read -p "Are You Sure? <y|n>" ans
+					 if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+								echo "Confirmed!!!"
+					 else
+								echo "Aborted!!!"
+					 exit
+					 fi
+		  fi
+		  for file in $files
+		  do
+					 [ -f "$file.orig" ] && rm "$file.orig"
+					 rm "$file.rej"
+		  done
+		  exit
+fi
+
+# Quieting command output
+if [ $quiet -eq 0 ]; then
+		  echo "> $cmd"
+fi
+eval "$cmd"
+
