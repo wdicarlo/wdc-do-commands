@@ -54,7 +54,7 @@ if [ $patchmode -eq 1 ]; then
 		exit
 	fi
 	if [ -f "$1.rej" ]; then
-		cmd="vim -o $1.rej $1.orig $1 -c \":2,3windo diffthis|:2wincmd k\""
+		cmd="vim -o $1.rej $1.orig $1 -c \":2,3windo diffthis|:2wincmd k\" < /dev/tty"
 	else
 		cmd="vimdiff $1 $1.orig"
 	fi
