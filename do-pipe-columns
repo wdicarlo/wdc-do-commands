@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-if [ -t 0 ]; then
+# Usage help function
+
+function usage() {
     cmd=`basename $0`
-    echo "Usage: <cmds> | $cmd <columns-list>"
+    echo "Usage: <cmds> | $cmd <columns-list> [-t]"
+	 echo "       -t                      : trim spaces"
     echo "       Where <columns-list> can be:"
     echo "           x,y,..."
     echo "           x-y"
@@ -11,6 +14,39 @@ if [ -t 0 ]; then
     echo "           x-y,z,k,j-"
     echo "       See cut manual"
     exit
+}
+
+# Arguments processing
+trim=0
+while getopts ht flag
+do
+case $flag in
+		  t)
+			 trim=1
+			 ;;
+		  h)
+			 usage
+			 exit
+			 ;;
+		  ?)
+			 usage
+			 exit
+			 ;;
+esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+# Check it is used correctly	
+if [ -t 0 ]; then
+		  cmd=`basename $0`
+		  echo "Usage: $cmd must be used in a pipe"
+		  exit
 fi
 
-cat 2>/dev/null | cut -d " " -f $@
+
+
+if [ $trim -eq 0 ]; then
+		  cat 2>/dev/null  cut -d " " -f $@
+else
+		  cat 2>/dev/null | sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null| sed -e "s/[ ]\+/ /g" 2>/dev/null | cut -d " " -f $@
+fi
