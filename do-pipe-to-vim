@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 function usage() {
-    echo "Usage: pipe | do-pipe-to-vim [-h] [-d] [-o|-O] [-p]"
+    echo "Usage: pipe | do-pipe-to-vim [-h] [-d] [-o|-O] [-p] [-c <ex_commands>]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -o|-O                       : H/V split mode"
     echo "       -p                          : tab mode"
     echo "       -d                          : use diff filetype"
+    echo "       -c <ex_commands>            : run ex_commands"
 }
 
 if [ -t 0 ]; then
@@ -19,9 +20,13 @@ fi
 
 vcmd=":vnew"
 diff=0
-while getopts hoOpd flag
+ex_cmds=""
+while getopts hoOpdc: flag
 do
     case $flag in
+        c)
+            ex_cmds="$OPTARG"
+            ;;
         d)
             diff=1 
             ;;
@@ -56,6 +61,10 @@ done
 
 if [ $diff -eq 1 ]; then
 	cmds="$cmds -c \":set filetype=diff\""
+fi
+
+if [ ! "$ex_cmds" == "" ]; then
+	cmds="$cmds -c \"$ex_cmds\""
 fi
 
 cmd="vim -R $cmds -"
