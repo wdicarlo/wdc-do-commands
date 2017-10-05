@@ -295,3 +295,7 @@ Basic format placeholders:
 	'%n': newline
 	'%%': a raw '%'
 	'%x00': print a byte from a hex code
+Stash untracked files without staging them
+	git stash save -u
+Generate diff for untracked file
+	git diff --no-index /dev/null <file>
