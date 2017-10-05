@@ -6,8 +6,8 @@ n=$(git status --short|wc -l)
 branch=$(git rev-parse --abbrev-ref HEAD)
 
 if [ $n -gt 0 ]; then
-	echo "> git stash save"
-	git stash save
+	echo "> git stash save -u"
+	git stash save -u	# stash modified and untracked files
 fi
 
 cmd="git pull origin $branch"
