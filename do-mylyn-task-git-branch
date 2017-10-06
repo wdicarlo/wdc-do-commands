@@ -4,19 +4,29 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-c] <task_pattern>"
+    echo "Usage: $cmd [-h] [-q] [-c] [-u] [-n] <task_pattern>"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -c                          : commit changes"
+    echo "       -u                          : add untracked files"
+    echo "       -n                          : dry run"
     echo "       -q                          : quiet"
 }
 
 # Arguments processing
 quiet=0
 commit=0
-while getopts hqc flag
+untracked=0
+dryrun=0
+while getopts hqcun flag
 do
     case $flag in
+	n)
+	    dryrun=1
+	    ;;
+	u)
+	    untracked=1
+	    ;;
 	c)
 	    commit=1
 	    ;;
@@ -51,11 +61,17 @@ commit_comment=$(do-mylyn-tasks "$1")
 
 cmd="git checkout -b $taskname"
 if [ $commit -eq 1 ]; then
-	cmd="$cmd; git add -u; git commit -m \"$commit_comment\""
+	if [ $untracked -eq 0 ]; then
+			  cmd="$cmd; git add -u; git commit -m \"$commit_comment\""
+	else
+			  cmd="$cmd; git add .; git commit -m \"$commit_comment\""
+	fi
 fi
 # Quieting command output
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
-eval "$cmd"
+if [ $dryrun -eq 0 ]; then
+		  eval "$cmd"
+fi
 
