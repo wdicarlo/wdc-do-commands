@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+
+# see https://stackoverflow.com/a/39686693
+
+set -eu
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+		  echo "Usage: $cmd [-h] [-n <name>] [<topology>]"
+		  echo "where:"
+		  echo "       <topology>                  : topology id (1..10)"
+		  echo "       -n <name>                   : name of the repository"
+		  echo "       -h                          : print this help"
+		  echo "       -q                          : quiet"
+}
+
+git_commit() {
+    if ! [ "${commit_i:-}" ]; then
+        commit_i=0
+    fi
+    (( commit_i++ )) || true
+    echo "$commit_i" > "$commit_i"
+    git add "$commit_i"
+    git commit -qm "c$commit_i"
+}
+
+git_merge() {
+    if ! [ "${merge_i:-}" ]; then
+        merge_i=0
+    fi
+    (( merge_i++ )) || true
+    git merge -m "$merge_i" $1
+}
+
+# Arguments processing
+quiet=0
+name="git-upstream-branch-test-repo"
+while getopts hqn: flag
+do
+		  case $flag in
+		  n)
+			 name="$OPTARG"
+			 ;;
+		  q)
+			 quiet=1
+			 ;;
+		  h)
+			 usage
+			 exit
+			 ;;
+		  ?)
+			 usage
+			 exit
+			 ;;
+		  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+A_TOPOLOGY=${1:-}
+
+if [ $# -eq 1 ]; then
+	A_TOPOLOGY="$1"
+fi
+
+rm -rf "$name"
+mkdir "$name"
+cd "$name"
+git init -q
+if [ "$A_TOPOLOGY" = 10 ]; then
+    git_commit
+    git_commit
+    git checkout -qb dev
+    git_commit
+    git_commit
+    git checkout -q master
+    git_commit
+    git_commit
+    c=$(git rev-parse HEAD)
+    git_commit
+    git_commit
+    git checkout -q dev
+    git checkout -qb t1
+    git_commit
+    git_commit
+    git checkout -q dev
+    git_commit
+    git_commit
+    git rebase --onto "$c" dev t1
+elif [ "$A_TOPOLOGY" = 11 ]; then
+    git_commit
+    git_commit
+    git checkout -qb dev
+    git_commit
+    git_commit
+    git checkout -q master
+    git_commit
+    git_commit
+    git checkout -q dev
+    c=$(git rev-parse HEAD)
+    git_commit
+    git_commit
+    git checkout -q master
+    git checkout -qb t1
+    git_commit
+    git_commit
+    git checkout -q master
+    git_commit
+    git_commit
+    git rebase --onto "$c" master t1
+else
+    git_commit
+    git_commit
+    git checkout -qb dev
+    git_commit
+    git_commit
+    git checkout -q master
+    git_commit
+    git_commit
+    if [ "$A_TOPOLOGY" = 4 ] || [ "$A_TOPOLOGY" = 5 ] || [ "$A_TOPOLOGY" = 6 ]; then
+        git_merge dev
+        git_commit
+        git_commit
+        git checkout -q dev
+        git_commit
+        git_commit
+        git checkout -q master
+    elif [ "$A_TOPOLOGY" = 7 ] || [ "$A_TOPOLOGY" = 8 ] || [ "$A_TOPOLOGY" = 9 ]; then
+        git checkout -q dev
+        git_merge master
+        git_commit
+        git_commit
+        git checkout -q master
+        git_commit
+        git_commit
+    fi
+    git checkout -qb t1
+    git_commit
+    git_commit
+    git checkout -q master
+    git_commit
+    git_commit
+    if [ "$A_TOPOLOGY" = 2 ] || [ "$A_TOPOLOGY" = 5 ] || [ "$A_TOPOLOGY" = 8 ]; then
+        git_merge dev
+    elif [ "$A_TOPOLOGY" = 3 ] || [ "$A_TOPOLOGY" = 6 ] || [ "$A_TOPOLOGY" = 9 ]; then
+        git checkout -q dev
+        git_merge master
+    fi
+fi
+git --no-pager log --oneline --graph --decorate --all
