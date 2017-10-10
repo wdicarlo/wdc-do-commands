@@ -4,7 +4,7 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-a] <target_branch>"
+    echo "Usage: $cmd [-h] [-q] [-a] [<target_branch>]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -a                          : list merge commits"
@@ -36,12 +36,12 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 if [ $# -eq 0 ]; then
-	usage
-	exit
+	target=$(do-git-get-parent-branch)
+else
+	target="$1"
 fi
 
 filter="develop\|master"
-target="$1"
 options="--no-merges"
 
 if [ $all -eq 1 ]; then
