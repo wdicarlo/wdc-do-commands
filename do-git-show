@@ -13,7 +13,13 @@ fi
 rev=$1
 shift
 
-cmd="git show $rev:$@"
+if [ $# -gt 0 ]; then
+		  #cmd="git show --summary --oneline --date=unix --format=format:'%h - (%cd) %s - [%an] %d' $rev:$@"
+		  cmd="git show --summary --oneline --date=unix --format=format:'%h - (%cI) %s - [%an] %d' $rev:$@"
+else
+		  #cmd="git show --summary --oneline --date=unix --format=format:'%h - (%cd) %s - [%an] %d' $rev"
+		  cmd="git show --summary --oneline --date=unix --format=format:'%h - (%cI) %s - [%an] %d' $rev"
+fi
 echo "> $cmd"
 eval $cmd
 
