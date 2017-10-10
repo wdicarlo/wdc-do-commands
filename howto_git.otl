@@ -299,3 +299,6 @@ Stash untracked files without staging them
 	git stash save -u
 Generate diff for untracked file
 	git diff --no-index /dev/null <file>
+Rebase feature branch to new integration branch
+	git checkout my_feature
+	git rebase new_int_branch
