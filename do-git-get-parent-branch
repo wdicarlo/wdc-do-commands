@@ -1,25 +1,95 @@
 #!/usr/bin/env  bash
 
-# source: https://gist.github.com/joechrysler/6073741
+# see https://stackoverflow.com/a/40267625/3676996
 
-git show-branch -a 2>&1 \
-| grep -v "^warning" \
-| grep '\*' \
-| grep -v `git rev-parse --abbrev-ref HEAD` \
-| head -n1 \
-| sed 's/.*\[\(.*\)\].*/\1/' \
-| sed 's/[\^~].*//' 
+# Usage help function
+cmd=`basename $0`
 
-# How it works:
-# 1| Display a textual history of all commits.
-# 2| Ancestors of the current commit are indicated
-#    by a star. Filter out everything else.
-# 3| Ignore all the commits in the current branch.
-# 4| The first result will be the nearest ancestor branch.
-#    Ignore the other results.
-# 5| Branch names are displayed [in brackets]. Ignore 
-#    everything outside the brackets, and the brackets.
-# 6| Sometimes the branch name will include a ~2 or ^1 to
-#    indicate how many commits are between the referenced
-#    commit and the branch tip. We don't care. Ignore them.
+function usage() {
+		  echo "Usage: $cmd [-h] [-n] [-o] [-m <master_pattern>]"
+		  echo "where:"
+		  echo "       -h                          : print this help"
+		  echo "       -o                          : get oldest master branch"
+		  echo "       -n                          : get newest master branch"
+		  echo "       -m <master_pattern>         : pattern used to identify master branches"
+}
 
+# Arguments processing
+getmin=0
+getmax=1
+masterpatt="master\|develop"
+while getopts hnom: flag
+do
+case $flag in
+		m)
+		    masterpatt="$OPTARG"
+		    ;;
+		n)
+		    getmax=1
+		    getmin=0
+		    ;;
+		o)
+		    getmax=0
+		    getmin=1
+		    ;;
+		h)
+		    usage
+		    exit
+		    ;;
+		?)
+		    usage
+		    exit
+		    ;;
+esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+
+ref=$(git show --summary --oneline --date=unix --format=format:'%cd' HEAD)
+git log --oneline \
+  | cut -f 1 -d' ' \
+  | (while read commit ; do
+       other_branches="$(git branch --contains $commit | egrep -v '^\* '|tr -d ' ')"
+       if [ -n "${other_branches}" ] ; then
+			masters=""
+			max=""
+			maxmaster=""
+			min=""
+			minmaster=""
+			for branch in ${other_branches}
+			do
+					  if [ "$(echo $branch|grep $masterpatt)" == "" ]; then
+							continue
+					  fi
+					  #git show --summary --oneline --date=unix --format=format:'%h - (%cd) %s - [%an] %d' $branch
+					  date=$(git show --summary --oneline --date=unix --format=format:'%cd' $branch|head -1)
+
+						  masters="$masters $branch"
+						  if [ "$max" == "" ]; then
+						  		maxmaster="$branch"
+						  		max="$date"
+						  		minmaster="$branch"
+						  		min="$date"
+						  else
+									 if [ $date -ge $max ]; then
+										  maxmaster="$branch"
+										  max="$date"
+									 fi
+									 if [ $date -le $min ]; then
+										  minmaster="$branch"
+										  min="$date"
+									 fi
+						  fi
+			done
+			if [ ! "$masters" == "" ]; then
+				if [ $getmin -eq 1 ]; then
+						  echo "$minmaster"
+			   fi
+				if [ $getmax -eq 1 ]; then
+						  echo "$maxmaster"
+				fi
+				exit
+			fi
+       fi
+     done)
