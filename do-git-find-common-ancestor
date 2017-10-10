@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 2 ]; then
+	branch_A=$1
+	master=$2
+else 
+	master=$(do-git-get-parent-branch)
+	branch_A=$(do-git-branch -n)
+fi
+
+diff -u <(git rev-list --first-parent $branch_A) \
+          <(git rev-list --first-parent $master) | \
+      sed -ne 's/^ //p' | head -1
