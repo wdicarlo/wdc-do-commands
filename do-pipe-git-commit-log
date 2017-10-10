@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+cat |xargs -I@ git show --summary --oneline --date=unix --format=format:'%h - (%cd) %s - [%an] %d' @
