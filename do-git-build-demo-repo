@@ -8,10 +8,11 @@ set -eu
 cmd=`basename $0`
 
 function usage() {
-		  echo "Usage: $cmd [-h] [-n <name>] [<topology>]"
+		  echo "Usage: $cmd [-h] [-n <name>] [-s] [<topology>]"
 		  echo "where:"
 		  echo "       <topology>                  : topology id (1..10)"
 		  echo "       -n <name>                   : name of the repository"
+		  echo "       -s                          : use sub-module"
 		  echo "       -h                          : print this help"
 		  echo "       -q                          : quiet"
 }
@@ -37,11 +38,15 @@ git_merge() {
 # Arguments processing
 quiet=0
 name="git-upstream-branch-test-repo"
-while getopts hqn: flag
+submodule=0
+while getopts hqn:s flag
 do
 		  case $flag in
 		  n)
 			 name="$OPTARG"
+			 ;;
+		  s)
+			 submodule=1
 			 ;;
 		  q)
 			 quiet=1
@@ -64,6 +69,12 @@ if [ $# -eq 1 ]; then
 	A_TOPOLOGY="$1"
 fi
 
+if [ $submodule -eq 1 ]; then
+	if [ $quiet -eq 0 ]; then echo "Building ${name}_submodule submodule..."; fi
+	do-git-build-demo-repo -q -n "${name}_submodule" 5
+fi
+
+if [ $quiet -eq 0 ]; then echo "Building $name repository..."; fi
 rm -rf "$name"
 mkdir "$name"
 cd "$name"
@@ -148,4 +159,13 @@ else
         git_merge master
     fi
 fi
+
+if [ $submodule -eq 1 ]; then
+	 if [ -d "../${name}_submodule" ]; then
+				git submodule add "../${name}_submodule" submodule
+				(( commit_i++ )) || true
+				git commit -qm "s$commit_i"
+	 fi
+fi
+
 git --no-pager log --oneline --graph --decorate --all
