@@ -16,12 +16,13 @@ fi
 cmd=`basename $0`
 
 function usage() {
-        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [<topology>]"
+        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [<topology>]"
         echo "where:"
         echo "       <topology>                  : topology id (1..10)"
         echo "       -n <name>                   : name of the repository"
         echo "       -s                          : use sub-module"
         echo "       -f                          : use git flow"
+        echo "       -o                          : overwrite existing repository"
         echo "       -h                          : print this help"
         echo "       -q                          : quiet"
 }
@@ -60,11 +61,15 @@ quiet=0
 name="git_demo"
 submodule=0
 gitflow=0
-while getopts hqn:sf flag
+overwrite=0
+while getopts hqn:sfo flag
 do
         case $flag in
         n)
           name="$OPTARG"
+          ;;
+        o)
+          overwrite=1
           ;;
         f)
           gitflow=1
@@ -102,7 +107,16 @@ if [ $submodule -eq 1 ]; then
 fi
 
 if [ $quiet -eq 0 ]; then echo "Building $name repository..."; fi
-rm -rf "$name"
+
+if [ -d "$name" ]; then
+        if [ $overwrite -eq 1 ]; then
+                rm -rf "$name"
+        else
+                echo "Git Repository $name already exists. Use -o to overwrite it."
+                exit
+        fi
+fi
+
 mkdir "$name"
 cd "$name"
 git init -q
