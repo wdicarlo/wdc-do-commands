@@ -13,6 +13,41 @@
 # a file called CHANGES (under the title of the new version
 # number) and create a GIT tag.
 
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+        echo "Usage: $cmd [-h] [-q]"
+        echo "where:"
+        echo "       -h                          : print this help"
+        echo "       -d                          : use defaults"
+        echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+defaults=0
+while getopts hqd flag
+do
+case $flag in
+      d)
+          defaults=1
+          ;;
+      q)
+          quiet=1
+          ;;
+      h)
+          usage
+          exit
+          ;;
+      ?)
+          usage
+          exit
+          ;;
+esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 remote=$(git remote -v|head -1| awk '{print $1}')
 
 if [ -f VERSION ]; then
@@ -25,7 +60,11 @@ if [ -f VERSION ]; then
     V_MINOR=$((V_MINOR + 1))
     V_PATCH=0
     SUGGESTED_VERSION="$V_MAJOR.$V_MINOR.$V_PATCH"
-    read -p "Enter a version number [$SUGGESTED_VERSION]: " INPUT_STRING
+    if [ $defaults -eq 0 ]; then
+            read -p "Enter a version number [$SUGGESTED_VERSION]: " INPUT_STRING
+    else
+            INPUT_STRING=""
+    fi
     if [ "$INPUT_STRING" = "" ]; then
         INPUT_STRING=$SUGGESTED_VERSION
     fi
@@ -45,7 +84,11 @@ if [ -f VERSION ]; then
     fi
 else
     echo "Could not find a VERSION file"
-    read -p "Do you want to create a version file and start from scratch? [y]" RESPONSE
+    if [ $defaults -eq 0 ]; then
+            read -p "Do you want to create a version file and start from scratch? [y]" RESPONSE
+    else
+            RESPONSE="y"
+    fi
     if [ "$RESPONSE" = "" ]; then RESPONSE="y"; fi
     if [ "$RESPONSE" = "Y" ]; then RESPONSE="y"; fi
     if [ "$RESPONSE" = "Yes" ]; then RESPONSE="y"; fi
