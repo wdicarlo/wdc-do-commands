@@ -4,17 +4,26 @@
 
 set -eu
 
+# Check needed commands
+CMD_NAME="git-flow"
+cmd=`which $CMD_NAME`
+if [ -z "$cmd" ]; then
+        echo "Missing $CMD_NAME command"
+        exit
+fi
+
 # Usage help function
 cmd=`basename $0`
 
 function usage() {
-		  echo "Usage: $cmd [-h] [-n <name>] [-s] [<topology>]"
-		  echo "where:"
-		  echo "       <topology>                  : topology id (1..10)"
-		  echo "       -n <name>                   : name of the repository"
-		  echo "       -s                          : use sub-module"
-		  echo "       -h                          : print this help"
-		  echo "       -q                          : quiet"
+        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [<topology>]"
+        echo "where:"
+        echo "       <topology>                  : topology id (1..10)"
+        echo "       -n <name>                   : name of the repository"
+        echo "       -s                          : use sub-module"
+        echo "       -f                          : use git flow"
+        echo "       -h                          : print this help"
+        echo "       -q                          : quiet"
 }
 
 git_commit() {
@@ -35,43 +44,61 @@ git_merge() {
     git merge -m "$merge_i" $1
 }
 
+git_checkout() {
+    if [ "$2" == "$BRANCH_DEV" ]; then
+            if [ $gitflow -eq 1 ]; then
+                    git checkout -q $BRANCH_DEV
+                    return
+            fi
+    fi
+    git checkout $1 $2
+}
+
+
 # Arguments processing
 quiet=0
-name="git-upstream-branch-test-repo"
+name="git_demo"
 submodule=0
-while getopts hqn:s flag
+gitflow=0
+while getopts hqn:sf flag
 do
-		  case $flag in
-		  n)
-			 name="$OPTARG"
-			 ;;
-		  s)
-			 submodule=1
-			 ;;
-		  q)
-			 quiet=1
-			 ;;
-		  h)
-			 usage
-			 exit
-			 ;;
-		  ?)
-			 usage
-			 exit
-			 ;;
-		  esac
+        case $flag in
+        n)
+          name="$OPTARG"
+          ;;
+        f)
+          gitflow=1
+          ;;
+        s)
+          submodule=1
+          ;;
+        q)
+          quiet=1
+          ;;
+        h)
+          usage
+          exit
+          ;;
+        ?)
+          usage
+          exit
+          ;;
+        esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 A_TOPOLOGY=${1:-}
+BRANCH_DEV="develop"
+BRANCH_MASTER="master"
+BRANCH_TMP="t1"
 
 if [ $# -eq 1 ]; then
-	A_TOPOLOGY="$1"
+   A_TOPOLOGY="$1"
 fi
 
 if [ $submodule -eq 1 ]; then
-	if [ $quiet -eq 0 ]; then echo "Building ${name}_submodule submodule..."; fi
-	do-git-build-demo-repo -q -n "${name}_submodule" 5
+   if [ $quiet -eq 0 ]; then echo "Building ${name}_submodule submodule..."; fi
+   do-git-build-demo-repo -q -n "${name}_submodule" 5
 fi
 
 if [ $quiet -eq 0 ]; then echo "Building $name repository..."; fi
@@ -79,93 +106,96 @@ rm -rf "$name"
 mkdir "$name"
 cd "$name"
 git init -q
+if [ $gitflow -eq 1 ]; then
+   git flow init -d -f
+fi
 if [ "$A_TOPOLOGY" = 10 ]; then
     git_commit
     git_commit
-    git checkout -qb dev
+    git_checkout -qb $BRANCH_DEV
     git_commit
     git_commit
-    git checkout -q master
+    git_checkout -q $BRANCH_MASTER
     git_commit
     git_commit
     c=$(git rev-parse HEAD)
     git_commit
     git_commit
-    git checkout -q dev
-    git checkout -qb t1
+    git_checkout -q $BRANCH_DEV
+    git_checkout -qb $BRANCH_TMP
     git_commit
     git_commit
-    git checkout -q dev
+    git_checkout -q $BRANCH_DEV
     git_commit
     git_commit
-    git rebase --onto "$c" dev t1
+    git rebase --onto "$c" $BRANCH_DEV $BRANCH_TMP
 elif [ "$A_TOPOLOGY" = 11 ]; then
     git_commit
     git_commit
-    git checkout -qb dev
+    git_checkout -qb $BRANCH_DEV
     git_commit
     git_commit
-    git checkout -q master
+    git_checkout -q $BRANCH_MASTER
     git_commit
     git_commit
-    git checkout -q dev
+    git_checkout -q $BRANCH_DEV
     c=$(git rev-parse HEAD)
     git_commit
     git_commit
-    git checkout -q master
-    git checkout -qb t1
+    git_checkout -q $BRANCH_MASTER
+    git_checkout -qb $BRANCH_TMP
     git_commit
     git_commit
-    git checkout -q master
+    git_checkout -q $BRANCH_MASTER
     git_commit
     git_commit
-    git rebase --onto "$c" master t1
+    git rebase --onto "$c" $BRANCH_MASTER $BRANCH_TMP
 else
     git_commit
     git_commit
-    git checkout -qb dev
+    git_checkout -qb $BRANCH_DEV
     git_commit
     git_commit
-    git checkout -q master
+    git_checkout -q $BRANCH_MASTER
     git_commit
     git_commit
     if [ "$A_TOPOLOGY" = 4 ] || [ "$A_TOPOLOGY" = 5 ] || [ "$A_TOPOLOGY" = 6 ]; then
-        git_merge dev
+        git_merge $BRANCH_DEV
         git_commit
         git_commit
-        git checkout -q dev
+        git_checkout -q $BRANCH_DEV
         git_commit
         git_commit
-        git checkout -q master
+        git_checkout -q $BRANCH_MASTER
     elif [ "$A_TOPOLOGY" = 7 ] || [ "$A_TOPOLOGY" = 8 ] || [ "$A_TOPOLOGY" = 9 ]; then
-        git checkout -q dev
-        git_merge master
+        git_checkout -q $BRANCH_DEV
+        git_merge $BRANCH_MASTER
         git_commit
         git_commit
-        git checkout -q master
+        git_checkout -q $BRANCH_MASTER
         git_commit
         git_commit
     fi
-    git checkout -qb t1
+    git_checkout -qb $BRANCH_TMP
     git_commit
     git_commit
-    git checkout -q master
+    git_checkout -q $BRANCH_MASTER
     git_commit
     git_commit
     if [ "$A_TOPOLOGY" = 2 ] || [ "$A_TOPOLOGY" = 5 ] || [ "$A_TOPOLOGY" = 8 ]; then
-        git_merge dev
+        git_merge $BRANCH_DEV
     elif [ "$A_TOPOLOGY" = 3 ] || [ "$A_TOPOLOGY" = 6 ] || [ "$A_TOPOLOGY" = 9 ]; then
-        git checkout -q dev
-        git_merge master
+        git_checkout -q $BRANCH_DEV
+        git_merge $BRANCH_MASTER
     fi
 fi
 
 if [ $submodule -eq 1 ]; then
-	 if [ -d "../${name}_submodule" ]; then
-				git submodule add "../${name}_submodule" submodule
-				(( commit_i++ )) || true
-				git commit -qm "s$commit_i"
-	 fi
+    if [ -d "../${name}_submodule" ]; then
+            git submodule add "../${name}_submodule" submodule
+            (( commit_i++ )) || true
+            git commit -qm "s$commit_i"
+    fi
 fi
 
 git --no-pager log --oneline --graph --decorate --all
