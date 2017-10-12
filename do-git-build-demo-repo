@@ -106,6 +106,7 @@ rm -rf "$name"
 mkdir "$name"
 cd "$name"
 git init -q
+do-git-bump-version -d
 if [ $gitflow -eq 1 ]; then
    git flow init -d -f
 fi
