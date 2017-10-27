@@ -23,6 +23,7 @@ function usage() {
         echo "       -s                          : use sub-module"
         echo "       -f                          : use git flow"
         echo "       -o                          : overwrite existing repository"
+        echo "       -c                          : create clone repository"
         echo "       -h                          : print this help"
         echo "       -q                          : quiet"
 }
@@ -62,11 +63,15 @@ name="git_demo"
 submodule=0
 gitflow=0
 overwrite=0
-while getopts hqn:sfo flag
+clone=0
+while getopts hqn:sfoc flag
 do
         case $flag in
         n)
           name="$OPTARG"
+          ;;
+        c)
+          clone=1
           ;;
         o)
           overwrite=1
@@ -211,6 +216,15 @@ if [ $submodule -eq 1 ]; then
             (( commit_i++ )) || true
             git commit -qm "s$commit_i"
     fi
+fi
+
+if [ $clone -eq 1 ]; then
+	git clone . ../${name}_clone
+	if [ $gitflow -eq 1 ]; then
+		\cd ../${name}_clone
+		git flow init -d -f
+		\cd - 
+	fi
 fi
 
 git --no-pager log --oneline --graph --decorate --all
