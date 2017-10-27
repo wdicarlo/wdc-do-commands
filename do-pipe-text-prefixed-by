@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+# Usage help function
+function usage() {
+    echo "Usage: $cmd [-h] <file|command> <lines>"
+    echo "where:"
+    echo "       file                        : text file to get prefixes" 
+    echo "       command                     : command to generate prefixes" 
+    echo "       lines                       : number of lines to use the same prefix" 
+    echo "       -h                          : print this help"
+}
+
+function prefix_by_command() {
+	cmd="$1"
+	lines="$2"
+	line=0
+	prefix=$(eval "$cmd")
+	cat | while read text_line;
+	do
+		line=$((line+1))
+		echo "$prefix$text_line"
+		if [ $line -eq $lines ]; then
+			line=0
+			prefix=$(eval "$cmd")
+		fi
+	done
+}
+
+# Arguments processing
+quiet=0
+while getopts h flag
+do
+case $flag in
+	h)
+	    usage
+	    exit
+	    ;;
+	?)
+	    usage
+	    exit
+	    ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+# Check it is used correctly	
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    usage
+    exit
+fi
+
+if [ $# == 0 ] || [ $# -ne 2 ]; then
+    usage
+    exit
+fi
+
+mode=0 # 0=command, 1=file
+
+
+if [ $mode -eq 0 ]; then
+	prefix_by_command "$1" "$2"
+fi
