@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+t=$(( ( RANDOM % 5 )  + 0 ))
+h=$(( ( RANDOM % 3 )  + 0 ))
+f=$(( ( RANDOM % 3 )  + 0 ))
+v=$(( ( RANDOM % 9 )  + 0 ))
+
+T=( "AA" "AB" "BA" "BB" "CC")
+
+V=$(printf "%05d" "$v")
+
+echo "${T[$t]}$h$f-$V"
