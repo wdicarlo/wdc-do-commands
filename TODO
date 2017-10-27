@@ -2,13 +2,13 @@ Commands to evaluate:
     multistrap
     ss
     mount --bind
-    fasd
     httpie
     lumail
     pwstore (in sqlite db)
     watch
     bash-it
     fasd
+    direnv
 Integrate vim notebooks
 Evaluate command history by folder
 Add todo management
