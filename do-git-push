@@ -1,6 +1,71 @@
 #!/usr/bin/env bash
+cmd=`basename $0`
 
+function usage() {
+	echo "Usage: $cmd [-h] [-q] [-n] [-f]"
+	echo "where:"
+	echo "       -h                          : print this help"
+	echo "       -n                          : dry run"
+	echo "       -f                          : force"
+	echo "       -v                          : verbose"
+	echo "       -q                          : quiet"
+}
 
-cmd="git push origin $(do-git-branch -n)"
-echo "> $cmd"
-eval "$cmd"
+# Arguments processing
+quiet=0
+force=0
+dryrun=0
+verbose=0
+while getopts hqnvf flag
+do
+	case $flag in
+		f)
+			force=1
+			;;
+		v)
+			verbose=1
+			;;
+		q)
+			quiet=1
+			;;
+		n)
+			dryrun=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+branch=$(do-git-branch -n)
+remote_branch=$(git branch -vv | grep "^[ \*]*$(do-git-branch -n)"|do-pipe-words "\[.*\]"|tr -d '[]')
+
+if [ "$remote_branch" == "" ]; then
+	# remote branch is missing, then push a new one
+	echo "WARNING: Missing remote branch"
+	cmd="git push -u origin $branch:$branch" # push local branch
+else
+	cmd="git push origin $branch"
+fi
+if [ $quiet -eq 0 ]; then
+	echo "> $cmd"
+fi
+# Request user confirmation
+if [ $force -eq 0 ]; then
+	read -p "Are You Sure? <y|n>" ans
+	if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+		echo "Confirmed!!!"
+	else
+		echo "Aborted!!!"
+		exit
+	fi
+fi
+if [ $dryrun -eq 0 ]; then
+	eval "$cmd"
+fi
