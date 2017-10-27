@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+		  echo "Usage: $cmd [-h] [-q] [-m <message>] [-n] <command>"
+					 echo "where:"
+					 echo "                           command : list, pop, save, push"
+					 echo "       -h                          : print this help"
+					 echo "       -u                          : include untracked files"
+					 echo "       -m                          : message for push command"
+					 echo "       -q                          : quiet"
+					 echo "       -n                          : dry run"
+}
+
+# Arguments processing
+quiet=0
+untracked=0
+dryrun=0
+message=""
+while getopts hqunm: flag
+do
+		  case $flag in
+		  n)
+					 dryrun=1
+					 ;;
+		  m)
+					 message="$OPTARG"
+					 ;;
+		  u)
+					 untracked=1
+					 ;;
+		  q)
+					 quiet=1
+					 ;;
+		  h)
+					 usage
+					 exit
+		  ;;
+		  ?)
+					 usage
+					 exit
+		  ;;
+		  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+		  usage
+		  exit
+fi
+
+
+cmd="git stash"
+if [ $untracked -eq 1 ]; then
+	cmd="$cmd --include-untracked"
+fi
+snapshot=0
+if [ "$1" == "push" ]; then
+	shift
+	snapshot=1
+fi
+if [ $snapshot -eq 0 ]; then
+	cmd="$cmd $@"
+else
+	cmd="$cmd save \"$message\"; git stash apply"
+fi
+
+# Quieting command output
+if [ $quiet -eq 0 ]; then
+	echo "> $cmd"
+fi
+if [ $dryrun -eq 0 ]; then
+	eval "$cmd"
+fi
