@@ -1,96 +1,113 @@
 bash scripting howto
-	LIst of bash scripting how to
+   LIst of bash scripting how to
 
 # First line identification
-	#!/usr/bin/env bash
+   #!/usr/bin/env bash
 
-# Check it is used correctly	
-	if [ -t 0 ]; then
-	    cmd=`basename $0`
-	    echo "Usage: $cmd must be used in a pipe"
-	    exit
-	fi
+# Check it is used correctly   
+   if [ -t 0 ]; then
+       # 0:     stdin  
+       # 1:     stdout  
+       # 2:     stderr
+       cmd=`basename $0`
+       echo "Usage: $cmd must be used in a pipe"
+       exit
+   fi
+
+# Check if it used in a pipe
+   if [ -t 1 ]; then # check if piping to output stream
+      piping=0
+      quiet=0
+   fi
+
+# Check needed commands
+   CMD_NAME="debootstrap"
+   cmd=`which $CMD_NAME`
+   if [ -z "$cmd" ]; then
+       echo "Missing $CMD_NAME command"
+       exit
+   fi
 
 # Usage help function
-	cmd=`basename $0`
+   cmd=`basename $0`
 
-	function usage() {
-	    echo "Usage: $cmd [-h] [-q] [-s <val>] [-n] [-v] <arg> [-f]"
-	    echo "where:"
-	    echo "       -h                          : print this help"
-	    echo "       -n                          : dry run"
-	    echo "       -s <val>                    : use <val>"
-	    echo "       -f                          : force"
-	    echo "       -v                          : verbose"
-	    echo "       -q                          : quiet"
-	}
+   function usage() {
+       echo "Usage: $cmd [-h] [-q] [-s <val>] [-n] [-v] <arg> [-f]"
+       echo "where:"
+       echo "       -h                          : print this help"
+       echo "       -n                          : dry run"
+       echo "       -s <val>                    : use <val>"
+       echo "       -f                          : force"
+       echo "       -v                          : verbose"
+       echo "       -q                          : quiet"
+   }
 
 # Arguments processing
-	quiet=0
-	force=0
-	exclude=""
-	dryrun=0
-	verbose=0
-	while getopts hqnve:f flag
-	do
-	case $flag in
-		f)
-		    force=1
-		    ;;
-		v)
-		    verbose=1
-		    ;;
-		q)
-		    quiet=1
-		    ;;
-		n)
-		    dryrun=1
-		    ;;
-		e)
-		    exclude=$OPTARG
-		    ;;
-		h)
-		    usage
-		    exit
-		    ;;
-		?)
-		    usage
-		    exit
-		    ;;
-	    esac
-	done
-	shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+   quiet=0
+   force=0
+   exclude=""
+   dryrun=0
+   verbose=0
+   while getopts hqnve:f flag
+   do
+   case $flag in
+      f)
+          force=1
+          ;;
+      v)
+          verbose=1
+          ;;
+      q)
+          quiet=1
+          ;;
+      n)
+          dryrun=1
+          ;;
+      e)
+          exclude=$OPTARG
+          ;;
+      h)
+          usage
+          exit
+          ;;
+      ?)
+          usage
+          exit
+          ;;
+       esac
+   done
+   shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-	if [ $# == 0 ]; then
-	    usage
-	    exit
-	fi
-	arg="$1"
+   if [ $# == 0 ]; then
+       usage
+       exit
+   fi
+   arg="$1"
 
 # Test environment variable
-	if [ "$WEB_HOME" == "" ]; then
-	   echo "Missing WEB_HOME environment variable"
-	   exit
-	fi
+   if [ "$WEB_HOME" == "" ]; then
+      echo "Missing WEB_HOME environment variable"
+      exit
+   fi
 
 # Request user confirmation
-	if [ $force -eq 0 ]; then
-		read -p "Are You Sure? <y|n>" ans
-		if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
-			echo "Confirmed!!!"
-		else
-			echo "Aborted!!!"
-			exit
-		fi
-	fi
+   if [ $force -eq 0 ]; then
+      read -p "Are You Sure? <y|n>" ans
+      if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+         echo "Confirmed!!!"
+      else
+         echo "Aborted!!!"
+         exit
+      fi
+   fi
 
 # Quieting command output
-	if [ $verbose -eq 1 ]; then
-	    usage|head -1
-	fi
-	if [ $quiet -eq 0 ]; then
-	    echo "> $cmd"
-	fi
-	if [ $dryrun -eq 0 ]; then
-	    eval "$cmd"
-	fi
+   if [ $verbose -eq 1 ]; then
+       usage|head -1
+   fi
+   if [ $quiet -eq 0 ]; then
+       echo "> $cmd"
+   fi
+   if [ $dryrun -eq 0 ]; then
+       eval "$cmd"
+   fi
