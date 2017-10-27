@@ -302,3 +302,7 @@ Generate diff for untracked file
 Rebase feature branch to new integration branch
 	git checkout my_feature
 	git rebase new_int_branch
+Display branch oriented log graph
+	git log --graph --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
+Display repository oriented log graph
+	git log --graph --full-history --all --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
