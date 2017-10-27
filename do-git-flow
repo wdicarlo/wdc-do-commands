@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Check needed commands
+CMD_NAME="git-flow"
+cmd=`which $CMD_NAME`
+if [ -z "$cmd" ]; then
+	echo "Missing $CMD_NAME command"
+	exit
+fi
+
+cmd="git-flow $@"
+echo "> $cmd"
+eval "$cmd"
