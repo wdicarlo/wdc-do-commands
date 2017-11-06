@@ -17,19 +17,24 @@
 cmd=`basename $0`
 
 function usage() {
-        echo "Usage: $cmd [-h] [-q]"
+        echo "Usage: $cmd [-h] [-d] [-t] [-q]"
         echo "where:"
         echo "       -h                          : print this help"
         echo "       -d                          : use defaults"
+        echo "       -t                          : tag"
         echo "       -q                          : quiet"
 }
 
 # Arguments processing
 quiet=0
 defaults=0
-while getopts hqd flag
+tag=0
+while getopts hqdt flag
 do
 case $flag in
+      t)
+          tag=1
+          ;;
       d)
           defaults=1
           ;;
@@ -78,7 +83,9 @@ if [ -f VERSION ]; then
     mv tmpfile CHANGES
     git add CHANGES VERSION
     git commit -m "Version bump to $INPUT_STRING"
-    git tag -a -m "Tagging version $INPUT_STRING" "v$INPUT_STRING"
+    if [ $tag -eq 1 ]; then
+	    git tag -a -m "Tagging version $INPUT_STRING" "v$INPUT_STRING"
+    fi
     if [ "$remote" == "origin" ]; then
        git push origin --tags
     fi
@@ -102,10 +109,11 @@ else
         echo "" >> CHANGES
         git add VERSION CHANGES
         git commit -m "Added VERSION and CHANGES files, Version bump to v0.1.0"
-        git tag -a -m "Tagging version 0.1.0" "v0.1.0"
+	if [ $tag -eq 1 ]; then
+		git tag -a -m "Tagging version 0.1.0" "v0.1.0"
+	fi
         if [ "$remote" == "origin" ]; then
            git push origin --tags
         fi
     fi
-
 fi
