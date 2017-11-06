@@ -9,6 +9,7 @@ Commands to evaluate:
     bash-it
     fasd
     direnv
+    watchdog (https://github.com/gorakhargosh/watchdog.git)
 Integrate vim notebooks
 Evaluate command history by folder
 Add todo management
