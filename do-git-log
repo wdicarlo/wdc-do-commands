@@ -70,6 +70,11 @@ if [ $files -eq 1 ]; then
 	details="--name-status"
 fi
 
+# graph branch oriented
+#git log --graph --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
+# graph history oriented
+#git log --graph --full-history --all --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
+
 if [ $raw -eq 0 ]; then
 	if [ $piping -eq 0 ]; then
 		  if [ $quiet -eq 0 ]; then
