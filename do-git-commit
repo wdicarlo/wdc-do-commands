@@ -4,7 +4,7 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] "
+    echo "Usage: $cmd [-h] [-q] [-n] [git-commit-options...]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -n                          : skip hooks"
