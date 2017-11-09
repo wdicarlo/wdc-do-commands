@@ -66,6 +66,9 @@ if [ $commit -eq 0 ]; then
 else
 	cmd="git merge $options $branch"
 fi
+
+cmd="$cmd; git status"
+
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
