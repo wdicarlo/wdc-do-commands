@@ -47,7 +47,7 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-if [ $# == 0 ]; then
+if [ ! $# == 1 ]; then
 		  usage
 		  exit
 fi
