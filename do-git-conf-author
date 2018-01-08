@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: add -g for global flag to configure at global level
+
 function usage() {
     cmd=`basename $0`
     echo "Usage: $cmd <name> <email>"
