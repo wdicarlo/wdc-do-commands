@@ -1,11 +1,93 @@
 #!/usr/bin/env bash
 
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-q] [-s]"
+    echo "where:"
+    echo "       -h                          : print this help"
+    #echo "       -n                          : dry run"
+    #echo "       -f                          : force"
+    #echo "       -v                          : verbose"
+    echo "       -s                          : stop if changes are present"
+    echo "       -r                          : recurse over folders"
+    echo "       -q                          : quiet"
+}
+
+function recurse() {
+	folders=$(ls -1)
+
+	for folder in $folders;
+	do
+		cd $folder
+		do-git-pull -s
+		cd ..
+	done
+}
+
+
+# Arguments processing
+quiet=0
+force=0
+exclude=""
+dryrun=0
+verbose=0
+halt=0
+recurse=0
+while getopts hqsr flag
+do
+case $flag in
+   r)
+       recurse=1
+       ;;
+   s)
+       halt=1
+       ;;
+   f)
+       force=1
+       ;;
+   v)
+       verbose=1
+       ;;
+   q)
+       quiet=1
+       ;;
+   n)
+       dryrun=1
+       ;;
+   h)
+       usage
+       exit
+       ;;
+   ?)
+       usage
+       exit
+       ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $recurse -eq 1 ]; then
+	recurse
+	exit
+fi
+
+if [ ! -d "./.git" ]; then
+	echo "Not in a git repository"
+	exit
+fi
+
 # TODO: use git fetch to check if changes are available
 
 n=$(git status --short|wc -l)
 branch=$(git rev-parse --abbrev-ref HEAD)
 
 if [ $n -gt 0 ]; then
+	if [ $halt -eq 1 ]; then
+		echo "Changes are present"
+		exit
+	fi
 	echo "> git stash save -u"
 	git stash save -u	# stash modified and untracked files
 fi
@@ -15,6 +97,10 @@ echo "> $cmd"
 eval "$cmd"
 
 if [ $n -gt 0 ]; then
+	if [ $halt -eq 1 ]; then
+		echo "Changes are present"
+		exit
+	fi
 	echo "> git stash pop"
 	git stash pop
 fi
