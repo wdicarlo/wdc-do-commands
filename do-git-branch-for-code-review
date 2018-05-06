@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+branch=$(do-git-branch -n)
+
+if [ "$branch" == "master" ]; then
+    echo "In master branch"
+    exit
+fi
+
+squash=0
+if [ "$1" == "-s" ]; then
+    squash=1
+fi
+
+commits=$(git log --oneline|grep "$branch"|awk '{ print $1 }')
+
+echo "$commits"
+
+git checkout -qb "${branch}_review"
+for commit in $commits;
+do
+    git revert --no-commit $commit
+    git commit -m "revert: $commit"
+done
+
+if [ $squash -eq 1 ]; then
+    git checkout "$branch"
+    git checkout -qb "${branch}_review_squashed"
+    git merge --squash "${branch}_review"
+    git commit -m "${branch}_review squashed"
+    git branch -D "${branch}_review"
+fi
