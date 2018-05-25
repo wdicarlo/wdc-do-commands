@@ -30,12 +30,26 @@ function usage() {
         echo "       -q                          : quiet"
 }
 
+gen_num() {
+	echo $(($1 + $RANDOM % ($2 - $1)))
+}
+gen_path() {
+	if [ $tree -eq 0 ]; then
+		return
+	fi
+	tree_path=""
+	for i in $(seq 1 $(gen_num 1 $tree));
+	do 
+			dir=$(gen_num 1 $tree)
+			tree_path="${tree_path}/d$dir"
+	done
+}
+
 git_commit() {
     if ! [ "${commit_i:-}" ]; then
         commit_i=0
     fi
     (( commit_i++ )) || true
-    echo "$commit_i" > "$commit_i"
 
     branch=$(do-git-branch -n)
     msg="c$commit_i"
@@ -43,7 +57,16 @@ git_commit() {
         msg="$BRANCH_DEV: $msg"
     fi
 
-    git add "$commit_i"
+	if [ $tree -gt 0 ] && [ $(gen_num 1 10) -gt 5 ]; then
+		gen_path
+		mkdir -p ".$tree_path"
+		echo "$commit_i" > ".$tree_path/$commit_i"
+    	git add ".$tree_path/$commit_i"
+	else
+		echo "$commit_i" > "$commit_i"
+    	git add "$commit_i"
+	fi
+
     git commit -qm "$msg"
 }
 git_commit_conflict() {
@@ -128,9 +151,14 @@ name="git_demo"
 submodule=0
 overwrite=0
 clone=0
-while getopts hqn:sfoc flag
+tree=0
+tree_path=""
+while getopts hqn:sfoct: flag
 do
         case $flag in
+        t)
+          tree=$OPTARG
+          ;;
         n)
           name="$OPTARG"
           ;;
