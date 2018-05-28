@@ -18,7 +18,7 @@ fi
 cmd=`basename $0`
 
 function usage() {
-        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [<topology>]"
+        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [-t <tree_depth>][<topology>]"
         echo "where:"
         echo "       <topology>                  : topology id (1..10)"
         echo "       -n <name>                   : name of the repository"
@@ -26,6 +26,8 @@ function usage() {
         echo "       -f                          : use git flow"
         echo "       -o                          : overwrite existing repository"
         echo "       -c                          : create clone repository"
+        echo "       -t <tree_depth>             : commit into a folder tree with <tree_depth> depth"
+        echo "       -r                          : use random generator"
         echo "       -h                          : print this help"
         echo "       -q                          : quiet"
 }
@@ -38,11 +40,21 @@ gen_path() {
 		return
 	fi
 	tree_path=""
-	for i in $(seq 1 $(gen_num 1 $tree));
-	do 
-			dir=$(gen_num 1 $tree)
-			tree_path="${tree_path}/d$dir"
-	done
+	if [ $random -eq 1 ]; then
+			for i in $(seq 1 $(gen_num 1 $tree));
+			do 
+					dir=$(gen_num 1 $tree)
+					tree_path="${tree_path}/d$dir"
+			done
+	else
+			tree_path="/d$tree_root"
+			for i in $(seq 1 $tree);
+			do 
+					dir="d$i"
+					tree_path="${tree_path}/$dir"
+			done
+			tree_root=$(($tree_root + 1))
+	fi
 }
 
 git_commit() {
@@ -57,14 +69,14 @@ git_commit() {
         msg="$BRANCH_DEV: $msg"
     fi
 
-	if [ $tree -gt 0 ] && [ $(gen_num 1 10) -gt 5 ]; then
+	if [ $tree -eq 0 ] || ([ $random -eq 1 ] && [ $(gen_num 1 10) -le 5 ]); then
+		echo "$commit_i" > "$commit_i"
+    	git add "$commit_i"
+	else
 		gen_path
 		mkdir -p ".$tree_path"
 		echo "$commit_i" > ".$tree_path/$commit_i"
     	git add ".$tree_path/$commit_i"
-	else
-		echo "$commit_i" > "$commit_i"
-    	git add "$commit_i"
 	fi
 
     git commit -qm "$msg"
@@ -153,7 +165,9 @@ overwrite=0
 clone=0
 tree=0
 tree_path=""
-while getopts hqn:sfoct: flag
+tree_root=0
+random=0
+while getopts hqn:sfoct:r flag
 do
         case $flag in
         t)
@@ -161,6 +175,9 @@ do
           ;;
         n)
           name="$OPTARG"
+          ;;
+        r)
+          random=1
           ;;
         c)
           clone=1
