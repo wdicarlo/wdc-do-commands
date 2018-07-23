@@ -20,6 +20,7 @@ function usage() {
    echo "       -h                          : print this help"
    echo "       -l                          : list machines"
    echo "       -n                          : dry run"
+   echo "       -v                          : verbose"
 }
 
 # Arguments processing
@@ -27,7 +28,7 @@ quiet=0
 dryrun=0
 verbose=0
 list=0
-while getopts hnl flag
+while getopts hnlv flag
 do
 case $flag in
   v)
@@ -55,14 +56,14 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 if [ $list -eq 1 ]; then
-    cat $remotes
+    cat $remotes | awk '{ printf "%-2s %-60s\n", NR, $0 }'
     exit
 fi
 
 machines=$(cat $remotes|sed 's/^\(.*\) .*/\1/')
 if [ $# -eq 0 ]; then
     echo "Please insert the instance name:"
-    echo "$machines" | awk '{ printf "%-2s %-60s\n", NR, $0 }'
+    cat $remotes | awk '{ printf "%-2s %-60s\n", NR, $0 }'
     read -p "Machine? " num
 
     if [ "$num" == "" ]; then
@@ -86,8 +87,12 @@ if [ ! -f "$pem" ]; then
     exit
 fi
 
-remote=`cat $root/remotes.map|grep $instance|awk '{print $2}'`
-cmd="ssh -i $pem $remote"
+remote=`cat $root/remotes.map|awk '{print NR,$0}'|grep "^$num"|awk '{print $3}'`
+if [ $verbose -eq 1 ]; then
+    cmd="ssh -v -i $pem $remote"
+else
+    cmd="ssh -i $pem $remote"
+fi
 
 echo "> $cmd"
 if [ $dryrun -eq 0 ]; then
