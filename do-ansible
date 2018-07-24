@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+if [ "$ANSIBLE_HOSTS" == "" ]; then
+    echo "Missing ANSIBLE_HOSTS"
+    exit
+fi
+if [ "$ANSIBLE_USER" == "" ]; then
+    echo "Missing ANSIBLE_USER"
+    exit
+fi
+
+
+cmd="ansible-playbook -i $ANSIBLE_HOSTS $1 --user=$ANSIBLE_USER"
+echo "> $cmd"
+eval "$cmd"
