@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# todo: add possibility to add user to sudoers
+# usermod -aG sudo <username>
+
 cmd="do-super adduser $@"
 echo "> $cmd"
 eval $cmd
