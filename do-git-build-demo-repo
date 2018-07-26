@@ -18,7 +18,7 @@ fi
 cmd=`basename $0`
 
 function usage() {
-        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [-t <tree_depth>][<topology>]"
+        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [-d <tree_depth>][<topology>] [-t]"
         echo "where:"
         echo "       <topology>                  : topology id (1..10)"
         echo "       -n <name>                   : name of the repository"
@@ -26,8 +26,9 @@ function usage() {
         echo "       -f                          : use git flow"
         echo "       -o                          : overwrite existing repository"
         echo "       -c                          : create clone repository"
-        echo "       -t <tree_depth>             : commit into a folder tree with <tree_depth> depth"
+        echo "       -d <tree_depth>             : commit into a folder tree with <tree_depth> depth"
         echo "       -r                          : use random generator"
+        echo "       -t                          : use tags"
         echo "       -h                          : print this help"
         echo "       -q                          : quiet"
 }
@@ -55,6 +56,18 @@ gen_path() {
 			done
 			tree_root=$(($tree_root + 1))
 	fi
+}
+
+git_tag() {
+    if ! [ "${tag_i:-}" ]; then
+        tag_i=0
+    fi
+    (( tag_i++ )) || true
+
+    branch=$(do-git-branch -n)
+    tag="${branch}_t$tag_i"
+
+    git tag -a "$tag" -m "$tag"
 }
 
 git_commit() {
@@ -149,9 +162,15 @@ git_merge_conflict() {
 git_checkout() {
     if [ "$2" == "$BRANCH_DEV" ]; then
             if [ $gitflow -eq 1 ]; then
+                    if [ $tags -eq 1 ]; then
+                        git_tag 
+                    fi
                     git checkout -q $BRANCH_DEV
                     return
             fi
+    fi
+    if [ $tags -eq 1 ]; then
+        git_tag 
     fi
     git checkout $1 $2
 }
@@ -167,10 +186,14 @@ tree=0
 tree_path=""
 tree_root=0
 random=0
-while getopts hqn:sfoct:r flag
+tags=0
+while getopts hqn:sfoctrd: flag
 do
         case $flag in
         t)
+          tags=1
+          ;;
+        d)
           tree=$OPTARG
           ;;
         n)
@@ -211,7 +234,7 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 A_TOPOLOGY=${1:-}
 BRANCH_DEV="develop"
 BRANCH_MASTER="master"
-BRANCH_TMP="t1"
+BRANCH_FEATURE="feature"
 
 if [ $# -eq 1 ]; then
    A_TOPOLOGY="$1"
@@ -255,13 +278,13 @@ if [ "$A_TOPOLOGY" = 10 ]; then
     git_commit
     git_commit
     git_checkout -q $BRANCH_DEV
-    git_checkout -qb $BRANCH_TMP
+    git_checkout -qb $BRANCH_FEATURE
     git_commit
     git_commit
     git_checkout -q $BRANCH_DEV
     git_commit
     git_commit
-    git rebase --onto "$c" $BRANCH_DEV $BRANCH_TMP
+    git rebase --onto "$c" $BRANCH_DEV $BRANCH_FEATURE
 elif [ "$A_TOPOLOGY" = 11 ]; then
     git_commit
     git_commit
@@ -276,13 +299,13 @@ elif [ "$A_TOPOLOGY" = 11 ]; then
     git_commit
     git_commit
     git_checkout -q $BRANCH_MASTER
-    git_checkout -qb $BRANCH_TMP
+    git_checkout -qb $BRANCH_FEATURE
     git_commit
     git_commit
     git_checkout -q $BRANCH_MASTER
     git_commit
     git_commit
-    git rebase --onto "$c" $BRANCH_MASTER $BRANCH_TMP
+    git rebase --onto "$c" $BRANCH_MASTER $BRANCH_FEATURE
 elif [ "$A_TOPOLOGY" = 12 ]; then
     git_commit
     git_commit
@@ -324,7 +347,7 @@ else
         git_commit
         git_commit
     fi
-    git_checkout -qb $BRANCH_TMP
+    git_checkout -qb $BRANCH_FEATURE
     git_commit
     git_commit
     git_checkout -q $BRANCH_MASTER
