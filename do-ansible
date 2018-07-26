@@ -10,7 +10,7 @@ function usage() {
    echo "       -i                          : info about remotes"
    echo "       -f <pattern>                : filtered info about remotes"
    #echo "       -n                          : dry run"
-   #echo "       -v                          : verbose"
+   echo "       -v                          : verbose"
    #echo "       -q                          : quiet"
 }
 
@@ -20,9 +20,10 @@ force=0
 exclude=""
 dryrun=0
 verbose=0
+verbose_flag=""
 info=0
 filter=""
-while getopts hif: flag
+while getopts hif:v flag
 do
 case $flag in
   i)
@@ -34,6 +35,7 @@ case $flag in
       ;;
   v)
       verbose=1
+      verbose_flag="-vvvv"
       ;;
   q)
       quiet=1
@@ -66,12 +68,12 @@ fi
 if [ $info -eq 1 ]; then
     if [ "$filter" == "" ]; then
         #cmd="ansible -i $ANSIBLE_HOSTS all -m setup -a \"filter=ansible_distribution*\" --user=$ANSIBLE_USER"
-        cmd="ansible -i $ANSIBLE_HOSTS all -m setup --user=$ANSIBLE_USER"
+        cmd="ansible $verbose_flag -i $ANSIBLE_HOSTS all -m setup --user=$ANSIBLE_USER"
     else
-        cmd="ansible -i $ANSIBLE_HOSTS all -m setup -a \"filter=*$filter*\" --user=$ANSIBLE_USER"
+        cmd="ansible $verbose_flag -i $ANSIBLE_HOSTS all -m setup -a \"filter=*$filter*\" --user=$ANSIBLE_USER"
     fi
 else
-    cmd="ansible-playbook -i $ANSIBLE_HOSTS $1 --user=$ANSIBLE_USER"
+    cmd="ansible-playbook $verbose_flag -i $ANSIBLE_HOSTS $1 --user=$ANSIBLE_USER"
 fi
 
 echo "> $cmd"
