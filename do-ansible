@@ -4,13 +4,15 @@
 cmd=`basename $0`
 
 function usage() {
-   echo "Usage: $cmd [-h] [-i] [-f <pattern>]"
+   echo "Usage: $cmd [-h] [-i] [-f <pattern>] [-v] [-c] [-e \"<extra-vars\"]"
    echo "where:"
    echo "       -h                          : print this help"
    echo "       -i                          : info about remotes"
    echo "       -f <pattern>                : filtered info about remotes"
-   #echo "       -n                          : dry run"
+   echo "       -n                          : dry run"
    echo "       -v                          : verbose"
+   echo "       -c                          : check syntax"
+   echo "       -e \"<var>=<val> ...\"        : extra vars"
    #echo "       -q                          : quiet"
 }
 
@@ -19,13 +21,22 @@ quiet=0
 force=0
 exclude=""
 dryrun=0
+dryrun_flag=""
 verbose=0
 verbose_flag=""
 info=0
 filter=""
-while getopts hif:v flag
+check=""
+extra_vars=""
+while getopts hif:vnce: flag
 do
 case $flag in
+  e)
+      extra_vars="$OPTARG"
+      ;;
+  c)
+      check="--syntax-check"
+      ;;
   i)
       info=1
       ;;
@@ -42,6 +53,7 @@ case $flag in
       ;;
   n)
       dryrun=1
+      dryrun_flag="--check"
       ;;
   h)
       usage
@@ -65,15 +77,19 @@ if [ "$ANSIBLE_USER" == "" ]; then
     exit
 fi
 
+if [ ! "$extra_vars" == "" ]; then
+    extra_vars="--extra-vars \"$extra_vars\""
+fi
+
 if [ $info -eq 1 ]; then
     if [ "$filter" == "" ]; then
         #cmd="ansible -i $ANSIBLE_HOSTS all -m setup -a \"filter=ansible_distribution*\" --user=$ANSIBLE_USER"
-        cmd="ansible $verbose_flag -i $ANSIBLE_HOSTS all -m setup --user=$ANSIBLE_USER"
+        cmd="ansible $check $dryrun_flag $extra_vars $verbose_flag -i $ANSIBLE_HOSTS all -m setup --user=$ANSIBLE_USER "
     else
-        cmd="ansible $verbose_flag -i $ANSIBLE_HOSTS all -m setup -a \"filter=*$filter*\" --user=$ANSIBLE_USER"
+        cmd="ansible $check $dryrun_flag $verbose_flag $extra_vars -i $ANSIBLE_HOSTS all -m setup -a \"filter=*$filter*\" --user=$ANSIBLE_USER "
     fi
 else
-    cmd="ansible-playbook $verbose_flag -i $ANSIBLE_HOSTS $1 --user=$ANSIBLE_USER"
+    cmd="ansible-playbook $check $dryrun_flag $verbose_flag $extra_vars -i $ANSIBLE_HOSTS $1 --user=$ANSIBLE_USER "
 fi
 
 echo "> $cmd"
