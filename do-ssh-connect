@@ -78,7 +78,7 @@ else
     num="$1"
 fi
 
-instance=$(echo "$machines" | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}')
+instance=$(echo "$machines" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 echo "$instance"
 if [[ "$instance" == "" ]]; then
         echo "Unknown instance"
@@ -92,7 +92,7 @@ if [ ! -f "$pem" ]; then
     exit
 fi
 
-remote=$(cat $root/remotes.map|awk '{print NR,$0}'|grep "^$num"|awk '{print $3}')
+remote=$(cat $root/remotes.map|awk '{print NR,$0}'|grep "^$num "|awk '{print $3}')
 if [ $force -eq 1 ]; then
     ip=$(echo $remote|sed 's/^.*@//')
     cmd="ssh-keygen -f "~/.ssh/known_hosts" -R $ip"
