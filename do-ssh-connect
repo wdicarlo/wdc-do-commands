@@ -14,7 +14,7 @@ fi
 cmd=`basename $0`
 
 function usage() {
-   echo "Usage: $cmd [-h] [-l] [-n] [-v] [-f] [<arg>]"
+   echo "Usage: $cmd [-h] [-l] [-n] [-v] [-f] [-e] [<arg>]"
    echo "where:"
    echo "       <arg>                       : machine id"
    echo "       -h                          : print this help"
@@ -22,6 +22,7 @@ function usage() {
    echo "       -n                          : dry run"
    echo "       -v                          : verbose"
    echo "       -f                          : force"
+   echo "       -e                          : edit"
 }
 
 # Arguments processing
@@ -30,9 +31,13 @@ dryrun=0
 verbose=0
 list=0
 force=0
-while getopts hnlvf flag
+edit=0
+while getopts hnlvfe flag
 do
 case $flag in
+  e)
+      edit=1
+      ;;
   f)
       force=1
       ;;
@@ -59,6 +64,11 @@ case $flag in
    esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $edit -eq 1 ]; then
+    vim $remotes < `tty` 
+    exit
+fi
 
 if [ $list -eq 1 ]; then
     cat $remotes | awk '{ printf "%-2s %-60s\n", NR, $0 }'
