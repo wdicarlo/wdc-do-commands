@@ -1,0 +1,8 @@
+ansible
+	Machines manager over the SSH protocol
+Install ansible in ubuntu
+    sudo apt-get update
+    sudo apt-get install software-properties-common
+    sudo apt-add-repository ppa:ansible/ansible
+    sudo apt-get update
+    sudo apt-get install ansible
