@@ -1,0 +1,12 @@
+Docker
+	How to about Docker
+List docker images
+	docker images
+Rename/tag image
+	docker tag 4f3e2b44ea88 ballerina/ballerina-pizza
+Print detailed information about an image
+	docker image inspect 4f3e2b44ea88
+Run bash of an image
+	docker run -ti -u `id -u $USER` -v `pwd`:/home/ballerina ballerina/ballerina-platform /bin/bash
+Run image mapping a port
+	docker run -d -p 9090:9090 pizza:latest
