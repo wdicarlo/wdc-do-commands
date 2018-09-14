@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [ "$DOCKER_VOLUME_BIND" == "" ]; then
+    echo "Missing DOCKER_VOLUME_BIND!!!"
+    exit
+fi
+
+if [ "$DOCKER_IMAGE" == "" ]; then
+    echo "Missing DOCKER_IMAGE!!!"
+    exit
+fi
+
+if [ "$DOCKER_USER" == "" ]; then
+    DOCKER_USER=$(id -u $USER)
+fi
+
+
+cmd="docker run -u $DOCKER_USER -v $DOCKER_VOLUME_BIND -it $DOCKER_IMAGE $@"
+echo "> $cmd"
+eval "$cmd"
