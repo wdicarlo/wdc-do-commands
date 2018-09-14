@@ -10,3 +10,22 @@ Run bash of an image
 	docker run -ti -u `id -u $USER` -v `pwd`:/home/ballerina ballerina/ballerina-platform /bin/bash
 Run image mapping a port
 	docker run -d -p 9090:9090 pizza:latest
+Dockerfile to modify existing image
+    FROM golang:latest
+    MAINTAINER Walter Di Carlo <walter@di-carlo.it>
+    RUN echo "Hello Go" > ~/hello.txt
+Build docker image
+	docker build -t wdicarlo/golang:v1 .
+Print image history
+	docker history wdicarlo/golang:v1
+
+Check the personalized image
+	do-docker-run cat /root/hello.txt
+List all containers
+	docker ps -a
+Create a new image from a container
+	docker commit 089a3e27346a wdicarlo_golang_hello
+Export content of a container
+	docker export  --output=busybox-mkdir.tar d93201be1712
+Delete an image
+	docker rmi training/sinatra
