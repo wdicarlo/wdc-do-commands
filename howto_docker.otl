@@ -16,9 +16,8 @@ Dockerfile to modify existing image
     RUN echo "Hello Go" > ~/hello.txt
 Build docker image
 	docker build -t wdicarlo/golang:v1 .
-Print image history
+Print image history/layers
 	docker history wdicarlo/golang:v1
-
 Check the personalized image
 	do-docker-run cat /root/hello.txt
 List all containers
@@ -29,3 +28,11 @@ Export content of a container
 	docker export  --output=busybox-mkdir.tar d93201be1712
 Delete an image
 	docker rmi training/sinatra
+Search for an image
+	docker search golang
+Run dockerized web site
+	docker run -d --name mysite -P wdicarlo/httpd-mysite:v1
+Stop container
+	docker stop 0f9f27cedc75
+Remove container
+	docker rm ab0d93f9efb4
