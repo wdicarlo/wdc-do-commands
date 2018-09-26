@@ -6,3 +6,5 @@ Install ansible in ubuntu
     sudo apt-add-repository ppa:ansible/ansible
     sudo apt-get update
     sudo apt-get install ansible
+View content of vault
+	ansible-vault view vault
