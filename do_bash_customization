@@ -42,7 +42,7 @@ echo "Customizing bash"
 function update_prompt()
 {
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-        PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@${GREEN}$REPO_LOCATION${RESET}[$REPO_SYNT]{${PROMPT_VARS}}\$ '
+        PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@\[${GREEN}\]$REPO_LOCATION\[${RESET}\][$REPO_SYNT]{${PROMPT_VARS}}\$ '
     else
         PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
     fi
@@ -293,7 +293,7 @@ function update_env() {
     #echo "REPO_SYNT=$REPO_SYNT"
     if [ -f .bash_env ]
     then
-        cat .bash_env
+        cat .bash_env | grep "^export .*=" | sed 's/^export \(.*\)=.*/\1/' | xargs -I@ sh -c 'echo "@=\$@"'
         source .bash_env
     else
         shift $#
