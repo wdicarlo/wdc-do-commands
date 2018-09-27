@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+HEADER_ROWS="$1"
+
+if [ "$HEADER_ROWS" == "" ]; then
+    cat
+else
+    cat | tail -n +$((HEADER_ROWS+1))
+fi
