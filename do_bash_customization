@@ -283,7 +283,7 @@ function update_env() {
         REPO_LOCATION="S:$SVN_LOCATION"
         REPO_SYNT=$(\svn status |grep -v cscope|grep -v ".settings"|grep -v "RTOSE"|grep -v "^Performing"|awk '{print $1}'|sort|uniq|grep -v "X"|tr -d '\n')
     fi
-    git status >/dev/null 2>&1 && GIT_LOCATION=$(git status | grep "^# On"|awk '{print $4}')
+    git status >/dev/null 2>&1 && GIT_LOCATION=$(git rev-parse --abbrev-ref HEAD)
     if [ ! "$GIT_LOCATION" == "" ]; then
         REPO_LOCATION="G:$GIT_LOCATION"
         REPO_SYNT=$(git status -s | awk '{print $1}'|sort|uniq|tr -d '\n')
