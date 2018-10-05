@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+cat | sed -e 's/\([a-zA-Z]\)\([a-zA-Z]*\)/\1/g' | tr -d ' ' | tr '[:lower:]' '[:upper:]' 
