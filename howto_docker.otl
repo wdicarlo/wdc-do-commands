@@ -36,3 +36,7 @@ Stop container
 	docker stop 0f9f27cedc75
 Remove container
 	docker rm ab0d93f9efb4
+Inspect network bridge information
+	docker network inspect bridge
+Share volumes between containers
+	docker run -d -p 80:80 --volumes-from myservice httpd
