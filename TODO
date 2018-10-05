@@ -19,3 +19,4 @@ Add todo management
 Develop Lua simple type checking
 Evaluate tools for backup: irsync, rsnapshot, rbackup, 
 Add command to join output from different other commands (git blame, git diff, git log)
+Solve bug with 'grep "$num"' by adding a space after num
