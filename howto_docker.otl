@@ -40,3 +40,17 @@ Inspect network bridge information
 	docker network inspect bridge
 Share volumes between containers
 	docker run -d -p 80:80 --volumes-from myservice httpd
+List networks
+	docker network ls
+Create a new network
+	docker network create mynet
+Inspect network details
+	docker network inspect mynet 
+Remove network
+	docker network rm mynet
+List available network commands
+	docker network
+Run a container
+	docker run -itd --name=mycontainer busybox
+Attach to container
+	docker attach mycontainer 
