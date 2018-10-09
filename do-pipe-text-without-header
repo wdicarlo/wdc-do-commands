@@ -3,7 +3,6 @@
 HEADER_ROWS="$1"
 
 if [ "$HEADER_ROWS" == "" ]; then
-    cat
-else
-    cat | tail -n +$((HEADER_ROWS+1))
+    HEADER_ROWS=1
 fi
+cat | tail -n +$((HEADER_ROWS+1))
