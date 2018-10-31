@@ -1,5 +1,5 @@
 ansible
-	Machines manager over the SSH protocol
+    Machines manager over the SSH protocol
 Install ansible in ubuntu
     sudo apt-get update
     sudo apt-get install software-properties-common
@@ -7,4 +7,6 @@ Install ansible in ubuntu
     sudo apt-get update
     sudo apt-get install ansible
 View content of vault
-	ansible-vault view vault
+    ansible-vault view [vault]
+Update vault
+    ansible-vault edit [vault]
