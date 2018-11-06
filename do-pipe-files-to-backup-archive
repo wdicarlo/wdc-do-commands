@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+
+bakfile="backup"
+curdate="`date '+%y%m%d-%H%M%S'`"
+
+if [ "${BACKUP_DIR}" == "" ]
+then
+  echo "Please, set BACKUP_DIR"
+  exit
+fi
+
+bakdir="$BACKUP_DIR"
+
+export MY_VIM_FILES=""
+
+export MY_FILES=`eval echo " \
+~/.bashrc \
+~/.bash_aliases \
+~/.notebook/* \
+$MY_VIM_FILES \
+"`
+MY_FILES=$(cat)
+
+if [ ${#MY_FILES} -eq 0 ]
+then
+  echo "Please, provide paths of files to backup"
+  exit
+fi
+
+files="$MY_FILES"
+nfiles=$(echo $files | wc -l)
+echo "Backuping $nfiles files..."
+
+
+
+if [ ! "$1" == "" ]; then
+	tarfile="$bakfile-$curdate-$1.tar"
+else
+	tarfile="$bakfile-$curdate.tar"
+fi
+
+
+echo "Creating $bakdir/$tarfile..."
+cmd="tar -cvf \"$bakdir/$tarfile\" --exclude=.git $(echo $files)"
+echo "$cmd"
+eval "$cmd"
+echo "Done."
+
+echo "Creating $tarfile.gz..."
+gzip -c "$bakdir/$tarfile" > "$bakdir/$tarfile.gz"
+echo "Done."
+
+
+if [ -f "$bakdir/$tarfile.gz" ]; then
+  echo "Removing $tarfile..."
+  rm -f "$bakdir/$tarfile"
+  echo "Done."
+  if [ ! "$remote_host" == "" ]; then 
+    echo "Duplicating backup wdicarlo@$remote_host:walter/backups..."
+    #cp $bakdir/$tarfile.gz /mnt/alvs17/backups
+    scp "$bakdir/$tarfile.gz"  "wdicarlo@$remote_host:walter/backups"
+    echo "Done."
+  else
+    echo "Skipping transfer to remote host."
+  fi
+fi
+
