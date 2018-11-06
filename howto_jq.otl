@@ -2,3 +2,5 @@ Howto jq
 	Tips and tricks about jq usage
 List github projects' name and URL
 	do-github-search -q -l java mongodb | jq  '[.items[]| {(.name): (.html_url)}]|add'
+Filter out github search result
+	do-github-search -q  xavante | jq  '[.items[]| {(.name): [(.html_url),(.language)]}]|add'
