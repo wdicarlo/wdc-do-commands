@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+filenames=$(do-find-files "*.txt" | sort -r)
+names=$(echo "$filenames" | sed 's/_[0-9]*\.txt//' | grep -v "\.txt" | uniq)
+
+files=""
+for name in $names;
+do
+	file=$(echo "$filenames" | grep "${name}_[0-9]*\.txt" | head -1)
+	files=$(printf "%s\n%s" "$files" "$file")
+done
+others=$(do-find-files "*_[0-9]*_*.txt" | sort -r)
+files="$files $others"
+echo "$files" | sort -r
