@@ -33,7 +33,7 @@ Search for an image
 Run dockerized web site
 	docker run -d --name mysite -P wdicarlo/httpd-mysite:v1
 Stop container
-	docker stop 0f9f27cedc75
+	docker stop 0f9f27cedc75; docker stop mycontainer1
 Remove container
 	docker rm ab0d93f9efb4
 Inspect network bridge information
@@ -52,5 +52,33 @@ List available network commands
 	docker network
 Run a container
 	docker run -itd --name=mycontainer busybox
-Attach to container
+Attach to container to use its shell console (use enter key to get the prompt and ctrl-p ctrl-q to exit)
 	docker attach mycontainer 
+Commands to use in the containers's shell
+    cat /etc/hosts; mount; ping 172.17.0.3 # don't use exit command otherwise the container get stopped
+List running machines
+    docker-machine ls
+Docker bridge network (default)
+    docker network inspect bridge
+Create a dedicated container network
+	docker run -itd --name=mycontainer3 --net=mynet debian
+Remove container and volume
+	docker rm -v mycontainer1
+Map all host ports into container ports
+	docker run -d -P httpd:latest
+Map specific host port to a container port
+	docker run -d -p 80:5000 httpd:latest
+List all exited containers
+	docker ps -a -f status=exited
+Remove all exited containers
+	docker rm $(docker ps -a -f status=exited -q)
+Stop all running containers
+	docker stop $(docker ps -a -q)
+Remove all images even if error are present
+	docker rmi -f $(docker images -a -q)
+Remove all images avoiding those ones if error are present
+	docker rmi $(docker images -a -q)
+List volumes not attached to containers
+	docker volume ls -f dangling=true
+Remove all detached volumes
+	docker volume rm $(docker volume ls -f dangling=true -q)
