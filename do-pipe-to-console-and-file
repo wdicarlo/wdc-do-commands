@@ -1,0 +1,71 @@
+#!/bin/bash
+
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: <piped-commands> | $cmd [-f] [-a] <output-file>"
+}
+
+
+if [ -t 0 ]; then
+    usage
+    exit
+fi
+
+# Arguments processing
+quiet=0
+force=0
+dryrun=0
+verbose=0
+append=0
+while getopts hqnvfa flag
+do
+case $flag in
+  a)
+      append=1
+      ;;
+  f)
+      force=1
+      ;;
+  v)
+      verbose=1
+      ;;
+  q)
+      quiet=1
+      ;;
+  n)
+      dryrun=1
+      ;;
+  h)
+      usage
+      exit
+      ;;
+  ?)
+      usage
+      exit
+      ;;
+   esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+   usage
+   exit
+fi
+if [ ! $# == 1 ]
+then
+    usage
+    exit
+fi
+
+if [ -f "$1" ]
+then
+    if [ $force -eq 0 ] && [ $append -eq 0 ]; then
+        echo "File $1 already exists"
+        exit
+    fi
+fi
+
+#do_something 2>&1 | tee -a some_file
+# TODO: solve redirection issue - convert to command which evaluate the input pipe command
+cat 2>&1 | tee -a $1
