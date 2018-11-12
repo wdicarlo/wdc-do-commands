@@ -13,15 +13,20 @@
 # a file called CHANGES (under the title of the new version
 # number) and create a GIT tag.
 
+
+BUMP_COMMIT_MSG="Version bump to"
+TAG_COMMIT_MSG="Tagged version"
+
 # Usage help function
 cmd=`basename $0`
 
 function usage() {
-        echo "Usage: $cmd [-h] [-d] [-t] [-q]"
+        echo "Usage: $cmd [-h] [-d] [-t] [-q] [-p]"
         echo "where:"
         echo "       -h                          : print this help"
         echo "       -d                          : use defaults"
-        echo "       -t                          : tag"
+        echo "       -t                          : use tags"
+        echo "       -p                          : push tags"
         echo "       -q                          : quiet"
 }
 
@@ -29,9 +34,13 @@ function usage() {
 quiet=0
 defaults=0
 tag=0
-while getopts hqdt flag
+push=0
+while getopts hqdtp flag
 do
 case $flag in
+      p)
+          push=1
+          ;;
       t)
           tag=1
           ;;
@@ -76,18 +85,27 @@ if [ -f VERSION ]; then
     echo "Will set new version to be $INPUT_STRING"
     echo $INPUT_STRING > VERSION
     echo "Version $INPUT_STRING:" > tmpfile
-    git log --pretty=format:" - %s" "v$BASE_STRING"...HEAD >> tmpfile
+    BASE_STRING_REF="v$BASE_STRING"
+    if [ $tag -eq 0 ]; then
+        BASE_STRING_REF=$(do-git-log | grep "$BUMP_COMMIT_MSG $BASE_STRING" | do-pipe-columns -t 1)
+    fi
+    git log --pretty=format:" - %s" "$BASE_STRING_REF"...HEAD >> tmpfile
     echo "" >> tmpfile
     echo "" >> tmpfile
     cat CHANGES >> tmpfile
     mv tmpfile CHANGES
     git add CHANGES VERSION
-    git commit -m "Version bump to $INPUT_STRING"
+    git commit -m "$BUMP_COMMIT_MSG $INPUT_STRING"
+    if [ $tag -eq 0 ]; then
+        tag=$(git tag|grep "v$BASE_STRING"|wc -l)
+    fi
     if [ $tag -eq 1 ]; then
-	    git tag -a -m "Tagging version $INPUT_STRING" "v$INPUT_STRING"
+	    git tag -a -m "$TAG_COMMIT_MSG $INPUT_STRING" "v$INPUT_STRING"
     fi
     if [ "$remote" == "origin" ]; then
-       git push origin --tags
+        if [ $push -eq 1 ]; then
+           git push origin --tags
+        fi
     fi
 else
     echo "Could not find a VERSION file"
@@ -108,12 +126,20 @@ else
         echo "" >> CHANGES
         echo "" >> CHANGES
         git add VERSION CHANGES
-        git commit -m "Added VERSION and CHANGES files, Version bump to v0.1.0"
-	if [ $tag -eq 1 ]; then
-		git tag -a -m "Tagging version 0.1.0" "v0.1.0"
-	fi
-        if [ "$remote" == "origin" ]; then
-           git push origin --tags
+        git commit -m "Added VERSION and CHANGES files, $BUMP_COMMIT_MSG 0.1.0"
+
+        if [ $tag -eq 1 ]; then
+            git tag -a -m "$TAG_COMMIT_MSG 0.1.0" "v0.1.0"
+        else
+            echo "Tag not created. Use the follwing command to create it"
+            echo "git tag -a -m \"$TAG_COMMIT_MSG 0.1.0\" \"v0.1.0\""
+        fi
+        if [ $tag -eq 1 ]; then
+            if [ "$remote" == "origin" ]; then
+                if [ $push -eq 1 ]; then
+                   git push origin --tags
+                fi
+            fi
         fi
     fi
 fi
