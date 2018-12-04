@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+   echo "Usage: $cmd [-h] [-q] [-H]"
+   echo "where:"
+   echo "       -H                          : find MoM in pre-defined folder"
+   echo "       -h                          : print this help"
+   echo "       -q                          : quiet"
+}
+
+# Arguments processing
+home=0
+opts=""
+quiet=0
+force=0
+exclude=""
+dryrun=0
+verbose=0
+while getopts hqH flag
+do
+case $flag in
+  H)
+      home=1
+      opts="-H"
+      ;;
+  f)
+      force=1
+      ;;
+  v)
+      verbose=1
+      ;;
+  q)
+      quiet=1
+      ;;
+  n)
+      dryrun=1
+      ;;
+  e)
+      exclude=$OPTARG
+      ;;
+  h)
+      usage
+      exit
+      ;;
+  ?)
+      usage
+      exit
+      ;;
+   esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+FILES=$(do-find-mom $opts)
+
+for file in $FILES
+do
+    #echo "$file"
+    MOM_TEXT="$(cat $file | do-pipe-trimmed)"
+    #MOM_TEXT="$(cat $file )"
+    NUM_ENTRIES=$(echo "$MOM_TEXT" | grep "^# " | wc -l)
+    if [ $NUM_ENTRIES -eq 0 ]; then
+        echo "Skipping $file"
+        continue
+    fi
+    if [ $NUM_ENTRIES -gt 1 ]; then
+        LAST_ENTRY=$(echo "$MOM_TEXT" | grep "^# .*[0-9]\+$"|head -1)
+        LAST_MOM=$(echo "$MOM_TEXT" | sed "/^${LAST_ENTRY}/,/^# /!d")
+    else
+        LAST_ENTRY=$(echo "$MOM_TEXT" | grep "^# "|head -1)
+        LAST_MOM=$(echo "$MOM_TEXT")
+    fi
+    echo "$LAST_ENTRY @ $file"
+    echo "$LAST_MOM" | grep -i "walter>\|<done"
+done
+
