@@ -82,3 +82,13 @@ List volumes not attached to containers
 	docker volume ls -f dangling=true
 Remove all detached volumes
 	docker volume rm $(docker volume ls -f dangling=true -q)
+Remove a container
+	docker container rm myjenkins
+Run container exposing port 8080 to 8888
+	docker run -d --name myjenkins -p 8888:8080 jenkins/jenkins:lts
+Print container logs
+	docker logs myjenkins
+Copy a file inside the docker
+	docker cp ss.java myjenkins:/var/jenkins_home/jobs/
+Restart container
+	docker restart myjenkins
