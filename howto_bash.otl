@@ -20,3 +20,5 @@ Redirect to null
 	mkdir ~/tmp > /dev/null 2>&1
 Sleep and wait last background process
 	sleep 10 & wait ${1}
+The Art of Command Line
+    curl -s 'https://raw.githubusercontent.com/jlevy/the-art-of-command-line/master/README.md' | egrep -o '`\w+`' | tr -d '`'
