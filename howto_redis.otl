@@ -5,3 +5,13 @@ Run redis-rejson
 
 Connect redis-cli container to redis-rejson container
 	docker run -it --link redis-rejson:redis --rm redis redis-cli -h redis -p 6379
+Set json entry
+	docker run -it --link redis-rejson:redis --rm redis redis-cli -h redis -p 6379 JSON.SET foo . '"bar"'
+Get json entry
+	docker run -it --link redis-rejson:redis --rm redis redis-cli -h redis -p 6379 JSON.GET foo
+Alias for rejson-cli
+	alias rejson-cli='docker run -it --link redis-rejson:redis --rm redis redis-cli -h redis -p 6379'
+Set json entry
+	rejson-cli JSON.SET doc . '{foo:bar, faz:42}'
+Get json entry
+	rejson-cli JSON.GET doc .faz
