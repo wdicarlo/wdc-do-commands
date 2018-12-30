@@ -1,0 +1,7 @@
+redis nosql database
+	NoSql key-value data storage
+Run redis-rejson
+	docker run -p 6379:6379 --name redis-rejson redislabs/rejson:latest
+
+Connect redis-cli container to redis-rejson container
+	docker run -it --link redis-rejson:redis --rm redis redis-cli -h redis -p 6379
