@@ -15,3 +15,7 @@ Set json entry
 	rejson-cli JSON.SET doc . '{foo:bar, faz:42}'
 Get json entry
 	rejson-cli JSON.GET doc .faz
+Get all entries with letter o in the second position of the key
+	rejson-cli keys "?o*"
+Get dump.rdb file location
+	rejson-cli config get dir
