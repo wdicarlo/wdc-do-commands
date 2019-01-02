@@ -92,3 +92,7 @@ Copy a file inside the docker
 	docker cp ss.java myjenkins:/var/jenkins_home/jobs/
 Restart container
 	docker restart myjenkins
+Get volume mount point of a running container
+	docker inspect redis-rejson | grep Source
+Run a command in a running container
+	docker exec redis-rejson ps -eLF
