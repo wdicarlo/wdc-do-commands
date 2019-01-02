@@ -12,20 +12,12 @@ fi
 
 bakdir="$BACKUP_DIR"
 
-export MY_VIM_FILES=""
-
-export MY_FILES=`eval echo " \
-~/.bashrc \
-~/.bash_aliases \
-~/.notebook/* \
-$MY_VIM_FILES \
-"`
 MY_FILES=$(cat)
 
 if [ ${#MY_FILES} -eq 0 ]
 then
   echo "Please, provide paths of files to backup"
-  exit
+  exit 1
 fi
 
 files="$MY_FILES"
