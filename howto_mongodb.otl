@@ -13,5 +13,9 @@ Drop mydemo database
 Import json data
 	docker cp inventory.json mongo-server:/data/
 	docker exec mongo-server mongoimport --db mydemo --collection inventory --type json --file /data/inventory.json --jsonArray
-Find all items which have the item attribute starting with the letter l
+Find all items which have the item field starting with the letter l
 	do-mongo inventory 'find({item: { $regex: /^l/m } } )' # m is needed for patterns that need to use anchors like ^ (bol) or $ (eol)
+Find all items not containing devops in the web_url field
+	do-mongo projects 'find({web_url: { $not: /devops/ }  } ).toArray()' | grep web_url
+Print only id, web_url and name of the projects with the name contains the word core
+	do-mongo projects 'find({name: /core/},{_id: 0, id: 1, web_url: 1, name: 1}).toArray()'
