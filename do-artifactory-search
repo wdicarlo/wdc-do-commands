@@ -51,8 +51,13 @@ if [ "$ARTIFACTORY_REPO" == "" ]; then
     exit
 fi
 
+if [ "$ARTIFACTORY_API_KEY" == "" ]; then
+    echo "ARTIFACTORY_API_KEY not defined"
+    exit
+fi
+
 name="$1"
-cmd="curl -sS -H \"\" \"https://$ARTIFACTORY_SERVER/artifactory/api/search/artifact?name=$name&repos=$ARTIFACTORY_REPO\""
+cmd="curl -sS -H \"X-JFrog-Art-Api:$ARTIFACTORY_API_KEY\" \"https://$ARTIFACTORY_SERVER/artifactory/api/search/artifact?name=$name&repos=$ARTIFACTORY_REPO\""
 if [ $quiet -eq 0 ]; then
 	echo "> $cmd"
 fi
