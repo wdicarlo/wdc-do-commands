@@ -4,3 +4,5 @@ List github projects' name and URL
 	do-github-search -q -l java mongodb | jq  '[.items[]| {(.name): (.html_url)}]|add'
 Filter out github search result
 	do-github-search -q  xavante | jq  '[.items[]| {(.name): [(.html_url),(.language)]}]|add'
+Concatenate two json arrays
+	jq --argjson arr1 "$firstArr" --argjson arr2 "$secondArr" -n '$arr2 + $arr1'
