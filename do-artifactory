@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+	echo "Usage: $cmd [-h] "
+	echo "where:"
+	echo "       -l                          : get list of files"
+	echo "       -i                          : get folder/file info"
+	echo "       -s                          : search"
+	echo "       -h                          : print this help"
+	echo "       -q                          : quiet"
+	echo "       -n                          : dry run"
+}
+
+
+quiet=0
+sorting="sort=stars"
+order="order=desc"
+dryrun=0
+search=0
+list=0
+info=0
+while getopts hqnsli flag
+do
+	case $flag in
+		i)
+			info=1
+			;;
+		l)
+			list=1
+			;;
+		s)
+			search=1
+			;;
+		n)
+			dryrun=1
+			;;
+		q)
+			quiet=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+    echo "Missing name of the artifact to search"
+    exit
+fi
+
+if [ "$ARTIFACTORY_SERVER" == "" ]; then
+    echo "ARTIFACTORY_SERVER not defined"
+    exit
+fi
+
+if [ "$ARTIFACTORY_REPO" == "" ]; then
+    echo "ARTIFACTORY_REPO not defined"
+    exit
+fi
+
+if [ "$ARTIFACTORY_API_KEY" == "" ]; then
+    echo "ARTIFACTORY_API_KEY not defined"
+    exit
+fi
+
+cmd=""
+if [ $list -eq 1 ]; then
+    folder_path="$1"
+    cmd="curl -sS -H \"X-JFrog-Art-Api:$ARTIFACTORY_API_KEY\" \"https://$ARTIFACTORY_SERVER/artifactory/api/storage/$ARTIFACTORY_REPO/$folder_path?list&deep=1&depth=99&listFolders=1\""
+fi
+if [ $info -eq 1 ]; then
+    item_path="$1"
+    cmd="curl -sS -H \"X-JFrog-Art-Api:$ARTIFACTORY_API_KEY\" \"https://$ARTIFACTORY_SERVER/artifactory/api/storage/$ARTIFACTORY_REPO/$item_path\""
+fi
+
+if [ "$cmd" == "" ]; then
+    search=1 # default
+fi
+if [ $search -eq 1 ]; then
+    name="$1"
+    cmd="curl -sS -H \"X-JFrog-Art-Api:$ARTIFACTORY_API_KEY\" \"https://$ARTIFACTORY_SERVER/artifactory/api/search/artifact?name=$name&repos=$ARTIFACTORY_REPO\""
+fi
+if [ $quiet -eq 0 ]; then
+	echo "> $cmd"
+fi
+if [ $dryrun -eq 0 ]; then
+    eval "$cmd"
+fi
+
