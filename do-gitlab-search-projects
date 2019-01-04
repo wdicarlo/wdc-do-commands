@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+# TODO; concatenate multi-page results
+# TODO: remove dependency from json_pp
+
+cmd=`basename $0`
+
+function usage() {
+	echo "Usage: $cmd [-h] [-p <num_pages>] [-q] [-n] [<search_topic>]"
+	echo "where:"
+	echo "       -p <num_pages>              : number of pages to retrieve"
+	echo "       -h                          : print this help"
+	echo "       -q                          : quiet"
+	echo "       -n                          : dry run"
+}
+
+
+quiet=0
+dryrun=0
+pages=1
+while getopts hqnp: flag
+do
+	case $flag in
+		p)
+			pages=$OPTARG
+			;;
+		n)
+			dryrun=1
+			;;
+		q)
+			quiet=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ "$GITLAB_SERVER" == "" ]; then
+    echo "GITLAB_SERVER not defined"
+    exit
+fi
+
+if [ "$GITLAB_GROUPID" == "" ]; then
+    echo "GITLAB_GROUPID not defined"
+    exit
+fi
+
+if [ "$TOKEN" == "" ]; then
+    echo "Missing TOKEN value"
+    exit
+fi
+
+token="PRIVATE-TOKEN: $TOKEN"
+url_groups="https://$GITLAB_SERVER/api/v4/groups"
+groupid="$GITLAB_GROUPID"
+search="$1"
+
+for counter in $(seq 1 $pages);
+do
+    cmd="curl --header \"$token\" \"$url_groups/$groupid/-/search?page=$counter&per_page=100&scope=projects&simple=true&search=$search\" | json_pp"
+    if [ $quiet -eq 0 ]; then
+       echo "> $cmd"
+    fi
+    if [ $dryrun -eq 0 ]; then
+       eval "$cmd"
+    fi
+done
