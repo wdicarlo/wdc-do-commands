@@ -96,3 +96,5 @@ Get volume mount point of a running container
 	docker inspect redis-rejson | grep Source
 Run a command in a running container
 	docker exec redis-rejson ps -eLF
+Copy local file into a running container
+	docker cp inventory.json mongo-server:/data/
