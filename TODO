@@ -13,6 +13,7 @@ Commands to evaluate:
     bats
     cats
     watchdog (https://github.com/gorakhargosh/watchdog.git)
+    github.com/micha/json-table
 Integrate vim notebooks
 Evaluate command history by folder
 Add todo management
