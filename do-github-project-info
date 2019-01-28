@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+	echo "Usage: $cmd [-h] [-t <topic>] [-n]  project"
+	echo "where:"
+	echo "       -h                          : print this help"
+	echo "       -q                          : quiet"
+	echo "       -n                          : dry run"
+}
+
+
+quiet=0
+dryrun=0
+while getopts hqn flag
+do
+	case $flag in
+		n)
+			dryrun=1
+			;;
+		q)
+			quiet=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+project=""
+if [ $# -gt 0 ]; then
+	project="$1"
+fi
+
+cmd="curl -sS -H \"Authentication: token $GITHUB_TOKEN\" -H \"Accept: application/vnd.github.mercy-preview+json\" \"https://api.github.com/repos/$project\""
+if [ $quiet -eq 0 ]; then
+	echo "> $cmd"
+fi
+if [ $dryrun -eq 0 ]; then
+    eval "$cmd"
+fi
