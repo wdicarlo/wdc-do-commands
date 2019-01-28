@@ -1,0 +1,8 @@
+GitHub
+	GitHub howtos
+Get connection information
+	curl -i https://api.github.com/user
+Get own user details
+	curl -i -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user
+Get project details
+	curl -i -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/rstudio/leaflet
