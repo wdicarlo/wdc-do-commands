@@ -8,3 +8,4 @@ Concatenate two json arrays
 	jq --argjson arr1 "$firstArr" --argjson arr2 "$secondArr" -n '$arr2 + $arr1'
 Print fields in columns
 	cat r_packages_info.json | jq '. | "\(.full_name); \(.description)"'
+	cat r_packages_info.json | jq '. | .full_name + ";" + .description'
