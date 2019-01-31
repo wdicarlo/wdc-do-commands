@@ -19,3 +19,7 @@ Find all items not containing devops in the web_url field
 	do-mongo projects 'find({web_url: { $not: /devops/ }  } ).toArray()' | grep web_url
 Print only id, web_url and name of the projects with the name contains the word core
 	do-mongo projects 'find({name: /core/},{_id: 0, id: 1, web_url: 1, name: 1}).toArray()'
+Backup database
+	docker run -it --link $MONGODB_CONTAINER_NAME:mongo --rm -v $PROJECT_PATH/backups/backup-20190128:/backup mongo bash -c 'mongodump --out /backup --host mongo:27017'
+Find specific items and print only few fields (nested included)
+	do-mongo issues 'find({key:{$regex: /MYJIRA/ }},{'key':true,'_id':false,"fields.created":true}).toArray()'
