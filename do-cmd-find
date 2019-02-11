@@ -8,6 +8,7 @@ function usage() {
     echo "Usage: $cmd [-h] [-q] <string>"
     echo "where:"
     echo "       -h                          : print this help"
+    echo "       -f                          : find the filenames"
     echo "       -c                          : find in all commands (even not versioned)"
     echo "       -a                          : find in all files (even not versioned)"
     echo "       -o                          : find only in the options"
@@ -18,11 +19,15 @@ function usage() {
 quiet=0
 all=0
 options=0
-while getopts hqaoc flag
+files=0
+while getopts hqaocf flag
 do
     case $flag in
 	o)
 	    options=1
+	    ;;
+	f)
+	    files=1
 	    ;;
 	c)
 	    all=1
@@ -55,15 +60,19 @@ fi
 cd ~/bin
 cmd="git ls-files | grep \"^do[-_].*\""
 if [ $all -eq 1 ]; then
-	cmd="find . -maxdepth 1 -name \"do[-_]*\" | sed 's#^\.\/##'"
+    cmd="find . -maxdepth 1 -name \"do[-_]*\" | sed 's#^\.\/##'"
 elif [ $all -eq 2 ]; then
-	cmd="find . -not -path \"./.git/*\" -type f | sed 's#^\.\/##'"
+    cmd="find . -not -path \"./.git/*\" -type f | sed 's#^\.\/##'"
 fi
 
-if [ $options -eq 0 ]; then
-	cmd="$cmd | xargs -I@ \grep --color -Hn $@ @"
+if [ $files -eq 1 ]; then
+    cmd="$cmd | grep $@"
 else
-	cmd="$cmd | xargs -I@ grep -Hn \"getopts.*h\" @ |sed 's/^\([a-z-]*\):.*/\1/'|sort|uniq|xargs -I@ sh -c \"@ -h\"| \grep --color \"do[-_][a-z_-]*\|$@\""
+    if [ $options -eq 0 ]; then
+        cmd="$cmd | xargs -I@ \grep --color -Hn $@ @"
+    else
+        cmd="$cmd | xargs -I@ grep -Hn \"getopts.*h\" @ |sed 's/^\([a-z-]*\):.*/\1/'|sort|uniq|xargs -I@ sh -c \"@ -h\"| \grep --color \"do[-_][a-z_-]*\|$@\""
+    fi
 fi
 
 # Quieting command output
