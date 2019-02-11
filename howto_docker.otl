@@ -98,3 +98,7 @@ Run a command in a running container
 	docker exec redis-rejson ps -eLF
 Copy local file into a running container
 	docker cp inventory.json mongo-server:/data/
+Restart docker service
+	sudo service docker restart
+Example of nginx docker usage
+	docker run --name datatable_demo -p 8888:80 -v $PROJECT_PATH/datatable_demo:/usr/share/nginx/html:ro -d nginx:alpine
