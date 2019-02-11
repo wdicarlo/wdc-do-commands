@@ -31,5 +31,5 @@ mongo_cmd=$(quote "$2")
 #cmd="docker run -it --link $MONGODB_CONTAINER_NAME:mongo --rm mongo mongo $MONGODB_DB_NAME --host mongo --eval \"db.${mongo_collection}.${mongo_cmd}.toArray()\""
 cmd="docker run -it --link $MONGODB_CONTAINER_NAME:mongo --rm mongo mongo $MONGODB_DB_NAME --host mongo --eval \"db.${mongo_collection}.${mongo_cmd}\""
 
-#echo "> $cmd"
+echo "> $cmd"
 eval "$cmd"
