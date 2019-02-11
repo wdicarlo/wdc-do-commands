@@ -9,3 +9,6 @@ Concatenate two json arrays
 Print fields in columns
 	cat r_packages_info.json | jq '. | "\(.full_name); \(.description)"'
 	cat r_packages_info.json | jq '. | .full_name + ";" + .description'
+Convert CSV to JSON
+	cat data.csv | jq -Rsn '{occurrences: [inputs | . / "
+" | (.[] | select(length > 0) | . / ";") as  | {"name": [$input[0], $input[1]], "address": {"city": $input[2]}}]}'
