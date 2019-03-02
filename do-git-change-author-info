@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+
+# see https://help.github.com/en/articles/changing-author-info
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+   echo "Usage: $cmd [-h] [-q] [-n] [-v] <old_email> <name> <email>"
+   echo "where:"
+   echo "       -h                          : print this help"
+   echo "       -n                          : dry run"
+   echo "       -v                          : verbose"
+   echo "       -q                          : quiet"
+}
+
+items="config HEAD info objects refs"
+list=$(ls -1)
+for item in $items;
+do
+    if [ "$(echo "$list" | grep "$item")" == "" ]; then
+        echo "It seems we are not in a bare git repository"
+        exit
+     fi
+done
+
+# Arguments processing
+quiet=0
+dryrun=0
+verbose=0
+while getopts hqnv flag
+do
+case $flag in
+  v)
+      verbose=1
+      ;;
+  q)
+      quiet=1
+      ;;
+  n)
+      dryrun=1
+      ;;
+  h)
+      usage
+      exit
+      ;;
+  ?)
+      usage
+      exit
+      ;;
+   esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -ne 3 ]; then
+   usage
+   exit
+fi
+
+if [ $dryrun -eq 1 ]; then
+    echo "git filter-branch --env-filter '
+
+OLD_EMAIL=\"$1\"
+CORRECT_NAME=\"$2\"
+CORRECT_EMAIL=\"$3\"
+
+if [ \"$GIT_COMMITTER_EMAIL\" = \"$OLD_EMAIL\" ]
+then
+    export GIT_COMMITTER_NAME=\"$CORRECT_NAME\"
+    export GIT_COMMITTER_EMAIL=\"$CORRECT_EMAIL\"
+fi
+if [ \"$GIT_AUTHOR_EMAIL\" = \"$OLD_EMAIL\" ]
+then
+    export GIT_AUTHOR_NAME=\"$CORRECT_NAME\"
+    export GIT_AUTHOR_EMAIL=\"$CORRECT_EMAIL\"
+fi
+' --tag-name-filter cat -- --branches --tags"
+    exit
+fi
+
+# git filter-branch --env-filter '
+# 
+# OLD_EMAIL="$1"
+# CORRECT_NAME="$2"
+# CORRECT_EMAIL="$3"
+# 
+# # if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]
+# # then
+#     export GIT_COMMITTER_NAME="$CORRECT_NAME"
+#     export GIT_COMMITTER_EMAIL="$CORRECT_EMAIL"
+# # fi
+# # if [ "$GIT_AUTHOR_EMAIL" = "$OLD_EMAIL" ]
+# # then
+#     export GIT_AUTHOR_NAME="$CORRECT_NAME"
+#     export GIT_AUTHOR_EMAIL="$CORRECT_EMAIL"
+# # fi
+# ' --tag-name-filter cat -- --branches --tags HEAD
+
+# git filter-branch --commit-filter '
+#       if [ "$GIT_AUTHOR_EMAIL" = "$1" ];
+#       then
+#               GIT_AUTHOR_NAME="$2";
+#               GIT_AUTHOR_EMAIL="$3";
+#               GIT_COMMITTER_NAME="$2";
+#               GIT_COMMITTER_EMAIL="$3";
+#               git commit-tree "$@";
+#       else
+#               git commit-tree "$@";
+#       fi' HEAD
+
+# git filter-branch -f --env-filter \
+# "GIT_AUTHOR_NAME='Walter Di Carlo'; GIT_AUTHOR_EMAIL='walter@di-carlo.it'; GIT_COMMITTER_NAME='walter@di-carlo.it'; GIT_COMMITTER_EMAIL='walter@di-carlo.it';" HEAD
+git filter-branch -f --env-filter \
+"GIT_AUTHOR_NAME='$2'; GIT_AUTHOR_EMAIL='$3'; GIT_COMMITTER_NAME='$2'; GIT_COMMITTER_EMAIL='$3';" HEAD
