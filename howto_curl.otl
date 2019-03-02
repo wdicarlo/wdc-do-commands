@@ -1,0 +1,4 @@
+cURL how tp
+	List of how to for curl tool
+Health check an Artifactory server
+	curl  https://$ARTIFACTORY_SERVER/artifactory/api/system/ping
