@@ -12,3 +12,9 @@ Print fields in columns
 Convert CSV to JSON
 	cat data.csv | jq -Rsn '{occurrences: [inputs | . / "
 " | (.[] | select(length > 0) | . / ";") as  | {"name": [$input[0], $input[1]], "address": {"city": $input[2]}}]}'
+Build JSON with values of another JSON
+	cat data.json | jq '[.[].fields | {(.customfield_29497): (.summary)}]'
+Filter and rename JSON fields
+	cat data.json | jq '[.[].fields | {"id": (.customfield_29497),"name": (.summary),"status":(.status.name),"offering":(.customfield_37062.value)}]'
+Filter items by value of a field
+	cat data.json | jq '.[] | select( .status | contains("MOCKUP","WAIT") )'
