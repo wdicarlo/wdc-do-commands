@@ -7,4 +7,7 @@ if [ -t 0 ]; then
 fi
 
 # filter terminal control characters
-cat | tr -d '[:cntrl:]' | sed "s#\[0m#\n#g"
+#cat | tr -d '[:cntrl:]' | sed "s#\[0m#\n#g"
+
+# https://stackoverflow.com/a/18000433
+cat | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
