@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 
-filenames=$(do-find-files "*.txt" | sort -r)
+if [ $# -gt 0 ]; then
+    if [ ! -d "$1" ]; then
+        echo "Not a valid folder: $1"
+        exit 1
+    fi  
+    filenames=$(do-find-files -r "$1" "*.txt" | sort -r)
+else
+    filenames=$(do-find-files "*.txt" | sort -r)
+fi
+
+
 names=$(echo "$filenames" | sed 's/_[0-9]*\.txt//' | grep -v "\.txt" | uniq)
 
 files=""
