@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+bakfile="backup"
+curdate="`date '+%y%m%d-%H%M%S'`"
+bakdir=`echo ~/backups`
+
+if [ "$DOCUMENTS_DIR" == "" ]; then
+	echo "Missing DOCUMENTS_DIR"
+	exit 1
+fi
+
+if [ $1 ]; then
+	tarfile="$bakdir/$bakfile-$curdate-$1"
+else
+	tarfile="$bakdir/$bakfile-$curdate"
+fi
+
+do-list-uniq-text-files "$DOCUMENTS_DIR" | do-pipe-to-tar $tarfile
+
+FILES=$(tar -tjf $tarfile.tar.bz2)
+echo "Backup file: $tarfile.tar.bz2"
+echo "Backuped $(echo $FILES|sed 's/ /\n/g' |wc -l) files"
+echo $FILES|sed 's/ /\n/g' |head -10
+echo "..."
