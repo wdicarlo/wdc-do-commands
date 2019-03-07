@@ -25,5 +25,5 @@ if [ -f "$ctar" ]; then
     exit
 fi
 
-cat | xargs -I@ tar -rf "$tar" @ 
+cat | xargs -I@ tar -rf "$tar" @ > /dev/null 2>&1
 bzip2  "$tar"
