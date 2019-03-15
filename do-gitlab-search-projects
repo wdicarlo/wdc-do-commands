@@ -64,7 +64,7 @@ search="$1"
 
 for counter in $(seq 1 $pages);
 do
-    cmd="curl --header \"$token\" \"$url_groups/$groupid/-/search?page=$counter&per_page=100&scope=projects&simple=true&search=$search\" | json_pp"
+    cmd="curl -Ss --header \"$token\" \"$url_groups/$groupid/-/search?page=$counter&per_page=100&scope=projects&simple=true&search=$search\" | json_pp"
     if [ $quiet -eq 0 ]; then
        echo "> $cmd"
     fi
