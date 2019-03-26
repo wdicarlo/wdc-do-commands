@@ -18,3 +18,7 @@ Filter and rename JSON fields
 	cat data.json | jq '[.[].fields | {"id": (.customfield_29497),"name": (.summary),"status":(.status.name),"offering":(.customfield_37062.value)}]'
 Filter items by value of a field
 	cat data.json | jq '.[] | select( .status | contains("MOCKUP","WAIT") )'
+Extract all Bugs
+	cat tickets.json | jq '.[] | [select( .fields.issuetype.name | contains("Bug") )]' | jq '.[] | "\(.key);\(.fields.description)"'
+Join json files
+	cat json_files/* | jq '.' | jq -s '.'
