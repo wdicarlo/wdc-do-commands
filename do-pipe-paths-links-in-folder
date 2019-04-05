@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+
+if [ ! $# == 2 ]
+then
+    app=`basename $0`
+    echo "Usage: <pipe_absolute_paths> | $app <pattern> <dest-folder>"
+    exit
+
+fi
+
+
+curr_path=$PWD
+curr_folder=`basename $PWD`
+
+
+if [ ! -d "$2" ]
+then
+    echo "$2 does not exists"
+    exit
+fi
+
+cd "$2"
+
+cat | grep "^/" | grep "$1" | while read -r filepath
+do
+    path=$(dirname $filepath)
+    filename=$(basename $filepath)
+    cmd="ln -s $path/$filename $filename"
+    echo "> $cmd"
+    eval "$cmd"
+done
