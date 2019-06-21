@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+# source: https://stackoverflow.com/a/15606900
+
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+   echo "Usage: $cmd [-h] [-q] [-n] [-v] [-d] [-s] [-t] <week_number> <year>"
+   echo "where:"
+   echo "       -t                          : text rapresentation"
+   echo "       -h                          : print this help"
+   echo "       -s                          : print days range start,end for a 2 weeks sprint"
+   echo "       -d                          : print days range start,end"
+   echo "       -n                          : dry run"
+   echo "       -v                          : verbose"
+   echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+dryrun=0
+verbose=0
+dayrange=0
+sprint=0
+text=0
+while getopts hqnvdst flag
+do
+case $flag in
+  t)
+      text=1
+      ;;
+  s)
+      sprint=1
+      ;;
+  d)
+      dayrange=1
+      ;;
+  v)
+      verbose=1
+      ;;
+  q)
+      quiet=1
+      ;;
+  n)
+      dryrun=1
+      ;;
+  h)
+      usage
+      exit
+      ;;
+  ?)
+      usage
+      exit
+      ;;
+   esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -ne 2 ]; then
+   usage
+   exit
+fi
+
+
+function weekof()
+{
+    local week=$1 year=$2
+    local week_num_of_Jan_1 week_day_of_Jan_1
+    local first_Mon
+    local date_fmt="+%FT%T"
+    if [ $text -eq 1 ]; then
+        date_fmt="+%a %b %d %Y"
+    fi
+    if [ $dayrange -eq 1 ]; then
+        date_fmt="+%d"
+    fi
+    local mon sun
+    local days=6
+    if [ $sprint -eq 1 ]; then
+        days=13
+    fi
+
+    week_num_of_Jan_1=$(date -d $year-01-01 +%W)
+    week_day_of_Jan_1=$(date -d $year-01-01 +%u)
+
+    if ((week_num_of_Jan_1)); then
+        first_Mon=$year-01-01
+    else
+        first_Mon=$year-01-$((01 + (7 - week_day_of_Jan_1 + 1) ))
+    fi
+
+    mon=$(date -d "$first_Mon +$((week - 1)) week" "$date_fmt")
+    sun=$(date -d "$first_Mon +$((week - 1)) week + $days day" "$date_fmt")
+    if [ $dayrange -eq 0 ]; then
+        echo "\"$mon\";\"$sun\""
+    else
+        echo "$mon;$sun"
+    fi
+}
+
+weekof $1 $2 | tr -d '"'
