@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [-h] [-q] [-d|-r] [<cal_parameters]"
+        echo "where:"
+        echo "       -r                          : range"
+        echo "       -d                          : days"
+        echo "       -h                          : print this help"
+        echo "       -q                          : quiet"
+        echo "Examples: "
+        echo "$cmd 03 2019 
+     March 2019       
+Su Mo Tu We Th Fr Sa  
+                1  2  
+ 3  4  5  6  7  8  9  
+10 11 12 13 14 15 16  
+17 18 19 20 21 22 23  
+24 25 26 27 28 29 30  
+31                    
+"
+}
+
+# Arguments processing
+quiet=0
+postproc=""
+range=0
+while getopts hqdr flag
+do
+    case $flag in
+    r)
+        range=1
+        ;;
+    d)
+        postproc="| awk 'NF {DAYS = \$NF}; END {print DAYS}'"
+        ;;
+    q)
+        quiet=1
+        ;;
+    h)
+        usage
+        exit
+        ;;
+    ?)
+        usage
+        exit
+        ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+cmd="cal $@ $postproc"
+if [ $range -eq 1 ]; then
+    day1=$(echo "$@" | while read a b; do echo "$a/01/$b"; done)
+    startdate=$(date -d $day1 '+%Y-%m-%dT00:00:00')
+    dayn=$(echo "$@" | while read a b; do c=$(cal $@ | awk 'NF {DAYS = $NF}; END {print DAYS}'); echo "$a/$c/$b"; done)
+    enddate=$(date -d $dayn '+%Y-%m-%dT00:00:00')
+    cmd="echo $startdate $enddate"
+fi
+if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+fi
+eval "$cmd"
