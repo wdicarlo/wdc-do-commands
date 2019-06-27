@@ -16,10 +16,10 @@ fi
 
 # TODO: use the readlink -f command
 folder=`file $1 | tr -d "\'" | awk '{print $5}'`
-folder=${folder:1}
+#folder=${folder:1}
 if [ -f "$folder" ]
 then
-    folder=`dirname $folder`
+    folder=$(dirname $folder)
 fi
 if [ ! -d "$folder" ]
 then
