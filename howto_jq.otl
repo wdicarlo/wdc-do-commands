@@ -22,3 +22,7 @@ Extract all Bugs
 	cat tickets.json | jq '.[] | [select( .fields.issuetype.name | contains("Bug") )]' | jq '.[] | "\(.key);\(.fields.description)"'
 Join json files
 	cat json_files/* | jq '.' | jq -s '.'
+Convert string date to timestamp number
+	echo "{ \"date\": \"2015-03-05T23:51:47Z\" }" | jq '.date|fromdateiso8601'
+Filter by date
+	cat data.json |sed 's/\.[0-9]\+Z/Z/'| jq '.[] | select(.created_at|fromdateiso8601 > 1561327200)'
