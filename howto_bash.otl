@@ -22,3 +22,7 @@ Sleep and wait last background process
 	sleep 10 & wait ${1}
 The Art of Command Line
     curl -s 'https://raw.githubusercontent.com/jlevy/the-art-of-command-line/master/README.md' | egrep -o '`\w+`' | tr -d '`'
+Check if script is run in a terminal or in a pipe
+	if [ -t 1 ] ; then echo terminal; else echo "not a terminal"; fi
+Check if the pipe usage is detected
+	(if [ -t 1 ] ; then echo terminal; else echo "not a terminal"; fi) | cat

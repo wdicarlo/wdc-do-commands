@@ -102,3 +102,5 @@ Restart docker service
 	sudo service docker restart
 Example of nginx docker usage
 	docker run --name datatable_demo -p 8888:80 -v $PROJECT_PATH/datatable_demo:/usr/share/nginx/html:ro -d nginx:alpine
+Bypass ENTRYPOINT command
+	docker run --entrypoint "/bin/sh" -i  myimage
