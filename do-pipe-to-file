@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+
+if [ $# -ne 2 ]; then
+    echo "Missing folder and extension"
+    exit 1
+fi
+
+if [ ! -d "$1" ]; then
+    echo "$1 is not a folder"
+    exit 1
+fi
+
+
+curdate="`date '+%y%m%d-%H%M%S'`"
+
+filename="$1-$curdate.$2"
+
+cat > "$1/$filename"
+
+ls -l "$1/$filename"
+cat "$1/$filename" | head -5
