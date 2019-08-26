@@ -5,17 +5,37 @@ function usage()
 {
     cmd=`basename $0`
     echo "Copy files recreating the source folders tree and the destination folder"
-    echo "Usage: $cmd [-m] <src1>...<srcn> <dst>"
+    echo "Usage: $cmd [-m] [-f] [-a] [-r] [-R] <src1>...<srcn> <dst>"
     echo "             -m                   : move the file"
     echo "             -f                   : just consider the source file/s, not the location"
+    echo "             -a                   : if destination file exist, add a new version"
+    echo "             -r                   : if destination file exist, backup it and replace it"
+    echo "             -R                   : if destination file exist, just replace it"
+    echo "             -q                   : quiet"
+    echo "             -n                   : dry run"
     exit
 }
 
 move=0
 foldertree=1
-while getopts hmqf flag
+replace=0
+dryrun=0
+quiet=0
+while getopts hmqfrRna flag
 do
     case $flag in
+        a)
+            replace=3
+            ;;
+        R)
+            replace=2
+            ;;
+        r)
+            replace=1
+            ;;
+        n)
+            dryrun=1
+            ;;
         m)
             move=1
             ;;
@@ -58,6 +78,25 @@ fi
 curdate="`date '+%y%m%d-%H%M%S'`"
 num=$(($# - 1))
 count=0
+dest="$(dirname $dest)/$(basename $dest)"
+if [ $dryrun -eq 0 ]; then
+# pre-check if a file is already present
+    for file in $@; do
+        from=$file
+        if [ $foldertree -eq 1 ]; then
+            to=$dest/$from
+        else
+            to=$dest/$(basename $from)
+        fi
+
+        if [ -f $to ]; then
+            if [ $replace -eq 0 ]; then
+                echo "Destination already exist: $to"
+                exit
+            fi
+        fi
+    done
+fi
 for file in $@; do
     from=$file
     if [ $foldertree -eq 1 ]; then
@@ -70,19 +109,41 @@ for file in $@; do
         mkdir -p $parent
     fi
 
+    backup="true" # could use : but is less readable
     if [ -f $to ]; then
-        to="$to-$curdate"
+        if [ $replace -eq 0 ]; then
+            echo "Destination already exist: $to"
+            count=$(($count + 1))
+            if [ $count -eq $num ]; then
+                break #skip last parameter
+            fi
+            continue
+        elif [ $replace -eq 3 ]; then
+            toname="${to%.*}"
+            toext="${to##*.}"
+            to="$toname-$curdate.$toext"
+        elif [ $replace -eq 1 ]; then
+            toname="${to%.*}"
+            toext="${to##*.}"
+            backup="cp $to $toname-$curdate.$toext"
+        fi
     fi
     if [ $move -eq 1 ]; then
-        cmd="mv $from $to"
+        cmd="$backup; mv $from $to"
     else
-        cmd="cp $from $to"
+        cmd="$backup; cp $from $to"
     fi
-    echo "> $cmd"
-    eval "$cmd"
+    if [ $quiet -eq 0 ]; then
+        echo "> $cmd"
+    fi
+    if [ $dryrun -eq 0 ]; then
+        eval "$cmd"
+    fi
     count=$(($count + 1))
     if [ $count -eq $num ]; then
         break #skip last parameter
     fi
 done
-last $dest
+if [ $dryrun -eq 0 ]; then
+    last $dest
+fi
