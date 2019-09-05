@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+if [ $# == 0 ]
+then
+   cmd=`basename $0`
+   echo "Usage: $cmd <grep_pattern>"
+   exit
+fi
+
+grep -Hn "$1" $(ls -1 ~/bin/howto_*.otl) | sed 's#\(.*\)/howto_\([a-z_]\+\).otl#\2#'|grep --color "^\|$1"
