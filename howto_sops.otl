@@ -1,0 +1,15 @@
+SOPS: Secrets OPerationS
+	sops is an editor of encrypted files that support YAML, JSON, ENV, INI and BINARY formats and encrypts with AWS KMS, GCP KMS, AZURE Key Vault and PGP
+Clone git project
+	git clone https://github.com/mozilla/sops.git
+SOPS config file .sops.yaml
+	creation_rules:
+    - pgp: '5246BEBFDBB0A54B40037A24EEEAF87FE5F5EEB5'
+Create a new yaml file with encripted values. Just change the template and save
+	sops -i helloworld.yaml
+Pipe a key
+	sops --decrypt mysecret.yaml | kubectl apply -f -
+WARNING! Don't change the file already encripted with a text editor
+	Otherwise the file will not be decrypted by sops
+Decrypt and Extract the value of a yaml node
+	sops -d --extract '["dev"]["devkit_account"]["user"]' helloworld.yaml
