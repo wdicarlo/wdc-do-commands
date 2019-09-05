@@ -1,0 +1,8 @@
+GnuPG
+	A complete and free implementation of the OpenPGP standard
+Precondition for a user to generate keys
+	The user must be part of the tty group and $(tty) device must have rw permission for the tty group
+Generate a new key
+	gpg --generate-key
+List kets
+	gpg --list-keys
