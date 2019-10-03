@@ -2,3 +2,7 @@ cURL how tp
 	List of how to for curl tool
 Health check an Artifactory server
 	curl  https://$ARTIFACTORY_SERVER/artifactory/api/system/ping
+Verbose execution
+	curl -v -X GET "https://httpbin.org/status/404" -H  "accept: text/plain"
+Print header of messages
+	curl -i -X GET "https://httpbin.org/status/404" -H  "accept: text/plain"

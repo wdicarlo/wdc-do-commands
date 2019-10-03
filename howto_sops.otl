@@ -1,5 +1,14 @@
 SOPS: Secrets OPerationS
 	sops is an editor of encrypted files that support YAML, JSON, ENV, INI and BINARY formats and encrypts with AWS KMS, GCP KMS, AZURE Key Vault and PGP
+Best practice about how many keys should be used
+    The recommended way to use sops is to have two KMS master keys in different regions and one PGP public key with
+    the private key stored offline. If, by any chance, both KMS master keys are lost, you can always recover the encrypted data using the PGP private key.
+Best practice about where to store PGP private keys
+    Store PGP private key on smart cards or offline as often as possible.
+Best practice about length of PGP keys
+     Rely on strong keys isuch as 2048+ bits RSA keys, or 256+ bits ECDSA keys
+Best practice about weak AES cryptography
+    Keep encrypted files reasonably private
 Clone git project
 	git clone https://github.com/mozilla/sops.git
 SOPS config file .sops.yaml
@@ -13,3 +22,9 @@ WARNING! Don't change the file already encripted with a text editor
 	Otherwise the file will not be decrypted by sops
 Decrypt and Extract the value of a yaml node
 	sops -d --extract '["dev"]["devkit_account"]["user"]' helloworld.yaml
+Decrypt and Extract a valaue using yq to select it
+	sops -d --extract '' helloworld.yaml | yq r - dev.gitlab_account.user
+Add key to an encrypted file
+	sops -r --add-pgp <fingerprint>  -i mysecrets.yaml
+Encrypt only values of a specified suffix
+	sops -p <fingerprint> -i --encrypt --encrypted-suffix '<suffix>' mysecrets.yaml

@@ -6,3 +6,11 @@ Generate a new key
 	gpg --generate-key
 List kets
 	gpg --list-keys
+Export secret keys
+	gpg --export-secret-keys > my-private-key.asc
+Export public key in ASCII format
+	gpg --armor --export <fingerprint> > mypubkey.asc
+Import public key
+	gpg --import pubkey.asc
+Change key trust level
+	gpg --edit-key <fingerprint>
