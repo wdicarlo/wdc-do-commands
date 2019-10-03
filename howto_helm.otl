@@ -1,0 +1,8 @@
+Helm
+	Helm tool for Kubernetes
+Create initial helm chart
+	helm create helm_hello_world
+Use the helm template system
+	helm template helm_hello_world --name helm-hello-world --namespace hhm
+List revisions of deployed helm charts
+	helm list --all
