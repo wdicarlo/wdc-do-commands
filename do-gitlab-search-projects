@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
-# TODO; concatenate multi-page results
-# TODO: remove dependency from json_pp
-
 cmd=`basename $0`
 
 function usage() {
-	echo "Usage: $cmd [-h] [-p <num_pages>] [-q] [-n] [<search_topic>]"
+	echo "Usage: $cmd [-h] [-p <num_pages>] [-s <sec_to_sleep>] [-q] [-n] [-g <gitlab_server_domain>] [-t <gitlab_token>] [-i <group_id>] [<search_topic>]"
 	echo "where:"
+    echo "       -t <gitlab_token>           : gitlab token to overwrite the value in TOKEN"
+    echo "       -g <gitlab_server_domain>   : gitlab server domain to overwrite the value in GITLAB_SERVER"
+	echo "       -s <sec_to_sleep>           : seconds to sleep after each request"
+	echo "       -i <group_id>               : group ID to start search from to overwrite the value in GITLAB_GROUPID"
 	echo "       -p <num_pages>              : number of pages to retrieve"
 	echo "       -h                          : print this help"
 	echo "       -q                          : quiet"
@@ -18,9 +19,22 @@ function usage() {
 quiet=0
 dryrun=0
 pages=1
-while getopts hqnp: flag
+seconds=0
+while getopts hqnp:s:g:t:i: flag
 do
 	case $flag in
+		i)
+			GITLAB_GROUPID=$OPTARG
+			;;
+		t)
+			TOKEN=$OPTARG
+			;;
+		g)
+			GITLAB_SERVER=$OPTARG
+			;;
+		s)
+			seconds=$OPTARG
+			;;
 		p)
 			pages=$OPTARG
 			;;
@@ -64,11 +78,18 @@ search="$1"
 
 for counter in $(seq 1 $pages);
 do
-    cmd="curl -Ss --header \"$token\" \"$url_groups/$groupid/-/search?page=$counter&per_page=100&scope=projects&simple=true&search=$search\" | json_pp"
+    cmd="curl -Ss --header \"$token\" \"$url_groups/$groupid/-/search?page=$counter&per_page=100&scope=projects&simple=true&search=$search\""
     if [ $quiet -eq 0 ]; then
        echo "> $cmd"
     fi
     if [ $dryrun -eq 0 ]; then
-       eval "$cmd"
+           eval "$cmd | jq .[]"
     fi
-done
+    if [ $counter -lt $pages ] && [ $seconds -gt 0 ]; then
+        if [ $quiet -eq 0 ]; then
+           echo "waiting $seconds secs..."
+        fi
+
+        sleep $seconds
+    fi
+done | jq -s '.'
