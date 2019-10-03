@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+
+# Scope of jobs to show. Either one of or an array of the following: 
+# created, pending, running, failed, success, canceled, skipped, or manual. 
+# All jobs are returned if scope is not provided.
+
+cmd=`basename $0`
+
+function usage() {
+	echo "Usage: $cmd [-h] [-g <gitlab_server_domain>] [-t <gitlab_token>] [-p <num_pages>] [-q] [-n] [-i <num_items_per_pages>] [-s <sec_to_sleep>] [-b <start_date>] [-e <end_date>] <project_id>>"
+	echo "where:"
+    echo "       -t <gitlab_token>           : gitlab token to overwrite the value in TOKEN"
+    echo "       -g <gitlab_server_domain>   : gitlab server domain to overwrite the value in GITLAB_SERVER"
+	echo "       -b <start_date>             : start date range"
+	echo "       -e <end_date>               : end date range"
+	echo "       -s <sec_to_sleep>           : seconds to sleep after each request"
+	echo "       -i <num_items_per_pages>    : number of items per page to retrieve"
+	echo "       -p <num_pages>              : number of pages to retrieve"
+	echo "       -h                          : print this help"
+	echo "       -q                          : quiet"
+	echo "       -n                          : dry run"
+}
+
+
+quiet=0
+dryrun=0
+pages=1
+items=20
+seconds=0
+start_date=""
+end_date=""
+while getopts hqnp:i:s:b:e:g:t: flag
+do
+	case $flag in
+		t)
+			TOKEN=$OPTARG
+			;;
+		g)
+			GITLAB_SERVER=$OPTARG
+			;;
+		b)
+			start_date=$OPTARG
+			;;
+		e)
+			end_date=$OPTARG
+			;;
+		s)
+			seconds=$OPTARG
+			;;
+		i)
+			items=$OPTARG
+			;;
+		p)
+			pages=$OPTARG
+			;;
+		n)
+			dryrun=1
+			;;
+		q)
+			quiet=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -eq 0 ]; then
+    echo "Missing project id"
+    exit 1
+fi
+
+if [ "$GITLAB_SERVER" == "" ]; then
+    echo "GITLAB_SERVER not defined"
+    exit
+fi
+
+if [ "$GITLAB_GROUPID" == "" ]; then
+    echo "GITLAB_GROUPID not defined"
+    exit
+fi
+
+if [ "$TOKEN" == "" ]; then
+    echo "Missing TOKEN value"
+    exit
+fi
+
+token="PRIVATE-TOKEN: $TOKEN"
+url_projects="https://$GITLAB_SERVER/api/v4/projects"
+projectid="$1"
+
+opts=""
+if [ $quiet -eq 1 ]; then
+    opts="-sS"
+fi
+
+gitlab_opts=""
+if [ ! $start_date == "" ]; then
+    gitlab_opts="$gitlab_opts&since=$start_date"
+fi
+if [ ! $end_date == "" ]; then
+    gitlab_opts="$gitlab_opts&until=$end_date"
+fi
+
+concatenate=0
+if [ $pages -gt 1 ] || [ $pages -eq -1 ]; then
+    if [ $pages -eq -1 ]; then
+        cmd="curl -sS --head --header \"$token\" -I \"$url_projects/$projectid/jobs?scope[]=failed&scope[]=success&page=1&per_page=1$gitlab_opts\""
+        total=$(eval "$cmd" | grep "^x-total:" | sed 's/.* \([0-9]\+\).*/\1/')
+        pages=$(( ($total / $items) + 1 ))
+        if [ $pages -eq 0 ]; then 
+            exit
+        fi
+    fi
+    concatenate=1
+    echo "["
+fi
+if [ $pages -eq 0 ]; then 
+    exit
+fi
+# jq --argjson arr1 "$firstArr" --argjson arr2 "$secondArr" -n '$arr2 + $arr1' # this is failing
+for counter in $(seq 1 $pages);
+do
+    #startAt=$(( ($counter - 1) * $items ))
+
+    cmd="curl $opts --header \"$token\" \"$url_projects/$projectid/jobs?scope[]=failed&scope[]=success&page=${counter}&per_page=${items}${gitlab_opts}\""
+    if [ $quiet -eq 0 ]; then
+       echo "> $cmd"
+    fi
+    if [ $dryrun -eq 0 ]; then
+        if [ $concatenate -eq 0 ]; then
+           eval "$cmd | jq ."
+        else
+           if [ $counter -lt $pages ]; then
+               eval "$cmd | jq . | grep -v \"^\[\|^]\" | head -n -1" # remove last 1 lines, i.e. }
+               echo "   },"
+           else
+               eval "$cmd | jq . | grep -v \"^\[\|^]\""
+           fi
+        fi
+    fi
+    if [ $counter -lt $pages ] && [ $seconds -gt 0 ]; then
+        if [ $quiet -eq 0 ]; then
+           echo "waiting $seconds secs..."
+        fi
+
+        sleep $seconds
+    fi
+done
+if [ $dryrun -eq 0 ]; then
+    if [ $concatenate -eq 1 ]; then
+        echo "]"
+    fi
+fi
+
