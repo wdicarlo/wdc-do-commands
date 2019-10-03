@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# ls -1 demo | grep ".*_jobs_gitlabe[0-9].*"|sed 's/_jobs_gitlabe[0-9]//' | sort|uniq -c|grep "^[\t ]*1"|do-pipe-columns -t 2
+
+cmd=$(basename $0)
+
+if [ $# -ne 2 ]; then
+    echo "$cmd <path> <join_pattern>"
+    exit
+fi
+
+path="$1"
+join_pattern="$2"
+
+# process files just to rename
+for name in $(ls -1 $path | grep ".*${join_pattern}.*"|sed "s/${join_pattern}//" | sort|uniq -c|grep "^[\t ]*1"|do-pipe-columns -t 2|sed 's/\.json//')
+do
+    #echo $name
+    cmd="ls -1 $path | grep \"^${name}${join_pattern}.json\" | xargs -I@ mv \"$path/@\" \"$path/${name}.json\""
+    echo "> $cmd"
+    eval "$cmd"
+done
+
+# process files to be joined
+for name in $(ls -1 $path | grep ".*${join_pattern}.*"|sed "s/${join_pattern}//" | sort|uniq -c|grep -v "^[\t ]*1"|do-pipe-columns -t 2|sed 's/\.json//')
+do
+    #echo $name
+    files=$(ls -1 $path | grep "^${name}${join_pattern}.json" |sed "s#^#$path/#"| tr '\n' ' ')
+    cmd="cat $files | jq '.[]' | jq -s '.' > \"$path/${name}.json\""
+    echo "> $cmd"
+    eval "$cmd"
+    echo "> rm $files"
+    eval "rm $files"
+done
