@@ -1,0 +1,4 @@
+yq
+	a lightweight and portable command-line YAML processor. It aims to be the jq or sed of yaml files.
+Extract the value of an item
+	cat myconfig.yaml | yq r - a.b.c
