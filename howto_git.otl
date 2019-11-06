@@ -306,3 +306,5 @@ Display branch oriented log graph
 	git log --graph --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
 Display repository oriented log graph
 	git log --graph --full-history --all --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
+Set the remote URL
+	git remote set-url origin https://<domain>/scala-examples.git
