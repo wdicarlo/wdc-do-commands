@@ -9,24 +9,22 @@ function quote () {
     printf "%s" "$quoted"
 }
 function usage() {
-	echo "Usage: $cmd [-h] [-p <num_pages>] [-q] [-n] [-i <num_items_per_pages>] [-s <sec_to_sleep>] [-j <jira_server>] <project_id>>"
+	echo "Usage: $cmd [-h] [-p <num_pages>] [-n] [-i <num_items_per_pages>] [-s <sec_to_sleep>] [-j <jira_server>] <project_id>>"
 	echo "where:"
 	echo "       -j <jira_server>            : jira server domain name"
 	echo "       -s <sec_to_sleep>           : seconds to sleep after each request"
 	echo "       -i <num_items_per_pages>    : number of items per page to retrieve"
 	echo "       -p <num_pages>              : number of pages to retrieve"
 	echo "       -h                          : print this help"
-	echo "       -q                          : quiet"
 	echo "       -n                          : dry run"
 }
 
 
-quiet=0
 dryrun=0
 pages=1
 items=20
 seconds=0
-while getopts hqnp:i:s:j: flag
+while getopts hnp:i:s:j: flag
 do
 	case $flag in
 		j)
@@ -43,9 +41,6 @@ do
 			;;
 		n)
 			dryrun=1
-			;;
-		q)
-			quiet=1
 			;;
 		h)
 			usage
@@ -66,70 +61,41 @@ fi
 
 if [ "$JIRA_SERVER" == "" ]; then
     echo "JIRA_SERVER not defined"
-    exit 1
+    exit -1
 fi
 
 if [ "$DEVOPS_USER" == "" ]; then
     echo "DEVOPS_USER not defined"
-    exit 1
+    exit -1
 fi
 
 if [ "$DEVOPS_PASSWORD" == "" ]; then
     echo "DEVOPS_PASSWORD not defined"
-    exit 1
+    exit -1
 fi
 
 url_api="https://$JIRA_SERVER/rest/api/2/search"
 jql="project = $1 ORDER BY priority DESC, updated DESC" # search all issues whatever are their status
 jql_url=$(quote "$jql")
 
-
-opts=""
-if [ $quiet -eq 1 ]; then
-    opts="-sS"
+if [ $pages -eq -1 ]; then
+    cmd="curl -sS -u '$DEVOPS_USER:$DEVOPS_PASSWORD' -H \"Content-Type: application/json\" \"$url_api?startAt=$startAt&maxResults=1&jql=$jql_url\""
+    total=$(eval "$cmd" | jq '.total')
+    pages=$(( ($total / $items) + 1 ))
 fi
 
-concatenate=0
-if [ $pages -gt 1 ] || [ $pages -eq -1 ]; then
-    if [ $pages -eq -1 ]; then
-        cmd="curl -sS -XH -u $DEVOPS_USER:$DEVOPS_PASSWORD -X GET -H \"Content-Type: application/json\" \"$url_api?startAt=$startAt&maxResults=1&jql=$jql_url\""
-        total=$(eval "$cmd" | jq '.total')
-        pages=$(( ($total / $items) + 1 ))
-    fi
-    concatenate=1
-    echo "["
-fi
+
+opts="-sS"
 
 for counter in $(seq 1 $pages);
 do
     startAt=$(( ($counter - 1) * $items))
 
     cmd="curl -sS -XH -u $DEVOPS_USER:$DEVOPS_PASSWORD -X GET -H \"Content-Type: application/json\" \"$url_api?startAt=$startAt&maxResults=$items&jql=$jql_url\""
-    if [ $quiet -eq 0 ]; then
-       echo "> $cmd"
-    fi
     if [ $dryrun -eq 0 ]; then
-        if [ $concatenate -eq 0 ]; then
-           eval "$cmd | jq ."
-        else
-           if [ $counter -lt $pages ]; then
-               eval "$cmd | jq . | tail +7 | head -n -3" # remove first 7 lines and last 3 
-               echo "   },"
-           else
-               eval "$cmd | jq . | tail +7 | head -n -2" # remove first 7 lines and last 2 
-           fi
-        fi
+           eval "$cmd | jq '.issues|.[]'"
     fi
     if [ $counter -lt $pages ] && [ $seconds -gt 0 ]; then
-        if [ $quiet -eq 0 ]; then
-           echo "waiting $seconds secs..."
-        fi
-
         sleep $seconds
     fi
-done
-if [ $dryrun -eq 0 ]; then
-    if [ $concatenate -eq 1 ]; then
-        echo "]"
-    fi
-fi
+done | jq -s '.'
