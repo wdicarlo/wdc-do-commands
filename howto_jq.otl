@@ -36,3 +36,5 @@ Filter by number threshold
     echo "[{\"id\":1},{\"id\":\"B\"},{\"id\":\"C\"},{\"id\":4}]"|jq '.[].id | select(numbers) | select(. < 3)'
 Filter by number range
     echo "[{\"id\":1},{\"id\":\"B\"},{\"id\":\"C\"},{\"id\":4}]"|jq '.[].id | select(numbers) | select(. > 2 and . < 6)'
+Conditionally change values 
+    cat data.json | jq '.[] |if .key == "MYISSUE-2" then .fields.resolutiondate = "2019-07-01T17:22:52.000+0300" else . end'| jq '"\(.key);\(.fields.resolutiondate)"'
