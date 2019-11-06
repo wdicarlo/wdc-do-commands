@@ -28,3 +28,5 @@ Add key to an encrypted file
 	sops -r --add-pgp <fingerprint>  -i mysecrets.yaml
 Encrypt only values of a specified suffix
 	sops -p <fingerprint> -i --encrypt --encrypted-suffix '<suffix>' mysecrets.yaml
+Edit an encrypted file exposing the master secret keys
+	sops --show-master-keys cs_gitlab.yaml
