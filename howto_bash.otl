@@ -26,3 +26,5 @@ Check if script is run in a terminal or in a pipe
 	if [ -t 1 ] ; then echo terminal; else echo "not a terminal"; fi
 Check if the pipe usage is detected
 	(if [ -t 1 ] ; then echo terminal; else echo "not a terminal"; fi) | cat
+Process substitution
+	cat <(echo A) <(echo B)
