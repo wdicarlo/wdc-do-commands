@@ -1,0 +1,74 @@
+Pandashell
+	Tool to use Pandas library from the command line
+    Commands extracted from https://cbrownley.wordpress.com/2016/03/20/pandashells-data-science-with-python-on-the-command-line/
+    Commands extracted from https://github.com/robdmc/pandashells#dataframe-manipulations
+Alias for pandashells docker
+    alias p.example_data='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.example_data'
+    alias p.df='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.df'
+    alias p.facet_grid='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.facet_grid'
+    alias p.hist='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.hist'
+View first few rows of the dataframe
+    cat churn.csv | p.df 'df.head()'
+View first few rows of the dataframe
+    cat churn.csv | p.df 'df.head()'
+View number of rows and columns
+    cat churn.csv | p.df 'df["rows"], df["columns"] = df.shape' 'df[["rows", "columns"]]' 'df.head(1)' -o table
+Change column headings
+    cat churn.csv | p.df 'df.rename(columns={"State":"STATE", "Account Length":"ACCOUNT_LENGTH", "Area Code":"AREA_CODE", "Phone":"PHONE", "Intl Plan":"INTL_PLAN", "VMail Plan":"VMAIL_PLAN", "VMail Message":"VMAIL_MESSAGE", "Day Mins":"DAY_MINS", "Day Calls":"DAY_CALLS", "Day Charge":"DAY_CHARGE", "Eve Mins":"EVE_MINS", "Eve Calls":"EVE_CALLS", "Eve Charge":"EVE_CHARGE", "Night Mins":"NIGHT_MINS", "Night Calls":"NIGHT_CALLS", "Night Charge":"NIGHT_CHARGE", "Intl Mins":"INTL_MINS", "Intl Calls":"INTL_CALLS", "Intl Charge":"INTL_CHARGE", "CustServ Calls":"CUSTSERV_CALLS", "Churn?":"CHURN?"})' 'df.head()'
+Remove rows that contain nans
+    cat churn.csv | p.df 'df[df.notnull()]' 'df.head()'
+    cat churn.csv | p.df 'df[df["Churn?"].notnull()]' 'df[df["Account Length"].notnull()]' 'df.head()'
+Keep rows where values meet conditions
+    cat churn.csv | p.df 'df[df["Account Length"] > 145]' 'df.head()'
+    cat churn.csv | p.df 'df[(df["Intl Charge"] < 2.0) & (df["Day Charge"] > 45.0)]' 'df.head()'
+Keep rows where values are / are not in a set
+    cat churn.csv | p.df 'df[df["Intl Plan"].isin(["yes"])]' 'df.head()'
+    cat churn.csv | p.df 'df[~df["Intl Plan"].isin(["yes"])]' 'df.head()'
+Keep rows where values match a pattern
+    cat churn.csv | p.df 'df[df["State"].str.startswith("K")]' 'df.head()'
+    cat churn.csv | p.df 'df[df["State"].str.contains("K")]' 'df.head()'
+Keep specific columns
+    cat churn.csv | p.df 'df[["Account Length", "Intl Plan", "VMail Plan", "Day Charge", "Eve Charge", "Night Charge", "Intl Charge", "CustServ Calls", "Churn?"]]' 'df.head()'
+Create new variables / columns
+    cat churn.csv | p.df 'df["churn"] = np.where(df["Churn?"] == "True.", 1, 0)' 'df.head()'
+    cat churn.csv | p.df 'df["total_calls"] = df["Day Calls"] + df["Eve Calls"] + df["Night Calls"] + df["Intl Calls"]' 'df.head()'
+    cat churn.csv | p.df 'df["total_charges"] = df["Day Charge"] + df["Eve Charge"] + df["Night Charge"] + df["Intl Charge"]' 'df.head()'
+Create categorical variable from values in another column
+    cat churn.csv | p.df 'df["us_regions"] = ["Northeast" if ("CT" in str(state).upper() or "ME" in state or "MA" in state or "NH" in state or "RI" in state or "VT" in state or "NJ" in state or "NY" in state or "PA" in state) else "Midwest" if ("IL" in state or "IN" in state or "MI" in state or "OH" in state or "WI" in state or "IA" in state or "KS" in state or "MN" in state or "MO" in state or "NE" in state or "ND" in state or "SD" in state) else "South" if ("DE" in state or "FL" in state or "GA" in state or "MD" in state or "NC" in state or "SC" in state or "VA" in state or "DC" in state or "WV" in state or "AL" in state or "KY" in state or "MS" in state or "TN" in state or "AR" in state or "LA" in state or "OK" in state or "TX" in state) else "West" for state in df["State"]]' 'df.head()'
+Create indicator / dummy variables
+    cat churn.csv | p.df 'df["us_regions"] = ["Northeast" if ("CT" in str(state).upper() or "ME" in state or "MA" in state or "NH" in state or "RI" in state or "VT" in state or "NJ" in state or "NY" in state or "PA" in state) else "Midwest" if ("IL" in state or "IN" in state or "MI" in state or "OH" in state or "WI" in state or "IA" in state or "KS" in state or "MN" in state or "MO" in state or "NE" in state or "ND" in state or "SD" in state) else "South" if ("DE" in state or "FL" in state or "GA" in state or "MD" in state or "NC" in state or "SC" in state or "VA" in state or "DC" in state or "WV" in state or "AL" in state or "KY" in state or "MS" in state or "TN" in state or "AR" in state or "LA" in state or "OK" in state or "TX" in state) else "West" for state in df["State"]]' 'pd.concat([df, pd.get_dummies(df.us_regions)], axis=1)' 'df.head()'
+Ensure specific date format (yyyy-mm-dd hh:mm:ss)
+Restrict to specific datetime range
+Calculate number of days between two dates
+Unique values in a column
+    cat churn.csv | p.df 'sorted(df["Churn?"].unique())' -o table index
+Value counts for unique values in a column
+    cat churn.csv | p.df 'df["VMail Plan"].value_counts()' -o table index
+Descriptive statistics for a column
+    cat churn.csv | p.df 'df[["Churn?"]].describe()' -o table index
+    cat churn.csv | p.df 'df[["Intl Charge"]].describe().T' -o table index
+Crosstabs
+    cat churn.csv | p.df 'pd.crosstab(df["Churn?"], df["Intl Plan"])' -o table index
+Group by
+    cat churn.csv | p.df 'df.groupby("Churn?")[["Intl Plan"]].describe().unstack("Churn?")' -o table index
+    cat churn.csv | p.df 'df.groupby("Churn?")[["Intl Charge"]].describe().unstack("Churn?")' -o table index
+Pivot tables
+    cat churn.csv | p.df 'df.pivot_table(values=["Intl Charge"], index=["Churn?"], columns=["Intl Plan"], aggfunc="count")' -o table index
+    cat churn.csv | p.df 'df.pivot_table(values=["Intl Charge"], index=["Churn?"], columns=["Intl Plan"], aggfunc="mean")' -o table index
+Bar chart
+    cat churn.csv | p.df 'df["churn"] = np.where(df["Churn?"] == "True.", 1, 0)' 'df["churn"]' -o csv | p.hist --ylabel 'Count' --xlabel 'Churn? (0: No; 1: Yes)' --title 'Bar Chart of Dependent Variable: Churn?' --theme 'darkgrid' --palette 'muted' --savefig 'plots/bar_chart.png'
+Facet grid
+    cat churn.csv | p.df 'df["churn"] = np.where(df["Churn?"] == "True.", 1, 0)' 'df[["churn", "Intl Plan"]]' -o csv | p.facet_grid --col "Intl Plan" --args "churn" --map pl.hist --savefig 'plots/bar_chart_facet.png'
+Write data to a file
+    cat churn.csv | p.df 'df[["Account Length", "Intl Plan", "VMail Plan", "Day Charge", "Eve Charge", "Night Charge", "Intl Charge", "CustServ Calls", "Churn?"]]' 'df.to_csv("dataset_cleaned.csv", index=False)'
+    cat churn.csv | p.df 'df[["Account Length", "Intl Plan", "VMail Plan", "Day Charge", "Eve Charge", "Night Charge", "Intl Charge", "CustServ Calls", "Churn?"]]' -o csv > dataset_clean.csv
+Putting it all together
+    cat churn.csv | p.df 'df.rename(columns={"State":"STATE", "Account Length":"ACCOUNT_LENGTH", "Area Code":"AREA_CODE", "Phone":"PHONE", "Intl Plan":"INTL_PLAN", "VMail Plan":"VMAIL_PLAN", "VMail Message":"VMAIL_MESSAGE", "Day Mins":"DAY_MINS", "Day Calls":"DAY_CALLS", "Day Charge":"DAY_CHARGE", "Eve Mins":"EVE_MINS", "Eve Calls":"EVE_CALLS", "Eve Charge":"EVE_CHARGE", "Night Mins":"NIGHT_MINS", "Night Calls":"NIGHT_CALLS", "Night Charge":"NIGHT_CHARGE", "Intl Mins":"INTL_MINS", "Intl Calls":"INTL_CALLS", "Intl Charge":"INTL_CHARGE", "CustServ Calls":"CUSTSERV_CALLS", "Churn?":"CHURN?"})' 'df[df.notnull()]' 'df["CHURN"] = np.where(df["CHURN?"] == "True.", 1, 0)' 'df["INT_PLAN"] = np.where(df["INTL_PLAN"] == "yes", 1, 0)' 'df["VM_PLAN"] = np.where(df["VMAIL_PLAN"] == "yes", 1, 0)' 'df["TOTAL_CALLS"] = df["DAY_CALLS"] + df["EVE_CALLS"] + df["NIGHT_CALLS"] + df["INTL_CALLS"]' 'df["TOTAL_CHARGES"] = df["DAY_CHARGE"] + df["EVE_CHARGE"] + df["NIGHT_CHARGE"] + df["INTL_CHARGE"]' 'df["USA_REGIONS"] = ["NORTHEAST" if ("CT" in str(state).upper() or "ME" in state or "MA" in state or "NH" in state or "RI" in state or "VT" in state or "NJ" in state or "NY" in state or "PA" in state) else "MIDWEST" if ("IL" in state or "IN" in state or "MI" in state or "OH" in state or "WI" in state or "IA" in state or "KS" in state or "MN" in state or "MO" in state or "NE" in state or "ND" in state or "SD" in state) else "SOUTH" if ("DE" in state or "FL" in state or "GA" in state or "MD" in state or "NC" in state or "SC" in state or "VA" in state or "DC" in state or "WV" in state or "AL" in state or "KY" in state or "MS" in state or "TN" in state or "AR" in state or "LA" in state or "OK" in state or "TX" in state) else "WEST" for state in df["STATE"]]' 'pd.concat([df, pd.get_dummies(df.USA_REGIONS)], axis=1)' 'df[["CHURN", "ACCOUNT_LENGTH", "INT_PLAN", "VM_PLAN", "TOTAL_CALLS", "TOTAL_CHARGES", "CUSTSERV_CALLS", "NORTHEAST", "MIDWEST", "SOUTH", "WEST"]]' 'df.to_csv("churn_cleaned.csv", index_label="ID")'
+Compute data statistics
+	p.example_data -d tips | p.df 'df.describe().T' -o table index
+Compute mean of grouped data
+	p.example_data -d tips | p.df 'df.groupby(by=["sex","day"]).tip.mean()' -o table index
+Merge CSV files
+	p.merge <(p.example_data -d election) <(p.example_data -d electoral_college) --how left --on state
+Create scatter plot
+	p.example_data -d tips | p.plot -x total_bill -y tip -s 'o' --title 'Tip Vs Bill' --savefig '/mnt/plots/scatter_chart.png'
