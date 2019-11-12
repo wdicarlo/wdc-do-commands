@@ -5,6 +5,8 @@ Pandashell
 Alias for pandashells docker
     alias p.example_data='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.example_data'
     alias p.df='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.df'
+    alias p.merge='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.merge'
+    alias p.plot='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.plot'
     alias p.facet_grid='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.facet_grid'
     alias p.hist='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.hist'
 View first few rows of the dataframe
