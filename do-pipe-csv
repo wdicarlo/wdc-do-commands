@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+
+# Check it is used correctly   
+if [ -t 0 ]; then
+   # 0:     stdin  
+   # 1:     stdout  
+   # 2:     stderr
+   cmd=`basename $0`
+   echo "Usage: $cmd must be used in a pipe"
+   exit
+fi
+
+# Usage help function
+function usage() {
+   echo "Usage: do-pipe-csv [-h] [-q]"
+   echo "where:"
+   echo "       -h                          : print this help"
+   echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+header=0
+semicolon=0
+while getopts hqHs flag
+do
+case $flag in
+  H)
+      header=1
+      ;;
+  q)
+      quiet=1
+      ;;
+  s)
+      semicolon=1
+      ;;
+  h)
+      usage
+      exit
+      ;;
+  ?)
+      usage
+      exit
+      ;;
+   esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $header -eq 1 ]; then
+    if [ $semicolon -eq 0 ]; then
+        cat | sed '1s/\([[:alpha:]]\+\)/"\1"/g'
+    else
+        cat | sed '1s/\([[:alpha:]]\+\)/"\1"/g' | tr ';' ','
+    fi
+else
+    if [ $semicolon -eq 0 ]; then
+        cat 
+    else
+        cat | tr ';' ','
+    fi
+fi
