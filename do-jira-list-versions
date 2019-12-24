@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function quote () { 
+    local quoted=${1// /%20};
+    quoted=${quoted//=/%3D};
+    quoted=${quoted//,/%2C};
+    printf "%s" "$quoted"
+}
+function usage() {
+	echo "Usage: $cmd [-h] [-i] [-n] [-u <user>] [-p <pass>] [-j <jira_server>] <project_id>>"
+	echo "where:"
+    echo "       -i                          : interactive"
+	echo "       -u <user>                   : user"
+	echo "       -p <pass>                   : pass"
+	echo "       -j <jira_server>            : jira server domain name"
+	echo "       -h                          : print this help"
+	echo "       -n                          : dry run"
+}
+
+
+dryrun=0
+interactive=0
+while getopts hnj:iu:p: flag
+do
+	case $flag in
+        i)
+            interactive=1
+            ;;
+		u)
+			DEVOPS_USER=$OPTARG
+			;;
+		p)
+			DEVOPS_PASSWORD=$OPTARG
+			;;
+		j)
+			JIRA_SERVER=$OPTARG
+			;;
+		n)
+			dryrun=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# -eq 0 ]; then
+    echo "Missing project key"
+    exit 1
+fi
+
+if [ "$JIRA_SERVER" == "" ]; then
+    echo "JIRA_SERVER not defined"
+    exit -1
+fi
+
+if [ "$DEVOPS_USER" == "" ]; then
+    if [ $interactive -eq 0 ]; then
+        echo "DEVOPS_USER not defined"
+        exit -1
+    else
+        echo "DEVOPS_USER: "
+        read USER
+        export DEVOPS_USER=$USER
+    fi
+fi
+
+if [ "$DEVOPS_PASSWORD" == "" ]; then
+    if [ $interactive -eq 0 ]; then
+        echo "DEVOPS_PASSWORD not defined"
+        exit -1
+    else
+        echo "DEVOPS_PASSWORD: "
+        read -s PASSWORD
+        export DEVOPS_PASSWORD=$PASSWORD
+    fi
+fi
+
+url_api="https://$JIRA_SERVER/rest/api/2/project/$1/versions"
+
+
+cmd="curl -sS -XH -u $DEVOPS_USER:$DEVOPS_PASSWORD -X GET -H \"Content-Type: application/json\" \"$url_api\""
+if [ $dryrun -eq 0 ]; then
+   eval "$cmd | jq '.'"
+else
+   echo "$cmd"
+fi
