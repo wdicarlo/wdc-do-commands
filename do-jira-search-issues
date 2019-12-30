@@ -9,12 +9,13 @@ function quote () {
     printf "%s" "$quoted"
 }
 function usage() {
-	echo "Usage: $cmd [-h] [-p <num_pages>] [-n] [-i <num_items_per_pages>] [-s <sec_to_sleep>] [-j <jira_server>] <project_id>>"
+	echo "Usage: $cmd [-h] [-p <num_pages>] [-n] [-i <num_items_per_pages>] [-s <sec_to_sleep>] [-j <jira_server>] [-t] <project_id>>"
 	echo "where:"
 	echo "       -j <jira_server>            : jira server domain name"
 	echo "       -s <sec_to_sleep>           : seconds to sleep after each request"
 	echo "       -i <num_items_per_pages>    : number of items per page to retrieve"
 	echo "       -p <num_pages>              : number of pages to retrieve"
+    echo "       -t                          : interactive"
 	echo "       -h                          : print this help"
 	echo "       -n                          : dry run"
 }
@@ -24,9 +25,13 @@ dryrun=0
 pages=1
 items=20
 seconds=0
-while getopts hnp:i:s:j: flag
+interactive=0
+while getopts hnp:i:s:j:t flag
 do
 	case $flag in
+        t)
+            interactive=1
+            ;;
 		j)
 			JIRA_SERVER=$OPTARG
 			;;
@@ -65,13 +70,25 @@ if [ "$JIRA_SERVER" == "" ]; then
 fi
 
 if [ "$DEVOPS_USER" == "" ]; then
-    echo "DEVOPS_USER not defined"
-    exit -1
+    if [ $interactive -eq 0 ]; then
+        echo "DEVOPS_USER not defined"
+        exit -1
+    else
+        echo "DEVOPS_USER: "
+        read USER
+        export DEVOPS_USER=$USER
+    fi
 fi
 
 if [ "$DEVOPS_PASSWORD" == "" ]; then
-    echo "DEVOPS_PASSWORD not defined"
-    exit -1
+    if [ $interactive -eq 0 ]; then
+        echo "DEVOPS_PASSWORD not defined"
+        exit -1
+    else
+        echo "DEVOPS_PASSWORD: "
+        read -s PASSWORD
+        export DEVOPS_PASSWORD=$PASSWORD
+    fi
 fi
 
 url_api="https://$JIRA_SERVER/rest/api/2/search"
@@ -94,6 +111,8 @@ do
     cmd="curl -sS -XH -u $DEVOPS_USER:$DEVOPS_PASSWORD -X GET -H \"Content-Type: application/json\" \"$url_api?startAt=$startAt&maxResults=$items&jql=$jql_url\""
     if [ $dryrun -eq 0 ]; then
            eval "$cmd | jq '.issues|.[]'"
+    else
+           echo "$cmd | jq '.issues|.[]'"
     fi
     if [ $counter -lt $pages ] && [ $seconds -gt 0 ]; then
         sleep $seconds
