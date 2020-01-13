@@ -3,7 +3,7 @@
 cmd=`basename $0`
 
 function usage() {
-	echo "Usage: $cmd [-h] "
+	echo "Usage: $cmd [-h] [-l] [-i] [-s] [-q] [-n] <repo|folfer|file|search_item>"
 	echo "where:"
 	echo "       -l                          : get list of files"
 	echo "       -i                          : get folder/file info"
