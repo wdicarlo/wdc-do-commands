@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+cmd=`basename $0`
+
+function usage() {
+    echo "Usage: $cmd [<post-fix>]"
+}
+
+
+if [ "$1" == "-h" ]; then
+    usage
+    exit
+fi
+
 if [ ! -d .git ]; then
 	echo "Not in the project's root folder (.git folder is missing)"
 	exit
@@ -17,12 +29,6 @@ if [ $nfiles -ne 0 ]; then
 	echo "There are some files ready to be committed."
 	exit
 fi
-
-cmd=`basename $0`
-
-function usage() {
-    echo "Usage: $cmd [<post-fix>]"
-}
 
 
 postfix=""
