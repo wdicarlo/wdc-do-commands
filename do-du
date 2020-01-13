@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
 
 
-du -hcs $@
+if [ "$1" == "-t" ]; then
+    du -hcs $@
+    exit 0
+fi
+
+for folder in $(find . -maxdepth 1 -type d|grep "/") 
+do
+    echo "$(du -cs $folder| grep total | sed 's/^\(.*\)[ \t]\+total/\1/'); $folder"
+done | sort -nr
