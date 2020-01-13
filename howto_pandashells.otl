@@ -2,6 +2,7 @@ Pandashell
 	Tool to use Pandas library from the command line
     Commands extracted from https://cbrownley.wordpress.com/2016/03/20/pandashells-data-science-with-python-on-the-command-line/
     Commands extracted from https://github.com/robdmc/pandashells#dataframe-manipulations
+    Requirements: The table must be a CSV with a stringified header and columns separated by commas (see do-pipe-csv -s -H)
 Alias for pandashells docker
     alias p.example_data='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.example_data'
     alias p.df='docker run -i -v /mnt/plots:/mnt/plots nate/pandashells p.df'
