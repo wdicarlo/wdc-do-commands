@@ -13,9 +13,11 @@ fi
 
 # Usage help function
 function usage() {
-   echo "Usage: do-pipe-csv [-h] [-q]"
+   echo "Usage: do-pipe-csv [-h] [-q] [-H] [-s]"
    echo "where:"
    echo "       -h                          : print this help"
+   echo "       -H                          : stringfy the header (first) line"
+   echo "       -s                          : convert semicolon to comma separated format"
    echo "       -q                          : quiet"
 }
 
@@ -46,6 +48,10 @@ case $flag in
    esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+# find separator
+# separator=$(cat | sed '1s/[[:alpha:]]//g'|head -1|sed 's/\(.\)/\1\n/g'|uniq|head -1)
 
 if [ $header -eq 1 ]; then
     if [ $semicolon -eq 0 ]; then
