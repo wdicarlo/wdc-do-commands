@@ -766,7 +766,9 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-unalias svn
+if [ ! "$(alias svn 2>/dev/null)" == "" ]; then
+	unalias svn
+fi
 SVN_CMD=$(which svn)
 
 # some more ls aliases
