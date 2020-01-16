@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 
 # Usage help function
@@ -57,7 +57,7 @@ fi
 
 
 
-cd ~/bin
+cd $WDC_DO_COMMANDS_DIR
 cmd="git ls-files | grep \"^do[-_].*\""
 if [ $all -eq 1 ]; then
     cmd="find . -maxdepth 1 -name \"do[-_]*\" | sed 's#^\.\/##'"

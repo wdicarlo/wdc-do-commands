@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 if [ $# == 0 ]
@@ -8,4 +8,4 @@ then
    exit
 fi
 
-grep -Hn "$1" $(ls -1 ~/bin/howto_*.otl) | sed 's#\(.*\)/howto_\([a-z_]\+\).otl#\2#'|grep --color "^\|$1"
+grep -Hn "$1" $(ls -1 $WDC_DO_COMMANDS_DIR/howto_*.otl) | sed 's#\(.*\)/howto_\([a-z_]\+\).otl#\2#'|grep --color "^\|$1"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 find . -type f -name '*.h' -print0 | xargs -0 grep -l '$'
 find . -type f -name '*.c' -print0 | xargs -0 grep -l '$'

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 # TODO: improve check to see if we are in the root of the linux kernel

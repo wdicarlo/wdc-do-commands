@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# == 0 ]; then
     find . -type d | xargs -I@ bash -c "echo -n '@ ' ; find @ -maxdepth 1 -type d -not -path @ | wc -l"

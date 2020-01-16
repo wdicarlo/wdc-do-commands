@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 if [ ! $# == 3 ]
@@ -13,7 +13,7 @@ then
    exit
 fi
 
-howto=`echo ~/bin/howto_$1.otl`
+howto=`echo $WDC_DO_COMMANDS_DIR/howto_$1.otl`
 
 if [ ! -f $howto ]; then
     echo "Missing howto file: $howto"

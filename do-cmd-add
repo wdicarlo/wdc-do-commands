@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-bin_dir=`echo ~/bin`
+bin_dir=`echo $WDC_DO_COMMANDS_DIR`
 
 function usage() {
     echo "Usage: $cmd [-f] <new-bin-cmd>"

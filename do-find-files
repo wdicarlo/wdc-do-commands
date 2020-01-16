@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # TODO: find files newer then a specified date
 # touch -t `date +%m%d0000` /tmp/$$

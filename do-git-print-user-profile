@@ -12,17 +12,17 @@ then
    echo "          company_xyz"
    echo "          ..."
    echo "       Current available profiles:"
-    ls -1 ~/bin/git_user_profile* 2>/dev/null | xargs -I@ basename @ | sed  "s/git_user_profile_//" | sed "s/.txt//" | sed "s/^/\t\t/"
+    ls -1 $WDC_DO_COMMANDS_DIR/git_user_profile* 2>/dev/null | xargs -I@ basename @ | sed  "s/git_user_profile_//" | sed "s/.txt//" | sed "s/^/\t\t/"
    exit
 fi
 
 # TODO: use grep 
-profile=`echo ~/bin/git_user_profile_$1.txt`
+profile=`echo $WDC_DO_COMMANDS_DIR/git_user_profile_$1.txt`
 
 if [ ! -f $profile ]; then
     echo "Missing profile file: $profile"
     echo "Available profiles:"
-    ls -1 ~/bin/git_user_profile* 2>/dev/null | xargs -I@ basename @ | sed  "s/git_user_profile_//" | sed "s/.txt//"
+    ls -1 $WDC_DO_COMMANDS_DIR/git_user_profile* 2>/dev/null | xargs -I@ basename @ | sed  "s/git_user_profile_//" | sed "s/.txt//"
     exit
 fi
 

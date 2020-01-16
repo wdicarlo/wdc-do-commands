@@ -2,7 +2,7 @@
 
 echo "ATTENTION: command still under development"
 
-hfile=`echo ~/bin/history.txt`
+hfile=`echo $WDC_DO_COMMANDS_DIR/history.txt`
 
 
 

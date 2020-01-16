@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function help() {
         cmd=`basename $0`
         echo "Usage: $cmd [-e <command-to-be-evaluated>|files ] "

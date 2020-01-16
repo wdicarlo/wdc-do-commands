@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 prj_root=`echo /media/sf_Shared/tests/`
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 force_color_prompt=yes
 
@@ -7,7 +7,7 @@ export TESTS=~/tests
 export RELEASES=~/releases
 export PROJECTS=~/projects
 export SHARED_FOLDER=/media/share
-if [ -f ~/bin/do_bash_env ]; then
+if [ -f $WDC_DO_COMMANDS_DIR/do_bash_env ]; then
     # do_bash_env example:
     # #!/usr/bin/env bash
     # 
@@ -17,9 +17,9 @@ if [ -f ~/bin/do_bash_env ]; then
     # export SHARED_FOLDER=/wc/wdicarlo/share
     # export PATCHES_DIR=/wc/wdicarlo/share/ec/patches
     # 
-    # export BASH_COMPLETITION_DIR=$(echo ~/bin/bash_completion.d)
+    # export BASH_COMPLETITION_DIR=$(echo $WDC_DO_COMMANDS_DIR/bash_completion.d)
     echo "Sourcing file: do_bash_env"
-    source  ~/bin/do_bash_env
+    source  $WDC_DO_COMMANDS_DIR/do_bash_env
     echo "PROJECTS               =  $PROJECTS"
     echo "TESTS                  =  $TESTS"
     echo "RELEASES               =  $RELEASES"
@@ -199,9 +199,9 @@ eval $cmd
 }
 
 
-#. ~/bin/do_setup_env_for_okl4sdk-5.1.8m4
-#. ~/bin/do_setup_env okl4sdk-5.1.8m4
-. ~/bin/do_setup_env 
+#. $WDC_DO_COMMANDS_DIR/do_setup_env_for_okl4sdk-5.1.8m4
+#. $WDC_DO_COMMANDS_DIR/do_setup_env okl4sdk-5.1.8m4
+. $WDC_DO_COMMANDS_DIR/do_setup_env 
 
 function mkcd() {
     mkdir "$1"
@@ -297,7 +297,7 @@ function update_env() {
         source .bash_env
     else
         shift $#
-        source ~/bin/do_setup_env
+        source $WDC_DO_COMMANDS_DIR/do_setup_env
     fi
     update_prompt
 }
@@ -399,7 +399,7 @@ function cdenv() {
     #     source .bash_env
     # else
     #     shift $#
-    #     . ~/bin/do_setup_env
+    #     . $WDC_DO_COMMANDS_DIR/do_setup_env
     # fi
     update_env
 }
@@ -610,7 +610,7 @@ function last() {
 }
 
 function do_activate_release() {
-    script=`echo ~/bin/do_activate_release`
+    script=`echo $WDC_DO_COMMANDS_DIR/do_activate_release`
     source $script
 }
 
@@ -751,7 +751,7 @@ update_prompt
 
 bash_completion
 
-alias do-bash-customization='. ~/bin/do_bash_customization && cd .'
+alias do-bash-customization='. $WDC_DO_COMMANDS_DIR/do_bash_customization && cd .'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -795,27 +795,27 @@ alias cd-projects='cd $PROJECTS'
 alias cd-tests='cd $TESTS'
 alias cd-releases='cd /media/sf_Shared/releases/'
 
-alias do-project-creation='. ~/bin/do_project_creation'
-alias do-cd-test='. ~/bin/do_cd_test'
-alias do-cd-release='. ~/bin/do_cd_release'
-alias do-cd-folder='. ~/bin/do_cd_folder'
-alias do-cd-path='. ~/bin/do_cd_path'
-alias do-cd-bookmark='. ~/bin/do_cd_bookmark'
-alias do-cd-link='. ~/bin/do_cd_link'
+alias do-project-creation='. $WDC_DO_COMMANDS_DIR/do_project_creation'
+alias do-cd-test='. $WDC_DO_COMMANDS_DIR/do_cd_test'
+alias do-cd-release='. $WDC_DO_COMMANDS_DIR/do_cd_release'
+alias do-cd-folder='. $WDC_DO_COMMANDS_DIR/do_cd_folder'
+alias do-cd-path='. $WDC_DO_COMMANDS_DIR/do_cd_path'
+alias do-cd-bookmark='. $WDC_DO_COMMANDS_DIR/do_cd_bookmark'
+alias do-cd-link='. $WDC_DO_COMMANDS_DIR/do_cd_link'
 
 alias do-bookmark-list='do-cd-bookmark -l'
 
 alias cd=cdenv 
 alias gh=gohome
-alias do-project-activation='. ~/bin/do_project_activation'
-alias do-activate-release='. ~/bin/do_activate_release'
-alias do-activate-test='. ~/bin/do_activate_test'
-alias do-setup-env='. ~/bin/do_setup_env -s'
-alias do-setup-ld-library-path='. ~/bin/do_setup_ld_library_path $@'
+alias do-project-activation='. $WDC_DO_COMMANDS_DIR/do_project_activation'
+alias do-activate-release='. $WDC_DO_COMMANDS_DIR/do_activate_release'
+alias do-activate-test='. $WDC_DO_COMMANDS_DIR/do_activate_test'
+alias do-setup-env='. $WDC_DO_COMMANDS_DIR/do_setup_env -s'
+alias do-setup-ld-library-path='. $WDC_DO_COMMANDS_DIR/do_setup_ld_library_path $@'
 
-alias do-history-update='. ~/bin/do_history_update'
-alias do-history-add-last='. ~/bin/do_history_add_last'
-alias do-history-diagram='. ~/bin/do_history_diagram'
+alias do-history-update='. $WDC_DO_COMMANDS_DIR/do_history_update'
+alias do-history-add-last='. $WDC_DO_COMMANDS_DIR/do_history_add_last'
+alias do-history-diagram='. $WDC_DO_COMMANDS_DIR/do_history_diagram'
 
 alias mkca='make clean all'
 alias mka='make all'
@@ -850,9 +850,9 @@ export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
 export rsync_proxy=$http_proxy
 export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
-if [ -f ~/bin/do_proxy_setup ]; then
+if [ -f $WDC_DO_COMMANDS_DIR/do_proxy_setup ]; then
     echo "Sourcing file: do_proxy_setup"
-    source  ~/bin/do_proxy_setup
+    source  $WDC_DO_COMMANDS_DIR/do_proxy_setup
     echo "http_proxy    = $http_proxy"
     echo "https_proxy   = $https_proxy"
     echo "ftp_proxy     = $ftp_proxy"

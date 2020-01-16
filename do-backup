@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 bakfile="backup"
@@ -12,7 +12,7 @@ export MY_VIM_FILES=`eval echo " \
 "`
 
 export MY_FILES=`eval echo " \
-~/bin/* \
+$WDC_DO_COMMANDS_DIR/* \
 ~/.bashrc \
 ~/.bash_aliases \
 ~/.notebook/* \

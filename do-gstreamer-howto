@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# -gt 0 ]
 then
-    cat ~/bin/howto_gstreamer.otl | grep -A 1 -in $@
+    cat $WDC_DO_COMMANDS_DIR/howto_gstreamer.otl | grep -A 1 -in $@
 else
-    cat ~/bin/howto_gstreamer.otl
+    cat $WDC_DO_COMMANDS_DIR/howto_gstreamer.otl
 fi

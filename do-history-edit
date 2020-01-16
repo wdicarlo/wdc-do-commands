@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-hist_file=`echo ~/bin/history.txt`
+hist_file=`echo $WDC_DO_COMMANDS_DIR/history.txt`
 
 vi $hist_file

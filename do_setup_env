@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 if [ $# == 0 ]; then
     is_project_folder=`pwd|grep $PROJECTS`
     if [ -z "$is_project_folder" ];then
-        . ~/bin/do_setup_env empty
+        . $WDC_DO_COMMANDS_DIR/do_setup_env empty
     else
         curr_folder=`basename $PWD`
         if [ -f "$PROJECTS/$curr_folder" ]; then
-            . ~/bin/do_setup_env okl4sdk-5.1.8m4
+            . $WDC_DO_COMMANDS_DIR/do_setup_env okl4sdk-5.1.8m4
         fi
     fi
     unset is_project_folder
@@ -33,7 +33,7 @@ then
     fi
 fi
 
-prj_root=`echo ~/bin`
+prj_root=`echo $WDC_DO_COMMANDS_DIR`
 export PROJECT_VARS=""
 
 if [ $list -eq 1 ]; then
@@ -92,7 +92,7 @@ if [ "$env_name" == "$PROJECT_ENV" ]; then
 fi
 
 # reset environment 
-PATH=~/bin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:.
+PATH=$WDC_DO_COMMANDS_DIR:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:.
 PROJECT_VARS=
 export PROJECT_ENV=$env_name
 echo "Applying settings: $PROJECT_ENV"

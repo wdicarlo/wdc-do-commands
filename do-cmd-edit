@@ -12,7 +12,7 @@ then
     usage
     exit
 fi
-folders=`echo ~/bin/`
+folders=`echo $WDC_DO_COMMANDS_DIR/`
 
 if [ $# == 1 ]
 then

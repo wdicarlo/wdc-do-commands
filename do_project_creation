@@ -27,7 +27,7 @@ export PROJECT_ROOT1=.
 export PROJECT_ROOT2=docs
 END_OF_TEXT
 
-env_root=`echo ~/bin`
+env_root=`echo $WDC_DO_COMMANDS_DIR`
 if [ $# -gt 1 ]; then
     env="$2"
     n=`ls -1 $env_root/do_setup_env_for_* | grep $env | wc -l`
@@ -47,4 +47,4 @@ if [ $# -gt 1 ]; then
 fi
 
 
-source ~/bin/do_project_activation $1
+source $WDC_DO_COMMANDS_DIR/do_project_activation $1

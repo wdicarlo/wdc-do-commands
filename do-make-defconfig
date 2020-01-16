@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #TODO: check it is executed in the linux or buildroot root folder
 

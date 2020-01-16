@@ -1,5 +1,5 @@
-#!/bin/bash
-folders=`echo ~/bin`
+#!/usr/bin/env bash
+folders=`echo $WDC_DO_COMMANDS_DIR`
 
 if [ $# == 1 ]
 then

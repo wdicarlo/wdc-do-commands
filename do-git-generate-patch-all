@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 git diff -w $@
 git ls-files --others --exclude-standard | while read -r i; do git diff -- /dev/null "$i"; done

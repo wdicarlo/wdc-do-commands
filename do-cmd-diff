@@ -36,7 +36,7 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 
-bin_dir=`echo ~/bin`
+bin_dir=`echo $WDC_DO_COMMANDS_DIR`
 list=""
 cmd="git diff"
 
