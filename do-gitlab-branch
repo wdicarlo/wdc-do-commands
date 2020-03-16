@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+cmd=`basename $0`
+
+function usage() {
+	echo "Usage: $cmd [-h] [-q] [-n] [-g <gitlab_server_domain>] [-t <gitlab_token>] project_id branch_src branch_dest"
+	echo "where:"
+	echo "       -t <gitlab_token>           : gitlab token to overwrite the value in TOKEN"
+	echo "       -g <gitlab_server_domain>   : gitlab server domain to overwrite the value in GITLAB_SERVER"
+	echo "       -h                          : print this help"
+	echo "       -q                          : quiet"
+	echo "       -n                          : dry run"
+}
+
+
+quiet=0
+dryrun=0
+while getopts hqng:t: flag
+do
+	case $flag in
+		t)
+			TOKEN=$OPTARG
+			;;
+		g)
+			GITLAB_SERVER=$OPTARG
+			;;
+		n)
+			dryrun=1
+			quiet=0
+			;;
+		q)
+			quiet=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ "$GITLAB_SERVER" == "" ]; then
+    echo "GITLAB_SERVER not defined"
+    exit
+fi
+
+if [ "$TOKEN" == "" ]; then
+    echo "Missing TOKEN value"
+    exit
+fi
+
+if [ $# -ne 3 ]; then
+	usage
+	exit 
+fi
+
+projectid=$1
+refbranch=$2
+newbranch=$3
+
+token="PRIVATE-TOKEN: $TOKEN"
+url_base="https://$GITLAB_SERVER/api/v4/projects"
+
+cmd="curl -Ss --request POST --header \"$token\" \"$url_base/$projectid/repository/branches?branch=$newbranch&ref=$refbranch\""
+if [ $quiet -eq 0 ]; then
+	echo "> $cmd"
+fi
+if [ $dryrun -eq 0 ]; then
+   eval "$cmd | jq .[]"
+fi
