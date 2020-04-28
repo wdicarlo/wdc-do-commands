@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+msg=""
+
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+	echo "Usage: $cmd [-h] [-q] [-n] [-f] [-m \"<message>\""
+	echo "where:"
+	echo "       -m \"<message>\"            : commit message"
+	echo "       -f                          : force"
+	echo "       -h                          : print this help"
+	echo "       -n                          : dry run"
+	echo "       -q                          : quiet"
+}
+
+# Arguments processing
+quiet=0
+dryrun=0
+force=0
+while getopts hqnm:f flag
+do
+	case $flag in
+		m)
+			msg="$OPTARG"
+			;;
+		f)
+			force=1
+			;;
+		v)
+			verbose=1
+			;;
+		q)
+			quiet=1
+			;;
+		n)
+			dryrun=1
+			;;
+		e)
+			exclude=$OPTARG
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+if [ "$msg" == "" ]; then
+	echo "Misisng commit message"
+	exit 1
+fi
+
+if [ $# -eq 0 ]; then
+	echo "Missing files to commit"
+	exit 1
+fi
+
+cmd="git add $@; git commit -m \"$msg\""
+
+# Quieting command output
+if [ $quiet -eq 0 ]; then
+	echo "> $cmd"
+fi
+# Request user confirmation
+if [ $force -eq 0 ]; then
+	read -p "Are You Sure? <y|n>" ans
+	if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+		echo "Confirmed!!!"
+	else
+		echo "Aborted!!!"
+		exit
+	fi
+fi
+if [ $dryrun -eq 0 ]; then
+	eval "$cmd"
+fi
