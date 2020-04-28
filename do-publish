@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+	echo "Missing file/s to publish"
+	exit 1
+fi
+
+if [ "$PUBLISH_DIR" == "" ]; then
+	echo "Missing PUBLISH_DIR"
+	exit 1
+fi
+
+if [ ! -d "$PUBLISH_DIR" ]; then
+	echo "Not a folder: $PUBLISH_DIR"
+	exit 1
+fi
+
+for file in "$@"
+do
+	if [ ! -f "$file" ]; then
+		echo "Skipping $file"
+		continue
+	fi
+	cp "$file" "$PUBLISH_DIR"
+	ls -l "${PUBLISH_DIR}/${file}"
+done
