@@ -100,6 +100,8 @@ Remove untracked files and directory together with ignored one. Replace -f with 
 	git clean -f -d -x
 Delete last commit (uncommit) still not pushed
 	git reset --hard HEAD~1
+Delete last commit (uncommit) still not pushed without loosing the changes
+	git reset HEAD~1
 Uncommit latest commits still not pushed (loosing the history)
 	git reset --hard HEAD~
 Merge a branch squashing its commits into ready-to-be-committed changes
@@ -308,3 +310,9 @@ Display repository oriented log graph
 	git log --graph --full-history --all --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
 Set the remote URL
 	git remote set-url origin https://<domain>/scala-examples.git
+Move master to a tag
+	git checkout master
+	git reset --hard <tag>
+	git push -f origin master # force the push
+Globally config vim as editor for git
+	git config --global core.editor "vim"

@@ -1041,3 +1041,22 @@ cmap w!! w !sudo tee > /dev/null %
 :set lazyredraw
 " key unmapping 
 :nunmap n " unmap n
+----------------------------------------
+" replace a column of numbers with a sequence
+" Ex.
+"      1. one
+"      1. two
+"      1. three
+"      1. four
+"      1. five
+gg^j   " move to the second line
+<ctrl-v>jjjg<ctrl-a>  " select the rest of the column and use g<ctrl-a> to generate the sequence of numbers
+----------------------------------------
+" delete until character
+" Ex. Hello World, here we are; bob and eva
+"          ^
+"          Cursor position
+" to delete unti ;
+dt;
+" Ex. Hello; bob and eva
+

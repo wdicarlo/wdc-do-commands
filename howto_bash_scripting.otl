@@ -4,6 +4,11 @@ bash scripting howto
 # First line identification
    #!/usr/bin/env bash
 
+# Support Functions 
+   yell() { echo "$0: $*" >&2; }
+   die() { yell "$*"; exit 111; }
+   try() { "$@" || die "cannot $*"; }
+
 # Check it is used correctly   
    if [ -t 0 ]; then
        # 0:     stdin  
