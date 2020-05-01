@@ -1059,4 +1059,22 @@ gg^j   " move to the second line
 " to delete unti ;
 dt;
 " Ex. Hello; bob and eva
-
+----------------------------------------
+" Example of .vimrc to setup vim with some plugins
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
+endif
+call plug#begin('~/.vim/plugged')
+Plug 'tpope/vim-sensible'
+Plug 'scrooloose/syntastic'
+Plug 'nvie/vim-flake8'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'godlygeek/tabular'
+Plug 'jacoborus/tender'
+Plug 'ervandew/supertab'
+Plug 'sirver/ultisnips'
+Plug 'honza/vim-snippets'
+call plug#end()
+----------------------------------------

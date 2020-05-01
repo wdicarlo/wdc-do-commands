@@ -42,3 +42,5 @@ Filter by values and items
 	cat certificates.json | jq  '.[]|select(.certificateId == "6312" )| {"name":.certificateName,"id":.certificateId}'
 Filter using regular expression
 	cat certificates.json | jq  '.[]|select(.certificateName|match(^UC[[:digit:]][[:digit:]][[:digit:]][[:digit:]]) )'
+List root nodes
+	cat data.json | jq keys_unsorted[] -r

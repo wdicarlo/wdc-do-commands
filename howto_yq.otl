@@ -4,3 +4,5 @@ Alias to run the docker image
 	alias yq='docker run --rm -i -v ${PWD}:/workdir mikefarah/yq yq'
 Extract the value of an item
 	cat myconfig.yaml | yq r - a.b.c
+Convert YAML into JSON
+	cat data.yaml | yq r -j - | jq '.'
