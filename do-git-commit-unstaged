@@ -7,8 +7,11 @@ msg=""
 cmd=`basename $0`
 
 function usage() {
-	echo "Usage: $cmd [-h] [-q] [-n] [-f] [-m \"<message>\""
+	echo "Usage: $cmd [-h] [-q] [-n] [-f] [-u] [-A|-U] [-m \"<message>\"] <files...>"
 	echo "where:"
+	echo "       -A                          : add specified file/s using the Add message"
+	echo "       -U                          : update specified file/s using the Update message"
+	echo "       -u                          : add all files apart the untracked ones"
 	echo "       -m \"<message>\"            : commit message"
 	echo "       -f                          : force"
 	echo "       -h                          : print this help"
@@ -20,11 +23,23 @@ function usage() {
 quiet=0
 dryrun=0
 force=0
-while getopts hqnm:f flag
+all=0
+add=0
+update=0
+while getopts hqnm:fuAU flag
 do
 	case $flag in
 		m)
 			msg="$OPTARG"
+			;;
+		A)
+			add=1
+			;;
+		U)
+			update=1
+			;;
+		u)
+			all=1
 			;;
 		f)
 			force=1
@@ -54,17 +69,28 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 
-if [ "$msg" == "" ]; then
-	echo "Misisng commit message"
-	exit 1
-fi
-
-if [ $# -eq 0 ]; then
+if [ $# -eq 0 ] && [ $all -eq 0 ]; then
 	echo "Missing files to commit"
 	exit 1
 fi
 
-cmd="git add $@; git commit -m \"$msg\""
+opts="$@"
+if [ $all -eq 1 ]; then
+	opts="-u"
+fi
+if [ $add -eq 1 ]; then
+	msg="Added $@"
+fi
+if [ $update -eq 1 ]; then
+	msg="Updated $@"
+fi
+
+if [ "$msg" == "" ]; then
+	echo "Missing commit message"
+	exit 1
+fi
+
+cmd="git add $opts; git commit -m \"$msg\""
 
 # Quieting command output
 if [ $quiet -eq 0 ]; then
