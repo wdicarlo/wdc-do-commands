@@ -44,3 +44,9 @@ Filter using regular expression
 	cat certificates.json | jq  '.[]|select(.certificateName|match(^UC[[:digit:]][[:digit:]][[:digit:]][[:digit:]]) )'
 List root nodes
 	cat data.json | jq keys_unsorted[] -r
+Sort by a field
+	cat data.json | jq '.subnets|=sort_by(.name)|.subnets[]|.name'
+Count occurences in an array
+	cat data.json | jq '.subnets[]|select(.name == "Low") | "\(.ipConfigs | length)"' 
+URI Encode 
+  date | jq -sRr @uri

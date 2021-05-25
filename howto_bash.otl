@@ -28,3 +28,22 @@ Check if the pipe usage is detected
 	(if [ -t 1 ] ; then echo terminal; else echo "not a terminal"; fi) | cat
 Process substitution
 	cat <(echo A) <(echo B)
+Reset terminal colors
+	tput sgr0 is normally the equivalent of echo -en "\e[0m"
+Date operation
+	date -d "2020/09/30 + 168 days"
+Sort by not considering the first line
+	cat data.csv | cut -d";" -f 1,2 | (read -r; printf "%s\n" "$REPLY"; sort) | uniq
+Create a file using redirection
+  cat <<EOF > requirements.txt
+    tables==3.5.1
+    azure-storage-blob==12.1.0
+    attrs==19.3.0
+    fsspec==0.7.2
+    kneed==0.6.0
+    matplotlib==3.2.1
+    scikit-learn==0.22.2.post1
+    xgboost==0.90
+  EOF
+
+

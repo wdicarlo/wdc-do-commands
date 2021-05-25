@@ -32,8 +32,8 @@ Stats of a git commit
 	git diff --stat 04c77e46ee
 Delete remote branch
 	git push origin --delete GitDemos_1_2_2
-Prune branches remotelly deleted
-	git remote prune origin
+De-reference (prune) local branches whose remote branch has been deleted
+	git remote prune origin # add --dry-run to test it before to apply
 Create patch from a git commit
 	git format-patch -1 04c77e46ee
 Create the patch of the branch GitDemos_Ark_GPIO
@@ -195,7 +195,7 @@ Rename a branch
 	git branch -m my_current_branch_name my_new_branch_name
 Get current branch name
 	git rev-parse --abbrev-ref HEAD
-Print branch last commit and remote reference
+Print the branches with their last commit and remote reference
 	git branch -vv
 List all commits of an author
 	git log --oneline --author=walter
@@ -215,7 +215,7 @@ Uncommit latest commits still not pushed (loosing the history)
 	git reset --hard <sha-1>
 Checkout files from another branch
 	git checkout <branch> -- <path_of_file>
-Locally prune deleted remote objects
+Locally prune deleted remote branches/objects
 	git fetch --prune
 Push a new local branch changing the name of the remote branch
 	git push -u origin <local_branch_name>:<remote_branch_name>
@@ -316,3 +316,12 @@ Move master to a tag
 	git push -f origin master # force the push
 Globally config vim as editor for git
 	git config --global core.editor "vim"
+Checkout remote master and reset local master
+  git checkout -B master origin/master
+List branches without a remote branch
+  git branch -vv | awk '/: gone]/{print $1}'
+Delete all local branches without referenced remote branch
+  [ "$(git rev-parse --abbrev-ref HEAD)" == "master" ] && (git branch -vv | awk '/: gone]/{print $1}' |xargs git branch -d ) # use -D to force the deletion even if not fully merged
+Delete local and remote branch
+  git branch -d localBranchName # delete branch locally
+  git push origin --delete remoteBranchName # delete branch remotely

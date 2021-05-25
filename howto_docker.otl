@@ -106,3 +106,15 @@ Bypass ENTRYPOINT command
 	docker run --entrypoint "/bin/sh" -i  myimage
 Execute a terminal inside a running container
 	docker exec -it sonarqube_cluster_sonarqube_1 bash
+Stop all running containers
+	docker stop $(docker ps -a -q)
+Fast stop all running containers
+	docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {} # parallel stop commands
+Remove all containers
+	docker rm $(docker ps -a -q)
+Remove all containers and volumes
+	docker rm -v $(docker ps -a -q)
+Stop exited containers and delete only non-tagged images
+	docker ps --filter 'status=Exited' -a | xargs docker stop docker images --filter "dangling=true" -q | xargs docker rmi 
+Remove all containers that aren't currently running
+	docker rm $(docker ps -a -q -f "status=exited*")
