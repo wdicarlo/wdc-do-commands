@@ -116,6 +116,19 @@ bash scripting howto
    if [ $dryrun -eq 0 ]; then
        eval "$cmd"
    fi
+# Array manipulation
+   declare -A myarr
+   mykey="k1"
+   myarr["demo"]="done"
+   myarr[$mykey]="na"
+   myval="${myarr[$mykey]}"
+   readarray -t myarr < "$1" # readarray reads also the trailing newline in each array element. Use the -t option to strip them. 
+   echo "${myarr[*]}"
+   printf '%s ' "${myarr[*]}"
+   printf '%s ' "${myarr[@]}"
+   local str
+   printf -v str ' %s' "${myArray[@]}"  # save to variable str without printing
+   printf '%s' "${str:1}"  # to remove the leading space 
 
 # docs as code
     #!/usr/bin/env bash
