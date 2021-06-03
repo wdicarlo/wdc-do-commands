@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 #TODO: use only two inout <path/filename> <other-root-path>
 app=`basename $0`
@@ -63,14 +63,39 @@ if [ $patchmode -eq 1 ]; then
 	exit
 fi
 
-if [ $# -ne 3 ]; then
+if [ $# -eq 2 ]; then
+    path1=$(echo "$1" | sed 's#/$##')
+    path2=$(echo "$2" | sed 's#/$##')
+    if [ ! -d "$path1" ] || [ ! -d "$path2" ]; then
+      usage
+      exit
+    fi
+    # find common filenames
+    for file in $(ls -1 "$path1")
+    do
+      ok=$(ls -1 "$path2" | grep "^${file}$" | wc -l)
+      cmd="vimdiff --noplugin "
+      if [ $ok -gt 0 ]; then
+        [ $(diff "${path1}/${file}" "${path2}/${file}"|wc -l) -eq 0 ] && continue
+        cmd="$cmd ${path1}/${file} ${path2}/${file}"
+        echo "> $cmd"
+        read -p "Compare? y/[n]/q > " answer 
+        if [ "$answer" == "y" ]; then
+          eval "$cmd"
+        elif [ "$answer" == "q" ]; then
+          exit
+        fi
+      fi
+    done
+    exit
+elif [ $# -ne 3 ]; then
     usage
     exit
 fi 
 
 if [ $multinames -eq 0 ]; then
-    path1=$1
-    path2=$2
+    path1="$1"
+    path2="$2"
     shift
     shift
     for file in $@;
