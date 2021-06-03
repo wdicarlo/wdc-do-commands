@@ -1,0 +1,78 @@
+Terraform Tips and Tricks
+	Examples of terraform commands
+Show Version
+  terraform --version
+Init Terraform
+  terraform init
+Init Terraform and Don't Ask Any Input
+  terraform init -input=false
+Change Backend Configuration During the Init
+  terraform init -backend-config=cfg/s4.dev.tf -reconfigure # do not copy the existing state to the new remote state location.
+Init Terraform with a remote state file
+  terraform init \
+    -backend-config=address=${TF_ADDRESS} \
+    -backend-config=lock_address=${TF_ADDRESS_LOCK} \
+    -backend-config=unlock_address=${TF_ADDRESS_LOCK} \
+    -backend-config=username=${TF_USERNAME} \
+    -backend-config=password=${TF_PASSWORD} \
+    -backend-config="lock_method=POST" \
+    -backend-config="unlock_method=DELETE" \
+    -backend-config="retry_wait_min=5"
+Update edited modules
+  terraform get -update=true 
+Check configuration to execute and write a plan to apply to target infrastructure provider.
+  terraform plan -out plan.out # -target option works with Terraform plan too.
+General verification of reusable modules, including correctness of attribute names and value types
+  terraform init -backend=false
+  terraform validate  # -json output in a machine-readable
+Display a tree of modules annotated with their provider requirements
+  terraform providers
+Apply the plan.
+  terraform apply plan.out
+Apply and Auto Approve
+  terraform apply -auto-approve
+Apply and Define New Variables Value
+  terraform apply -auto-approve -var tags-repository_url=${GIT_URL}
+Apply Only One Module
+  terraform apply -target=module.s3 
+Display all the outputs for the root module
+  terraform output
+Display human-readable output from a state or plan file.
+  terraform show -json | jq '.'
+Display the attributes of a single resource in the state file
+  terraform state show module.bootstrap.module.vault-dns.null_resource.dns_validate
+  terraform state show module.bootstrap.module.main.data.azurerm_subnet.subnets[1]
+Display json representation of the schemas for all providers 
+  terraform providers schema -json
+Destroy
+  terraform destroy
+Destroy and Auto Approve
+  terraform destroy -auto-approve
+Create deletion plan
+  terraform plan -destroy # -target option allows to destroy only one resource
+Graph visual dependency graph of Terraform resources.
+  terraform graph | dot -Tpng > graph.png
+Validate/check the syntax of the Terraform files
+  terraform validate
+Tree of providers used by modules in your project.
+  terraform providers
+Pull Remote State in A Local Copy
+  terraform state pull > terraform.tfstate
+Push State in a Remote Backend storage
+  terraform state push
+Move a resource from local state to a remote state
+  terraform state mv aws_iam_role.role1 module.mymodule
+Import resource into the Terraform state
+  terraform import module.core.azurerm_resource_group.core /subscriptions/********-****-****-****-************/resourceGroups/my_az_resource_group
+List all resources in the state file
+  terraform state list
+List filtered list of resources in the state file
+  terraform state list module.bootstrap.module.logs
+List the resource filtered by ID
+  terraform state list -id=/subscriptions/********-****-****-****-************/resourceGroups/my_az_resource_group
+Destroy and re-create a particular resource
+  terraform taint module.bootstrap.azurerm_resource_group.rg
+Undo previous taint
+  terraform taint module.bootstrap.azurerm_resource_group.rg
+Unlock a locked state file
+  terraform force-unlock $TF_ADDRESS_LOCK 
