@@ -76,3 +76,36 @@ Undo previous taint
   terraform taint module.bootstrap.azurerm_resource_group.rg
 Unlock a locked state file
   terraform force-unlock $TF_ADDRESS_LOCK 
+Upgrade kubernetes provider
+  # use required_providers block
+  terraform {
+    required_providers {
+      kubernetes = {
+        source  = "hashicorp/kubernetes"
+        version = ">= 2.0" # upgrade with command: terraform init -upgrade
+      }
+    }
+  }
+Configure kubernetes provider
+  # explicitly:
+  # * using a kubeonfig file
+  # * supplying credentials
+  # * exec plugins
+  # implicitly:
+  # * using the in-cluster config
+Warning when using interpolation to pass credentials to the kubernetes provider from other resources
+  # there resources SHOULD NOT be created in the same terraform module where k8s provider resources are also used.
+  # The most reliable way to configure the Kubernetes provider is to ensure that the cluster itself and 
+  # the Kubernetes provider resources can be managed with separate apply operations. 
+  # Data-sources can be used to convey values between the two stages as needed.
+Kubeconfig for manual CLI access
+  export KUBECONFIG=$(terraform output -raw kubeconfig_path)
+  kubectl get pods -n test
+Save new credentials into state if the certificates (or other authentication attributes) are replaced due to expiration
+  terraform plan -target=module.aks-cluster
+  terraform apply -target=module.aks-cluster
+  terraform plan
+  terraform apply # to apply any updates to kubernetes resources
+Replace the underlying AKS cluster (for example, changing VM sizes), removing module.kubernetes-config prior to replacing the cluster credentials
+  terraform state rm module.kubernetes-config
+  terraform apply
