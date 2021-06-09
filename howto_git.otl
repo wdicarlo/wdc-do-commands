@@ -326,4 +326,6 @@ Delete local and remote branch
   git branch -d localBranchName # delete branch locally
   git push origin --delete remoteBranchName # delete branch remotely
 List all tags reachable from a branch
-	git tag --merged <branch> --sort=taggerdate
+  git tag --merged <branch> --sort=taggerdate
+Get git folder
+  git rev-parse --git-dir
