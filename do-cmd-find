@@ -5,13 +5,14 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] <string>"
+    echo "Usage: $cmd [-h] [-q] [-f] [-c] [-a] [-o] [-r <root>] <string>"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -f                          : find the filenames"
     echo "       -c                          : find in all commands (even not versioned)"
     echo "       -a                          : find in all files (even not versioned)"
     echo "       -o                          : find only in the options"
+    echo "       -r                          : find in the <root> folder"
     echo "       -q                          : quiet"
 }
 
@@ -20,9 +21,13 @@ quiet=0
 all=0
 options=0
 files=0
-while getopts hqaocf flag
+root="$WDC_DO_COMMANDS_DIR"
+while getopts hqaocfr: flag
 do
     case $flag in
+	r)
+	    root="$OPTARG"
+	    ;;
 	o)
 	    options=1
 	    ;;
@@ -55,9 +60,9 @@ if [ $# == 0 ]; then
     exit
 fi
 
+[ ! -d "$root" ] && echo "Wrong command folder: $root" && exit
 
-
-cd $WDC_DO_COMMANDS_DIR
+cd "$root"
 cmd="git ls-files | grep \"^do[-_].*\""
 if [ $all -eq 1 ]; then
     cmd="find . -maxdepth 1 -name \"do[-_]*\" | sed 's#^\.\/##'"
