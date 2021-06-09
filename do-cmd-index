@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+declare -A cmds
+for cmd in $(ls -1 | grep "^do-")
+do
+  idx=""
+  for w in $(echo "$cmd" | tr '-' ' '); 
+  do 
+    idx="${idx}$(echo $w|head -c 1)"
+  done
+  if [ ! "${cmds[$idx]}" == "" ]; then
+    num=$(echo "$cmd" | tr '-' ' ' | wc -w)
+    word=$(echo "$cmd" | cut -d'-' -f $num)
+    for ((i=2; i<=${#word}; i++)); do
+      nidx="${idx::-1}$(echo $word | head -c $i)"
+      [ "${cmds[$nidx]}" == "" ] && break
+    done
+    idx="$nidx"
+  fi
+  cmds["$idx"]="$cmd"
+  echo "$idx: $cmd" 
+done | sort -t':' -k 1 | column -t -s':' 
