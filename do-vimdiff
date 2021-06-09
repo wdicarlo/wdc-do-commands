@@ -3,9 +3,40 @@
 #TODO: use only two inout <path/filename> <other-root-path>
 app=`basename $0`
 function usage() {
-    echo "Usage: $app <root1> <root2> <common-path>"
+    echo "Usage: $app [-r] [-s] <root1> <root2>"
+    echo "       -r             : recursive"
+    echo "       -s             : just print a summary of differences"
+    echo "Usage: $app <root1> <root2> <common-relative-path-to-file>"
     echo "Usage: $app -f <root> <file1> <file2>"
     echo "Usage: $app -p <file> # edit diff of <file> vs <file>.orig and <file>.rej"
+}
+
+function compare() {
+    path1=$(echo "$1" | sed 's#/$##')
+    path2=$(echo "$2" | sed 's#/$##')
+    if [ ! -d "$path1" ] || [ ! -d "$path2" ]; then
+      usage
+      exit
+    fi
+    # find common filenames
+    for file in $(find "$path1" -maxdepth 1 -type f | sed "s#${path1}/##")
+    do
+      ok=$(find "$path2" -maxdepth 1 -type f | sed "s#${path2}/##" | grep "^${file}$" | wc -l)
+      cmd="vimdiff --noplugin "
+      if [ $ok -gt 0 ]; then
+        [ $(diff "${path1}/${file}" "${path2}/${file}"|wc -l) -eq 0 ] && echo "Skipping equal file: ${path2}/${file}" && continue
+        cmd="$cmd ${path1}/${file} ${path2}/${file}"
+        echo "> $cmd"
+        read -p "Compare? y/[n]/q > " answer 
+        if [ "$answer" == "y" ]; then
+          eval "$cmd"
+        elif [ "$answer" == "q" ]; then
+          exit
+        fi
+      else
+        echo "Skipping missing file: ${path2}/${file}"
+      fi
+    done
 }
 
 if [ $# == 0 ]; then
@@ -16,13 +47,21 @@ fi
 multinames=0
 quiet=0
 patchmode=0
-while getopts qhfp flag
+recurse=0
+summary=0
+while getopts qhfprs flag
 do
     case $flag in
 
         q)
             quiet=1
 #            echo pars is $pars
+            ;;
+        s)
+            recurse=1
+            ;;
+        r)
+            summary=1
             ;;
         p)
             patchmode=1
@@ -66,27 +105,20 @@ fi
 if [ $# -eq 2 ]; then
     path1=$(echo "$1" | sed 's#/$##')
     path2=$(echo "$2" | sed 's#/$##')
-    if [ ! -d "$path1" ] || [ ! -d "$path2" ]; then
-      usage
+
+    if [ $summary -eq 1 ]; then
+      [ ! -d "$path1" ] || [ ! -d "$path2" ] && echo "Wrong paths" && exit
+      diff -q -r --exclude=".git"  "$path1" "$path2"
       exit
     fi
-    # find common filenames
-    for file in $(ls -1 "$path1")
-    do
-      ok=$(ls -1 "$path2" | grep "^${file}$" | wc -l)
-      cmd="vimdiff --noplugin "
-      if [ $ok -gt 0 ]; then
-        [ $(diff "${path1}/${file}" "${path2}/${file}"|wc -l) -eq 0 ] && continue
-        cmd="$cmd ${path1}/${file} ${path2}/${file}"
-        echo "> $cmd"
-        read -p "Compare? y/[n]/q > " answer 
-        if [ "$answer" == "y" ]; then
-          eval "$cmd"
-        elif [ "$answer" == "q" ]; then
-          exit
-        fi
-      fi
-    done
+    compare "$path1" "$path2"
+    if [ $recurse -eq 1 ]; then
+      for subdir in $(find "$path1" -type d | sed "s#${path1}/##")
+      do
+        [ ! -d "${path2}/${subdir}" ] && echo "Skipping missing path: ${path2}/${subdir}" && continue
+        compare "${path1}/${subdir}" "${path2}/${subdir}" 
+      done
+    fi
     exit
 elif [ $# -ne 3 ]; then
     usage
