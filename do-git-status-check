@@ -1,18 +1,39 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # source: https://stackoverflow.com/a/3278427
 
-UPSTREAM=${1:-'@{u}'}
-LOCAL=$(git rev-parse @)
-REMOTE=$(git rev-parse "$UPSTREAM")
-BASE=$(git merge-base @ "$UPSTREAM")
+# use @ for the current branch (assuming you're not in a detached-head state) 
+# use @{u} for the upstream branch (eg origin/master)
 
-if [ $LOCAL = $REMOTE ]; then
-    echo "Up-to-date"
-elif [ $LOCAL = $BASE ]; then
-    echo "Need to pull"
-elif [ $REMOTE = $BASE ]; then
-    echo "Need to push"
+# Update tracking branches with: git remote -v update
+
+function check() {
+  GITDIR=$(git rev-parse --git-dir 2>/dev/null)
+  [ -z $GITDIR ] && echo "Not a git repository" && return
+  UPSTREAM=${1:-'@{u}'} # [optionally] pass an upstream branch explicitly (remotename/branchname)
+  LOCAL=$(git rev-parse @)
+  REMOTE=$(git rev-parse "$UPSTREAM" 2>/dev/null)
+  BASE=$(git merge-base @ "$UPSTREAM" 2>/dev/null)
+
+  if [ "$LOCAL" = "$REMOTE" ]; then
+      echo "Up-to-date"
+  elif [ "$LOCAL" = "$BASE" ]; then
+      echo "Need to pull"
+  elif [ "$REMOTE" = "$BASE" ]; then
+      echo "Need to push"
+  else
+      echo "Diverged"
+  fi
+}
+
+if [ $# -eq 0 ]; then
+  check
 else
-    echo "Diverged"
+  for dir in $@
+  do
+    [ ! -d "$dir" ] && continue
+    cd "$dir"
+    echo "$dir: $(git rev-parse --abbrev-ref HEAD 2>/dev/null): $(check)"
+    cd ..
+  done | column -t -s':'
 fi
