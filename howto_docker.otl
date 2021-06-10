@@ -118,3 +118,12 @@ Stop exited containers and delete only non-tagged images
 	docker ps --filter 'status=Exited' -a | xargs docker stop docker images --filter "dangling=true" -q | xargs docker rmi 
 Remove all containers that aren't currently running
 	docker rm $(docker ps -a -q -f "status=exited*")
+COPY vs ADD
+  # Both commands can copy files from local host into the container
+  # In addition, ADD allows to copy from an URL and to decompress an archive
+  # Use COPY and use the ADD only if it is necessary to extract a local tar file
+Download and uncompress an archive
+  RUN curl http://mydomain.net/myarchive.tar.gz \
+    | tar -xjC /tmp/ myarchive.tar.gz \
+    && make -C /tmp/ myarchive.tar.gz
+
