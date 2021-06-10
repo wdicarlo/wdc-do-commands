@@ -9,23 +9,21 @@ function usage() {
     echo "Usage: $app <root1> <root2> <common-relative-path-to-file>"
     echo "Usage: $app -f <root> <file1> <file2>"
     echo "Usage: $app -p <file> # edit diff of <file> vs <file>.orig and <file>.rej"
+    echo "Usage: $app -g <file> # view diff of <file> vs un-staged git changes"
 }
 
 function compare() {
-    path1=$(echo "$1" | sed 's#/$##')
-    path2=$(echo "$2" | sed 's#/$##')
-    if [ ! -d "$path1" ] || [ ! -d "$path2" ]; then
-      usage
-      exit
-    fi
+    dir1=$(echo "$1" | sed 's#/$##')
+    dir2=$(echo "$2" | sed 's#/$##')
+
     # find common filenames
-    for file in $(find "$path1" -maxdepth 1 -type f | sed "s#${path1}/##")
+    for file in $(find "$dir1" -maxdepth 1 -type f | sed "s#${dir1}/##")
     do
-      ok=$(find "$path2" -maxdepth 1 -type f | sed "s#${path2}/##" | grep "^${file}$" | wc -l)
+      ok=$(find "$dir2" -maxdepth 1 -type f | sed "s#${dir2}/##" | grep "^${file}$" | wc -l)
       cmd="vimdiff --noplugin "
       if [ $ok -gt 0 ]; then
-        [ $(diff "${path1}/${file}" "${path2}/${file}"|wc -l) -eq 0 ] && echo "Skipping equal file: ${path2}/${file}" && continue
-        cmd="$cmd ${path1}/${file} ${path2}/${file}"
+        [ $(diff "${dir1}/${file}" "${dir2}/${file}"|wc -l) -eq 0 ] && echo "Skipping equal file: ${dir2}/${file}" && continue
+        cmd="$cmd ${dir1}/${file} ${dir2}/${file}"
         echo "> $cmd"
         read -p "Compare? y/[n]/q > " answer 
         if [ "$answer" == "y" ]; then
@@ -34,7 +32,7 @@ function compare() {
           exit
         fi
       else
-        echo "Skipping missing file: ${path2}/${file}"
+        echo "Skipping missing file: ${dir2}/${file}"
       fi
     done
 }
@@ -49,7 +47,8 @@ quiet=0
 patchmode=0
 recurse=0
 summary=0
-while getopts qhfprs flag
+git=0
+while getopts qhfprsg flag
 do
     case $flag in
 
@@ -57,11 +56,14 @@ do
             quiet=1
 #            echo pars is $pars
             ;;
+        g)
+            git=1
+            ;;
         s)
-            recurse=1
+            summary=1
             ;;
         r)
-            summary=1
+            recurse=1
             ;;
         p)
             patchmode=1
@@ -81,6 +83,14 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+if [ $git -eq 1 ]; then
+	if [ $# -ne 1 ]; then
+	    usage
+	    exit
+	fi 
+  git difftool -t vimdiff -y "$1"
+  exit
+fi
 
 if [ $patchmode -eq 1 ]; then
 	if [ $# -ne 1 ]; then
@@ -105,17 +115,17 @@ fi
 if [ $# -eq 2 ]; then
     path1=$(echo "$1" | sed 's#/$##')
     path2=$(echo "$2" | sed 's#/$##')
+    [ ! -d "$path1" ] || [ ! -d "$path2" ] && echo "Wrong paths" && exit
 
     if [ $summary -eq 1 ]; then
-      [ ! -d "$path1" ] || [ ! -d "$path2" ] && echo "Wrong paths" && exit
       diff -q -r --exclude=".git"  "$path1" "$path2"
       exit
     fi
     compare "$path1" "$path2"
     if [ $recurse -eq 1 ]; then
-      for subdir in $(find "$path1" -type d | sed "s#${path1}/##")
+      for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
       do
-        [ ! -d "${path2}/${subdir}" ] && echo "Skipping missing path: ${path2}/${subdir}" && continue
+        [ ! -d "${path2}/${subdir}" ] && echo "Skipping missing path: ${path2} / ${subdir}" && continue
         compare "${path1}/${subdir}" "${path2}/${subdir}" 
       done
     fi
