@@ -1078,3 +1078,5 @@ Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 call plug#end()
 ----------------------------------------
+" To solve CONVERSION errors during saving use:
+:w ++enc=utf-8
