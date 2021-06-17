@@ -47,4 +47,9 @@ Create a file using redirection
   EOF
 Add \ character at the end of all lines apart the last one
   cat date.csv|sed '$!s/$/ \\/'
-
+Remove substring from the begin of a variable value
+	${var#substr}  # shortest matching pattern
+	${var##substr} # longest matching pattern
+Remove substring from the end of a variable value
+	${var%substr}  # shortest matching pattern
+	${var%%substr} # longest matching pattern
