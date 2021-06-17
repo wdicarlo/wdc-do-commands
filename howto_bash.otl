@@ -45,5 +45,6 @@ Create a file using redirection
     scikit-learn==0.22.2.post1
     xgboost==0.90
   EOF
-
+Add \ character at the end of all lines apart the last one
+  cat date.csv|sed '$!s/$/ \\/'
 
