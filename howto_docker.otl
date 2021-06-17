@@ -34,7 +34,7 @@ Run dockerized web site
 	docker run -d --name mysite -P wdicarlo/httpd-mysite:v1
 Stop container
 	docker stop 0f9f27cedc75; docker stop mycontainer1
-Remove container
+Remove (delete) a container
 	docker rm ab0d93f9efb4
 Inspect network bridge information
 	docker network inspect bridge
@@ -46,7 +46,7 @@ Create a new network
 	docker network create mynet
 Inspect network details
 	docker network inspect mynet 
-Remove network
+Remove (delete) a network
 	docker network rm mynet
 List available network commands
 	docker network
@@ -62,7 +62,7 @@ Docker bridge network (default)
     docker network inspect bridge
 Create a dedicated container network
 	docker run -itd --name=mycontainer3 --net=mynet debian
-Remove container and volume
+Remove (delete) a container and volume
 	docker rm -v mycontainer1
 Map all host ports into container ports
 	docker run -d -P httpd:latest
@@ -70,19 +70,19 @@ Map specific host port to a container port
 	docker run -d -p 80:5000 httpd:latest
 List all exited containers
 	docker ps -a -f status=exited
-Remove all exited containers
+Remove (delete) all exited containers
 	docker rm $(docker ps -a -f status=exited -q)
 Stop all running containers
 	docker stop $(docker ps -a -q)
-Remove all images even if error are present
+Remove (delete) all images even if error are present
 	docker rmi -f $(docker images -a -q)
-Remove all images avoiding those ones if error are present
+Remove (delete) all images avoiding those ones if error are present
 	docker rmi $(docker images -a -q)
 List volumes not attached to containers
 	docker volume ls -f dangling=true
-Remove all detached volumes
+Remove (delete) all detached volumes
 	docker volume rm $(docker volume ls -f dangling=true -q)
-Remove a container
+Remove (delete) a container
 	docker container rm myjenkins
 Run container exposing port 8080 to 8888
 	docker run -d --name myjenkins -p 8888:8080 jenkins/jenkins:lts
@@ -110,13 +110,13 @@ Stop all running containers
 	docker stop $(docker ps -a -q)
 Fast stop all running containers
 	docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {} # parallel stop commands
-Remove all containers
+Remove (delete) all containers
 	docker rm $(docker ps -a -q)
-Remove all containers and volumes
+Remove (delete) all containers and volumes
 	docker rm -v $(docker ps -a -q)
 Stop exited containers and delete only non-tagged images
 	docker ps --filter 'status=Exited' -a | xargs docker stop docker images --filter "dangling=true" -q | xargs docker rmi 
-Remove all containers that aren't currently running
+Remove (delete) all containers that aren't currently running
 	docker rm $(docker ps -a -q -f "status=exited*")
 COPY vs ADD
   # Both commands can copy files from local host into the container
@@ -126,4 +126,7 @@ Download and uncompress an archive
   RUN curl http://mydomain.net/myarchive.tar.gz \
     | tar -xjC /tmp/ myarchive.tar.gz \
     && make -C /tmp/ myarchive.tar.gz
-
+Print disk space used by docker
+	docker system df
+Remove (delete) unused data; containers, networks, images, cache
+	docker system prune
