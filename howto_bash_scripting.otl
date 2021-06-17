@@ -37,6 +37,36 @@ bash scripting howto
    cmd=`basename $0`
 
    function usage() {
+	   echo "Usage: $cmd [-h]"
+	   echo "where:"
+	   echo "       -h                          : print this help"
+   }
+
+# Arguments processing
+   while getopts h flag
+   do
+   case $flag in
+	  h)
+		  usage
+		  exit
+		  ;;
+	  ?)
+		  usage
+		  exit
+		  ;;
+	   esac
+   done
+   shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+   if [ $# == 0 ]; then
+	   usage
+	   exit
+   fi
+
+# Usage help function
+   cmd=`basename $0`
+
+   function usage() {
        echo "Usage: $cmd [-h] [-q] [-s <val>] [-n] [-v] <arg> [-f]"
        echo "where:"
        echo "       -h                          : print this help"
@@ -173,3 +203,4 @@ bash scripting howto
     I | S |   | A |
     T | A | B | L | E
     DACv2
+
