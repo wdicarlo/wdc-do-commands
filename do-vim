@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+# Support Functions 
+yell() { echo "$0: $*" >&2; }
+die() { yell "$*"; exit 111; }
+try() { "$@" || die "cannot $*"; }
+
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -t <task>                   : start/continue work on <task>"
+  echo "       -t .                        : select task start/continue work on"
+}
+
+# Arguments processing
+task=""
+while getopts ht: flag
+do
+  case $flag in
+    t)
+      task="$OPTARG"
+      [ "$task" == "" ] && task="."
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+if [ ! "$task" == "" ]; then
+  if [ "$task" == "." ]; then
+    ls -1 "$PROJECT_PATH" | grep "^task_.*\.vim$"| awk '{ printf "%-2s %-60s\n", NR, $0 }'
+    read -p "task? " num
+
+    if [ "$num" == "" ]; then
+        exit
+    fi
+    task_filename=$(ls -1 "$PROJECT_PATH" | grep "^task_.*\.vim$"| awk '{ printf "%-2s %-60s\n", NR, $0 }'|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)
+  else
+    task_name="task_${task}"
+    task_filename="${task_name}.vim"
+  fi
+  task_path="$PROJECT_PATH/${task_filename}"
+  if [ -f "$task_path" ]; then
+    \vi -S "$task_path" -c ":Obsession $task_path"
+  else
+    if [ ! "$task" == "." ]; then
+      \vi -c ":Obsession $task_path"
+    else
+      exit 1
+    fi
+  fi
+    exit
+fi
+
+vi $@
