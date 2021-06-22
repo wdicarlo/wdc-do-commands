@@ -221,8 +221,8 @@ Push a new local branch changing the name of the remote branch
 	git push -u origin <local_branch_name>:<remote_branch_name>
 Stop merge commit while in Vim
 	Either remove/comment the message or use the command :cq
-List all branches which contains the specified commit
-	git branch [-r|-a] --contains <sha>
+List all branches which contains the specified commit/tag
+	git branch [-r|-a] --contains <sha>|<tag>
 List files with conflicts
 	git diff --name-only --diff-filter=U
 Get used credential storage helper
@@ -317,15 +317,17 @@ Move master to a tag
 Globally config vim as editor for git
 	git config --global core.editor "vim"
 Checkout remote master and reset local master
-  git checkout -B master origin/master
+	git checkout -B master origin/master
 List branches without a remote branch
-  git branch -vv | awk '/: gone]/{print $1}'
+	git branch -vv | awk '/: gone]/{print $1}'
 Delete all local branches without referenced remote branch
-  [ "$(git rev-parse --abbrev-ref HEAD)" == "master" ] && (git branch -vv | awk '/: gone]/{print $1}' |xargs git branch -d ) # use -D to force the deletion even if not fully merged
+	[ "$(git rev-parse --abbrev-ref HEAD)" == "master" ] && (git branch -vv | awk '/: gone]/{print $1}' |xargs git branch -d ) # use -D to force the deletion even if not fully merged
 Delete local and remote branch
-  git branch -d localBranchName # delete branch locally
-  git push origin --delete remoteBranchName # delete branch remotely
+	git branch -d localBranchName # delete branch locally
+	git push origin --delete remoteBranchName # delete branch remotely
 List all tags reachable from a branch
-  git tag --merged <branch> --sort=taggerdate
+	git tag --merged <branch> --sort=taggerdate
 Get git folder
-  git rev-parse --git-dir
+	git rev-parse --git-dir
+Get last tag from current branch
+	git describe --abbrev=0 --tags
