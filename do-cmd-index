@@ -1,21 +1,68 @@
 #!/usr/bin/env bash
-declare -A cmds
-for cmd in $(ls -1 | grep "^do-")
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h] [-t] [<grep_pattern>]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -t                          : pretty print"
+  echo "       -u                          : update the index"
+}
+
+# Arguments processing
+otable=0
+update=0
+while getopts htu flag
 do
-  idx=""
-  for w in $(echo "$cmd" | tr '-' ' '); 
-  do 
-    idx="${idx}$(echo $w|head -c 1)"
-  done
-  if [ ! "${cmds[$idx]}" == "" ]; then
-    num=$(echo "$cmd" | tr '-' ' ' | wc -w)
-    word=$(echo "$cmd" | cut -d'-' -f $num)
-    for ((i=2; i<=${#word}; i++)); do
-      nidx="${idx::-1}$(echo $word | head -c $i)"
-      [ "${cmds[$nidx]}" == "" ] && break
+  case $flag in
+    u)
+      update=1
+      ;;
+    t)
+      otable=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+idxfile="$(echo ~/wbin/do_cmd.index)"
+
+if [ $update -eq 1 ]; then
+  declare -A cmds
+  for cmd in $(ls -1 | grep "^do-")
+  do
+    idx=""
+    for w in $(echo "$cmd" | tr '-' ' '); 
+    do 
+      idx="${idx}$(echo $w|head -c 1)"
     done
-    idx="$nidx"
-  fi
-  cmds["$idx"]="$cmd"
-  echo "$idx: $cmd" 
-done | sort -t':' -k 1 | column -t -s':' 
+    if [ ! "${cmds[$idx]}" == "" ]; then
+      num=$(echo "$cmd" | tr '-' ' ' | wc -w)
+      word=$(echo "$cmd" | cut -d'-' -f $num)
+      for ((i=2; i<=${#word}; i++)); do
+        nidx="${idx::-1}$(echo $word | head -c $i)"
+        [ "${cmds[$nidx]}" == "" ] && break
+      done
+      idx="$nidx"
+    fi
+    cmds["$idx"]="$cmd"
+    echo "$idx: $cmd" 
+  #done | sort -t':' -k 1 | column -t -s':' 
+  done | sort -t':' -k 1 > "$idxfile"
+fi
+
+[ $# -gt 1 ] && usage && exit
+[ $# -eq 1 ] && [ $otable -eq 1 ] && cat "$idxfile" | column -t -s':' | grep "$1" && exit
+[ $otable -eq 1 ] && cat "$idxfile" | column -t -s':' && exit
+[ $# -eq 1 ] && cat "$idxfile" | grep "$1" && exit
+
+[ $# -eq 0 ] && cat "$idxfile" 
