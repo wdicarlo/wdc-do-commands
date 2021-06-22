@@ -53,3 +53,11 @@ Remove substring from the begin of a variable value
 Remove substring from the end of a variable value
 	${var%substr}  # shortest matching pattern
 	${var%%substr} # longest matching pattern
+Simulate a failing bash script
+	true && sh -c 'exit 1' # $(echo $?) # print 1
+Convert variable value to lowercase
+	echo ${STR,}   #=> "hELLO WORLD!" (lowercase 1st letter)
+	echo ${STR,,}  #=> "hello world!" (all lowercase)
+Convert variable value to uppercase
+	echo ${STR^}   #=> "Hello world!" (uppercase 1st letter)
+	echo ${STR^^}  #=> "HELLO WORLD!" (all uppercase)	
