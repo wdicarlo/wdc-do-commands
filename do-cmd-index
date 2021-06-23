@@ -61,7 +61,7 @@ if [ $update -eq 1 ]; then
 fi
 
 [ $# -gt 1 ] && usage && exit
-[ $# -eq 1 ] && [ $otable -eq 1 ] && cat "$idxfile" | column -t -s':' | grep "$1" && exit
+[ $# -eq 1 ] && [ $otable -eq 1 ] && cat "$idxfile" | grep "$1" | column -t -s':' && exit
 [ $otable -eq 1 ] && cat "$idxfile" | column -t -s':' && exit
 [ $# -eq 1 ] && cat "$idxfile" | grep "$1" && exit
 
