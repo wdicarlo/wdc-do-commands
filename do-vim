@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 # Support Functions 
 yell() { echo "$0: $*" >&2; }
 die() { yell "$*"; exit 111; }
@@ -54,10 +55,17 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+OBSESSIONS_PATH="$PROJECT_PATH/.obsessions"
+[ "$PROJECT_PATH" == "" ] && OBSESSIONS_PATH="$HOME/.obsessions"
+[ ! -d "$OBSESSIONS_PATH" ] && mkdir -p "$OBSESSIONS_PATH"
+NOTEBOOKS_PATH="$PROJECT_PATH/.notebooks"
+[ "$PROJECT_PATH" == "" ] && NOTEBOOKS_PATH="$HOME/.notebooks"
+[ ! -d "$NOTEBOOKS_PATH" ] && mkdir -p "$NOTEBOOKS_PATH"
+
 
 if [ ! "$task" == "" ]; then
   if [ "$task" == "." ]; then
-    (echo "NEW";ls -1 "$PROJECT_PATH" | grep "^task_.*\.vim$"| sed 's/^task_\(.*\)\.vim/\1/' | sort) | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t
+    (echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$"| sed 's/^task_\(.*\)\.vim/\1/' | sort) | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t
     read -p "task? " num
 
     if [ "$num" == "" ]; then
@@ -68,20 +76,20 @@ if [ ! "$task" == "" ]; then
       task_name="task_$(echo "$task"| tr ' ' '_' | sed 's/^task_//')"
       task_filename="${task_name}.vim"
     else
-      task_filename=$((echo "NEW";ls -1 "$PROJECT_PATH" | grep "^task_.*\.vim$" | sort)| awk '{ printf "%-2s %-60s\n", NR, $0 }'|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)
+      task_filename=$((echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$" | sort)| awk '{ printf "%-2s %-60s\n", NR, $0 }'|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)
       task_name="${task_filename%.vim}"
     fi
   elif [ $(echo "$task" | grep "^[0-9]\+$" | wc -l) -gt 0 ]; then
     num="$task"
     task="."
-    [ $num -eq 1 ] && (echo "NEW";ls -1 "$PROJECT_PATH" | grep "^task_.*\.vim$"| sed 's/^task_\(.*\)\.vim/\1/' | sort) | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t && exit
-    task_filename=$((echo "NEW";ls -1 "$PROJECT_PATH" | grep "^task_.*\.vim$" | sort)| awk '{ printf "%-2s %-60s\n", NR, $0 }'|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)
+    [ $num -eq 1 ] && (echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$"| sed 's/^task_\(.*\)\.vim/\1/' | sort) | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t && exit
+    task_filename=$((echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$" | sort)| awk '{ printf "%-2s %-60s\n", NR, $0 }'|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)
     task_name="${task_filename%.vim}"
   else
     task_name="task_${task}"
     task_filename="${task_name}.vim"
   fi
-  task_path="$PROJECT_PATH/${task_filename}"
+  task_path="$OBSESSIONS_PATH/${task_filename}"
   if [ -f "$task_path" ]; then
     [ $session_reset -eq 1 ] && rm -f "$task_path"
     #\vi -S "$task_path" -c ":Obsession $task_path" -c ":VimNotebookOpen $task_name" "$vimopt" $@
