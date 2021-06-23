@@ -29,15 +29,15 @@ Convert string date to timestamp number
 Filter by date
 	cat data.json |sed 's/\.[0-9]\+Z/Z/'| jq '.[] | select(.created_at|fromdateiso8601 > 1561327200)'
 Join values of field
-    echo "[{\"id\":\"1\"},{\"id\":\"B\"},{\"id\":\"C\"}]"|jq '. | map(.id) | join(",")'
+	echo "[{\"id\":\"1\"},{\"id\":\"B\"},{\"id\":\"C\"}]"|jq '. | map(.id) | join(",")'
 Join values of field which could not exist
-    echo "[{\"id\":1,\"tags\":[]},{\"id\":2,\"tags\":[{\"name\":\"A\"},{\"name\":\"B\"}]}]"|jq '.[]|.tags | map(.name) | join(",")'
+	echo "[{\"id\":1,\"tags\":[]},{\"id\":2,\"tags\":[{\"name\":\"A\"},{\"name\":\"B\"}]}]"|jq '.[]|.tags | map(.name) | join(",")'
 Filter by number threshold
-    echo "[{\"id\":1},{\"id\":\"B\"},{\"id\":\"C\"},{\"id\":4}]"|jq '.[].id | select(numbers) | select(. < 3)'
+	echo "[{\"id\":1},{\"id\":\"B\"},{\"id\":\"C\"},{\"id\":4}]"|jq '.[].id | select(numbers) | select(. < 3)'
 Filter by number range
-    echo "[{\"id\":1},{\"id\":\"B\"},{\"id\":\"C\"},{\"id\":4}]"|jq '.[].id | select(numbers) | select(. > 2 and . < 6)'
+	echo "[{\"id\":1},{\"id\":\"B\"},{\"id\":\"C\"},{\"id\":4}]"|jq '.[].id | select(numbers) | select(. > 2 and . < 6)'
 Conditionally change values 
-    cat data.json | jq '.[] |if .key == "MYISSUE-2" then .fields.resolutiondate = "2019-07-01T17:22:52.000+0300" else . end'| jq '"\(.key);\(.fields.resolutiondate)"'
+	cat data.json | jq '.[] |if .key == "MYISSUE-2" then .fields.resolutiondate = "2019-07-01T17:22:52.000+0300" else . end'| jq '"\(.key);\(.fields.resolutiondate)"'
 Filter by values and items
 	cat certificates.json | jq  '.[]|select(.certificateId == "6312" )| {"name":.certificateName,"id":.certificateId}'
 Filter using regular expression
@@ -48,5 +48,5 @@ Sort by a field
 	cat data.json | jq '.subnets|=sort_by(.name)|.subnets[]|.name'
 Count occurences in an array
 	cat data.json | jq '.subnets[]|select(.name == "Low") | "\(.ipConfigs | length)"' 
-URI Encode 
-  date | jq -sRr @uri
+Encode (escape) string for URI/URL
+	date | jq -sRr @uri
