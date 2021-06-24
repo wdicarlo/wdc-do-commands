@@ -4,18 +4,23 @@ bin_dir=`echo $WDC_DO_COMMANDS_DIR`
 
 
 function usage() {
-    echo "Usage: $cmd [-f] [-r] <improved-bin-cmd>"
+    echo "Usage: $cmd [-f] [-r] [-m \"message\"] <improved-bin-cmd>"
     echo "where:"
     echo "            -f          : update file (defualt update command)"
     echo "            -r          : avoid review of changes before to update"
+    echo "            -m          : message to append to the standard message"
 }
 
 quiet=0
 file=0
 review=1
-while getopts hqfr flag
+message=""
+while getopts hqfrm: flag
 do
 	case $flag in
+		m)
+			message="$OPTARG"
+			;;
 		r)
 			review=0
 			;;
@@ -70,8 +75,13 @@ fi
 
 git add $1
 
+msg=""
 if [ $file -eq 0 ]; then
-    git commit -m "Improved $1 command. $2"
+    msg="Improved $1 command."
 else
-    git commit -m "Update $1 file. $2"
+    msg="Update $1 file."
 fi
+
+[ ! "$message" == "" ] && msg="$msg ${message^}"
+
+git commit -m "$msg"
