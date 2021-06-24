@@ -1,3 +1,46 @@
 #!/usr/bin/env bash
 
-\grep -RHn --color $@ ~/.notebook/
+# usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "usage: $cmd [-h] [-g] <grep_pattern>"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -g                          : search in global notebooks"
+  echo "       -G                          : search in global and local notebooks"
+  echo "       -a                          : search in all notebooks"
+}
+
+# arguments processing
+global=0
+while getopts hgGa flag
+do
+  case $flag in
+    a)
+      global=3
+      ;;
+    G)
+      global=2
+      ;;
+    g)
+      global=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+NOTEBOOKS_PATHS="$PROJECT_PATH/.notebooks"
+[ $global -eq 1 ] && NOTEBOOKS_PATHS="$HOME/.notebooks"
+[ $global -eq 2 ] && NOTEBOOKS_PATHS="$HOME/.notebooks;$PROJECT_PATH/.notebooks"
+[ $global -eq 3 ] && NOTEBOOKS_PATHS="$(find ~ -type d -name .notebooks 2>/dev/null | tr '\n' ';')"
+
+echo "$NOTEBOOKS_PATHS" | tr ';' '\n' | xargs -I@ sh -c "\grep -RHn --color $@ \"@\""
