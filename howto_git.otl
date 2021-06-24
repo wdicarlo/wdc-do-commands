@@ -331,3 +331,6 @@ Get git folder
 	git rev-parse --git-dir
 Get last tag from current branch
 	git describe --abbrev=0 --tags
+List all tags with corresponding description
+	git tag -n --sort=v:refname  # same result with git tag -n | sort -V
+	git tag -n --sort=-v:refname # reverse, same result with git tag -n | sort -V -r
