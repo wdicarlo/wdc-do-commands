@@ -65,8 +65,9 @@ fi
 
 if [ $review -eq 1 ]; then
 	do-git-diff -q $1 | do-pipe-to-vim -o $1
-	read -p "Do you Accept the Changes? <y|n>" ans
+    read -p "Do you Accept the Changes? <Yy|n> (Y to specify a commit message) " ans
 	if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
+    [ "$ans" == "Y" ] && echo "Message? [$msg]" && read -p "" message
 		echo "Changes accepted!!!"
 	else
 		exit
