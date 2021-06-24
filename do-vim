@@ -11,11 +11,12 @@ try() { "$@" || die "cannot $*"; }
 cmd=`basename $0`
 
 function usage() {
-  echo "Usage: $cmd [-h] [-t <task_name>|.] [-r] [-O|-o|-p] [<file>..]"
+  echo "Usage: $cmd [-h] [-t|T <task_name>|.] [-r] [-O|-o|-p] [<file>..]"
   echo "where:"
   echo "       -h                          : print this help"
-  echo "       -t <task>                   : start/continue work on <task>"
-  echo "       -t .                        : select task start/continue work on"
+  echo "       -t|T <task>                   : start/continue work on <task> (-T for global)"
+  echo "       -t|T -                        : continue work on last used <task> (-T for global)"
+  echo "       -t|T .                        : select task start/continue work on (-T for global)"
   echo "       -r                          : reset session about the <task>"
   echo "       -O|-o|-p                    : vim visualization mode"
 }
@@ -24,7 +25,8 @@ function usage() {
 task=""
 vimopt=""
 session_reset=0
-while getopts ht:oOpr flag
+global=0
+while getopts ht:T:oOpr flag
 do
   case $flag in
     r)
@@ -39,9 +41,15 @@ do
     o)
       vimopt="-o"
       ;;
+    T)
+      task="$OPTARG"
+      [ "$task" == "" ] && task="."
+      global=1
+      ;;
     t)
       task="$OPTARG"
       [ "$task" == "" ] && task="."
+      global=0
       ;;
     h)
       usage
@@ -55,15 +63,20 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-OBSESSIONS_PATH="$PROJECT_PATH/.obsessions"
-[ "$PROJECT_PATH" == "" ] && OBSESSIONS_PATH="$HOME/.obsessions"
-[ ! -d "$OBSESSIONS_PATH" ] && mkdir -p "$OBSESSIONS_PATH"
-NOTEBOOKS_PATH="$PROJECT_PATH/.notebooks"
-[ "$PROJECT_PATH" == "" ] && NOTEBOOKS_PATH="$HOME/.notebooks"
-[ ! -d "$NOTEBOOKS_PATH" ] && mkdir -p "$NOTEBOOKS_PATH"
-
 
 if [ ! "$task" == "" ]; then
+  if [ $global -eq 0 ]; then
+    OBSESSIONS_PATH="$PROJECT_PATH/.obsessions"
+    [ "$PROJECT_PATH" == "" ] && OBSESSIONS_PATH="$HOME/.obsessions"
+    NOTEBOOKS_PATH="$PROJECT_PATH/.notebooks"
+    [ "$PROJECT_PATH" == "" ] && NOTEBOOKS_PATH="$HOME/.notebooks"
+  else
+    OBSESSIONS_PATH="$HOME/.obsessions"
+    NOTEBOOKS_PATH="$HOME/.notebooks"
+  fi
+  [ ! -d "$OBSESSIONS_PATH" ] && mkdir -p "$OBSESSIONS_PATH"
+  [ ! -d "$NOTEBOOKS_PATH" ] && mkdir -p "$NOTEBOOKS_PATH"
+
   if [ "$task" == "." ]; then
     (echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$"| sed 's/^task_\(.*\)\.vim/\1/' | sort) | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t
     read -p "task? " num
@@ -76,9 +89,12 @@ if [ ! "$task" == "" ]; then
       task_name="task_$(echo "$task"| tr ' ' '_' | sed 's/^task_//')"
       task_filename="${task_name}.vim"
     else
-      task_filename=$((echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$" | sort)| awk '{ printf "%-2s %-60s\n", NR, $0 }'|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)
-      task_name="${task_filename%.vim}"
+      task_name="task_$((echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$" | sed 's/^task_\(.*\)\.vim/\1/'| sort)| awk '{ printf "%-2s %-60s\n", NR, $0 }'|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)"
+      task_filename="${task_name}.vim"
     fi
+  elif [ "$task" == "-" ]; then
+    task_name=$(ls -t $OBSESSIONS_PATH | grep "task_" | head -1 | sed 's#^\(task_.*\)\.vim$#\1#')
+    task_filename="${task_name}.vim"
   elif [ $(echo "$task" | grep "^[0-9]\+$" | wc -l) -gt 0 ]; then
     num="$task"
     task="."
@@ -92,12 +108,12 @@ if [ ! "$task" == "" ]; then
   task_path="$OBSESSIONS_PATH/${task_filename}"
   if [ -f "$task_path" ]; then
     [ $session_reset -eq 1 ] && rm -f "$task_path"
-    #\vi -S "$task_path" -c ":Obsession $task_path" -c ":VimNotebookOpen $task_name" "$vimopt" $@
-    cmd="\vi -S \"$task_path\" -c \":Obsession $task_path\" -c \":VimNotebookOpen $task_name\" $vimopt $@"
+    nb_cmd="VimNotebookOpen"
+    [ $global -eq 1 ] && nb_cmd="VimNotebookOpenGlobal" 
+    cmd="\vi -S \"$task_path\" -c \":Obsession $task_path\" -c \":$nb_cmd $task_name\" $vimopt $@"
   else
     if [ ! "$task" == "." ]; then
-      #\vi -c ":Obsession $task_path" -c ":VimNotebookOpen $task_name" "$vimopt" $@
-      cmd="\vi -c \":Obsession $task_path\" -c \":VimNotebookOpen $task_name\" $vimopt $@"
+      cmd="\vi -c \":Obsession $task_path\" -c \":$nb_cmd $task_name\" $vimopt $@"
     else
       exit 1
     fi
