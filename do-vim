@@ -14,9 +14,9 @@ function usage() {
   echo "Usage: $cmd [-h] [-t|T <task_name>|.] [-r] [-O|-o|-p] [<file>..]"
   echo "where:"
   echo "       -h                          : print this help"
-  echo "       -t|T <task>                   : start/continue work on <task> (-T for global)"
-  echo "       -t|T -                        : continue work on last used <task> (-T for global)"
-  echo "       -t|T .                        : select task start/continue work on (-T for global)"
+  echo "       -t|T <task>                 : start/continue work on <task> (-T for global)"
+  echo "       -t|T -                      : continue work on last used <task> (-T for global)"
+  echo "       -t|T .                      : select task to start/continue work on (-T for global)"
   echo "       -r                          : reset session about the <task>"
   echo "       -O|-o|-p                    : vim visualization mode"
 }
@@ -63,6 +63,12 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+function list_tasks() {
+  (echo "NEW"; 
+  (ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$"| sed 's/^task_\(.*\)\.vim/\1/';
+  ls -1 "$NOTEBOOKS_PATH" | grep "^task_.*\.nb$"| sed 's/^task_\(.*\)\.nb/\1/';) | sort | uniq) | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t
+}
+
 
 if [ ! "$task" == "" ]; then
   if [ $global -eq 0 ]; then
@@ -78,7 +84,7 @@ if [ ! "$task" == "" ]; then
   [ ! -d "$NOTEBOOKS_PATH" ] && mkdir -p "$NOTEBOOKS_PATH"
 
   if [ "$task" == "." ]; then
-    (echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$"| sed 's/^task_\(.*\)\.vim/\1/' | sort) | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t
+    list_tasks
     read -p "task? " num
 
     if [ "$num" == "" ]; then
@@ -89,7 +95,7 @@ if [ ! "$task" == "" ]; then
       task_name="task_$(echo "$task"| tr ' ' '_' | sed 's/^task_//')"
       task_filename="${task_name}.vim"
     else
-      task_name="task_$((echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$" | sed 's/^task_\(.*\)\.vim/\1/'| sort)| awk '{ printf "%-2s %-60s\n", NR, $0 }'|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)"
+      task_name="task_$(list_tasks|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)"
       task_filename="${task_name}.vim"
     fi
   elif [ "$task" == "-" ]; then
@@ -98,25 +104,22 @@ if [ ! "$task" == "" ]; then
   elif [ $(echo "$task" | grep "^[0-9]\+$" | wc -l) -gt 0 ]; then
     num="$task"
     task="."
-    [ $num -eq 1 ] && (echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$"| sed 's/^task_\(.*\)\.vim/\1/' | sort) | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t && exit
-    task_filename=$((echo "NEW";ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$" | sort)| awk '{ printf "%-2s %-60s\n", NR, $0 }'|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)
-    task_name="${task_filename%.vim}"
+    [ $num -eq 1 ] && list_tasks && exit
+    [ $(list_tasks|grep -c "^$num ") -eq 0 ] && echo "Wrong task id" && exit
+    task_name="task_$(list_tasks|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)"
+    task_filename="${task_name}.vim"
   else
     task_name="task_${task}"
     task_filename="${task_name}.vim"
   fi
   task_path="$OBSESSIONS_PATH/${task_filename}"
+  nb_cmd="VimNotebookOpen"
+  [ $global -eq 1 ] && nb_cmd="VimNotebookOpenGlobal" 
   if [ -f "$task_path" ]; then
     [ $session_reset -eq 1 ] && rm -f "$task_path"
-    nb_cmd="VimNotebookOpen"
-    [ $global -eq 1 ] && nb_cmd="VimNotebookOpenGlobal" 
-    cmd="\vi -S \"$task_path\" -c \":Obsession $task_path\" -c \":$nb_cmd $task_name\" $vimopt $@"
+    cmd="\vi -S \"$task_path\" -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" $vimopt $@"
   else
-    if [ ! "$task" == "." ]; then
-      cmd="\vi -c \":Obsession $task_path\" -c \":$nb_cmd $task_name\" $vimopt $@"
-    else
-      exit 1
-    fi
+    cmd="\vi -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" $vimopt $@"
   fi
   echo "> $cmd"
   eval "$cmd"
