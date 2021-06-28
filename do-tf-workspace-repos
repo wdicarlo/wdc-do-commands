@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+# do-tf-workspace-repos -a "myuser1:token1@domain1" -a "myuser2:token2@domain2" -g domain.mycom.com/path/to/repo.git@branch myrepo
+
+cmd=`basename $0`
+
+function usage() {
+	echo "Usage: $cmd [-h] [-g <repo:branch>] [-u] [-a <user:token@domain>] <workspace_folder>"
+	echo "where:"
+	echo "       -a <user:token@domain>      : account for gitlab domain"
+	echo "       -g <repo:branch>            : master git repo and branch of workspace"
+	echo "       -r                          : reset workspace"
+	echo "       -u                          : update workspace"
+	echo "       -h                          : print this help"
+}
+
+function tf_scan() {
+  [ ! -d "$1" ] && return
+  cd "$1"
+  find . -name "*.tf" | grep -v "\.terraform" | xargs -I@ grep -Hn "git::ssh" @ | cut -d'@' -f2 | tr -d '"'
+}
+
+update=0
+reset=0
+mainrepo=""
+declare -A accounts
+export optargacc=""
+while getopts hurg:a: flag
+do
+	case $flag in
+		a)
+      optargacc="${optargacc} -a \"${OPTARG}\" "
+      account=$(echo ${OPTARG}|cut -d'@' -f1)
+      domain=$(echo ${OPTARG}|cut -d'@' -f2)
+      accounts["${domain}"]="${account}" # user:password
+			;;
+		g)
+      mainrepo="$OPTARG"
+			;;
+		r)
+      reset=1 # TODO: add support for reset
+      echo "Reset still not supported"
+      exit
+			;;
+		u)
+      #update=1
+      update=0 # TODO: add support for update
+      echo "Update still not supported"
+      exit
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+    echo "Missing workspace destination folder"
+    exit
+fi
+
+wsdir="$1"
+
+# must support cases where the same module is referenced with different tags/branches/commit: <git_repo_name>@<reference>
+
+[ "$mainrepo" == "" ] && echo "No main repo." && exit
+[ $reset -eq 1 ] && rm -rf "$wsdir"
+[ ! -d "$wsdir" ] && mkdir -p "$wsdir"
+
+destdir="$(basename $mainrepo)"
+url=""
+branch=""
+IFS='@' read -r url branch <<< $(echo "$mainrepo")
+domain="$(echo ${url} | cut -d'.' -f 1)" 
+
+[ "${accounts[${domain}]}" == "" ] && echo "Missing account for $domain." && exit
+user=$(echo "${accounts[${domain}]}"|cut -d':' -f1)
+password=$(echo "${accounts[${domain}]}"|cut -d':' -f2)
+uri="https://$user:$password@$url"
+destpath="${wsdir}/${destdir}"
+
+
+if [ $update -eq 1 ]; then
+  # update workspace
+  echo "Cannot update the workspace. Feature still not implemented" # FIX: 
+  exit
+fi
+
+# checkout main repo
+[ "$branch" == "" ] && branch=master
+[ ! -d "$destpath" ] && echo "$url" && git clone --single-branch --branch "$branch" "$uri" "$destpath"
+
+find "$destpath" -type f -name "*.tf" | xargs -I@ bash -c "grep -Hn \"source.*iac/az-terraform\" @" |
+  grep -v ":[ \t]*#[ \t]*source" | sed 's/^\(.*\) #.*/\1/'| sed 's#^\(.*\)\.git\"$#\1?ref=master"#'| sed 's#^.*git@\(.*\)?ref=\(.*\)"#\1@\2#' |
+  while read -r line
+    do
+      wcmd="do-tf-workspace-repos ${optargacc} -g \"$line\" \"$wsdir\""
+      eval "$wcmd"
+    done
