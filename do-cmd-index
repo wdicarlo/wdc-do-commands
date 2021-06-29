@@ -34,7 +34,7 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-idxfile="$(echo ~/wbin/do_cmd.index)"
+idxfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_index.csv)"
 
 if [ $update -eq 1 ]; then
   declare -A cmds
@@ -55,14 +55,14 @@ if [ $update -eq 1 ]; then
       idx="$nidx"
     fi
     cmds["$idx"]="$cmd"
-    echo "$idx: $cmd" 
-  #done | sort -t':' -k 1 | column -t -s':' 
-  done | sort -t':' -k 1 > "$idxfile"
+    echo "$idx;$cmd" 
+  #done | sort -t';' -k 1 | column -t -s';' 
+  done | sort -t';' -k 1 > "$idxfile"
 fi
 
 [ $# -gt 1 ] && usage && exit
-[ $# -eq 1 ] && [ $otable -eq 1 ] && cat "$idxfile" | grep "$1" | column -t -s':' && exit
-[ $otable -eq 1 ] && cat "$idxfile" | column -t -s':' && exit
+[ $# -eq 1 ] && [ $otable -eq 1 ] && cat "$idxfile" | grep "$1" | column -t -s';' && exit
+[ $otable -eq 1 ] && cat "$idxfile" | column -t -s';' && exit
 [ $# -eq 1 ] && cat "$idxfile" | grep "$1" && exit
 
 [ $# -eq 0 ] && cat "$idxfile" 
