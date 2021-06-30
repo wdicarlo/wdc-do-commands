@@ -4,6 +4,7 @@ cntfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_counts.csv)"
 idxfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_index.csv)"
 idx="d${1}";shift
 [ "$idx" == "d-h" ] && do-cmd-index -t "$1" && exit
+[ "$idx" == "d-c" ] && cat "$cntfile" |sort -t';' -n -r -k2| column -s ';' -t && exit
 cmdname=$(cat "$idxfile"|grep "^${idx};"|cut -d';' -f2|tr -d ' ')
 cmd="$cmdname $@"
 [ -t 0 ] && echo "> $cmd"
