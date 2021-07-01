@@ -11,12 +11,13 @@ try() { "$@" || die "cannot $*"; }
 cmd=`basename $0`
 
 function usage() {
-  echo "Usage: $cmd [-h] [-t|T <task_name>|.] [-r] [-O|-o|-p] [<file>..]"
+  echo "Usage: $cmd [-h] [-t|T <task_name>|.|-] [-r] [-O|-o|-p] [<file>..]"
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -t|T <task>                 : start/continue work on <task> (-T for global)"
   echo "       -t|T -                      : continue work on last used <task> (-T for global)"
   echo "       -t|T .                      : select task to start/continue work on (-T for global)"
+  echo "       -t|T =                      : select task to clone (-T for global)"
   echo "       -r                          : reset session about the <task>"
   echo "       -O|-o|-p                    : vim visualization mode"
 }
@@ -64,11 +65,12 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 function list_tasks() {
-  (echo "NEW"; 
+  action="NEW"
+  [ ! "$1" == "" ] && action="$1"
+  (echo "$action"; 
   (ls -1 "$OBSESSIONS_PATH" | grep "^task_.*\.vim$"| sed 's/^task_\(.*\)\.vim/\1/';
   ls -1 "$NOTEBOOKS_PATH" | grep "^task_.*\.nb$"| sed 's/^task_\(.*\)\.nb/\1/';) | sort | uniq) | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t
 }
-
 
 if [ ! "$task" == "" ]; then
   if [ $global -eq 0 ]; then
@@ -98,13 +100,37 @@ if [ ! "$task" == "" ]; then
       task_name="task_$(list_tasks|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)"
       task_filename="${task_name}.vim"
     fi
+  elif [ "$task" == "=" ]; then
+    list_tasks "TASKS:"
+    read -p "task to clone? " num
+    [ "$num" == "" ] && exit
+    [ "$num" == "1" ] && exit
+    task_name="task_$(list_tasks|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)"
+    [ "$task_name" == "task_" ] && exit
+    read -p "name of cloned task? " new_name
+    [ "$new_name" == "" ] && exit
+    new_task_name="task_${new_name}"
+    new_task_filename="${new_task_name}.vim"
+    new_task_path="$OBSESSIONS_PATH/${new_task_filename}"
+    new_nb_filename="${new_task_name}.nb"
+    new_nb_path="$NOTEBOOKS_PATH/${new_nb_filename}"
+    [ -f "$new_task_path" ] && echo "The task ${new_task_name} already exists." && exit
+    [ -f "$new_nb_path" ] && echo "The notebook ${new_task_name} already exists." && exit
+    task_filename="${task_name}.vim"
+    task_path="$OBSESSIONS_PATH/${task_filename}"
+    [ -f "$task_path" ] && cp "$task_path" "$new_task_path"
+    nb_filename="${task_name}.nb"
+    nb_path="$NOTEBOOKS_PATH/${nb_filename}"
+    [ -f "$nb_path" ] && cp "$nb_path" "$new_nb_path"
+    task_name="$new_task_name"
+    task_filename="$new_task_filename"
   elif [ "$task" == "-" ]; then
     task_name=$(ls -t $OBSESSIONS_PATH | grep "task_" | head -1 | sed 's#^\(task_.*\)\.vim$#\1#')
     task_filename="${task_name}.vim"
   elif [ $(echo "$task" | grep "^[0-9]\+$" | wc -l) -gt 0 ]; then
     num="$task"
     task="."
-    [ $num -eq 1 ] && list_tasks && exit
+    [ $num -eq 1 ] && list_tasks "" && exit
     [ $(list_tasks|grep -c "^$num ") -eq 0 ] && echo "Wrong task id" && exit
     task_name="task_$(list_tasks|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)"
     task_filename="${task_name}.vim"
