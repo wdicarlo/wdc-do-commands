@@ -63,10 +63,10 @@ list1=$(echo $1|tr '\/' '@')
 list2=$(echo $2|tr '\/' '@')
 
 [ $DEBUG=="debug" ] && echo "filenames=$filenames"
-cmd="cd $1&&pwd&&\$(find . $filenames | sort > $tmp/$list1.files)&&cd ${cwd}"
+cmd="cd $1&&pwd&&\$(find . $filenames | grep -v "\.git" | sort > $tmp/$list1.files)&&cd ${cwd}"
 echo "> $cmd"
 eval "$cmd"
-cmd="cd $2&&pwd&&\$(find . $filenames | sort > $tmp/$list2.files)&&cd ${cwd}"
+cmd="cd $2&&pwd&&\$(find . $filenames | grep -v "\.git" | sort > $tmp/$list2.files)&&cd ${cwd}"
 echo "> $cmd"
 eval "$cmd"
 
