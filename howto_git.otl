@@ -336,3 +336,9 @@ List all tags with corresponding description
 	git tag -n --sort=-v:refname # reverse, same result with git tag -n | sort -V -r
 Pretty print statistics of the changes
 	git log develop..master  --numstat --pretty=tformat: --numstat | nawk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf "added lines: %s removed lines: %s total lines: %s\n", add, subs, loc }'
+List supported merge tools
+	git mergetool --tool-help
+Use vimdiff as merge tool
+	git config merge.tool vimdiff
+	git config merge.conflictstyle diff3
+	git config mergetool.prompt false
