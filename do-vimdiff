@@ -3,8 +3,9 @@
 #TODO: use only two inout <path/filename> <other-root-path>
 app=`basename $0`
 function usage() {
-    echo "Usage: $app [-r] [-s] <root1> <root2>"
+    echo "Usage: $app [-d] [-r] [-s] <root1> <root2>"
     echo "       -r             : recursive"
+    echo "       -d             : use DirDiff plugin"
     echo "       -s             : just print a summary of differences"
     echo "Usage: $app <root1> <root2> <common-relative-path-to-file>"
     echo "Usage: $app -f <root> <file1> <file2>"
@@ -48,13 +49,17 @@ patchmode=0
 recurse=0
 summary=0
 git=0
-while getopts qhfprsg flag
+dirdiff=0
+while getopts qhfprsgd flag
 do
     case $flag in
 
         q)
             quiet=1
 #            echo pars is $pars
+            ;;
+        d)
+            dirdiff=1
             ;;
         g)
             git=1
@@ -121,6 +126,7 @@ if [ $# -eq 2 ]; then
       diff -q -r --exclude=".git"  "$path1" "$path2"
       exit
     fi
+    [ $dirdiff -eq 1 ] && vim -c ":DirDiff $path1 $path2" < /dev/tty && exit
     compare "$path1" "$path2"
     if [ $recurse -eq 1 ]; then
       for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
