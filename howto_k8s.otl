@@ -1,0 +1,33 @@
+kubernetes
+	system for automating deployment, scaling, and management of containerized applications
+Download arkade - portable marketplace for downloading your favourite devops CLIs and installing helm charts
+	curl -sLS https://dl.get-arkade.dev | sudo sh
+List available tools
+	arkade install --help
+Get kind tool
+	arkade get kind --version=v0.10.0
+Get kubectl tool
+	arkade get kubectl --version=v1.21.0
+Create k8s cluster using kind
+	kind create cluster
+Get (kind) cluster information
+	kubectl cluster-info --context kind-kind
+Create a namespace
+	kubectl create namespace argocd
+Get the argocd CLI
+	arkade install argocd
+Get argocd list of pods
+	kubectl get pods --namespace argocd
+Port-forward the argocd API server
+	kubectl port-forward svc/argocd-server -n argocd 8443:443 &
+Get the argocd password
+	PASS=$(kubectl get secret argocd-initial-admin-secret \
+	  -n argocd \
+	  -o jsonpath="{.data.password}" | base64 -d)
+Login in argocd
+	argocd login --name local 127.0.0.1:8443 --insecure \
+	 --username admin \
+	 --password $PASS
+Open the argocd UI:
+	https://127.0.0.1:8443
+
