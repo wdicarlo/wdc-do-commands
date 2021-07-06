@@ -73,15 +73,12 @@ function list_tasks() {
 }
 
 if [ ! "$task" == "" ]; then
-  if [ $global -eq 0 ]; then
-    OBSESSIONS_PATH="$PROJECT_PATH/.obsessions"
-    [ "$PROJECT_PATH" == "" ] && OBSESSIONS_PATH="$HOME/.obsessions"
-    NOTEBOOKS_PATH="$PROJECT_PATH/.notebooks"
-    [ "$PROJECT_PATH" == "" ] && NOTEBOOKS_PATH="$HOME/.notebooks"
-  else
-    OBSESSIONS_PATH="$HOME/.obsessions"
-    NOTEBOOKS_PATH="$HOME/.notebooks"
+  wdir="$HOME"
+  if [ $global -eq 0 ] && [ ! "$PROJECT" == "" ]; then
+    wdir="$PROJECT_PATH"
   fi
+  OBSESSIONS_PATH="$wdir/.obsessions"
+  NOTEBOOKS_PATH="$wdir/.notebooks"
   [ ! -d "$OBSESSIONS_PATH" ] && mkdir -p "$OBSESSIONS_PATH"
   [ ! -d "$NOTEBOOKS_PATH" ] && mkdir -p "$NOTEBOOKS_PATH"
 
@@ -143,9 +140,9 @@ if [ ! "$task" == "" ]; then
   [ $global -eq 1 ] && nb_cmd="VimNotebookOpenGlobal" 
   if [ -f "$task_path" ]; then
     [ $session_reset -eq 1 ] && rm -f "$task_path"
-    cmd="\vi -S \"$task_path\" -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" $vimopt $@"
+    cmd="\vi -S \"$task_path\" -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" -c \":autocmd BufEnter * :lcd $wdir\" $vimopt $@"
   else
-    cmd="\vi -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" $vimopt $@"
+    cmd="\vi -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" -c \":autocmd BufEnter * :lcd $wdir\" $vimopt $@"
   fi
   echo "> $cmd"
   eval "$cmd"
