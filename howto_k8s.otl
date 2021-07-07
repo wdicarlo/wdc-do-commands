@@ -16,6 +16,10 @@ Create a namespace
 	kubectl create namespace argocd
 Get the argocd CLI
 	arkade install argocd
+Install argocd without using arkade
+	kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+Manage argocd with argocd
+	argocd app create argo-cd --repo https://gitlab.cern.ch/clange/gitops-argo-cd.git --path 01_argo-cd --dest-server https://kubernetes.default.svc --dest-namespace argocd
 Get argocd list of pods
 	kubectl get pods --namespace argocd
 Port-forward the argocd API server
@@ -30,4 +34,21 @@ Login in argocd
 	 --password $PASS
 Open the argocd UI:
 	https://127.0.0.1:8443
-
+List argocd accounts
+	argocd account list
+List k8s events filtered by namespace
+	kubectl get events -n openfaas
+Install k9s tool and run it
+	arkade get k9s
+	export LC_ALL=C && k9s
+List applications deployed with argocd
+	argocd app list -o wide
+List available Custom Resources Definitions (CRD)
+	kubectl get customresourcedefinitions.apiextensions.k8s.io
+Create openfaas function with argocd
+	argocd app create openfaas-functions \
+		--repo https://github.com/wdicarlo/bring-gitops-to-your-openfaas-functions-with-argocd.git \
+		--dest-server https://kubernetes.default.svc \ # this URL must be used when deploying in the same cluster that Argo CD is running in
+		--path functions \
+		--self-heal \
+		--sync-policy automatic
