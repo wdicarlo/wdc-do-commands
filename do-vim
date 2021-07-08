@@ -118,7 +118,10 @@ if [ ! "$task" == "" ]; then
     [ -f "$task_path" ] && cp "$task_path" "$new_task_path"
     nb_filename="${task_name}.nb"
     nb_path="$NOTEBOOKS_PATH/${nb_filename}"
-    [ -f "$nb_path" ] && cp "$nb_path" "$new_nb_path"
+    if [ -f "$nb_path" ]; then
+      cp "$nb_path" "$new_nb_path"
+      sed -i "s/${task_name}/${new_task_name}/g" "$new_nb_path"
+    fi
     task_name="$new_task_name"
     task_filename="$new_task_filename"
   elif [ "$task" == "-" ]; then
