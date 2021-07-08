@@ -52,3 +52,21 @@ Create openfaas function with argocd
 		--path functions \
 		--self-heal \
 		--sync-policy automatic
+Define KUBECONFIG variable to manage more than one k8s cluster
+	export KUBECONFIG=<path_to_config_1>:<path_to_config_2>
+View merged k8s clusters configs
+	kubectl config view
+Print specific config
+	kubectl config --kubeconfig <path_to_config> view
+Generate kubectl bash completition file
+	kubectl completion bash
+Query configured users 
+	kubectl config view -o jsonpath='{.users[*].name}'   # get a list of users
+	kubectl config view -o jsonpath='{.users[].name}'    # display the first user
+	kubectl config view -o jsonpath='{.users[?(@.name == "local")].user.password}' # get password of local user
+Manage contexts
+	kubectl config get-contexts                          # display list of contexts
+	kubectl config current-context                       # display the current-context
+	kubectl config use-context my_cluster_name           # set the default context to my_cluster_name
+	kubectl config unset current-context                 # unset the current context
+	kubectl config set-context --current --namespace=mynamespace  # permantelly set the namespace of the current context
