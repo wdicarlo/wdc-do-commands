@@ -38,7 +38,7 @@ idxfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_index.csv)"
 
 if [ $update -eq 1 ]; then
   declare -A cmds
-  for cmd in $(ls -1 | grep "^do-")
+  for cmd in $(ls -1 | grep "^do-"| grep -v "\.sav$")
   do
     idx=""
     for w in $(echo "$cmd" | tr '-' ' '); 
