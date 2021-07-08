@@ -63,3 +63,6 @@ Convert variable value to uppercase
 	echo ${STR^^}  #=> "HELLO WORLD!" (all uppercase) # echo $STR | tr [:lower:] [:upper:]	
 List length of all files in the current folder
 	ls -1 | xargs -I@ sh -c "echo -n "@:";cat @|wc -l" |sort -t':' -k2 -n | column -t -s':'
+Use completition with aliases
+	alias k=kubectl
+	complete -F __start_kubectl k
