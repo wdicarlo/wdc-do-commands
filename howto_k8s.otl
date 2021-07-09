@@ -10,6 +10,10 @@ Get kubectl tool
 	arkade get kubectl --version=v1.21.0
 Create k8s cluster using kind
 	kind create cluster
+Get kubernetes version
+	kubectl version # Server Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.6"... The Server Version is the version of Kubernetes your cluster is running.
+Get nodes versions
+	kubectl get nodes # example: pool-rxaxmuoj-5s42o   Ready    <none>   26d   v1.18.6
 Get (kind) cluster information
 	kubectl cluster-info --context kind-kind
 Create a namespace
@@ -70,3 +74,9 @@ Manage contexts
 	kubectl config use-context my_cluster_name           # set the default context to my_cluster_name
 	kubectl config unset current-context                 # unset the current context
 	kubectl config set-context --current --namespace=mynamespace  # permantelly set the namespace of the current context
+Get all pods configuration in json format
+	k get pods --all-namespaces -o json | jq '.'
+List all images in the cluster using jsonpath
+	k get pods --all-namespaces -o jsonpath={..image} | tr ' ' '\n' | sort | uniq | column -t -d':'
+List all images in the cluster using jq
+	k get pods --all-namespaces -o json | jq -r '.items[].spec.containers[].image' | sort | uniq | column -t -d':' # -r to get the jq output without the " 
