@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 
-force_color_prompt=yes
+echo "Customizing bash"
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR. Assuming ~/bin" && export WDC_DO_COMMANDS_DIR="$HOME/bin"
+if [ ! -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
+    echo "Missing file: do_bash_env"
+fi
 
+cat <<END_OF_TEXT >> "$WDC_DO_COMMANDS_DIR/do_bash_env"
+export TESTS="$HOME/tests"
+export RELEASES="$HOME/releases"
+export PROJECTS="$HOME/projects"
+export SHARED_FOLDER="/media/share"
+export PROMPT_VARS=""
+END_OF_TEXT
 
-export TESTS=~/tests
-export RELEASES=~/releases
-export PROJECTS=~/projects
-export SHARED_FOLDER=/media/share
-if [ -f $WDC_DO_COMMANDS_DIR/do_bash_env ]; then
+if [ -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
     # do_bash_env example:
     # #!/usr/bin/env bash
     # 
@@ -17,27 +24,25 @@ if [ -f $WDC_DO_COMMANDS_DIR/do_bash_env ]; then
     # export SHARED_FOLDER=/wc/wdicarlo/share
     # export PATCHES_DIR=/wc/wdicarlo/share/ec/patches
     # 
-    # export BASH_COMPLETITION_DIR=$(echo $WDC_DO_COMMANDS_DIR/bash_completion.d)
     echo "Sourcing file: do_bash_env"
     source  $WDC_DO_COMMANDS_DIR/do_bash_env
     echo "PROJECTS               =  $PROJECTS"
     echo "TESTS                  =  $TESTS"
     echo "RELEASES               =  $RELEASES"
     echo "SHARED_FOLDER          =  $SHARED_FOLDER"
-    echo "BASH_COMPLETITION_DIR  =  $BASH_COMPLETITION_DIR"
     echo "PROMPT_VARS            =  $PROMPT_VARS"
-else
-    echo "Missing file: do_bash_env"
 fi
 
+export BASH_COMPLETITION_DIR="$WDC_DO_COMMANDS_DIR/bash_completion.d"
 bash_compl_dir=$BASH_COMPLETITION_DIR
+
+force_color_prompt=yes
 
 # to use vim keybindings in bash, 
 # do "set -o vi". Then, you can 
 # press "v" to edit current command 
 # in vim.
 #set -o vi
-echo "Customizing bash"
 
 function update_prompt()
 {
@@ -49,18 +54,18 @@ function update_prompt()
 }
 function bash_completion()
 {
-    if [ "$bash_compl_dir" == "" ]; then
-        return
-    fi
-	if [ ! -d $bash_compl_dir ]; then
-		return
-	fi
-	FILES=$(ls $bash_compl_dir)
-	for FILE in $FILES; do
-		bash_compl_file="$bash_compl_dir/$FILE"
-		echo "Sourcing file: $bash_compl_file"
-		source $bash_compl_file
-	done	
+  if [ "$bash_compl_dir" == "" ]; then
+    return
+  fi
+  if [ ! -d $bash_compl_dir ]; then
+    return
+  fi
+  FILES=$(ls $bash_compl_dir)
+  for FILE in $FILES; do
+    bash_compl_file="$bash_compl_dir/$FILE"
+    echo "Sourcing file: $bash_compl_file"
+    source $bash_compl_file
+  done	
 }
 
 function cd_folder()
@@ -71,9 +76,9 @@ function cd_folder()
 
 function edit_last()
 {
-cmd=`history |grep "^[0-9]* *vi "|tail -1|sed "s/^[0-9]* *//"`
-echo "> $cmd"
-eval $cmd
+  cmd=`history |grep "^[0-9]* *vi "|tail -1|sed "s/^[0-9]* *//"`
+  echo "> $cmd"
+  eval $cmd
 }
 
 # spinner got from http://fitnr.com/showing-a-bash-spinner.html
@@ -147,61 +152,58 @@ function make()
 }
 
 function vim_launcher() {
-opts=""
-if [ $# -eq 1 ]; then
+  opts=""
+  if [ $# -eq 1 ]; then
     if [ -f "$1" ]; then
-        n=`cat "$1" | wc -l`
-        if [ $n -gt 5000 ]; then
-            opts="--noplugin $1"
-            shift
-        fi
+      n=`cat "$1" | wc -l`
+      if [ $n -gt 5000 ]; then
+        opts="--noplugin $1"
+        shift
+      fi
     else
-        if [ -d "$1" ]; then
-            opts="$1"
-            shift
-        fi
+      if [ -d "$1" ]; then
+        opts="$1"
+        shift
+      fi
     fi
-fi
+  fi
 
-for opt in $@
-do
+  for opt in $@
+  do
     if [ -f "$opt" ]; then
-        if [ `file "$opt" | grep -o executable` ]; then
-            # make sure it is a binary file
-            if [ ! `file "$opt" | grep -o text` ]; then
-                for file in `ls "$opt".*| grep -v "\.sav$"`
-                do
-                    if [ `file "$file" | grep -o text` ]; then
-                        opts="$opts -p $file"
-                    fi
-                done
-                continue
+      if [ `file "$opt" | grep -o executable` ]; then
+        # make sure it is a binary file
+        if [ ! `file "$opt" | grep -o text` ]; then
+          for file in `ls "$opt".*| grep -v "\.sav$"`
+          do
+            if [ `file "$file" | grep -o text` ]; then
+              opts="$opts -p $file"
             fi
+          done
+          continue
         fi
+      fi
     else
-        n=0
-        for file in `ls "$opt"*|grep -v ".sav$"`
-        do
-                    if [ `file "$file" | grep -o text` ]; then
-                        opts="$opts -p $file"
-                        n=$((n+1))
-                    fi
-        done
-        if [ $n -gt 0 ]; then
-            continue
+      n=0
+      for file in `ls "$opt"*|grep -v ".sav$"`
+      do
+        if [ `file "$file" | grep -o text` ]; then
+          opts="$opts -p $file"
+          n=$((n+1))
         fi
+      done
+      if [ $n -gt 0 ]; then
+        continue
+      fi
     fi
     opts="$opts $opt"
-done
-cmd="vim $opts"
-echo "> $cmd"
-eval $cmd
+  done
+  cmd="vim $opts"
+  echo "> $cmd"
+  eval $cmd
 }
 
-
-#. $WDC_DO_COMMANDS_DIR/do_setup_env_for_okl4sdk-5.1.8m4
-#. $WDC_DO_COMMANDS_DIR/do_setup_env okl4sdk-5.1.8m4
-. $WDC_DO_COMMANDS_DIR/do_setup_env 
+source $WDC_DO_COMMANDS_DIR/do_setup_env 
 
 function mkcd() {
     mkdir "$1"
@@ -210,31 +212,6 @@ function mkcd() {
 function mterm() {
     #xfce4-terminal --geometry=80x20
     xterm -fn 10x20
-}
-function svn_branch() {
-    export SVN_LOCATION=""
-    wdir=$(pwd)
-    # find root folder
-    export SVN_ROOT=""
-    if [ -d ".svn" ]; then
-        SVN_ROOT=$(pwd)
-    else
-        go_repo_root
-        if [ -d ".svn" ]; then
-            SVN_ROOT=$(pwd)
-        fi
-    fi
-    if [ "$SVN_ROOT" == "" ]; then
-        \cd "$wdir"
-        return
-    fi
-    #SVN_LOCATION=$(basename $(svn info|grep "^URL"|awk '{print $2}'))
-    export SVN_LOCATION=$(\svn info|grep "^Relative URL"|awk '{print $3}')
-    SVN_LOCATION=${SVN_LOCATION#"^/branches/$SVN_USER/"}
-    SVN_LOCATION=${SVN_LOCATION#"^/branches/"}
-    #echo "SVN_LOCATION=$SVN_LOCATION"
-    export SVN_SYNT=$(\svn status|grep -v cscope|grep -v ".settings"|grep -v "RTOSE"|grep -v "^Performing"|awk '{print $1}'|sort|uniq|grep -v "X"|tr -d '\n')
-    \cd "$wdir"
 }
 function update_env() {
     #export PROMPT_VARS=""
@@ -275,14 +252,9 @@ function update_env() {
     then
         LOCATION=""
     fi
-    #svn info >/dev/null 2>&1 && SVN_LOCATION=$(basename $(svn info|grep "^URL"|awk '{print $2}'))
     export REPO_LOCATION=""
     export REPO_SYNT=""
-    svn_branch
-    if [ ! "$SVN_LOCATION" == "" ]; then
-        REPO_LOCATION="S:$SVN_LOCATION"
-        REPO_SYNT=$(\svn status |grep -v cscope|grep -v ".settings"|grep -v "RTOSE"|grep -v "^Performing"|awk '{print $1}'|sort|uniq|grep -v "X"|tr -d '\n')
-    fi
+    GIT_LOCATION=""
     git status >/dev/null 2>&1 && GIT_LOCATION=$(git rev-parse --abbrev-ref HEAD)
     if [ ! "$GIT_LOCATION" == "" ]; then
         REPO_LOCATION="G:$GIT_LOCATION"
@@ -291,34 +263,15 @@ function update_env() {
     #echo "PROJECT_PATH=$PROJECT_PATH"
     #echo "REPO_LOCATION=$REPO_LOCATION"
     #echo "REPO_SYNT=$REPO_SYNT"
-    if [ -f .bash_env ]
+    if [ -f ./.bash_env ]
     then
         cat .bash_env | grep "^export .*=" | sed 's/^export \(.*\)=.*/\1/' | xargs -I@ sh -c 'echo "@=\$@"'
-        source .bash_env
+        source ./.bash_env
     else
         shift $#
         source $WDC_DO_COMMANDS_DIR/do_setup_env
     fi
     update_prompt
-}
-function svn_cmd() {
-    pars=""
-    comment=0
-    for par in "$@"; do
-        if [ $comment -eq 1 ]; then
-            epar=$(echo "\"$par\""|sed 's/"/\"/g')
-            pars="$pars $epar"
-            comment=0
-        else
-            pars="$pars $par"
-        fi
-        if [ "$par" == "-m" ]; then
-            comment=1
-        fi
-    done
-    cmd="$SVN_CMD $pars && cd ."
-    echo -E "> $cmd"
-    eval "$cmd"
 }
 
 function cdenv() {
@@ -393,19 +346,11 @@ function cdenv() {
 
     \cd $NEW_PATH
     pwd
-    # if [ -f .bash_env ]
-    # then
-    #     cat .bash_env
-    #     source .bash_env
-    # else
-    #     shift $#
-    #     . $WDC_DO_COMMANDS_DIR/do_setup_env
-    # fi
     update_env
 }
 function setup_env() {
     if [ -f .bash_env ]; then
-        . .bash_env
+        source .bash_env
     fi
 }
 function go_repo_root() {
@@ -436,8 +381,6 @@ function go_repo_root() {
         if [ $folder == "$user" ] ||
             [ -d "$path/.git" ] ||
             [ -h "$path/.git" ] ||
-            [ -d "$path/.svn" ] ||
-            [ -h "$path/.svn" ] ||
             [ -f "$path/.bash_env" ] ||
             [ -d "$parent/$folder.git" ] ||
             [ "$parent_folder" == "projects" ] ||
@@ -513,8 +456,6 @@ function gohome() {
             if [ $folder == "$user" ] ||
                 [ -d "$path/.git" ] ||
                 [ -h "$path/.git" ] ||
-                [ -d "$path/.svn" ] ||
-                [ -h "$path/.svn" ] ||
                 [ -d "$path/src" ] ||
                 [ -f "$path/.bash_env" ] ||
                 [ -d "$parent/$folder.git" ] ||
@@ -531,8 +472,6 @@ function gohome() {
             if [ $folder == "$user" ] ||
                 [ -d "$path/.git" ] ||
                 [ -h "$path/.git" ] ||
-                [ -d "$path/.svn" ] ||
-                [ -h "$path/.svn" ] ||
                 [ -f "$path/.bash_env" ] ||
                 [ -d "$parent/$folder.git" ] ||
                 [ "$parent_folder" == "projects" ] ||
@@ -633,57 +572,6 @@ parse_git_branch() {
 
 function prompt_command()
 {
-#    export TYPE=`pwd | sed -e "s/\// /g" | awk '{ print $3}'`
-#    # if [ "$TYPE" = "projects" ];
-#    # then
-#    #     TYPE="p"
-#    # fi
-#    export PROJECT=""
-#    case $TYPE in
-#        "projects")
-#            TYPE="p"
-#            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
-#            ;;
-#        "tests")
-#            TYPE="t"
-#            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
-#            ;;
-#        "releases")
-#            TYPE="r"
-#            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
-#            ;;
-#    esac
-#
-#    export PROJECT_PATH=`echo $PROJECTS/$PROJECT`
-#    export TEST_PATH=`echo $TESTS/$PROJECT`
-#    export RELEASE_PATH=`echo $RELEASES/$PROJECT`
-#    export LOCATION=`basename $PWD`
-#    if [ "$PROJECT_PATH" == $PWD ]
-#    then
-#        LOCATION=""
-#    fi
-#    if [ "$TEST_PATH" == $PWD ]
-#    then
-#        LOCATION=""
-#    fi
-#    if [ "$RELEASE_PATH" == $PWD ]
-#    then
-#        LOCATION=""
-#    fi
-#    SVN_LOCATION=""
-#    svn info >/dev/null 2>&1 && SVN_LOCATION=$(basename $(svn info|grep "^URL"|awk '{print $2}'))
-#    GIT_LOCATION=""
-#    git status >/dev/null 2>&1 && GIT_LOCATION=$(git status | grep "^# On"|awk '{print $4}')
-#    REPO_LOCATION=""
-#    REPO_SYNT=""
-#    if [ ! "$SVN_LOCATION" == "" ]; then
-#        REPO_LOCATION=$SVN_LOCATION
-#        REPO_SYNT=$(svn status|grep -v cscope|grep -v ".settings"|grep -v "RTOSE"|grep -v "^Performing"|awk '{print $1}'|sort|uniq|grep -v "X"|tr -d '\n')
-#    fi
-#    if [ ! "$GIT_LOCATION" == "" ]; then
-#        REPO_LOCATION=$GIT_LOCATION
-#        REPO_SYNT=""
-#    fi
     # TODO: add repo status syntesis: [M|A|?] 
     update_prompt 
     history -a; history -c; history -r
@@ -726,8 +614,6 @@ function fsv()
     cat "$cfile"|do-pipe-cfile-to-vim
 }
 export PATCHES_DIR=""
-export SVN_LOCATION=""
-export SVN_SYNT=""
 export GIT_LOCATION=""
 export GIT_SYNT=""
 export REPO_LOCATION=""
@@ -735,23 +621,11 @@ export REPO_SYNT=""
 PROMPT_COMMAND=prompt_command
 GREEN="$(tput setaf 2)"
 RESET="$(tput sgr0)"
-# #export PS1="\[\033[00m\]\u@\h\[\033[01;34m\] \W \[\033[31m\]\$(parse_git_branch) \[\033[00m\]$\[\033[00m\] "
-# #if [ "$color_prompt" = yes ]; then
-# if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-#     #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-#     #PS1='\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
-#     PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@${GREEN}$REPO_LOCATION${RESET}[$REPO_SYNT]\{$PROMPT_VARS\}\$ '
-# else
-#     #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-#     #PS1='`basename \w` \$ '
-#     #PS1='$TYPE:$PROJECT:\W \$ '
-#     PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
-# fi
 update_prompt
 
 bash_completion
 
-alias do-bash-customization='. $WDC_DO_COMMANDS_DIR/do_bash_customization && cd .'
+alias do-bash-customization='source $WDC_DO_COMMANDS_DIR/do_bash_customization && cd .'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -766,10 +640,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-if [ ! "$(alias svn 2>/dev/null)" == "" ]; then
-	unalias svn
-fi
-SVN_CMD=$(which svn)
 
 # some more ls aliases
 alias ll='ls -l'
@@ -797,71 +667,53 @@ alias cd-projects='cd $PROJECTS'
 alias cd-tests='cd $TESTS'
 alias cd-releases='cd /media/sf_Shared/releases/'
 
-alias do-project-creation='. $WDC_DO_COMMANDS_DIR/do_project_creation'
-alias do-cd-test='. $WDC_DO_COMMANDS_DIR/do_cd_test'
-alias do-cd-release='. $WDC_DO_COMMANDS_DIR/do_cd_release'
-alias do-cd-folder='. $WDC_DO_COMMANDS_DIR/do_cd_folder'
-alias do-cd-path='. $WDC_DO_COMMANDS_DIR/do_cd_path'
-alias do-cd-bookmark='. $WDC_DO_COMMANDS_DIR/do_cd_bookmark'
-alias do-cd-link='. $WDC_DO_COMMANDS_DIR/do_cd_link'
+# TODO: generate these aliases
+alias do-project-creation='source $WDC_DO_COMMANDS_DIR/do_project_creation'
+alias do-cd-test='source $WDC_DO_COMMANDS_DIR/do_cd_test'
+alias do-cd-release='source $WDC_DO_COMMANDS_DIR/do_cd_release'
+alias do-cd-folder='source $WDC_DO_COMMANDS_DIR/do_cd_folder'
+alias do-cd-path='source $WDC_DO_COMMANDS_DIR/do_cd_path'
+alias do-cd-bookmark='source $WDC_DO_COMMANDS_DIR/do_cd_bookmark'
+alias do-cd-link='source $WDC_DO_COMMANDS_DIR/do_cd_link'
+alias do-project-activation='source $WDC_DO_COMMANDS_DIR/do_project_activation'
+alias do-activate-release='source $WDC_DO_COMMANDS_DIR/do_activate_release'
+alias do-activate-test='source $WDC_DO_COMMANDS_DIR/do_activate_test'
+alias do-setup-env='source $WDC_DO_COMMANDS_DIR/do_setup_env -s'
+alias do-setup-ld-library-path='source $WDC_DO_COMMANDS_DIR/do_setup_ld_library_path $@'
+alias do-history-update='source $WDC_DO_COMMANDS_DIR/do_history_update'
+alias do-history-add-last='source $WDC_DO_COMMANDS_DIR/do_history_add_last'
+alias do-history-diagram='source $WDC_DO_COMMANDS_DIR/do_history_diagram'
+alias do-edit-last='edit_last'
 
 alias do-bookmark-list='do-cd-bookmark -l'
 
 alias cd=cdenv 
 alias gh=gohome
-alias do-project-activation='. $WDC_DO_COMMANDS_DIR/do_project_activation'
-alias do-activate-release='. $WDC_DO_COMMANDS_DIR/do_activate_release'
-alias do-activate-test='. $WDC_DO_COMMANDS_DIR/do_activate_test'
-alias do-setup-env='. $WDC_DO_COMMANDS_DIR/do_setup_env -s'
-alias do-setup-ld-library-path='. $WDC_DO_COMMANDS_DIR/do_setup_ld_library_path $@'
-
-alias do-history-update='. $WDC_DO_COMMANDS_DIR/do_history_update'
-alias do-history-add-last='. $WDC_DO_COMMANDS_DIR/do_history_add_last'
-alias do-history-diagram='. $WDC_DO_COMMANDS_DIR/do_history_diagram'
 
 alias mkca='make clean all'
 alias mka='make all'
 
-alias do-edit-last='edit_last'
 
 alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
 
-alias _pa='do-project-activation'
-
-alias _fs='do-find-string'
-#alias _fsv='cat ~/.bash_output|do-pipe-cfile-to-vim'
-alias _fsv='fsv'
-alias _ff='do-find-files'
-alias _cb='do-cd-bookmark'
-
-alias _ss='do-svn-status'
-alias _sse='do-svn-set-externals'
-alias _slb='do-svn-list-branches'
-alias _slt='do-svn-list-tags'
-
-alias _af='do-arc-folder'
-alias _ae='do-arc-extract-files'
-
-alias _pf='do-publish-files'
-
-alias svn="svn_cmd $@"
 
 # default proxy setup
-export http_proxy=
-export https_proxy=$http_proxy
-export ftp_proxy=$http_proxy
-export rsync_proxy=$http_proxy
-export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
-if [ -f $WDC_DO_COMMANDS_DIR/do_proxy_setup ]; then
-    echo "Sourcing file: do_proxy_setup"
-    source  $WDC_DO_COMMANDS_DIR/do_proxy_setup
-    echo "http_proxy    = $http_proxy"
-    echo "https_proxy   = $https_proxy"
-    echo "ftp_proxy     = $ftp_proxy"
-    echo "rsync_proxy   = $rsync_proxy"
-    echo "no_proxy      = $no_proxy"
-else
-    echo "Missing file: do_proxy_setup"
-fi
+#export http_proxy=
+#export https_proxy=$http_proxy
+#export ftp_proxy=$http_proxy
+#export rsync_proxy=$http_proxy
+#export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+#if [ -f $WDC_DO_COMMANDS_DIR/do_proxy_setup ]; then
+#    echo "Sourcing file: do_proxy_setup"
+#    source  $WDC_DO_COMMANDS_DIR/do_proxy_setup
+#    echo "http_proxy    = $http_proxy"
+#    echo "https_proxy   = $https_proxy"
+#    echo "ftp_proxy     = $ftp_proxy"
+#    echo "rsync_proxy   = $rsync_proxy"
+#    echo "no_proxy      = $no_proxy"
+#else
+#    echo "Missing file: do_proxy_setup"
+#fi
 
-export SVN_EDITOR=vim
+alias k=kubectl
+[ "$(type -t __start_kubectl 2>/dev/null)" == "function" ] &&  complete -F __start_kubectl k
