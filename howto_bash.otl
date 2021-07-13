@@ -70,3 +70,5 @@ Use command completion with aliases
 	complete -F __start_kubectl k
 Check if a bash object (function, builtin, etc.) exists
 	[ "$(type -t __start_kubectl 2>/dev/null)" == "function" ] &&  complete -F __start_kubectl k
+Get rid of a bash function
+	unset -f <function>

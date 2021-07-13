@@ -342,3 +342,5 @@ Use vimdiff as merge tool
 	git config merge.tool vimdiff
 	git config merge.conflictstyle diff3
 	git config mergetool.prompt false
+Clone single branch
+	git clone --single-branch --branch <branch> <repo>

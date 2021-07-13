@@ -5,4 +5,21 @@ Create initial helm chart
 Use the helm template system
 	helm template helm_hello_world --name helm-hello-world --namespace hhm
 List revisions of deployed helm charts
-	helm list --all
+	helm list --all-namespaces # or helm ls --all-namespaces
+Add new helm chart repository
+	helm repo add apache-airflow https://airflow.apache.org
+	helm repo add argo https://argoproj.github.io/argo-helm
+List helm chart repositories
+	helm repo list
+Update available list of helm charts
+	helm repo update
+Search for an helm chart
+	helm search repo airflow
+Install AirFlow
+	helm install airflow apache-airflow/airflow --namespace airflow --debug
+List revisions in a specific namespace
+	helm ls -n airflow
+Get values of deployed helm chart
+	helm show values apache-airflow/airflow
+Get values of deployed helm chart in JSON form
+	cat airflow-values.yaml | yq eval -j | jq '.'

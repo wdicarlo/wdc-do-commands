@@ -130,3 +130,5 @@ Print disk space used by docker
 	docker system df
 Remove (delete) unused data; containers, networks, images, cache
 	docker system prune
+Update image name and tag
+	docker image tag mynvimi:0.0.1 neovim:0.5

@@ -80,3 +80,13 @@ List all images in the cluster using jsonpath
 	k get pods --all-namespaces -o jsonpath={..image} | tr ' ' '\n' | sort | uniq | column -t -d':'
 List all images in the cluster using jq
 	k get pods --all-namespaces -o json | jq -r '.items[].spec.containers[].image' | sort | uniq | column -t -d':' # -r to get the jq output without the " 
+List tools available in the arkade repository
+	arkade get
+List all port-forwards
+	kubectl get svc --all-namespaces -o json | jq '.items[] | {name:.metadata.name, p:.spec.ports[] } | select( .p.nodePort != null ) | "\(.name): localhost:\(.p.nodePort) -> \(.p.port) -> \(.p.targetPort)"'
+Add port forwarding
+	kubectl port-forward svc/airflow-webserver 8080:8080 -n airflow & # ps -f | grep 'kubectl' | grep 'port-forward'
+Search in the cheat sheet
+	curl -sS https://raw.githubusercontent.com/kubernetes/website/main/content/en/docs/reference/kubectl/cheatsheet.md | grep <term>
+List AirFlow users
+	k exec -ti -n airflow pods/airflow-scheduler-2436dafdbf-n5gqg --container=scheduler  -- sh -c "airflow users list"
