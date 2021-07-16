@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+root="$WDC_DO_COMMANDS_DIR"
+
+[ ! -d "$root" ] && echo "Wrong command folder: $root" && exit
+
+
+# do_setup_env -s
+declare -A cmds
+cmds["do_setup_env"]="-s"
+cmds["do_bash_customization"]="&& cd ."
+cmds["do_setup_ld_library_path"]="\$@"
+ls -1 "$root"| grep "^do_" | grep -v "\." | while read -r file
+do 
+  args="${cmds[$file]}"
+  echo "alias $(echo $file|tr '_' '-')='source \$WDC_DO_COMMANDS_DIR/$file $args'" | sed "s/ '$/'/"
+done

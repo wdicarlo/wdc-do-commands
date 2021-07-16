@@ -667,24 +667,10 @@ alias cd-projects='cd $PROJECTS'
 alias cd-tests='cd $TESTS'
 alias cd-releases='cd /media/sf_Shared/releases/'
 
-# TODO: generate these aliases
-alias do-project-creation='source $WDC_DO_COMMANDS_DIR/do_project_creation'
-alias do-cd-test='source $WDC_DO_COMMANDS_DIR/do_cd_test'
-alias do-cd-release='source $WDC_DO_COMMANDS_DIR/do_cd_release'
-alias do-cd-folder='source $WDC_DO_COMMANDS_DIR/do_cd_folder'
-alias do-cd-path='source $WDC_DO_COMMANDS_DIR/do_cd_path'
-alias do-cd-bookmark='source $WDC_DO_COMMANDS_DIR/do_cd_bookmark'
-alias do-cd-link='source $WDC_DO_COMMANDS_DIR/do_cd_link'
-alias do-project-activation='source $WDC_DO_COMMANDS_DIR/do_project_activation'
-alias do-activate-release='source $WDC_DO_COMMANDS_DIR/do_activate_release'
-alias do-activate-test='source $WDC_DO_COMMANDS_DIR/do_activate_test'
-alias do-setup-env='source $WDC_DO_COMMANDS_DIR/do_setup_env -s'
-alias do-setup-ld-library-path='source $WDC_DO_COMMANDS_DIR/do_setup_ld_library_path $@'
-alias do-history-update='source $WDC_DO_COMMANDS_DIR/do_history_update'
-alias do-history-add-last='source $WDC_DO_COMMANDS_DIR/do_history_add_last'
-alias do-history-diagram='source $WDC_DO_COMMANDS_DIR/do_history_diagram'
-alias do-edit-last='edit_last'
+# generate aliases for do_ commands
+eval "$(do-cmd-aliases)"
 
+alias do-edit-last='edit_last'
 alias do-bookmark-list='do-cd-bookmark -l'
 
 alias cd=cdenv 
