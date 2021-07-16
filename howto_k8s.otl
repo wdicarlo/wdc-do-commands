@@ -90,3 +90,7 @@ Search in the cheat sheet
 	curl -sS https://raw.githubusercontent.com/kubernetes/website/main/content/en/docs/reference/kubectl/cheatsheet.md | grep <term>
 List AirFlow users
 	k exec -ti -n airflow pods/airflow-scheduler-2436dafdbf-n5gqg --container=scheduler  -- sh -c "airflow users list"
+Get a pod with a specific name
+	kubectl get pods --all-namespaces -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep "airflow-webserver"
+List all pods part of an application
+	kubectl get pods --selector=app=nginxrc --output=jsonpath={.items..metadata.name}
