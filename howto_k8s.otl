@@ -94,3 +94,23 @@ Get a pod with a specific name
 	kubectl get pods --all-namespaces -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep "airflow-webserver"
 List all pods part of an application
 	kubectl get pods --selector=app=nginxrc --output=jsonpath={.items..metadata.name}
+Get all entities in a namespace
+	kubectl get all -n minio-operator
+List pending volume claims
+	kubectl get pvc -n minio-tenant-1
+Watch local-path provisioner logs
+	kubectl -n local-path-storage logs -f -l app=local-path-provisioner
+Get StorageClass
+	kubectl get storageclasses
+Get details of a StorageClass
+	kubectl describe storageclasses <name>
+Copy local file to running pod
+	k cp hello.txt local-path-storage/local-path-provisioner-78776bfc44-pr677:/root
+Run the shell of a container
+	k exec --stdin --tty -n local-path-storage local-path-provisioner-78776bfc44-pr677 -- /bin/sh # --stdin and --ty can be replaced with -it
+Copy file from pod to local
+	k cp -n local-path-storage local-path-provisioner-78776bfc44-pr677:/root/hi.txt hi.txt
+Get deployment configuration
+	k get deployments.apps -n airflow airflow-webserver -o yaml
+List API resources SHORTNAMES, APIVERSION, NAMESPACED and KIND
+	kubectl api-resources
