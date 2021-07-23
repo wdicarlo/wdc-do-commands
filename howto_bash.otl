@@ -72,3 +72,5 @@ Check if a bash object (function, builtin, etc.) exists
 	[ "$(type -t __start_kubectl 2>/dev/null)" == "function" ] &&  complete -F __start_kubectl k
 Get rid of a bash function
 	unset -f <function>
+Get IP address out of a URL
+	echo "https://192.168.12.123:8080/myservice" | egrep -o '([0-9]{1,3}[.]){3}[0-9]{1,3}'
