@@ -13,5 +13,6 @@ cmds["do_setup_ld_library_path"]="\$@"
 ls -1 "$root"| grep "^do_" | grep -v "\." | while read -r file
 do 
   args="${cmds[$file]}"
+  [ "$1" == "-l" ] && echo "$file"|tr '_' '-' && continue
   echo "alias $(echo $file|tr '_' '-')='source \$WDC_DO_COMMANDS_DIR/$file $args'" | sed "s/ '$/'/"
 done
