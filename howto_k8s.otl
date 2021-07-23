@@ -114,3 +114,19 @@ Get deployment configuration
 	k get deployments.apps -n airflow airflow-webserver -o yaml
 List API resources SHORTNAMES, APIVERSION, NAMESPACED and KIND
 	kubectl api-resources
+List pods IPs
+	kubectl get pods -n develop -o wide
+Get nodes details
+	kubectl get nodes -o wide # NAME STATUS ROLES AGE VERSION INTERANL-IP EXTERNAL-IP OS-IMAGE KERNERL-VERSION CONTAINER-RUNTIME
+Get cluster API server name and URL
+	kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
+Get cluster API server URL
+	kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}"
+Get token of default service account
+	kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode
+Get details of API server
+	CLUSTER_NAME=$(kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}' | sed 1d | sed 's/[ \t]\+/ /' | cut -d' ' -f 1)
+	APISERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
+	MASTER_IP=$(echo $APISERVER | egrep -o '([0-9]{1,3}[.]){3}[0-9]{1,3}')
+	TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
+	curl -X GET $APISERVER/api --header "Authorization: Bearer $TOKEN" --insecure
