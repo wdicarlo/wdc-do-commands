@@ -43,4 +43,8 @@ if [ ! -f "$howtofile" ]; then
     exit
 fi
 
-do-cmd-update -f "$howtofile"
+if [ "$message" == "" ]; then
+  do-cmd-update -f "$howtofile"
+else
+  do-cmd-update -f -m "$message" "$howtofile"
+fi
