@@ -77,9 +77,9 @@ Manage contexts
 Get all pods configuration in json format
 	k get pods --all-namespaces -o json | jq '.'
 List all images in the cluster using jsonpath
-	k get pods --all-namespaces -o jsonpath={..image} | tr ' ' '\n' | sort | uniq | column -t -d':'
+	k get pods --all-namespaces -o jsonpath={..image} | tr ' ' '\n' | sort | uniq | column -t -s':'
 List all images in the cluster using jq
-	k get pods --all-namespaces -o json | jq -r '.items[].spec.containers[].image' | sort | uniq | column -t -d':' # -r to get the jq output without the " 
+	k get pods --all-namespaces -o json | jq -r '.items[].spec.containers[].image' | sort | uniq | column -t -s':' # -r to get the jq output without the " 
 List tools available in the arkade repository
 	arkade get
 List all port-forwards
@@ -130,3 +130,7 @@ Get details of API server
 	MASTER_IP=$(echo $APISERVER | egrep -o '([0-9]{1,3}[.]){3}[0-9]{1,3}')
 	TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
 	curl -X GET $APISERVER/api --header "Authorization: Bearer $TOKEN" --insecure
+Open shell in a specific container in a pod
+	kubectl exec -it -n develop airflow-worker-0 --container=worker -- /bin/bash
+List pods, containers and images
+	kubectl get pods -n airflow -o json | jq '.items[] | . as $parent | .spec.containers[] | "\($parent.metadata.name);\(.name);\(.image)"' | column -s';' -t
