@@ -3,13 +3,14 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-s] [-a] [-u] [<file>..<file>|file_pattern>]"
+    echo "Usage: $cmd [-h] [-q] [-s] [-a] [-u] [-d] [<file>..<file>|file_pattern>]"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -s                          : diff of staged changes"
     echo "       -a                          : show all diffs"
     echo "       -c                          : list conflicted files"
     echo "       -u                          : include untracked files"
+    echo "       -d                          : diff develop..master"
     echo "       -q                          : quiet"
 }
 
@@ -20,13 +21,17 @@ staged=0
 all=0
 conflicts=0
 untracked=0
+develop=0
 if [ -t 1 ]; then # check if piping to output stream
 	piping=0
 	quiet=0
 fi
-while getopts hqsacu flag
+while getopts hqsacud flag
 do
     case $flag in
+	d)
+	    develop=1
+	    ;;
 	u)
 	    untracked=1
 	    ;;
@@ -58,12 +63,7 @@ opts="-w"
 if [ $all -eq 1 ]; then
 	opts=""
 fi
-if [ $piping -eq 0 ]; then
-	opts="$opts --color=always"
-fi
-if [ $staged -eq 1 ]; then
-	opts="$opts --staged"
-fi
+
 files="$@"
 if [ $# -eq 1 ]; then
 	rev=$(git rev-list --all| grep $1 | wc -l)
@@ -75,22 +75,34 @@ if [ $# -eq 1 ]; then
 	fi
 fi
 
-if [ $conflicts -eq 1 ]; then
-	cmd="git diff --name-only --diff-filter=U"
+if [ $develop -eq 1 ]; then
+	cmd="git diff $opts develop..master $files"
 else
-	#cmd="git diff -w $opts $files | sed \"s/^+[[:space:]]*$/+/g\" | sed \"s/^+\\(.*[;}>]\\)[[:space:]]*$/+\\1/\""
-	cmd="git diff $opts $files | do-pipe-diff-without-useless-whitespaces"
+  if [ $piping -eq 0 ]; then
+    opts="$opts --color=always"
+  fi
+  if [ $staged -eq 1 ]; then
+    opts="$opts --staged"
+  fi
+
+  if [ $conflicts -eq 1 ]; then
+    cmd="git diff --name-only --diff-filter=U"
+  else
+    #cmd="git diff -w $opts $files | sed \"s/^+[[:space:]]*$/+/g\" | sed \"s/^+\\(.*[;}>]\\)[[:space:]]*$/+\\1/\""
+    cmd="git diff $opts $files | do-pipe-diff-without-useless-whitespaces"
+  fi
+  if [ $untracked -eq 1 ]; then
+      others=$(git ls-files --other --exclude-standard)
+      nothers=$(echo "$others"|tr ' ' '\n'|wc -l)
+      if [ $nothers -gt 0 ]; then
+        for file in $others
+        do
+          cmd="$cmd; git diff -w --no-index /dev/null $file"
+        done
+      fi
+  fi
 fi
-if [ $untracked -eq 1 ]; then
-		others=$(git ls-files --other --exclude-standard)
-		nothers=$(echo "$others"|tr ' ' '\n'|wc -l)
-		if [ $nothers -gt 0 ]; then
-			for file in $others
-			do
-				cmd="$cmd; git diff -w --no-index /dev/null $file"
-			done
-		fi
-fi
+
 if [ $quiet -eq 0 ]; then
 	echo "> $cmd"
 fi
