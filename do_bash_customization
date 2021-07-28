@@ -255,10 +255,10 @@ function update_env() {
     export REPO_LOCATION=""
     export REPO_SYNT=""
     GIT_LOCATION=""
-    git status >/dev/null 2>&1 && GIT_LOCATION=$(git rev-parse --abbrev-ref HEAD)
+    \git status >/dev/null 2>&1 && GIT_LOCATION=$(\git rev-parse --abbrev-ref HEAD)
     if [ ! "$GIT_LOCATION" == "" ]; then
         REPO_LOCATION="G:$GIT_LOCATION"
-        REPO_SYNT=$(git status -s | awk '{print $1}'|sort|uniq|tr -d '\n')
+        REPO_SYNT=$(\git status -s | awk '{print $1}'|sort|uniq|tr -d '\n')
     fi
     #echo "PROJECT_PATH=$PROJECT_PATH"
     #echo "REPO_LOCATION=$REPO_LOCATION"
@@ -567,7 +567,7 @@ function copy_and_cd()
     fi
 }
 parse_git_branch() {
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+    \git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
 function prompt_command()
@@ -679,7 +679,12 @@ alias gh=gohome
 alias mkca='make clean all'
 alias mka='make all'
 
+function mygit() {
+  \git "$@"
+  cdenv .
+}
 
+alias git='mygit'
 alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
 
 
