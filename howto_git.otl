@@ -308,7 +308,7 @@ Display branch oriented log graph
 	git log --graph --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
 Display repository oriented log graph
 	git log --graph --full-history --all --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
-Set the remote URL
+Set/update the remote URL
 	git remote set-url origin https://<domain>/scala-examples.git
 Move master to a tag
 	git checkout master
@@ -330,7 +330,7 @@ List all tags reachable from a branch
 Get git folder
 	git rev-parse --git-dir
 Get last tag from current branch
-	git describe --abbrev=0 --tags
+	git for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 --merged # git describe --abbrev=0 --tags
 List all tags with corresponding description
 	git tag -n --sort=v:refname  # same result with git tag -n | sort -V
 	git tag -n --sort=-v:refname # reverse, same result with git tag -n | sort -V -r
