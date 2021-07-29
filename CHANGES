@@ -1,3 +1,1724 @@
+Version 0.3.0:
+ - Improved do-git-bump-version command.
+ - Improved do_bash_customization command.
+ - Improved do-git-diff command. Added -d option to get diff between develop and master branches
+ - Improved do_bash_customization command. Added updating of prompt after every use of git command
+ - Improved do-git-status command.
+ - Update /home/devkit/wbin/howto_git.otl file.
+ - Improved do-howto-commit command.
+ - Update /home/devkit/wbin/howto_k8s.otl file.
+ - Improved do-vim command.
+ - Improved do-cmd-aliases command.
+ - Added do-howto-commit command
+ - Update /home/devkit/wbin/howto_k8s.otl file.
+ - Update /home/devkit/wbin/howto_bash.otl file.
+ - Updated howto_k8s.otl file.
+ - Update howto_k8s.otl file.
+ - Added do-cmd-aliases command. To generate alias of do_ commands
+ - Updated do_cmd_index_def.csv file
+ - Added helm completion script
+ - Updated various howto files
+ - Update howto_k8s.otl file.
+ - Update do_cmd_index_def.csv file.
+ - Improved do-cmd-index command.
+ - Improved do-cmd-index command. Added support for pre-defined commands shortcuts
+ - Added bash_completion.d/kubectl.bash file
+ - Improved do_project_activation command.
+ - Improved do_bash_customization command. Major clean-up
+ - Update howto_bash.otl file.
+ - Added do-k8s-ctx, do-k8s-ns and do-k8s-tail commands
+ - Update howto_k8s.otl file.
+ - Update howto_bash.otl file.
+ - Improved do-cmd-index command.
+ - Improved d command. Added short command name in the sorted list of used commands
+ - Update howto_bash.otl file.
+ - Improved do-vim command.
+ - Improved howto_k8s.otl command. Added arkade and argocd commands
+ - Improved do-howto-print command.
+ - Improved do-howto-list command. Output sorted list
+ - Improved do-vim command. Added setup of vim working directory
+ - Added howto_k8s.otl file
+ - Update howto_bash.otl file.
+ - Update howto_git.otl file. Added merge tool commands
+ - Improved do-vimdiff command. Added option to use DirDiff plugin
+ - Improved d command.
+ - Improved do-compare-files-lists command. Excluded .git folders
+ - Update howto_git.otl file.
+ - Improved d command.
+ - Improved do-vim command. Added cloning feature
+ - Improved d command.
+ - Improved do-cmd-index command.
+ - Improved d command.
+ - Improved d command.
+ - Update howto_bash.otl file.
+ - Added do-tf-workspace-repos command
+ - Improved do-vim command. Added notebook as source for a new session
+ - Improved do-cmd-update command. Added possibility to specify a commit message after changes approval
+ - Improved do-vim command. Added support for local and global notebooks
+ - Improved do-notebook-search command. Added various levels of searches
+ - Improved do-cmd-update command. Added possibility to customize the commit message
+ - Update howto_git.otl file.
+ - Improved do-vim command.
+ - Update howto_jq.otl file.
+ - Improved do-cmd-index command.
+ - Improved do-cmd-find command.
+ - Added d command
+ - Improved do-cmd-index command.
+ - Update howto_git.otl file.
+ - Update howto_bash.otl file.
+ - Improved do-vim command.
+ - Update howto_bash.otl file.
+ - Improved do-vim command.
+ - Added do-vim command
+ - Update howto_bash_scripting.otl file.
+ - Update howto_bash.otl file.
+ - Update howto_docker.otl file.
+ - Improved do-vimdiff command.
+ - Update howto_vim.otl file.
+ - Update howto_docker.otl file.
+ - Improved do-cmd-find command.
+ - Update TODO file.
+ - Added do-cmd-index command
+ - Improved do-vimdiff command.
+ - Improved do-git-status-check command.
+ - Update howto_git.otl file.
+ - Improved howto_terraform.otl command.
+ - Added howto_az.otl command
+ - Update howto_git.otl file.
+ - Added howto_terraform.otl file
+ - Improved howto_bash_scripting.otl command.
+ - Improved do-vimdiff command.
+ - Improved do-git-commit-unstaged command.
+ - Updated various howtos
+ - Improved do-git-commit-unstaged command.
+ - Updated howto files for jq, vim and yq
+ - Added do-publish command
+ - Added do-git-commit-unstaged command
+ - Updated some howto files
+ - Added do-gitlab-branch command
+ - Improved do_bash_customization command.
+ - Replaced ~/bin with WDC_DO_COMMANDS_DIR variable
+ - Improved do-du command.
+ - Improved do-git-backup command.
+ - Improved do-artifactory command.
+ - Improved do-pipe-csv command.
+ - Update howto_pandashells.otl file.
+ - Improved do-jira-search-issues command.
+ - Added do-files-overview command
+ - Added do-jira-list-versions command
+ - Update howto_jq.otl file.
+ - Added do-pipe-csv command
+ - Update howto_pandashells.otl file.
+ - Update howto_bash.otl file.
+ - Added howto_pandashells.otl file
+ - Improved do-jira-search-issues command.
+ - Update howto_sops.otl file.
+ - Update howto_jq.otl file.
+ - Update howto_git.otl file.
+ - Added do-gitlab-search-project-jobs command
+ - Improved do-gitlab-search-projects command.
+ - Updated howto files
+ - Added howto_yq.otl file
+ - Added howto_helm.otl file
+ - Added do-json-join command
+ - Added do-howto-search command
+ - Added howto_sops.otl file
+ - Added howto_gpg.otl file
+ - Improved do-cp command.
+ - Added do-pipe-files-into-folder command
+ - Added do-pipe-to-file command
+ - Updated howto_bash.otl howto_docker.otl howto_jq.otl files
+ - Added do-cal command
+ - Improved do_cd_link command.
+ - Update howto_bash_scripting.otl file.
+ - Update howto_jq.otl file.
+ - Added do-pipe-table-prettyprinted command
+ - Added do-date-week-range command
+ - Added do-pipe-paths-links-in-folder command
+ - Update howto_jq.otl file.
+ - Improved do-gitlab-search-projects command.
+ - Improved do-pipe-columns command.
+ - Added do-backup-mydocuments command
+ - Improved do-list-uniq-text-files command.
+ - Improved do-pipe-to-tar command.
+ - Added do-pipe-number-of-semicolon-chars command
+ - Improved do-git-conf-editor command.
+ - Improved do-jira-search-issues command.
+ - Improved do-pipe-cntlrless-text command.
+ - Added do-pipe-text-stringfied command
+ - Added do-git-change-author-info command
+ - Added howto_ip.otl file
+ - Added howto_curl.otl file
+ - Update howto_jq.otl file.
+ - Improved do-git-push command.
+ - Added do-mongo command
+ - Improved do-cmd-find command.
+ - Update howto_jq.otl file.
+ - Update howto_docker.otl file.
+ - Update howto_jq.otl file.
+ - Update howto_jq.otl file.
+ - Update howto_mongodb.otl file.
+ - Added howto_github.otl file
+ - Added do-github-project-info command
+ - Added do-jira-search-issues command
+ - Added do-gitlab-search-merge-requests command
+ - Update howto_jq.otl file.
+ - Added do-gitlab-search-projects command
+ - Added do-mongo command
+ - Update TODO file.
+ - Added do-artifactory command
+ - Update howto_mongodb.otl file.
+ - Update howto_docker.otl file.
+ - Improved do-artifactory-search command.
+ - Added howto_mongodb.otl file
+ - Update howto_redis.otl file.
+ - Update howto_docker.otl file.
+ - Added do-backup-documents command
+ - Improved do-pipe-files-to-backup-archive command.
+ - Update howto_redis.otl file.
+ - Update howto_bash.otl file.
+ - Added do-csv command
+ - Added howto_redis.otl file
+ - Update howto_docker.otl file.
+ - Added do-list-todo command
+ - Added do-find-mom command
+ - Improved do-git-bump-version command.
+ - Renamed do-redirect-output to do-pipe-to-console-and-file
+ - Added do-artifactory-search command
+ - Renamed do-redirect-output to do-pipe-to-console-and-file
+ - Added do-pipe-files-to-backup-archive command
+ - Added do-list-uniq-text-files command
+ - Improved howto_jq.otl command.
+ - Improved howto_docker.otl command.
+ - Improved do-github-search command.
+ - Improved do-github-search command.
+ - Added howto_jq.otl file
+ - Improved do-pipe-text-without-header command.
+ - Update howto_docker.otl file.
+ - Added ./do-pipe-text-with-first-word-letter command
+ - Update TODO file.
+ - Update howto_docker.otl file.
+ - Added plantuml.jar file
+ - Added do-plantuml command
+ - Improved do_bash_customization command.
+ - Added do-pipe-text-without-header command
+ - Improved do_bash_customization command.
+ - Update howto_docker.otl file.
+ - Update howto_ansible.otl file.
+ - Added do-docker-run command
+ - Update howto_docker.otl file.
+ - Added howto_docker.otl file
+ - Update howto_bash.otl file.
+ - Improved do-ssh-connect command.
+ - Added howto_ansible.otl file
+ - Improved do-ssh-connect command
+ - Improved do-ssh-connect command.
+ - Improved do-ansible command.
+ - Improved do-ansible command.
+ - Improved do-ansible command.
+ - Improved do-ansible command.
+ - Improved do-git-build-demo-repo command.
+ - Added do-ansible command
+ - Added howto_gitlab.otl file
+ - Improved do-deb-pkg-list command.
+ - Improved do-sys-add-user command.
+ - Improved do-deb-pkg-list command.
+ - Improved do-ssh-connect command.
+ - Added do-ssh-connect command
+ - Added do-net-check command
+ - Improved do-git-build-demo-repo command.
+ - Improved do-git-build-demo-repo command.
+ - Added do-git-branch-for-code-review command
+ - Improved do-git-build-demo-repo command.
+ - Added do-git-conf-editor command
+ - Improved do-git-conf-author command.
+ - Improved do-git-pull command.
+ - Added do-sqlet command
+ - Updated TODO file
+ - Improved do-git-merge-branch command.
+ - Improved do-git-stash command.
+ - Improved do-git-switch command.
+ - Improved do-git-commit command.
+ - Merge branch 'master' of http://github.com/wdicarlo/wdc-do-commands
+ - Added do-github-search command
+ - Improved do-patch-rej command.
+ - Improved do-git-log command.
+ - Improved TODO command.
+ - Improved do-git-bump-version command.
+ - Merge branch 'master' of http://github.com/wdicarlo/wdc-do-commands
+ - Added bash_completion.d/docker-compose.bash command
+ - Added do-git-stash command
+ - Added do-git-flow command
+ - Update howto_git.otl file.
+ - Update TODO file.
+ - Update howto_bash_scripting.otl file.
+ - Improved do-git-push command.
+ - Improved do-git-build-demo-repo command.
+ - Added do-random-sn command
+ - Added do-random-macaddr command
+ - Added do-pipe-text-prefixed-by command
+ - Added do-date-epoch-mills command
+ - Adjusted commands' permission flags
+ - Improved do-git-build-demo-repo command.
+ - Improved do-git-build-demo-repo command.
+ - Improved do-git-bump-version command.
+ - Improved do-git-build-demo-repo command.
+ - Added bash_completion.d/git-flow-completion.bash command
+ - Improved do-git-build-demo-repo command.
+ - Improved do-git-branches-status command.
+ - Added do-pipe-git-commit-log command
+ - Added do-git-find-common-ancestor command
+ - Update howto_git.otl file.
+ - Improved do-git-show command.
+ - Improved do-git-log command.
+ - Improved do-git-get-parent-branch command.
+ - Added do-git-build-demo-repo command
+ - Improved do-mylyn-task-git-branch command.
+ - Added do-patch-rej command
+ - Update howto_git.otl file.
+ - Improved do-pipe-to-vim command.
+ - Improved do-git-reset command.
+ - Improved do-git-pull command.
+ - Improved do-git-diff command.
+ - Improved do-vimdiff command.
+ - Improved do-pipe-columns command.
+ - Update howto_bash_scripting.otl file.
+ - Improved do-git-reset command.
+ - Added do-pipe-diff-with-linenumbers command
+ - Improved do-vimdiff command.
+ - Improved do-patch command.
+ - Improved do-pipe-git-diff command.
+ - Improved do-git-reset command.
+ - Added do-git-find-parent command
+ - Improved do-git-branches-status command.
+ - Improved do-git-diff-with-linenumbers command.
+ - Improved do-history command.
+ - Improved do-git-find-history-change command.
+ - Improved do-git-cherry-pick-branch-commits command.
+ - Update howto_git.otl file.
+ - Update howto_bash.otl file.
+ - Improved do_cd_bookmark command.
+ - Improved do-bookmark command.
+ - Improved do-sys-info command.
+ - Added do-sys-path command
+ - Update howto_bash_scripting.otl file.
+ - Improved do-cmd-find command.
+ - Improved do-mylyn-tasks command.
+ - Improved do-find-string command.
+ - Improved do-cmd-find command
+ - Improved do-cmd-exe command.
+ - Added do_preexec command
+ - Improved do-cmd-exe command.
+ - Improved do-git-log-branch command.
+ - Improved do-git-diff command.
+ - Improved do-find-string command.
+ - Update howto_git.otl file.
+ - Improved do-pipe-diff-without-useless-whitespaces command.
+ - Improved do-patch command.
+ - Improved do-git-branch-code-cleanup command.
+ - Improved do-git-log-branch command.
+ - Improved do-git-diff-with-linenumbers command.
+ - Added do-git-amend-old command
+ - Update howto_git.otl file.
+ - Improved do-git-log-branch command.
+ - Improved do-git-diff-committed command.
+ - Improved do-git-ls command.
+ - Improved do-git-log command.
+ - Improved do-git-diff-with-linenumbers command.
+ - Improved do-git-diff command.
+ - Added do-git-push command
+ - Added do-git-reset command
+ - Added do-git-diff-committed command
+ - Added do-git-branch-code-cleanup command
+ - Added do-git-cherry-pick-branch-commits command
+ - Improved do-git-diff command.
+ - Improved do-cmd-update command.
+ - Improved do-git-log command.
+ - Update howto_bash_scripting.otl file.
+ - Update howto_git.otl file.
+ - Improved do-pipe-diff-without-useless-whitespaces command.
+ - Improved do-cmd-update command.
+ - Merge branch 'master' of http://github.com/wdicarlo/wdc-do-commands
+ - Updated files permissions
+ - Improved do-git-branch command.
+ - Added do-pipe-diff-string command
+ - Improved do-pipe-diff-paths command.
+ - Added do-pipe-diff-without-useless-whitespaces command
+ - Improved do-git-status-check command.
+ - Added do-git-status-check command
+ - Update howto_git.otl file.
+ - Improved do-pipe-diff-paths command.
+ - Improved do-git-log-branch command.
+ - Added do-git-get-parent-branch command
+ - Improved do-git-branch command.
+ - Update howto_bash_scripting.otl file.
+ - Improved do-cmd-exe command.
+ - Improved do-mylyn-tasks command.
+ - Improved do-git-status command.
+ - Improved do-git-pre-commit-check-java-imports command.
+ - Improved do-git-log-branch command.
+ - Added do-git-commit command
+ - Update TODO file.
+ - Added do-pipe-text-with-unix-endofline command
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Improved do-git-merge-branch command.
+ - Improved do-git-branches-status command.
+ - Improved do-git-diff command.
+ - Added do-git-diff-with-linenumbers command
+ - Added do-git-branches-status command
+ - Improved do-git-merge-branch command.
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Adjusted commands' permission flags
+ - Adjusted commands' permission flags
+ - Improved do-cmd-ls command.
+ - Added do-cmd-ls command
+ - Improved do-cmd-list-dependencies command.
+ - Version bump to 0.2.0
+ - Version bump to 0.2.0
+ - Improved do-mylyn-task-git-branch command.
+ - Improved do-mylyn-task-git-branch command.
+ - Improved do-pipe-words-in command.
+ - Improved do-pipe-words-in command.
+ - Added do-cmd-exe command
+ - Added do-cmd-exe command
+ - Improved do-git-diff command.
+ - Improved do-git-diff command.
+ - Improved do-cmd-diff command.
+ - Improved do-cmd-diff command.
+ - Improved do-git-pre-commit-check-java-imports command.
+ - Improved do-git-pre-commit-check-java-imports command.
+ - Improved do-git-log command.
+ - Improved do-git-log command.
+ - Added do-backup-file command
+ - Added do-backup-file command
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Merge branch 'master' of http://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of http://github.com/wdicarlo/wdc-do-commands
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Improved do-mylyn-task-git-branch command.
+ - Improved do-mylyn-task-git-branch command.
+ - Improved do-git-pull command.
+ - Improved do-git-pull command.
+ - Added do-git-pre-commit-check-java-imports command
+ - Added do-git-pre-commit-check-java-imports command
+ - Added do-man command
+ - Added do-man command
+ - Improved do-find-string command.
+ - Improved do-find-string command.
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Improved do-git-log command.
+ - Improved do-git-log command.
+ - Update howto_bash.otl file.
+ - Update howto_bash.otl file.
+ - Improved do-mylyn-tasks command.
+ - Improved do-mylyn-tasks command.
+ - Added do-mylyn-task-git-branch command
+ - Added do-mylyn-task-git-branch command
+ - Improved do-pipe-text-without-whitespaces command.
+ - Improved do-pipe-text-without-whitespaces command.
+ - Added do-pipe-highlighted-string command
+ - Added do-pipe-highlighted-string command
+ - Improved do-git-clone command.
+ - Improved do-git-clone command.
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Improved do-git-merge-branch command.
+ - Improved do-git-merge-branch command.
+ - Added do-git-uncommit-single-file command
+ - Added do-git-uncommit-single-file command
+ - Added do-git-uncommit command
+ - Added do-git-uncommit command
+ - Added do-pipe-git-diff command
+ - Added do-pipe-git-diff command
+ - Improved do-mylyn-tasks command.
+ - Improved do-mylyn-tasks command.
+ - Improved do-pipe-text-without-whitespaces command.
+ - Improved do-pipe-text-without-whitespaces command.
+ - Improved do-git-status command.
+ - Improved do-git-status command.
+ - Added do-git-cfile command
+ - Added do-git-cfile command
+ - Improved do-git-log-branch command.
+ - Improved do-git-log-branch command.
+ - Improved do-git-branch command.
+ - Improved do-git-branch command.
+ - Added do-pipe-git-commit-patch command
+ - Added do-pipe-git-commit-patch command
+ - Improved do-pipe-to-vim command.
+ - Improved do-pipe-to-vim command.
+ - Update howto_bash_scripting.otl file.
+ - Update howto_bash_scripting.otl file.
+ - Improved do-git-log command.
+ - Improved do-git-log command.
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Added do-mylyn-task-patch command
+ - Added do-mylyn-task-patch command
+ - Improved do-pipe-to-patch command.
+ - Improved do-pipe-to-patch command.
+ - Added do-pipe-diff-paths command
+ - Added do-pipe-diff-paths command
+ - Improved do-find-string command.
+ - Improved do-find-string command.
+ - Added do-arduino command
+ - Added do-arduino command
+ - Update howto_bash_scripting.otl file.
+ - Update howto_bash_scripting.otl file.
+ - Improved do-history command.
+ - Improved do-history command.
+ - Improved do-history command.
+ - Improved do-history command.
+ - Update howto_bash_scripting.otl file.
+ - Update howto_bash_scripting.otl file.
+ - Added do-git-blame command
+ - Added do-git-blame command
+ - Added do-git-find-largest-objects command
+ - Added do-git-find-largest-objects command
+ - Added do-pipe-patched-files command
+ - Added do-pipe-patched-files command
+ - Added do-git-branch command
+ - Added do-git-branch command
+ - Improved do-git-merge-branch command.
+ - Improved do-git-merge-branch command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Improved do-git-diff command.
+ - Improved do-git-diff command.
+ - Added do-git-backup command
+ - Added do-git-backup command
+ - Update .gitignore file.
+ - Update .gitignore file.
+ - Added do-sys-proc-search-and-kill command
+ - Added do-sys-proc-search-and-kill command
+ - Update TODO file.
+ - Update TODO file.
+ - Added do-text-without-whitespaces command
+ - Added do-text-without-whitespaces command
+ - Update TODO file.
+ - Update TODO file.
+ - Improved do-pipe-text-without-whitespaces command.
+ - Improved do-pipe-text-without-whitespaces command.
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Added do-git-standup command
+ - Added do-git-standup command
+ - Improved do-pipe-patched-files command.
+ - Improved do-pipe-patched-files command.
+ - Improved do-pipe-text-without-whitespaces command.
+ - Improved do-pipe-text-without-whitespaces command.
+ - Improved do-git-list-tags command.
+ - Improved do-git-list-tags command.
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Update howto_debian.otl file.
+ - Update howto_debian.otl file.
+ - Update howto_bash_scripting.otl file.
+ - Update howto_bash_scripting.otl file.
+ - Added do-git-switch command
+ - Added do-git-switch command
+ - Improved do-git-log command.
+ - Improved do-git-log command.
+ - Improved do-git-list-modified command.
+ - Improved do-git-list-modified command.
+ - Improved do-git-print-common-ancestor-rev command.
+ - Improved do-git-print-common-ancestor-rev command.
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Added do-git-log-no-merges command
+ - Added do-git-log-no-merges command
+ - Added do-git-log-branch command
+ - Added do-git-log-branch command
+ - Added do-git-show-history command
+ - Added do-git-show-history command
+ - Added do-pipe-text-without-whitespaces command
+ - Added do-pipe-text-without-whitespaces command
+ - Added do-mylyn-tasks command
+ - Added do-mylyn-tasks command
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Added do-git-print-common-ancestor-rev command
+ - Added do-git-print-common-ancestor-rev command
+ - Update howto_git.otl file.
+ - Update howto_git.otl file.
+ - Added do-git-find-history-change command
+ - Added do-git-find-history-change command
+ - Improved do-cmd-update command.
+ - Improved do-cmd-update command.
+ - Improved do-cmd-add command.
+ - Improved do-cmd-add command.
+ - Update howto_bash.otl file.
+ - Update howto_bash.otl file.
+ - Added howto_bash_scripting.otl file
+ - Added howto_bash_scripting.otl file
+ - Improved do-git-status command.
+ - Improved do-git-status command.
+ - Improved do-pipe-to-patch command.
+ - Improved do-pipe-to-patch command.
+ - Improved do-git-diff command.
+ - Improved do-git-diff command.
+ - Improved do-git-log command.
+ - Improved do-git-log command.
+ - Added do-pipe-files-strings command
+ - Added do-pipe-files-strings command
+ - Added do-pipe-columns-swapped command
+ - Added do-pipe-columns-swapped command
+ - Added do-sed-file-lines command
+ - Added do-sed-file-lines command
+ - Added wikipedia2text command
+ - Added wikipedia2text command
+ - Improved do-publish-files command.
+ - Improved do-publish-files command.
+ - Improved do-lua command.
+ - Improved do-lua command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-vimdiff command.
+ - Improved do-vimdiff command.
+ - Improved do-svn-cfile command.
+ - Improved do-svn-cfile command.
+ - Improved do-pipe-filename-and-linenumber command.
+ - Improved do-pipe-filename-and-linenumber command.
+ - Improved do-gdb-list-callstack command.
+ - Improved do-gdb-list-callstack command.
+ - Improved do-find-string command.
+ - Improved do-find-string command.
+ - Added do-pipe-pure-text command
+ - Added do-pipe-pure-text command
+ - Added do-sys-list-disk-usage command
+ - Added do-sys-list-disk-usage command
+ - Added do-pipe-file-lines command
+ - Added do-pipe-file-lines command
+ - Improved do-pipe-wrapped-text command.
+ - Improved do-pipe-wrapped-text command.
+ - Added do-pipe-filename-and-linenumber command
+ - Added do-pipe-filename-and-linenumber command
+ - Added do-pipe-aggregated-common-lines command
+ - Added do-pipe-aggregated-common-lines command
+ - Improved do-cmd-find command.
+ - Improved do-cmd-find command.
+ - Improved do_project_activation command.
+ - Improved do_project_activation command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do-svn-list-branches command.
+ - Improved do-svn-list-branches command.
+ - Improved do-pipe-compilation-steps command.
+ - Improved do-pipe-compilation-steps command.
+ - Improved do-svn-cfile command.
+ - Improved do-svn-cfile command.
+ - Added do-pipe-cfile-first-line command
+ - Added do-pipe-cfile-first-line command
+ - Improved do-git-log command.
+ - Improved do-git-log command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-pipe-gdb-list-callstack command.
+ - Improved do-pipe-gdb-list-callstack command.
+ - Improved do-svn-diff command.
+ - Improved do-svn-diff command.
+ - Improved do-svn-diff-all command.
+ - Improved do-svn-diff-all command.
+ - Added do-svn-propedit command
+ - Added do-svn-propedit command
+ - Improved do-pipe-compilation-steps command.
+ - Improved do-pipe-compilation-steps command.
+ - Improved do-gdb-list-callstack command.
+ - Improved do-gdb-list-callstack command.
+ - Added do-pipe-compilation-steps command
+ - Added do-pipe-compilation-steps command
+ - Improved do-note command.
+ - Improved do-note command.
+ - Improved do-cscope-update command.
+ - Improved do-cscope-update command.
+ - Improved do-find-symbols-by-root-folder command.
+ - Improved do-find-symbols-by-root-folder command.
+ - Improved do-svn-diff-branch command.
+ - Improved do-svn-diff-branch command.
+ - Added do-pipe-to-notebook command
+ - Added do-pipe-to-notebook command
+ - Added do-cmd-diff command
+ - Added do-cmd-diff command
+ - Improved do-svn-diff-branch command.
+ - Improved do-svn-diff-branch command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do-note command.
+ - Improved do-note command.
+ - Added do-find-symbols-by-root-folder command
+ - Added do-find-symbols-by-root-folder command
+ - Improved do-svn-status command.
+ - Improved do-svn-status command.
+ - Improved do-svn-log command.
+ - Improved do-svn-log command.
+ - Improved do-svn-create-branch command.
+ - Improved do-svn-create-branch command.
+ - Improved do-svn-blame command.
+ - Improved do-svn-blame command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Added do-pipe-timeless-log command
+ - Added do-pipe-timeless-log command
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do-svn-cfile command.
+ - Improved do-svn-cfile command.
+ - Improved do-svn-diff command.
+ - Improved do-svn-diff command.
+ - Improved do-svn-diff-branch command.
+ - Improved do-svn-diff-branch command.
+ - Improved do-patch-generate-by-orig command.
+ - Improved do-patch-generate-by-orig command.
+ - Improved do-svn-diff-branch-all command.
+ - Improved do-svn-diff-branch-all command.
+ - Improved do-svn-diff-branch command.
+ - Improved do-svn-diff-branch command.
+ - Added do-svn-cfile command
+ - Added do-svn-cfile command
+ - Improved do-svn-blame command.
+ - Improved do-svn-blame command.
+ - Improved do-svn-blame command.
+ - Improved do-svn-blame command.
+ - Added do-svn-blame command
+ - Added do-svn-blame command
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Added do-svn-diff-branch-all command
+ - Added do-svn-diff-branch-all command
+ - Improved do-svn-diff-branch command.
+ - Improved do-svn-diff-branch command.
+ - Added do-patch-generate-by-orig command
+ - Added do-patch-generate-by-orig command
+ - Improved do-run-app command.
+ - Improved do-run-app command.
+ - Improved do-svn-revert-all command.
+ - Improved do-svn-revert-all command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Added do-svn-revert-all command
+ - Added do-svn-revert-all command
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do-patch-list command.
+ - Improved do-patch-list command.
+ - Added do-sd-msgs command
+ - Added do-sd-msgs command
+ - Added do-run-app command
+ - Added do-run-app command
+ - Improved do-patch-generation command.
+ - Improved do-patch-generation command.
+ - Improved do-patch-generation command.
+ - Improved do-patch-generation command.
+ - Improved do-cp command.
+ - Improved do-cp command.
+ - Improved do-svn-code-churn-sequence command.
+ - Improved do-svn-code-churn-sequence command.
+ - Improved do-pipe-to-command command.
+ - Improved do-pipe-to-command command.
+ - Added do-svn-code-churn-sequence command
+ - Added do-svn-code-churn-sequence command
+ - Improved do-date-list command.
+ - Improved do-date-list command.
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Added do-date-list command
+ - Added do-date-list command
+ - Renamed do-gits-print-rev into do-git-print-rev
+ - Renamed do-gits-print-rev into do-git-print-rev
+ - Added do-svn-code-churm command
+ - Added do-svn-code-churm command
+ - Renamed do-update-cscope-db to do-cscope-update
+ - Renamed do-update-cscope-db to do-cscope-update
+ - Improved howto_vim.otl command.
+ - Improved howto_vim.otl command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-svn-switch-to-trunk command.
+ - Improved do-svn-switch-to-trunk command.
+ - Improved do-svn-diff-all command.
+ - Improved do-svn-diff-all command.
+ - Improved do-svn-diff command.
+ - Improved do-svn-diff command.
+ - Improved do-pipe-words command.
+ - Improved do-pipe-words command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-pipe-paths-to-vim command.
+ - Improved do-pipe-paths-to-vim command.
+ - Improved do-pipe-paths-of command.
+ - Improved do-pipe-paths-of command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Improved do-find-string command.
+ - Improved do-find-string command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Added do-pipe-no-empty-lines command
+ - Added do-pipe-no-empty-lines command
+ - Added do-patch-list command
+ - Added do-patch-list command
+ - Renamed do-patch-list into do-pipe-patched-files
+ - Renamed do-patch-list into do-pipe-patched-files
+ - Improved do-pipe-to-patch command.
+ - Improved do-pipe-to-patch command.
+ - Renamed do-numerate into do-pipe-lines-numbers
+ - Renamed do-numerate into do-pipe-lines-numbers
+ - Added do-svn-log-by-user command
+ - Added do-svn-log-by-user command
+ - Improved do-svn-diff-branch command.
+ - Improved do-svn-diff-branch command.
+ - Improved do-pipe-words-in command.
+ - Improved do-pipe-words-in command.
+ - Improved do-pipe-to-patch command.
+ - Improved do-pipe-to-patch command.
+ - Improved do-svn-switch-to-trunk command.
+ - Improved do-svn-switch-to-trunk command.
+ - Improved do-find-string command.
+ - Improved do-find-string command.
+ - Improved do-svn-list-branches command.
+ - Improved do-svn-list-branches command.
+ - Improved do-svn-diff-branch command.
+ - Improved do-svn-diff-branch command.
+ - Added do-svn-diff-branch command
+ - Added do-svn-diff-branch command
+ - Added do-svn-log-branch command
+ - Added do-svn-log-branch command
+ - Added do-pipe-to-patch command
+ - Added do-pipe-to-patch command
+ - Added do-svn-rm command
+ - Added do-svn-rm command
+ - Improved do-cp command.
+ - Improved do-cp command.
+ - Improved do-patch command.
+ - Improved do-patch command.
+ - Added do-pipe-text-without-words-in command
+ - Added do-pipe-text-without-words-in command
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Added do-cscope-init command
+ - Added do-cscope-init command
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-pipe-to-notes command.
+ - Improved do-pipe-to-notes command.
+ - Improved do-cmd-update command.
+ - Improved do-cmd-update command.
+ - Improved do-svn-switch command.
+ - Improved do-svn-switch command.
+ - Improved do-find-files command.
+ - Improved do-find-files command.
+ - Added do-svn-switch command
+ - Added do-svn-switch command
+ - Improved do-svn-set-externals-in-parent-folder command.
+ - Improved do-svn-set-externals-in-parent-folder command.
+ - Added do-svn-set-externals-in-parent-folder command
+ - Added do-svn-set-externals-in-parent-folder command
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Added do-pipe-paths-of command
+ - Added do-pipe-paths-of command
+ - Improved do-cmd-update command.
+ - Improved do-cmd-update command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-find-files-and-copy command.
+ - Improved do-find-files-and-copy command.
+ - Added do-uniondir command
+ - Added do-uniondir command
+ - Added bash completitions scripts
+ - Added bash completitions scripts
+ - Improved do-compare-files-lists command.
+ - Improved do-compare-files-lists command.
+ - Improved do-project-update command.
+ - Improved do-project-update command.
+ - Improved do-project-find command.
+ - Improved do-project-find command.
+ - Improved do_project_activation command.
+ - Improved do_project_activation command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-pipe-to-notes command.
+ - Improved do-pipe-to-notes command.
+ - Improved do-note-command command.
+ - Improved do-note-command command.
+ - Improved do-note command.
+ - Improved do-note command.
+ - Improved do-find-folders command.
+ - Improved do-find-folders command.
+ - Improved do-cmd-update command.
+ - Improved do-cmd-update command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Improved do-arc-folder command.
+ - Improved do-arc-folder command.
+ - Improved do-find-files-and-replace command.
+ - Improved do-find-files-and-replace command.
+ - Improved do-find-string command.
+ - Improved do-find-string command.
+ - Renamed commands about project management
+ - Renamed commands about project management
+ - Renamed and improved do-pipe-text-blocks
+ - Renamed and improved do-pipe-text-blocks
+ - Added do-svn-list-externals command
+ - Added do-svn-list-externals command
+ - Improved do-pipe-files-with-diffs command.
+ - Improved do-pipe-files-with-diffs command.
+ - Improved do-gdb-list-callstack command.
+ - Improved do-gdb-list-callstack command.
+ - Improved do-pipe-words command.
+ - Improved do-pipe-words command.
+ - Added do-pipe-merged-rows-2 command
+ - Added do-pipe-merged-rows-2 command
+ - Added do-pipe-merged-rows command
+ - Added do-pipe-merged-rows command
+ - Improved do-pipe-uniq command.
+ - Improved do-pipe-uniq command.
+ - Added do-pipe-words-delimited-by command
+ - Added do-pipe-words-delimited-by command
+ - Improved do-pipe-to-vim command.
+ - Improved do-pipe-to-vim command.
+ - Added do-pipe-sorted-text-objects command
+ - Added do-pipe-sorted-text-objects command
+ - Added do-pipe-text-object command
+ - Added do-pipe-text-object command
+ - Added do-pipe-files-with-diffs command
+ - Added do-pipe-files-with-diffs command
+ - Added do-pipe-words-in command
+ - Added do-pipe-words-in command
+ - Added do-pipe-map command
+ - Added do-pipe-map command
+ - Improved do-vimdiff command.
+ - Improved do-vimdiff command.
+ - Improved do-pipe-words command.
+ - Improved do-pipe-words command.
+ - Added inxi command
+ - Added inxi command
+ - Added do-find-missing-files command
+ - Added do-find-missing-files command
+ - Added do-find-files-and-replace command
+ - Added do-find-files-and-replace command
+ - Added do-edit-again command
+ - Added do-edit-again command
+ - Added do-pipe-paths-canonicalized command
+ - Added do-pipe-paths-canonicalized command
+ - Added do-vim-list-paths command
+ - Added do-vim-list-paths command
+ - Added do-arc-files command
+ - Added do-arc-files command
+ - Improved do-arc-extract-files command.
+ - Improved do-arc-extract-files command.
+ - Improved do-xavante-start command.
+ - Improved do-xavante-start command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-print-file-path command.
+ - Improved do-print-file-path command.
+ - Added do-sys-link command
+ - Added do-sys-link command
+ - Added do-sys-unlink command
+ - Added do-sys-unlink command
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Added do-pipe-gdb-list-callstack command
+ - Added do-pipe-gdb-list-callstack command
+ - Added do-pipe-gdb-list-callstack command
+ - Added do-pipe-gdb-list-callstack command
+ - Added do-ramlog-list-callstack command
+ - Added do-ramlog-list-callstack command
+ - Added do-gdb-list-callstack command
+ - Added do-gdb-list-callstack command
+ - Added do-pipe-files-content command
+ - Added do-pipe-files-content command
+ - Improved do-find-files-and-copy command.
+ - Improved do-find-files-and-copy command.
+ - Added do-find-files-and-copy command
+ - Added do-find-files-and-copy command
+ - Added do-patch-list command
+ - Added do-patch-list command
+ - Added do-patch-filter command
+ - Added do-patch-filter command
+ - Improved do-svn-status command.
+ - Improved do-svn-status command.
+ - Renamed commands to manage patches
+ - Renamed commands to manage patches
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Added do-svn-edit-modified command
+ - Added do-svn-edit-modified command
+ - Added do-memcalls-synthesis command
+ - Added do-memcalls-synthesis command
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-find-string command.
+ - Improved do-find-string command.
+ - Renamed do-svn-patch-dump to do-svn-diff-all
+ - Renamed do-svn-patch-dump to do-svn-diff-all
+ - Improved do-backup-sav-files command.
+ - Improved do-backup-sav-files command.
+ - Improved do-find-files command.
+ - Improved do-find-files command.
+ - Improved do-git-add-files command.
+ - Improved do-git-add-files command.
+ - Improved do-list-duplicated-symbols command.
+ - Improved do-list-duplicated-symbols command.
+ - Improved do-git-ignore command.
+ - Improved do-git-ignore command.
+ - Improved do-svn-create-branch command.
+ - Improved do-svn-create-branch command.
+ - Improved do-svn-new-branch command.
+ - Improved do-svn-new-branch command.
+ - Improved do-svn-switch-to-trunk command.
+ - Improved do-svn-switch-to-trunk command.
+ - Improved do-svn-list-branches command.
+ - Improved do-svn-list-branches command.
+ - Improved do-svn-list-tags command.
+ - Improved do-svn-list-tags command.
+ - Added do-pipe-cfile-paths command
+ - Added do-pipe-cfile-paths command
+ - Added do-pipe-column-increment command
+ - Added do-pipe-column-increment command
+ - Update howto_vim.otl file.
+ - Update howto_vim.otl file.
+ - Improved do-pipe-trimmed command.
+ - Improved do-pipe-trimmed command.
+ - Improved do-pipe-columns command.
+ - Improved do-pipe-columns command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do-svn-status command.
+ - Improved do-svn-status command.
+ - Added do-svn-patch-dump command
+ - Added do-svn-patch-dump command
+ - Improved do-dumph-synthesis command. Added option to generate only the plottings
+ - Improved do-dumph-synthesis command. Added option to generate only the plottings
+ - Added do-deb-update-keys command
+ - Added do-deb-update-keys command
+ - Added do-cmd-check-all command
+ - Added do-cmd-check-all command
+ - Update TODO file.
+ - Update TODO file.
+ - Improved do-svn-status command.
+ - Improved do-svn-status command.
+ - Improved do-find-string command.
+ - Improved do-find-string command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Added do-dumph-synthesis command
+ - Added do-dumph-synthesis command
+ - Added do-pipe-dumph-synthesis command
+ - Added do-pipe-dumph-synthesis command
+ - Improved do-pipe-trimmed command.
+ - Improved do-pipe-trimmed command.
+ - Renamed do-select-columns in do-pipe-columns
+ - Renamed do-select-columns in do-pipe-columns
+ - Added do-pipe-code-without-comments command
+ - Added do-pipe-code-without-comments command
+ - Improved do-pipe-master-slave-rows command.
+ - Improved do-pipe-master-slave-rows command.
+ - Improved do-svn-list-tags command.
+ - Improved do-svn-list-tags command.
+ - Update howto_make.otl file.
+ - Update howto_make.otl file.
+ - Update howto_vim.otl file.
+ - Update howto_vim.otl file.
+ - Improved do-vim-make command.
+ - Improved do-vim-make command.
+ - Added do-vim-make command
+ - Added do-vim-make command
+ - Added do-find-filelines command
+ - Added do-find-filelines command
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Improved do-cp command. Added listining of copied files
+ - Improved do-cp command. Added listining of copied files
+ - Improved do_bash_customization command. Added ? to list the defined PROJECT_ROOTs
+ - Improved do_bash_customization command. Added ? to list the defined PROJECT_ROOTs
+ - Improved do-svn-status command. Added possibility to specify the target for the command
+ - Improved do-svn-status command. Added possibility to specify the target for the command
+ - Improved do-svn-diff command. Avoided to print the executed command when it is used in a pipe
+ - Improved do-svn-diff command. Avoided to print the executed command when it is used in a pipe
+ - Improved do-svn-status command. Added option to show the differences
+ - Improved do-svn-status command. Added option to show the differences
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Improved do-cmd-update command. Added support for an optional comment
+ - Improved do-cmd-update command. Added support for an optional comment
+ - Improved do-bookmark command. Just added some todos
+ - Improved do-bookmark command. Just added some todos
+ - Added do-find-symbols command
+ - Added do-find-symbols command
+ - Added do-pipe-master-slave-rows command
+ - Added do-pipe-master-slave-rows command
+ - Improved do_cd_bookmark command
+ - Improved do_cd_bookmark command
+ - Improved do-svn-status command
+ - Improved do-svn-status command
+ - Improved do_cd_bookmark command
+ - Improved do_cd_bookmark command
+ - Added do-net-stat command
+ - Added do-net-stat command
+ - Update do_bash_customization file
+ - Update do_bash_customization file
+ - Added do-history-diagram command
+ - Added do-history-diagram command
+ - Update howto_vim.otl file
+ - Update howto_vim.otl file
+ - Update howto_lua.otl file
+ - Update howto_lua.otl file
+ - Improved do-pipe-multilines command
+ - Improved do-pipe-multilines command
+ - Added do-pipe-multilines command
+ - Added do-pipe-multilines command
+ - Update howto_bash.otl file
+ - Update howto_bash.otl file
+ - Update howto_vim.otl file
+ - Update howto_vim.otl file
+ - Update howto_make.otl file
+ - Update howto_make.otl file
+ - Update howto_vim.otl file
+ - Update howto_vim.otl file
+ - Improved do-svn-diff command
+ - Improved do-svn-diff command
+ - Improved do-svn-create-branch command
+ - Improved do-svn-create-branch command
+ - Improved do-find-string command
+ - Improved do-find-string command
+ - Improved do-git-bump-version command
+ - Improved do-git-bump-version command
+ - Added do-svn-status command
+ - Added do-svn-status command
+ - Added do-pipe-sum command
+ - Added do-pipe-sum command
+ - Improved do-svn-create-branch command
+ - Improved do-svn-create-branch command
+ - Added do-svn-create-branch command
+ - Added do-svn-create-branch command
+ - Improved do-svn-list-tags command
+ - Improved do-svn-list-tags command
+ - Improved do-svn-list-branches command
+ - Improved do-svn-list-branches command
+ - Improved do-git-bump-version command
+ - Improved do-git-bump-version command
+ - Added do-svn-switch-to-trunk command
+ - Added do-svn-switch-to-trunk command
+ - Added sqlite howto
+ - Added sqlite howto
+ - Added do-svn-list-tags command
+ - Added do-svn-list-tags command
+ - Renamed and improved do-svn-list-mybranches
+ - Renamed and improved do-svn-list-mybranches
+ - Update howto_vim.otl file
+ - Update howto_vim.otl file
+ - Added do-notebook-search command
+ - Added do-notebook-search command
+ - Added do-svn-diff command
+ - Added do-svn-diff command
+ - Added do-svn-get-mergeinfo command
+ - Added do-svn-get-mergeinfo command
+ - Added do-xavante-start command
+ - Added do-xavante-start command
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Added do-lua-checks command
+ - Added do-lua-checks command
+ - Improved do-date-week-number command
+ - Improved do-date-week-number command
+ - Improved do-publish-files command
+ - Improved do-publish-files command
+ - Added do-svn-log command
+ - Added do-svn-log command
+ - Improved do-vimdiff command
+ - Improved do-vimdiff command
+ - Added do-svn-new-branch command
+ - Added do-svn-new-branch command
+ - Added do-svn-list-mybranches command
+ - Added do-svn-list-mybranches command
+ - Added do-svn-show-changes-of-last-commit command
+ - Added do-svn-show-changes-of-last-commit command
+ - Added do-svn-set-externals command
+ - Added do-svn-set-externals command
+ - Improved do-date-week-number command
+ - Improved do-date-week-number command
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Added do-git-pull command
+ - Added do-git-pull command
+ - Added do-git-cat-user command
+ - Added do-git-cat-user command
+ - Added do-git-add-files command
+ - Added do-git-add-files command
+ - Added do-git-ignore command
+ - Added do-git-ignore command
+ - Improved do_create_project command
+ - Improved do_create_project command
+ - Improved do_setup_env command
+ - Improved do_setup_env command
+ - Started parametrization of bookmarks manager
+ - Started parametrization of bookmarks manager
+ - Added do-git-show command
+ - Added do-git-show command
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Added do-sd-dump and do-sd-write commands
+ - Added do-sd-dump and do-sd-write commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Improved do-cmd-update command
+ - Improved do-cmd-update command
+ - Update history.txt file
+ - Update history.txt file
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Added VERSION and CHANGES files, Version bump to v0.1.0
+ - Added VERSION and CHANGES files, Version bump to v0.1.0
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Improved do-git-log command
+ - Improved do-git-log command
+ - Added do-git-bump-version command
+ - Added do-git-bump-version command
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Improved do-find-folders command
+ - Improved do-find-folders command
+ - Improved do-make command
+ - Improved do-make command
+ - Improved do-git-status command
+ - Improved do-git-status command
+ - Improved do-git-log command
+ - Improved do-git-log command
+ - Improved do-cmd-update command
+ - Improved do-cmd-update command
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Added do_bash_add_die_functions command
+ - Added do_bash_add_die_functions command
+ - Updated TODO file
+ - Updated TODO file
+ - Improved howto_make.otl command
+ - Improved howto_make.otl command
+ - Improved do-find-folders command
+ - Improved do-find-folders command
+ - Improved do-find-files command
+ - Improved do-find-files command
+ - Added do-pipe-string-occurences command
+ - Added do-pipe-string-occurences command
+ - Improved do-pipe-aggregated-lines command
+ - Improved do-pipe-aggregated-lines command
+ - Improved do-find-string command
+ - Improved do-find-string command
+ - Added do-setup-ld-library-path command
+ - Added do-setup-ld-library-path command
+ - Improved do-pipe-folders-paths command
+ - Improved do-pipe-folders-paths command
+ - Improved do-gcc-preprocess command
+ - Improved do-gcc-preprocess command
+ - Improved do-pipe-folders-paths command
+ - Improved do-pipe-folders-paths command
+ - Added do-cmd-list-dependencies command
+ - Added do-cmd-list-dependencies command
+ - Added do-usbkey command
+ - Added do-usbkey command
+ - Improved do-find-files command
+ - Improved do-find-files command
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Added do-make command
+ - Added do-make command
+ - Improved do-arc-extract-files command
+ - Improved do-arc-extract-files command
+ - Improved do_cd_bookmark command
+ - Improved do_cd_bookmark command
+ - Improved do-bookmark command
+ - Improved do-bookmark command
+ - Improved do-find-folders command
+ - Improved do-find-folders command
+ - Added do-pipe-num-text-lines command
+ - Added do-pipe-num-text-lines command
+ - Improved do_bash_customization command
+ - Improved do_bash_customization command
+ - Improved do-find-string command
+ - Improved do-find-string command
+ - Added do-pipe-cntlrless-text command
+ - Added do-pipe-cntlrless-text command
+ - Improved do-find-folders command
+ - Improved do-find-folders command
+ - Improved do-pipe-uniq command
+ - Improved do-pipe-uniq command
+ - Improved do-sys-info command
+ - Improved do-sys-info command
+ - Improved archiving commands
+ - Improved archiving commands
+ - Added howto_smb.otl file
+ - Added howto_smb.otl file
+ - Added do-smb-share-folder command
+ - Added do-smb-share-folder command
+ - Added do-grep-symbols-filename command
+ - Added do-grep-symbols-filename command
+ - Added do-history-edit command
+ - Added do-history-edit command
+ - Added do-pipe-folders-paths command
+ - Added do-pipe-folders-paths command
+ - Improved do-cmd-update command
+ - Improved do-cmd-update command
+ - Improved do-cmd-edit command
+ - Improved do-cmd-edit command
+ - Renamed commands about do command management
+ - Renamed commands about do command management
+ - Improved do-find-string command
+ - Improved do-find-string command
+ - Added few commands improvements
+ - Added few commands improvements
+ - Added do-bookmark-list-projects command
+ - Added do-bookmark-list-projects command
+ - Added do-bin-add-new command
+ - Added do-bin-add-new command
+ - Added do-git-list-tracked-to-be-ignored command
+ - Added do-git-list-tracked-to-be-ignored command
+ - Improved do-update-cscope-db command
+ - Improved do-update-cscope-db command
+ - Improved do-build-patch command
+ - Improved do-build-patch command
+ - Improved do-backup-sav-files command
+ - Improved do-backup-sav-files command
+ - Added .gitignore
+ - Added .gitignore
+ - Improved do-find-folders command
+ - Improved do-find-folders command
+ - Added do-backup-sav-files
+ - Added do-backup-sav-files
+ - Updated TODO file
+ - Updated TODO file
+ - Added commands to process words in pipes
+ - Added commands to process words in pipes
+ - Improved Vim launcher
+ - Improved Vim launcher
+ - Improved do-sec-mount-folder command
+ - Improved do-sec-mount-folder command
+ - Added do-find-text-files command
+ - Added do-find-text-files command
+ - Improved do-find-folders command
+ - Improved do-find-folders command
+ - Added commands to mount/unmount the content of a crypted folder
+ - Added commands to mount/unmount the content of a crypted folder
+ - Added history.txt file with some used commands
+ - Added history.txt file with some used commands
+ - Added do-history command
+ - Added do-history command
+ - Added do-deb-pkg-list command and added support for backports in do-deb-pkg-install command
+ - Added do-deb-pkg-list command and added support for backports in do-deb-pkg-install command
+ - Added do-git-amend-author command
+ - Added do-git-amend-author command
+ - Added do-git-diff-cached command
+ - Added do-git-diff-cached command
+ - Added do-pipe-cmd-to-bash command
+ - Added do-pipe-cmd-to-bash command
+ - Improved do-git-status and do-git-ls commands
+ - Improved do-git-status and do-git-ls commands
+ - Added do-ascii-dump command
+ - Added do-ascii-dump command
+ - Added do-edit-source-files command
+ - Added do-edit-source-files command
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Added do-pipe-aggregated-lines and do-git-list-other-last commands
+ - Added do-pipe-aggregated-lines and do-git-list-other-last commands
+ - Added do-pipe-aggregated-lines and do-git-list-other-last commands
+ - Added do-pipe-aggregated-lines and do-git-list-other-last commands
+ - Added do-git-help command
+ - Added do-git-help command
+ - Improved do-bookmark command
+ - Improved do-bookmark command
+ - Added support to colorize output of the make command
+ - Added support to colorize output of the make command
+ - Added vim howtos
+ - Added vim howtos
+ - Minor changes
+ - Minor changes
+ - Added do-filter-empty-lines and do-pipe-trimmed commands
+ - Added do-filter-empty-lines and do-pipe-trimmed commands
+ - Added do-pipe-uniq and do-pipe-arrays-sizes commands
+ - Added do-pipe-uniq and do-pipe-arrays-sizes commands
+ - Minor changes
+ - Minor changes
+ - Improved do-sec-* commands
+ - Improved do-sec-* commands
+ - Improved some bash customization
+ - Improved some bash customization
+ - Added commands do encrypt/decrypt a file
+ - Added commands do encrypt/decrypt a file
+ - Updated c howtos
+ - Updated c howtos
+ - Improved do-gcc-preprocess command to manage multiple -I options
+ - Improved do-gcc-preprocess command to manage multiple -I options
+ - Added do-gcc-preprocess command
+ - Added do-gcc-preprocess command
+ - Added do-pipe-to-howto command
+ - Added do-pipe-to-howto command
+ - Added howto_c.otl and improved some howto management commands
+ - Added howto_c.otl and improved some howto management commands
+ - Added svn howto
+ - Added svn howto
+ - Added do-find-word command
+ - Added do-find-word command
+ - Improved do-list-src-files command with option to select the programming language
+ - Improved do-list-src-files command with option to select the programming language
+ - Improved last command
+ - Improved last command
+ - Added do-pipe-wrapped-text command
+ - Added do-pipe-wrapped-text command
+ - Added do-list-src-files command
+ - Added do-list-src-files command
+ - Renamed some commands about pdf management
+ - Renamed some commands about pdf management
+ - Renamed do-list-howtos in do-howto-list
+ - Renamed do-list-howtos in do-howto-list
+ - Minor improvements
+ - Minor improvements
+ - Improved do-pipe-paths-to-vim command
+ - Improved do-pipe-paths-to-vim command
+ - Added do-pipe-rows command
+ - Added do-pipe-rows command
+ - Improved do_cd_bookmark command
+ - Improved do_cd_bookmark command
+ - Minor improvement to do-find-files
+ - Minor improvement to do-find-files
+ - Added do-pipe-to-line-joiner command
+ - Added do-pipe-to-line-joiner command
+ - Added do-pipe-to-command command
+ - Added do-pipe-to-command command
+ - Minor improvements to various commands
+ - Minor improvements to various commands
+ - Improved do-howto-print command
+ - Improved do-howto-print command
+ - Updated git and lua howto files
+ - Updated git and lua howto files
+ - Added howto_avro.otl
+ - Added howto_avro.otl
+ - Minor improvements to some commands for pipe processing
+ - Minor improvements to some commands for pipe processing
+ - Added do-exec-pipe command
+ - Added do-exec-pipe command
+ - Added do-filter-whitespaces command
+ - Added do-filter-whitespaces command
+ - Added do-pipe-paths-to-vim command
+ - Added do-pipe-paths-to-vim command
+ - Updated howto_gdb
+ - Updated howto_gdb
+ - Renamed do-edit-howto to do-howto-edit and added howto_gdb.txt
+ - Renamed do-edit-howto to do-howto-edit and added howto_gdb.txt
+ - Renamed commands about howtos management
+ - Renamed commands about howtos management
+ - Improved do_cd_folder command and updated howto_lua
+ - Improved do_cd_folder command and updated howto_lua
+ - Added do-date-week-number command
+ - Added do-date-week-number command
+ - Added do-string-replace-in-files command
+ - Added do-string-replace-in-files command
+ - Added do-pipe-to-tar command
+ - Added do-pipe-to-tar command
+ - Solved issue of do_cd_folder command
+ - Solved issue of do_cd_folder command
+ - Improved commands do_cd_folder and do_cd_bookmark
+ - Improved commands do_cd_folder and do_cd_bookmark
+ - Improved do-locate-folder command
+ - Improved do-locate-folder command
+ - Added do-locate-folder command
+ - Added do-locate-folder command
+ - Added do-filter-rows-by-terms command
+ - Added do-filter-rows-by-terms command
+ - Improved do-git-list-tags command
+ - Improved do-git-list-tags command
+ - Improved do-find-string with do-find-string-filtered command
+ - Improved do-find-string with do-find-string-filtered command
+ - Solved issue in do_create_project to cd into created project
+ - Solved issue in do_create_project to cd into created project
+ - Merged do-rm-securely command
+ - Merged do-rm-securely command
+ - Updated lua howto
+ - Updated lua howto
+ - Added do-rm-securely command
+ - Added do-rm-securely command
+ - Improved do-find-files with option to filter by file size
+ - Improved do-find-files with option to filter by file size
+ - Added do-pipe-cfile-to-vim command
+ - Added do-pipe-cfile-to-vim command
+ - Added do-find-twin-files command
+ - Added do-find-twin-files command
+ - Added do-trim-whitespaces command
+ - Added do-trim-whitespaces command
+ - Updated TODO and some howto
+ - Updated TODO and some howto
+ - Added do-encrypt-file and do-decrypt-file commands
+ - Added do-encrypt-file and do-decrypt-file commands
+ - Added do-find-notebook command
+ - Added do-find-notebook command
+ - Updated howto for lua
+ - Updated howto for lua
+ - Added ss command in do-list-netstat script
+ - Added ss command in do-list-netstat script
+ - Added TODO file
+ - Added TODO file
+ - Improved do-publishing-files command by copying files maintaining the timestamp
+ - Improved do-publishing-files command by copying files maintaining the timestamp
+ - Improved do-publishing-files command by adding option to just add a publishing record
+ - Improved do-publishing-files command by adding option to just add a publishing record
+ - Improved do-publish-files command and other minor changes
+ - Improved do-publish-files command and other minor changes
+ - Minor changes to do_setup_env and new do-cp command
+ - Minor changes to do_setup_env and new do-cp command
+ - Added exclude pattern option to do-find-string command
+ - Added exclude pattern option to do-find-string command
+ - In do-publish-files added option to move the files to publish
+ - In do-publish-files added option to move the files to publish
+ - Added possibility to remove a bookmark tag and added command do-edit-bookmarks
+ - Added possibility to remove a bookmark tag and added command do-edit-bookmarks
+ - Improved check of missing commands
+ - Improved check of missing commands
+ - Improved tags management in bookmark commands
+ - Improved tags management in bookmark commands
+ - Added tags support to bookmark commands
+ - Added tags support to bookmark commands
+ - Improved do-list-duplicated-symbols command
+ - Improved do-list-duplicated-symbols command
+ - Solved issue with do-publish-files command
+ - Solved issue with do-publish-files command
+ - Small improvement to bookmark commands
+ - Small improvement to bookmark commands
+ - Minor changes
+ - Minor changes
+ - Renamed do-cd-project into do-activate-project
+ - Renamed do-cd-project into do-activate-project
+ - Small improvement to bookmark commands
+ - Small improvement to bookmark commands
+ - Added do-publish-files command to speed repeating copy operations
+ - Added do-publish-files command to speed repeating copy operations
+ - Improved do-find-string with option to just count the occurences of the string
+ - Improved do-find-string with option to just count the occurences of the string
+ - Added command do-find-file-upward
+ - Added command do-find-file-upward
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Improved do-print-file-path command
+ - Improved do-print-file-path command
+ - Improve do-xephyr-awesome command
+ - Improve do-xephyr-awesome command
+ - Added awesome windows manager commands
+ - Added awesome windows manager commands
+ - Filtered missing folders in bookmarks commands
+ - Filtered missing folders in bookmarks commands
+ - Added do-exec-in-folders command
+ - Added do-exec-in-folders command
+ - Added do-search-stackoverflow command
+ - Added do-search-stackoverflow command
+ - Added do-exec-parametric-command command
+ - Added do-exec-parametric-command command
+ - Added do-list-duplicated-symbols command
+ - Added do-list-duplicated-symbols command
+ - Small improvements to bookmark and project commands
+ - Small improvements to bookmark and project commands
+ - Added do-pipe-to-cmd command
+ - Added do-pipe-to-cmd command
+ - Added do-ls-octal-perms command
+ - Added do-ls-octal-perms command
+ - Added command do-bookmark-list
+ - Added command do-bookmark-list
+ - Improved do-bookmark command
+ - Improved do-bookmark command
+ - Improved commands to manage folder bookmarks
+ - Improved commands to manage folder bookmarks
+ - Improved do-cd-bookmark and do-bookmark commands
+ - Improved do-cd-bookmark and do-bookmark commands
+ - Improved do-ls-last-file command
+ - Improved do-ls-last-file command
+ - Added initial version of do-chroot command
+ - Added initial version of do-chroot command
+ - Solved minor issue in do-git-find-best-match-release command
+ - Solved minor issue in do-git-find-best-match-release command
+ - Improved do_crete_project command
+ - Improved do_crete_project command
+ - Improved output of do-gits-print-rev command
+ - Improved output of do-gits-print-rev command
+ - Improved command do-select-column
+ - Improved command do-select-column
+ - Avoided to store the same bookmark with do-bookmark command
+ - Avoided to store the same bookmark with do-bookmark command
+ - Added support for newest subversion repositories in gohome function
+ - Added support for newest subversion repositories in gohome function
+ - Solved issue with parameter processing of do-cd-bookmark command
+ - Solved issue with parameter processing of do-cd-bookmark command
+ - Improvements to commands for bookmarks and lua
+ - Improvements to commands for bookmarks and lua
+ - Added commands to manage bookmarks of folders and to cd into the specified file/folder path
+ - Added commands to manage bookmarks of folders and to cd into the specified file/folder path
+ - Added do-grep-less command
+ - Added do-grep-less command
+ - Added lua commands do-lua and do-luarocks
+ - Added lua commands do-lua and do-luarocks
+ - Added lua howto file
+ - Added lua howto file
+ - Added do-rename-files command
+ - Added do-rename-files command
+ - Improved do-screen-serial command
+ - Improved do-screen-serial command
+ - Added do-gits-print-rev command
+ - Added do-gits-print-rev command
+ - Added proxy environment variables in the bash customization script
+ - Added proxy environment variables in the bash customization script
+ - Added do-compare-folders command
+ - Added do-compare-folders command
+ - Added do-filter-rows command
+ - Added do-filter-rows command
+ - Added do-git-find-best-match-release command
+ - Added do-git-find-best-match-release command
+ - Added lua commands
+ - Added lua commands
+ - Improved do-screen-serial command
+ - Improved do-screen-serial command
+ - Minor changes to do-update-cscope-db
+ - Minor changes to do-update-cscope-db
+ - Minor changes to do-find-string
+ - Minor changes to do-find-string
+ - Added do-git-log-file command
+ - Added do-git-log-file command
+ - Added do-grep-{end|begin} commands
+ - Added do-grep-{end|begin} commands
+ - Added do-untar command
+ - Added do-untar command
+ - :Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - :Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Added do-git-print-user-profile
+ - Added do-git-print-user-profile
+ - Added do-print-file-path command
+ - Added do-print-file-path command
+ - Added do-du command
+ - Added do-du command
+ - Added do-screen-serial command
+ - Added do-screen-serial command
+ - Changes few referenced folders
+ - Changes few referenced folders
+ - Minor changes
+ - Minor changes
+ - Added do-sql-create-db
+ - Added do-sql-create-db
+ - Added do-create-project
+ - Added do-create-project
+ - Minor improvements
+ - Minor improvements
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Merge branch 'master' of https://github.com/wdicarlo/wdc-do-commands
+ - Solved issue with do-git-export command and improved do-find-dos-files
+ - Solved issue with do-git-export command and improved do-find-dos-files
+ - Solved issue with do-git-export command and improved do-find-dos-files
+ - Solved issue with do-git-export command and improved do-find-dos-files
+ - Improved do-wiggle-files command
+ - Improved do-wiggle-files command
+ - Completed do-find-do-command
+ - Completed do-find-do-command
+ - Added do-find-dos-files and do-grep-pointers
+ - Added do-find-dos-files and do-grep-pointers
+ - Added alias to use vim with command vi
+ - Added alias to use vim with command vi
+ - Added do-cd-folder and renamed other do-cd-xxx commands
+ - Added do-cd-folder and renamed other do-cd-xxx commands
+ - Improvements to several commands and few additions
+ - Improvements to several commands and few additions
+ - Improved do-tar-folder
+ - Improved do-tar-folder
+ - Added commands to add user to the system
+ - Added commands to add user to the system
+ - Renamed do-git-crete-clone-command
+ - Renamed do-git-crete-clone-command
+ - Added command do-edit-paint
+ - Added command do-edit-paint
+ - Improved management of active test
+ - Improved management of active test
+ - Added do-grep-context to filter a line ad its context
+ - Added do-grep-context to filter a line ad its context
+ - Added do-git-conf-author to specify the author of a git tree
+ - Added do-git-conf-author to specify the author of a git tree
+ - Added system command to add user and the bash customization
+ - Added system command to add user and the bash customization
+ - Minor changes
+ - Minor changes
+ - Renamed do-git-create-clone-command to do-git-print-clone-command
+ - Renamed do-git-create-clone-command to do-git-print-clone-command
+ - Added do-edit-paint
+ - Added do-edit-paint
+ - Improved do-tar-folder
+ - Improved do-tar-folder
+ - Removed absolute paths from do_bash_customization
+ - Removed absolute paths from do_bash_customization
+ - Solved issue causing do command with admin privileges to be not run in ubuntu
+ - Solved issue causing do command with admin privileges to be not run in ubuntu
+ - Added many new commands and minor chages to existing one
+ - Added many new commands and minor chages to existing one
+ - Minor changes
+ - Minor changes
+ - Added do-git-clone command to force author settings locally
+ - Added do-git-clone command to force author settings locally
+ - Improved do-list-netstatus
+ - Improved do-list-netstatus
+ - Minor changes
+ - Minor changes
+ - Avoid to change environment variables in subfolders and other minor changes
+ - Avoid to change environment variables in subfolders and other minor changes
+ - Added do-pipe-to-vim command
+ - Added do-pipe-to-vim command
+ - Added do-list-netstatus command
+ - Added do-list-netstatus command
+ - Improved bash environment variables management
+ - Improved bash environment variables management
+ - Added do-find-files command and refactored do-prepare-release
+ - Added do-find-files command and refactored do-prepare-release
+ - Added new do commands to clean and update debian system
+ - Added new do commands to clean and update debian system
+ - Added git how to
+ - Added git how to
+ - Improved do-find-string command
+ - Improved do-find-string command
+ - Added commands specific for Debian distribution
+ - Added commands specific for Debian distribution
+ - Added many other commands and adjusted some other
+ - Added many other commands and adjusted some other
+ - Some improvements to existing scripts
+ - Some improvements to existing scripts
+ - Added git command to generate the clone command
+ - Added git command to generate the clone command
+ - New commands and some minor changes to others
+ - New commands and some minor changes to others
+ - Updated bash customization and added command to list matching files
+ - Updated bash customization and added command to list matching files
+ - New commands and improved bash customization
+ - New commands and improved bash customization
+ - Improved listining of git tags
+ - Improved listining of git tags
+ - Initial scripts
+ - Initial scripts
+ - Initial commit
+ - Initial commit
+
 Version 0.2.0:
  - Improved do-mylyn-task-git-branch command.
  - Improved do-pipe-words-in command.
