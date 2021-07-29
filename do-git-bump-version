@@ -87,7 +87,7 @@ if [ -f VERSION ]; then
     echo "Version $INPUT_STRING:" > tmpfile
     BASE_STRING_REF="v$BASE_STRING"
     if [ $tag -eq 0 ]; then
-        BASE_STRING_REF=$(do-git-log | grep "$BUMP_COMMIT_MSG $BASE_STRING" | do-pipe-columns -t 1)
+        BASE_STRING_REF=$(do-git-log | grep "$BUMP_COMMIT_MSG $BASE_STRING" | head -1 | do-pipe-columns -t 1)
     fi
     git log --pretty=format:" - %s" "$BASE_STRING_REF"...HEAD >> tmpfile
     echo "" >> tmpfile
