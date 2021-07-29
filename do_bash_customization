@@ -214,6 +214,8 @@ function mterm() {
     xterm -fn 10x20
 }
 function update_env() {
+    quiet=0
+    [ "$1" == "-q" ] && quiet=1
     #export PROMPT_VARS=""
     export TYPE=`pwd | sed -e "s/\// /g" | awk '{ print $3}'`
     # if [ "$TYPE" = "projects" ];
@@ -265,7 +267,7 @@ function update_env() {
     #echo "REPO_SYNT=$REPO_SYNT"
     if [ -f ./.bash_env ]
     then
-        cat .bash_env | grep "^export .*=" | sed 's/^export \(.*\)=.*/\1/' | xargs -I@ sh -c 'echo "@=\$@"'
+        [ $quiet -eq 0 ] && cat .bash_env | grep "^export .*=" | sed 's/^export \(.*\)=.*/\1/' | xargs -I@ sh -c 'echo "@=\$@"'
         source ./.bash_env
     else
         shift $#
@@ -681,7 +683,7 @@ alias mka='make all'
 
 function mygit() {
   \git "$@"
-  cdenv .
+  update_env -q
 }
 
 alias git='mygit'
