@@ -3,7 +3,9 @@ Docker
 List docker images
 	docker images
 Rename/tag image
-	docker tag 4f3e2b44ea88 ballerina/ballerina-pizza
+	docker tag 4f3e2b44ea88 ballerina/ballerina-pizza:1.0
+Rename image
+	docker image tag neovimini:0.1 neovimini-core:0.1
 Print detailed information about an image
 	docker image inspect 4f3e2b44ea88
 Run bash of an image
