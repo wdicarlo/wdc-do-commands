@@ -14,3 +14,7 @@ Import public key
 	gpg --import pubkey.asc
 Change key trust level
 	gpg --edit-key <fingerprint>
+Kill gpg-agent. GPG will restart it when needed
+	gpgconf --kill gpg-agent
+List keys
+	gpg -K
