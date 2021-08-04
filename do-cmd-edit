@@ -22,7 +22,7 @@ then
         exit
     fi
     # TODO: improve filtering considering only the filename but maintaining the path
-    list=`find $folders -name "do-*" | grep "$@"`
+    list=$(find $folders -name "do-*" | grep "$@" | grep -v "\.sav$")
     num=`ls -1 $list|wc -l`
     if [ "$num" -lt 10 ]
     then
