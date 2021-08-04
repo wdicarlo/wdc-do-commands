@@ -3,21 +3,26 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-a] <folder> [<post-fix>]"
+    echo "Usage: $cmd [-a] [-e <path> [-e <path>]]  <folder> [<post-fix>]"
     echo "Where:"
     echo "            -a               : all files"
+    echo "            -e <path>        : exclude <path>"
 }
 
 quiet=0
 all=0
-while getopts haq flag
+exclude=""
+while getopts haqe: flag
 do
     case $flag in
+        e)
+            exclude="$exclude --exclude=$OPTARG"
+            ;;
         q)
             quiet=1
             ;;
         a)
-            all=1
+            [ $all -eq 0 ] && all=1 && exclude="$exclude --exclude=.git --exclude=.svn --exclude=initramfs --exclude=initramfs_dbg --exclude=*.boot"
             ;;
         h)
             usage
@@ -55,10 +60,6 @@ else
 fi
 
 
-if [ $all -eq 0 ]; then
-    cmd="tar -cjf ${tarfile}  --exclude=.git --exclude=.svn --exclude=initramfs --exclude=initramfs_dbg --exclude=*.boot ${folder_path}/"
-else
-    cmd="tar -cjf ${tarfile} ${folder_path}/"
-fi
+cmd="tar -cjf ${tarfile} ${exclude}  ${folder_path}/"
 echo "> $cmd"
 eval $cmd
