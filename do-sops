@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+
+# Usage help function
+cmd=$(basename $0)
+
+function usage() {
+  echo "Usage: $cmd [-h] [-n] [-q] [-r] [-d] [-K <key_file> -P <passphrase>] [-t <type] <encrypted_file>"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -d                          : print decrypted file"
+  echo "       -r                          : print raw file"
+  echo "       -K <key_file>               : key file"
+  echo "       -P <passphrase>             : passphrase"
+  echo "       -i                          : force gpg key import"
+  echo "       -v                          : verbose"
+  echo "       -t <type>                   : sops type (json, yaml, dotenv or binary)"
+  echo "       -n                          : dry run"
+  echo "       -q                          : quiet"
+}
+
+# Arguments processing
+verbose=0
+raw=0
+dump=0
+key=""
+passphrase=""
+import=0
+verbose=""
+ftype=""
+quiet=0
+dryrun=0
+while getopts hrdK:P:ivt:nq flag
+do
+  case $flag in
+    q)
+      quiet=1
+      ;;
+    n)
+      dryrun=1
+      ;;
+    t)
+      ftype="--input-type $OPTARG"
+      ;;
+    K)
+      key="$OPTARG"
+      ;;
+    P)
+      passphrase="$OPTARG"
+      ;;
+    v)
+      verbose="--verbose"
+      ;;
+    i)
+      import=1
+      ;;
+    d)
+      dump=1
+      ;;
+    r)
+      raw=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ $# == 0 ]; then
+  usage
+  exit
+fi
+
+ok=$(gpg --list-keys | grep -c "continous-integration")
+
+[ $import -eq 1 ] && ok=0
+
+if [ $ok -eq 0 ]; then
+  if [ "$key" == "" ] || [ "$passphrase" == "" ]; then
+    echo "Missing Key and/or Passphrase"
+    usage
+	  exit
+	fi
+fi
+
+if [ $ok -eq 0 ]; then
+	cat "$key" | gpg $verbose --batch --import
+	echo "$passphrase" | gpg  $verbose --batch  --always-trust --yes --passphrase-fd 0 --pinentry-mode loopback -s $(mktemp)
+fi
+efile="$1"
+
+if [ $raw -eq 0 ]; then
+  if [ $dump -eq 0 ]; then
+    cmd="sops $verbose $ftype \"$efile\""
+  else
+    cmd="sops $verbose $ftype -d \"$efile\""
+  fi
+else
+  cmd="cat \"$efile\" | grep -v \"^sops_\""
+fi
+if [ $quiet -eq 0 ]; then
+  echo "> $cmd"
+fi
+if [ $dryrun -eq 0 ]; then
+  eval "$cmd"
+fi
