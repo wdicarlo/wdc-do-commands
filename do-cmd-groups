@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h] [-n]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -n                          : dry run"
+  echo "       -g                          : use git mv"
+}
+
+function evalcmd() {
+  [ "$cmd" == "" ] && return
+  if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+  fi
+  if [ $dryrun -eq 0 ]; then
+    eval "$cmd"
+  fi
+}
+
+# Arguments processing
+quiet=0
+dryrun=0
+git=0
+while getopts hng flag
+do
+  case $flag in
+    g)
+      git=1
+      ;;
+    n)
+      dryrun=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR variable" && exit
+
+cd $WDC_DO_COMMANDS_DIR
+
+glist=$(find . -maxdepth 1 -type f | grep "do-.*" | cut -d'-' -f 2 | sort | uniq -c | sort -nr | column -t | grep -v "^1 " | sed 's/[ \t]\+/ /' | cut -d' ' -f 2)
+
+for group in $(echo $glist| tr ' ' '\n')
+do
+  clist=$(find . -maxdepth 1 -type f | grep "do-${group}$\|do-${group}-.*")
+  if [ ! -d "$group" ]; then
+    cmd="mkdir $group"
+    evalcmd
+  fi
+  for dcmd in $(echo $clist)
+  do
+    cmd="mv $dcmd $group/"
+    [ $git -eq 1 ] && cmd="git mv -f $dcmd $group/"
+    evalcmd
+  done
+done
