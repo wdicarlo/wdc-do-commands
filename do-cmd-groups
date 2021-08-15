@@ -54,7 +54,7 @@ glist=$(find . -maxdepth 1 -type f | grep "do-.*" | cut -d'-' -f 2 | sort | uniq
 
 for group in $(echo $glist| tr ' ' '\n')
 do
-  clist=$(find . -maxdepth 1 -type f | grep "do-${group}$\|do-${group}-.*")
+  clist=$(find * -maxdepth 1 -type f | grep "do-${group}$\|do-${group}-.*")
   if [ ! -d "$group" ]; then
     cmd="mkdir $group"
     evalcmd
@@ -62,7 +62,7 @@ do
   for dcmd in $(echo $clist)
   do
     cmd="mv $dcmd $group/"
-    [ $git -eq 1 ] && cmd="git mv -f $dcmd $group/"
+    [ $git -eq 1 ] && [ $(git ls-files | grep -c "^$dcmd$") -eq 1 ] && cmd="git mv -f $dcmd $group/"
     evalcmd
   done
 done
