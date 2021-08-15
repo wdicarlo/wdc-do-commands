@@ -1,3 +1,19 @@
+Version 0.4.0:
+ - Grouped commands by topic
+ - Improved do-cmd-groups command.
+ - Added do_cmd_groups.csv file
+ - Added do-cmd-groups-slinks command
+ - Added do-cmd-groups command
+ - Improved d command.
+ - Added do-sops command
+ - Update do_cmd_index_def.csv file.
+ - Improved do_bash_customization command. Skipped exluded completition files.
+ - Improved d command.
+ - Improved do-arc-folder command.
+ - Update /home/devkit/wbin/howto_gpg.otl file.
+ - Update /home/devkit/wbin/howto_docker.otl file.
+ - Improved do-cmd-edit command.
+
 Version 0.3.0:
  - Improved do-git-bump-version command.
  - Improved do_bash_customization command.
