@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 [ -z $WDC_DO_COMMANDS_DIR ] && echo "Undefined WDC_DO_COMMANDS_DIR." && exit
 cntfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_counts.csv)"
+[ ! -f "$cntfile" ] && touch "$cntfile"
 idxfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_index.csv)"
+[ ! -f "$idxfile" ] && touch "$idxfile"
 idx="d${1}";shift
 [ "$idx" == "d-h" ] && 
   echo "d [-h] [-s [<patt>]] [-c] <cmd> <params>" && 
