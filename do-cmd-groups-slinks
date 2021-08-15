@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h] [-n]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -n                          : dry run"
+}
+
+function evalcmd() {
+  [ "$cmd" == "" ] && return
+  if [ $quiet -eq 0 ]; then
+    echo "> $cmd"
+  fi
+  if [ $dryrun -eq 0 ]; then
+    eval "$cmd"
+  fi
+}
+
+# Arguments processing
+quiet=0
+dryrun=0
+while getopts hn flag
+do
+  case $flag in
+    n)
+      dryrun=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR variable" && exit
+
+cd $WDC_DO_COMMANDS_DIR
+
+
+# remove links of disabled commands
+nolist=$(cat do_cmd_groups.csv | grep ";no" | cut -d';' -f 1)
+for group in $(echo $nolist| tr ' ' '\n')
+do
+  clist=$(find * -maxdepth 1 -type l | grep "do-${group}$\|do-${group}-.*")
+  for dcmd in $(echo $clist)
+  do
+    cmd="rm $dcmd"
+    evalcmd
+    cmd="sed -i '/^$dcmd$/d' .gitignore"
+    evalcmd
+  done
+done
+
+
+# create links of enabled commands
+yeslist=$(cat do_cmd_groups.csv | grep ";yes" | cut -d';' -f 1)
+for group in $(echo $yeslist| tr ' ' '\n')
+do
+  clist=$(find $group/ -maxdepth 1 -type f | sed "s#$group/##" | grep "do-${group}$\|do-${group}-.*")
+  for dcmd in $(echo $clist)
+  do
+    [ $(file "$dcmd"|grep -c "symbolic link") -eq 1 ] && continue
+    cmd="ln -f -s $group/$dcmd $dcmd"
+    evalcmd
+    cmd="echo $dcmd >> .gitignore"
+    evalcmd
+  done
+done
+
