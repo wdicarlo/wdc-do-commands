@@ -6,6 +6,7 @@ filter="$@"
 if [ $# -eq 0 ]; then
     filter="$"
 fi
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
 
-cd ~/bin
-ls -1 | grep "^do[-_]" | \grep --color "$filter"
+cd "$WDC_DO_COMMANDS_DIR" 
+find * -type f | grep "do[-_]" | grep -v "\.sav" | \grep --color "$filter"

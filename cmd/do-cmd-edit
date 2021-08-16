@@ -4,7 +4,7 @@ function usage() {
     cmd=`basename $0`
     echo "Usage: $cmd <do-command-name-pattern>"
     echo "Examples:"
-    echo "   $cmd   \"list\""
+    echo "   $cmd   \"do-cmd-update\""
 }
 
 if [ $# -ne 1 ]
@@ -12,7 +12,7 @@ then
     usage
     exit
 fi
-folders=`echo $WDC_DO_COMMANDS_DIR/`
+folders=$(echo "$WDC_DO_COMMANDS_DIR/")
 
 if [ $# == 1 ]
 then
@@ -22,7 +22,7 @@ then
         exit
     fi
     # TODO: improve filtering considering only the filename but maintaining the path
-    list=$(find $folders -name "do-*" | grep "$@" | grep -v "\.sav$")
+    list=$(find $folders -type f -name "do-*" | grep "$@" | grep -v "\.sav$")
     num=`ls -1 $list|wc -l`
     if [ "$num" -lt 10 ]
     then
@@ -31,6 +31,6 @@ then
         ls -1 $list
     fi
 else
-    find $folders -name "do-*"
+    find $folders -type f -name "do-*"
 fi
 

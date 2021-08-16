@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-bin_dir=`echo $WDC_DO_COMMANDS_DIR`
+bin_dir=$(echo "$WDC_DO_COMMANDS_DIR")
 
 function usage() {
     echo "Usage: $cmd [-f] <new-bin-cmd>"
     echo "where:"
-    echo "            -f          : add file (defualt add command)"
+    echo "            -f          : add file (default add command)"
 }
 
 quiet=0
@@ -31,24 +31,26 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-cd $bin_dir
+cd "$bin_dir"
 
 if [ ! $# -eq 1 ]; then
     usage
     exit
 fi
 
+dfile="$1"
 
-if [ ! -f $1 ]; then
-    echo "Missing file in $bin_dir/$1"
+if [ ! -f "$dfile" ]; then
+    echo "Missing file in $bin_dir/$dfile"
     exit
 fi
 
-# TODO: check if the command is not already present in the git repository
+[ $(echo $dfile|grep -c "do[-_]\|howto_") -eq 0 ] && echo "Wrong filename" && exit
+[ $(git ls-file | grep -c "$dfile$") -eq 1 ] && echo "Command/file already included in git" && exit
 
-git add $1
+git add $dfile
 if [ $file -eq 0 ]; then
-	git commit -m "Added $1 command"
+	git commit -m "Added $dfile command"
 else
-	git commit -m "Added $1 file"
+	git commit -m "Added $dfile file"
 fi

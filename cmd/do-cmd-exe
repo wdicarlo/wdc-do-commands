@@ -50,7 +50,10 @@ if [ $exe -eq 0 ]; then
 fi
 
 cp=$(pwd)
-cd ~/bin
+
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
+
+cd "$WDC_DO_COMMANDS_DIR"
 
 pattern="do"
 for patt in $(echo $1| tr '-' '\n')
@@ -64,12 +67,11 @@ done
 shift
 
 if [ $list -eq 1 ]; then
-	cmd="find . -maxdepth 1 -name \"do-*\" | tr -d './' | grep \"$pattern\""
-	if [ "$cmd" == "" ]; then
+	cmd="find . -maxdepth 2 -type f -name \"do-*\" | tr -d './' | grep \"$pattern\""
+  if [ $(eval "$cmd" | wc -l) -eq 0 ]; then
 		echo "Command not found"
 		exit
 	fi
-	cmd="$cmd"
 	echo "> $cmd"
 	eval $cmd
 	exit
@@ -78,19 +80,19 @@ fi
 num=$(find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern" | wc -l)
 
 if [ $num -gt 1 ]; then
-	find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern" | awk '{ print NR, $0 }' 
+	find . -maxdepth 2 -type f -name "do-*" | tr -d './' | grep "$pattern" | awk '{ print NR, $0 }' 
 	read -p "Command?: " selected
 	if [ "$selected" == "" ]; then
 	    exit
 	fi
-	num=$( find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}' | wc -l) 
+	num=$( find . -maxdepth 2 -type f -name "do-*" | tr -d './' | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}' | wc -l) 
 	if [ $num -ne 1 ]; then
 		echo "Wrong command"
 		exit
 	fi
-	cmd=$(find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}') 
+	cmd=$(find . -maxdepth 2 -type f -name "do-*" | tr -d './' | grep "$pattern" | awk '{ print NR, $0 }' | grep "^$selected" | awk '{print $2}') 
 else
-	cmd=$(find . -maxdepth 1 -name "do-*" | tr -d './' | grep "$pattern")
+	cmd=$(find . -maxdepth 2 -type f -name "do-*" | tr -d './' | grep "$pattern")
 fi
 
 
