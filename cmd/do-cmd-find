@@ -68,9 +68,9 @@ fi
 [ ! -d "$root" ] && echo "Wrong command folder: $root" && exit
 
 cd "$root"
-cmd="git ls-files | grep \"^${filter}.*\""
+cmd="git ls-files | grep \"^${filter}.*\\\|/${filter}.*\""
 if [ $all -eq 1 ]; then
-    cmd="find . -maxdepth 1 -name \"${filter}*\" | sed 's#^\.\/##'"
+    cmd="find . -maxdepth 2 -type f -name \"${filter}*\" | sed 's#^\.\/##'"
 elif [ $all -eq 2 ]; then
     cmd="find . -not -path \"./.git/*\" -type f | sed 's#^\.\/##'"
 fi
@@ -81,7 +81,7 @@ else
     if [ $options -eq 0 ]; then
         cmd="$cmd | xargs -I@ \grep --color -Hn $@ @"
     else
-        cmd="$cmd | xargs -I@ grep -Hn \"getopts.*h\" @ |sed 's/^\([a-z-]*\):.*/\1/'|sort|uniq|xargs -I@ sh -c \"@ -h\"| \grep --color \"${filter}[a-z_-]*\|$@\""
+        cmd="$cmd | xargs -I@ grep -Hn \"getopts.*h\" @ |sed 's/^\([a-z/-]*\):.*/\1/'|sort|uniq|xargs -I@ sh -c \"@ -h\"| \grep --color \"${filter}[a-z_-]*\|$@\""
     fi
 fi
 
