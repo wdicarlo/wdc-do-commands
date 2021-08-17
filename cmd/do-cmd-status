@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+[ ! -d "$WDC_DO_COMMANDS_DIR" ] && echo "Missing WDC_DO_COMMANDS_DIR folder" && exit
+
+cd "$WDC_DO_COMMANDS_DIR"
+
+git status --porcelain --ignored | grep "[ /]do[-_][a-z0-9_-]*\|howto_.*\.otl" | grep -v "\.sav" | while IFS='' read -r line 
+do
+  file=$(echo "$line" | cut -d' ' -f2)
+  [ -L "$file" ] && continue # skip links
+  echo "$line"
+done | sed 's/^\(..\) \(.*\)/\1;\2/' |sort -t';' -k2 | column -t -s';'
