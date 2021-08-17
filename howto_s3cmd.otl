@@ -1,0 +1,56 @@
+s3cmd
+	Tips and tricks about s3cmd command
+Create bucket
+	s3cmd mb -c mys3.s3cfg s3://mys3-tests
+List buckets
+	s3cmd ls -c mys3.s3cfg
+Upload a file
+	s3cmd put -c mys3.s3cfg hello.txt s3://mys3-tests/dummy/
+Upload multiple files
+	s3cmd put -c mys3.s3cfg *.txt s3://mys3-tests/dummy/
+List all files in a bucket
+	s3cmd ls -c mys3.s3cfg -r s3://mys3-tests
+Download a file
+	s3cmd get -c mys3.s3cfg s3://mys3-tests/dummy/hello.txt s3_hello.txt
+Check downloaded file is not corrupted
+	md5sum hello.txt s3_hello.txt
+Delete a file from a bucket
+	s3cmd del -c mys3.s3cfg s3://mys3-tests/dummy/hello.txt
+Delete multiple files from a bucket
+	s3cmd del -c mys3.s3cfg s3://mys3-tests/dummy/*
+Delete a bucket
+	s3cmd rb -c mys3.s3cfg s3://mys3-tests/
+Configure s3cmd with new keys
+	s3cmd --configure
+Setup default configuration
+	cp mys3.s3cfg ~/.s3cfg # no need to specify the -c option anymore
+Make bucket
+	s3cmd mb s3://BUCKET
+Remove bucket
+	s3cmd rb s3://BUCKET
+List objects or buckets
+	s3cmd ls [s3://BUCKET[/PREFIX]]
+List all object in all buckets
+	s3cmd la 
+Put file into bucket
+	s3cmd put FILE [FILE...] s3://BUCKET[/PREFIX]
+Get file from bucket
+	s3cmd get s3://BUCKET/OBJECT LOCAL_FILE
+Delete file from bucket
+	s3cmd del s3://BUCKET/OBJECT
+Delete file from bucket (alias for del)
+	s3cmd rm s3://BUCKET/OBJECT
+Restore file from Glacier storage
+	s3cmd restore s3://BUCKET/OBJECT
+Synchronize a directory tree to S3 (checks files freshness using size and md5 checksum, unless overridden by options, see below)
+	s3cmd sync LOCAL_DIR s3://BUCKET[/PREFIX] or s3://BUCKET[/PREFIX] LOCAL_DIR
+Disk usage by buckets
+	s3cmd du [s3://BUCKET[/PREFIX]]
+Get various information about Buckets or Files
+	s3cmd info s3://BUCKET[/OBJECT]
+Copy object
+	s3cmd cp s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
+Modify object metadata
+	s3cmd modify s3://BUCKET1/OBJECT
+Move object
+	s3cmd mv s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
