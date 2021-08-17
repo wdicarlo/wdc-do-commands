@@ -4,3 +4,5 @@ dgs;do-git-status
 dgcu;do-git-commit-unstaged
 dgpul;do-git-pull
 dgpus;do-git-push
+dpa;do-project-activation
+dpc;do-project-creation

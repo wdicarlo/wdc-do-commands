@@ -632,7 +632,7 @@ update_prompt
 
 bash_completion
 
-alias do-bash-customization='source $WDC_DO_COMMANDS_DIR/do_bash_customization && cd .'
+#alias do-bash-customization='source $WDC_DO_COMMANDS_DIR/do_bash_customization && cd .'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -672,10 +672,10 @@ alias cd-p='cd $PROJECT/$PROJECT'
 
 alias cd-projects='cd $PROJECTS'
 alias cd-tests='cd $TESTS'
-alias cd-releases='cd /media/sf_Shared/releases/'
+alias cd-releases='cd /media/shared/releases/'
 
-# generate aliases for do_ commands
-eval "$(do-cmd-aliases)"
+# generate functions for do_ commands
+eval "$(do-cmd-aliases -f)"
 
 alias do-edit-last='edit_last'
 alias do-bookmark-list='do-cd-bookmark -l'
@@ -693,7 +693,8 @@ function mygit() {
 
 alias git='mygit'
 alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
-
+function d () { if [ $(echo "$@"|grep -c "^\-[a-z][ ]*") -eq 1 ] || [ $# -eq 0 ]; then $WDC_DO_COMMANDS_DIR/_d "$@"; else idx="d$1";shift;cmd="\$(do-cmd-index \"^$idx;\" | cut -d';' -f 2) $@"; eval "$cmd"; fi }
+export -f d
 
 # default proxy setup
 #export http_proxy=

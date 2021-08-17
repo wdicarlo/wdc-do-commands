@@ -4,7 +4,7 @@
 
 cd "$WDC_DO_COMMANDS_DIR"
 
-git status --porcelain --ignored | grep "[ /]do[-_][a-z0-9_-]*\|howto_.*\.otl" | grep -v "\.sav" | while IFS='' read -r line 
+git status --porcelain --ignored | grep " _d$\|[ /]do[-_][a-z0-9_-]*\|howto_.*\.otl" | grep -v "\.sav" | while IFS='' read -r line 
 do
   file=$(echo "$line" | cut -d' ' -f2)
   [ -L "$file" ] && continue # skip links

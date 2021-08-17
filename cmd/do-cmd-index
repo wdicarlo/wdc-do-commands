@@ -3,21 +3,26 @@
 cmd=`basename $0`
 
 function usage() {
-  echo "Usage: $cmd [-h] [-t] [<grep_pattern>]"
+  echo "Usage: $cmd [-h] [-t] [-T] [<grep_pattern>]"
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -t                          : pretty print"
+  echo "       -T                          : print command type; function or file"
   echo "       -u                          : update the index"
 }
 
 # Arguments processing
 otable=0
 update=0
-while getopts htu flag
+ctype=0
+while getopts htuT flag
 do
   case $flag in
     u)
       update=1
+      ;;
+    T)
+      ctype=1
       ;;
     t)
       otable=1
@@ -76,6 +81,7 @@ fi
 
 [ $# -gt 1 ] && usage && exit
 [ $# -eq 1 ] && [ $otable -eq 1 ] && cat "$idxfile" | grep "$1" | column -t -s';' && exit
+[ $# -ge 0 ] && [ $ctype -eq 1 ] && cat "$idxfile" | grep "${1:-.}" | while IFS=';' read -r idx cmd; do echo "$idx;$cmd;$(type -t $cmd)"; done && exit
 [ $otable -eq 1 ] && cat "$idxfile" | column -t -s';' && exit
 [ $# -eq 1 ] && cat "$idxfile" | grep "$1" && exit
 

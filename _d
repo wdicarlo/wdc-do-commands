@@ -9,8 +9,10 @@ idx="d${1}";shift
   echo "d [-h] [-s [<patt>]] [-c] <cmd> <params>" && 
   echo "d -h          : help" &&
   echo "d -s [<patt>] : list shortcuts filtered by <patt>" &&
+  echo "d -d [<patt>] : list commands filtered by <patt>" &&
   echo "d -c          : list usage counter" && exit
-[ "$idx" == "d-s" ] && do-cmd-index -t "$1" && exit
+[ "$idx" == "d-s" ] && do-cmd-index -t "d$1" && exit
+[ "$idx" == "d-d" ] && do-cmd-index -t "do-.*$1.*" && exit
 [ "$idx" == "d-c" ] && cat "$cntfile" | while IFS=';' read -r cmd count; do echo "$(do-cmd-index ";$cmd$"|cut -d';' -f1);$cmd;$count"; done |sort -t';' -n -r -k3| column -s ';' -t && exit
 [ "${idx:0:2}" == "d-" ] && echo "Wrong option. Use d -h to get availble options." && exit 
 cmdname=$(cat "$idxfile"|grep "^${idx};"|cut -d';' -f2|tr -d ' ')

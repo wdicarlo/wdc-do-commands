@@ -4,6 +4,8 @@ root="$WDC_DO_COMMANDS_DIR"
 
 [ ! -d "$root" ] && echo "Wrong command folder: $root" && exit
 
+func=0
+[ "$1" == "-f" ] && func=1
 
 # do_setup_env -s
 declare -A cmds
@@ -14,5 +16,15 @@ ls -1 "$root"| grep "^do_" | grep -v "\." | while read -r file
 do 
   args="${cmds[$file]}"
   [ "$1" == "-l" ] && echo "$file"|tr '_' '-' && continue
-  echo "alias $(echo $file|tr '_' '-')='source \$WDC_DO_COMMANDS_DIR/$file $args'" | sed "s/ '$/'/"
+  if [ $func -eq 0 ]; then
+    echo "alias $(echo $file|tr '_' '-')='source \$WDC_DO_COMMANDS_DIR/$file $args'" | sed "s/ '$/'/"
+  else
+    cat << EOF
+#echo "Sourcing file: $WDC_DO_COMMANDS_DIR/$file"
+function $(echo $file|tr '_' '-') () {
+  source \$WDC_DO_COMMANDS_DIR/$file $args
+}
+export -f $(echo $file|tr '_' '-')
+EOF
+  fi
 done
