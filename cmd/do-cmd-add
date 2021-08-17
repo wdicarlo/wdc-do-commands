@@ -46,7 +46,7 @@ if [ ! -f "$dfile" ]; then
 fi
 
 [ $(echo $dfile|grep -c "do[-_]\|howto_") -eq 0 ] && echo "Wrong filename" && exit
-[ $(git ls-file | grep -c "$dfile$") -eq 1 ] && echo "Command/file already included in git" && exit
+[ $(git ls-files | grep -c "$dfile$") -eq 1 ] && echo "Command/file already included in git" && exit
 
 git add $dfile
 if [ $file -eq 0 ]; then
