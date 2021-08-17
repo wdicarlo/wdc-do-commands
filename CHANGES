@@ -1,3 +1,13 @@
+Version 0.5.0:
+ - Improved d command. Added support for commands to be sourced.
+ - Update .gitignore file.
+ - Improved cmd/do-cmd-groups-slinks command.
+ - Improved cmd/do-cmd-add command.
+ - Added cmd/do-cmd-status command
+ - Added howto_s3cmd.otl file
+ - Fixed issues with do-cmd-... commands
+ - Improved cmd/do-cmd-find command.
+
 Version 0.4.0:
  - Grouped commands by topic
  - Improved do-cmd-groups command.
