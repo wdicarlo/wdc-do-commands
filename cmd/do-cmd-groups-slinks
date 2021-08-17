@@ -55,7 +55,7 @@ do
   do
     cmd="rm $dcmd"
     evalcmd
-    cmd="sed -i '/^$dcmd$/d' .gitignore"
+    cmd="sed -i '/^/$dcmd$/d' .gitignore"
     evalcmd
   done
 done
@@ -65,13 +65,13 @@ done
 yeslist=$(cat do_cmd_groups.csv | grep ";yes" | cut -d';' -f 1)
 for group in $(echo $yeslist| tr ' ' '\n')
 do
-  clist=$(find $group/ -maxdepth 1 -type f | sed "s#$group/##" | grep "do-${group}$\|do-${group}-.*")
+  clist=$(find $group/ -maxdepth 1 -type f | sed "s#$group/##" | grep "do-${group}$\|do-${group}-.*" | grep -v "\.sav")
   for dcmd in $(echo $clist)
   do
     [ $(file "$dcmd"|grep -c "symbolic link") -eq 1 ] && continue
     cmd="ln -f -s $group/$dcmd $dcmd"
     evalcmd
-    cmd="echo $dcmd >> .gitignore"
+    cmd="echo \"/$dcmd\" >> .gitignore"
     evalcmd
   done
 done
