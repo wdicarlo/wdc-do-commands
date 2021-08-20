@@ -241,3 +241,7 @@
 /do-cmd-aliases
 /do-cmd-update
 /do-cmd-list-dependencies
+/do-tf-workspace-repos
+/do-tf-workspace
+/do-tf-init
+/do-tf-list-vars

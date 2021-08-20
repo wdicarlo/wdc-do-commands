@@ -6,3 +6,5 @@ dgpul;do-git-pull
 dgpus;do-git-push
 dpa;do-project-activation
 dpc;do-project-creation
+dcb;do-cd-bookmark
+db;do-bookmark

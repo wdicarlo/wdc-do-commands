@@ -38,5 +38,6 @@ sec;yes
 select;no
 svn;no
 sys;yes
+tf;yes
 update;no
 vim;yes
