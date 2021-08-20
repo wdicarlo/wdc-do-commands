@@ -134,3 +134,5 @@ Open shell in a specific container in a pod
 	kubectl exec -it -n develop airflow-worker-0 --container=worker -- /bin/bash
 List pods, containers and images
 	kubectl get pods -n airflow -o json | jq '.items[] | . as $parent | .spec.containers[] | "\($parent.metadata.name);\(.name);\(.image)"' | column -s';' -t
+List edge IPs
+	kubectl get nodes -owide|grep edge
