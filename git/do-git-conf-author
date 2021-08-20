@@ -5,25 +5,42 @@
 function usage() {
     cmd=`basename $0`
     echo "Usage: $cmd <name> <email>"
+    echo "Usage: $cmd -c <conf>"
 }
 
-
-if [ ! $# == 2 ]; then
-    usage
-    exit
-fi
-
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
 
 git_conf=".git/config"
-
 if [ ! -f $git_conf ]; then
-    echo "Not in a git tree"
-    exit
+  echo "Not in a git tree"
+  exit
 fi
 
-name=$1
-email=$2
+[ $(cat "$git_conf"| grep -c "\[user\]") -gt 0 ] && echo "[user] section already present in $git_conf" && exit
 
+name=""
+email=""
+if [ "$1" == "-c" ]; then
+  shift
+  if [ ! $# == 1 ]; then
+      usage
+      exit
+  fi
+  conf="$1"
+  cfile="$WDC_DO_COMMANDS_DIR/do_git_conf_author.csv"
+  [ ! -f "$cfile" ] && echo "personal;Walter Di Carlo;walter@di-carlo.it" > "$cfile"
+  [ $(cat "$cfile"|grep -c "^$conf;") -ne 1 ] && echo "Missing $conf in $cfile" && exit
+  name="$(cat "$cfile" |grep "^$conf;"| cut -d';' -f2)"
+  email="$(cat "$cfile" |grep "^$conf;"| cut -d';' -f3)"
+else
+  if [ ! $# == 2 ]; then
+      usage
+      exit
+  fi
+
+  name="$1"
+  email="$2"
+fi
 
 echo -e "
 [user]

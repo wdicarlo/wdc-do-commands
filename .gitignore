@@ -1,5 +1,6 @@
 *.sav
 *.bz2
+/do_git_conf_author.csv
 /do-arc-extract-files
 /do-arc-files
 /do-arc-folder
