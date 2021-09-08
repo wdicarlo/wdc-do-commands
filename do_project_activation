@@ -1,5 +1,7 @@
 #!/usr/bin/env  bash
 
+[ "$1" == "-h" ] && echo "do-project-activation [-h] [<project_name_pattern>]" && return
+
 # shellcheck disable=SC2116
 prj_root=$(echo "$PROJECTS/")
 n=0
