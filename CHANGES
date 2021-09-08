@@ -1,3 +1,20 @@
+Version 0.6.0:
+ - Added howto_do.otl file
+ - Update README.md file. Described most important aspects of this repository of Linux commands
+ - Update TODO file.
+ - Update /home/devkit/wbin/howto_helm.otl file.
+ - Update /home/devkit/wbin/howto_github.otl file. Added Github markdown cheatsheet
+ - Improved vim/do-vim command.
+ - Improved sys/do-sys-install-bash-customization command.
+ - Improved git/do-git-conf-author command.
+ - Improved do_project_creation command.
+ - Improved do_project_activation command.
+ - Improved do_bash_customization command.
+ - Improved git/do-git-conf-author command.
+ - Update /home/devkit/wbin/howto_k8s.otl file.
+ - Enabled terraform commands
+ - Improved _d command.
+
 Version 0.5.0:
  - Improved d command. Added support for commands to be sourced.
  - Update .gitignore file.
