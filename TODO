@@ -22,3 +22,4 @@ Evaluate tools for backup: irsync, rsnapshot, rbackup,
 Add command to join output from different other commands (git blame, git diff, git log)
 Solve bug with 'grep "$num"' by adding a space after num
 https://github.com/0k/shyaml for YAML from command line
+Extract aknowledgements with command d fs "\"#.*http[s]*://\""
