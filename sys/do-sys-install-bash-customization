@@ -1,16 +1,11 @@
 #!/usr/bin/env bash
 
 script="\n\
-if [ -f $WDC_DO_COMMANDS_DIR/do_bash_customization ]; then\n\
-\t. $WDC_DO_COMMANDS_DIR/do_bash_customization\n\
-fi\n\
+[ -f \"\$WDC_DO_COMMANDS_DIR/do_bash_customization\" ] && source \"\$WDC_DO_COMMANDS_DIR/do_bash_customization\"\n\
 "
 
-is_custom=`cat ~/.bashrc | grep -E "\. $WDC_DO_COMMANDS_DIR/do_bash_cust"`
+is_custom=$(cat ~/.bashrc | grep -c "source .*\$WDC_DO_COMMANDS_DIR/do_bash_customization")
 
-if [ ! -z "$is_custom" ]; then
-    echo "Customization already installed"
-    exit
-fi
+[ $is_custom -gt 0 ] && echo "Customization already installed" && exit
 
-echo -e $script >> ~/.bashrc
+echo -e "$script" >> ~/.bashrc
