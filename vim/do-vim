@@ -151,5 +151,5 @@ if [ ! "$task" == "" ]; then
   eval "$cmd"
   exit
 fi
-
+echo "> vi $vimopt $@"
 \vi "$vimopt" $@
