@@ -238,16 +238,16 @@ TBD
 TBD
 
 ## TODO ##
-[ ] improve howto print command
-[ ] harmonize the commands
-[ ] apply shellcheck
-[ ] add bat tests
+* [ ] improve howto print command
+* [ ] harmonize the commands
+* [ ] apply shellcheck
+* [ ] add bat tests
 
 ## Contribution ##
-type of contributions
-commands
-howto
-harmonization
+* type of contributions
+* commands
+* howto
+* harmonization
 
 ## Acknowledgements ##
 TBD 
