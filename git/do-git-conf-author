@@ -5,7 +5,11 @@
 function usage() {
     cmd=`basename $0`
     echo "Usage: $cmd <name> <email>"
-    echo "Usage: $cmd -c <conf>"
+    echo "Usage: $cmd [-h] [-l] [-c <conf-pattern>]"
+	  echo "where:"
+	  echo "       -h                          : print this help"
+	  echo "       -l                          : list available configurations"
+	  echo "       -c <conf-pattern>           : use the selected configuration"
 }
 
 [ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
@@ -18,6 +22,9 @@ fi
 
 [ $(cat "$git_conf"| grep -c "\[user\]") -gt 0 ] && echo "[user] section already present in $git_conf" && exit
 
+cfile="$WDC_DO_COMMANDS_DIR/do_git_conf_author.csv"
+[ ! -f "$cfile" ] && echo "personal;Walter Di Carlo;walter@di-carlo.it" > "$cfile"
+
 name=""
 email=""
 if [ "$1" == "-c" ]; then
@@ -27,11 +34,11 @@ if [ "$1" == "-c" ]; then
       exit
   fi
   conf="$1"
-  cfile="$WDC_DO_COMMANDS_DIR/do_git_conf_author.csv"
-  [ ! -f "$cfile" ] && echo "personal;Walter Di Carlo;walter@di-carlo.it" > "$cfile"
   [ $(cat "$cfile"|grep -c "^$conf;") -ne 1 ] && echo "Missing $conf in $cfile" && exit
   name="$(cat "$cfile" |grep "^$conf;"| cut -d';' -f2)"
   email="$(cat "$cfile" |grep "^$conf;"| cut -d';' -f3)"
+elif [ "$1" == "-l" ]; then
+  cat "$cfile" && exit
 else
   if [ ! $# == 2 ]; then
       usage
