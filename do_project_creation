@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
 
-if [ ! $#  -gt 0 ]; then
-    cmd=`basename $0`
-    echo "Usage: $cmd <projectname> [<env>]"
+if [ ! $#  -gt 0 ] || [ "$1" == "-h" ]; then
+    echo "Usage: do-project-creation <projectname> [<env>]"
     return
 fi
 
