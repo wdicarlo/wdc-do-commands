@@ -14,7 +14,7 @@ List helm chart repositories
 Update available list of helm charts
 	helm repo update
 Search for an helm chart
-	helm search repo airflow
+	helm search repo airflow # --devel to list also pre-release versions
 Install AirFlow
 	helm install airflow apache-airflow/airflow --namespace airflow --debug
 List revisions in a specific namespace
