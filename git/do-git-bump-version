@@ -21,12 +21,13 @@ TAG_COMMIT_MSG="Tagged version"
 cmd=`basename $0`
 
 function usage() {
-        echo "Usage: $cmd [-h] [-d] [-t] [-q] [-p]"
+        echo "Usage: $cmd [-h] [-d] [-t] [-q] [-p]i [-c]"
         echo "where:"
         echo "       -h                          : print this help"
         echo "       -d                          : use defaults"
         echo "       -t                          : use tags"
         echo "       -p                          : push tags"
+        echo "       -c                          : commit CHANGES and VERSION files"
         echo "       -q                          : quiet"
 }
 
@@ -35,9 +36,13 @@ quiet=0
 defaults=0
 tag=0
 push=0
-while getopts hqdtp flag
+commit=0
+while getopts hqdtpc flag
 do
 case $flag in
+      c)
+          commit=1
+          ;;
       p)
           push=1
           ;;
@@ -94,8 +99,7 @@ if [ -f VERSION ]; then
     echo "" >> tmpfile
     cat CHANGES >> tmpfile
     mv tmpfile CHANGES
-    git add CHANGES VERSION
-    git commit -m "$BUMP_COMMIT_MSG $INPUT_STRING"
+    [ $commit -eq 1 ] && git add CHANGES VERSION && git commit -m "$BUMP_COMMIT_MSG $INPUT_STRING"
     if [ $tag -eq 0 ]; then
         tag=$(git tag|grep "v$BASE_STRING"|wc -l)
     fi
@@ -125,13 +129,11 @@ else
         git log --pretty=format:" - %s" >> CHANGES
         echo "" >> CHANGES
         echo "" >> CHANGES
-        git add VERSION CHANGES
-        git commit -m "Added VERSION and CHANGES files, $BUMP_COMMIT_MSG 0.1.0"
-
+        [ $commit -eq 1 ] && git add VERSION CHANGES && git commit -m "Added VERSION and CHANGES files, $BUMP_COMMIT_MSG 0.1.0"
         if [ $tag -eq 1 ]; then
             git tag -a -m "$TAG_COMMIT_MSG 0.1.0" "v0.1.0"
         else
-            echo "Tag not created. Use the follwing command to create it"
+            echo "Tag not created. Use the following command to create it"
             echo "git tag -a -m \"$TAG_COMMIT_MSG 0.1.0\" \"v0.1.0\""
         fi
         if [ $tag -eq 1 ]; then
