@@ -344,3 +344,5 @@ Use vimdiff as merge tool
 	git config mergetool.prompt false
 Clone single branch
 	git clone --single-branch --branch <branch> <repo>
+Delete remote tag
+	git push --delete origin v0.1.0
