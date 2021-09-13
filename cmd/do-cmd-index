@@ -40,7 +40,7 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 idxfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_index.csv)"
-
+[ ! -f "$idxfile" ] && update=1 # force the creation of the index
 if [ $update -eq 1 ]; then
   declare -A cmds
   if [ -f "$WDC_DO_COMMANDS_DIR/do_cmd_index_def.csv" ]; then
