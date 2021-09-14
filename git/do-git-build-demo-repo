@@ -10,7 +10,6 @@ gitflow=0
 CMD_NAME="git-flow"
 cmd=$(which $CMD_NAME) || true
 if [ -z "$cmd" ]; then
-        echo "Missing $CMD_NAME command"
         gitflow=-1
 fi
 
@@ -18,7 +17,7 @@ fi
 cmd=`basename $0`
 
 function usage() {
-        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [-d <tree_depth>] [-t] <topology>"
+        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [-d <tree_depth>] [-t|-T] <topology>"
         echo "where:"
         echo "       <topology>                  : topology ID where:"
         echo "             1                       : minimum demo repo"
@@ -41,6 +40,7 @@ function usage() {
         echo "       -d <tree_depth>             : commit into a folder tree with <tree_depth> depth"
         echo "       -r                          : use random generator"
         echo "       -t                          : use tags"
+        echo "       -T                          : use semver tags"
         echo "       -h                          : print this help"
         echo "       -q                          : quiet"
 }
@@ -76,10 +76,16 @@ git_tag() {
     fi
     (( tag_i++ )) || true
 
+    tag=""
     branch=$(do-git-branch -n)
-    tag="${branch}_t$tag_i"
+    if [ $tags -eq 1 ]; then
+      tag="${branch}_t$tag_i"
+    else
+      tag="1.${tag_i}.0"
+      [ ! "$branch" == "master" ] && tag="${tag}-dev"
+    fi
 
-    git tag -a "$tag" -m "$tag"
+    [ ! "$tag" == "" ] && git tag -a "$tag" -m "$tag"
 }
 
 git_commit() {
@@ -174,14 +180,14 @@ git_merge_conflict() {
 git_checkout() {
     if [ "$2" == "$BRANCH_DEV" ]; then
             if [ $gitflow -eq 1 ]; then
-                    if [ $tags -eq 1 ]; then
+                    if [ $tags -ge 1 ]; then
                         git_tag 
                     fi
                     git checkout -q $BRANCH_DEV
                     return
             fi
     fi
-    if [ $tags -eq 1 ]; then
+    if [ $tags -ge 1 ]; then
         git_tag 
     fi
     git checkout $1 $2
@@ -199,9 +205,12 @@ tree_path=""
 tree_root=0
 random=0
 tags=0
-while getopts hqn:sfoctrd: flag
+while getopts hqn:sfoctTrd: flag
 do
         case $flag in
+        T)
+          tags=2 # use semver tags
+          ;;
         t)
           tags=1
           ;;
@@ -223,6 +232,8 @@ do
         f)
           if [ $gitflow -eq 0 ]; then
               gitflow=1
+          else
+            echo "Missing $CMD_NAME command" && exit
           fi
           ;;
         s)
