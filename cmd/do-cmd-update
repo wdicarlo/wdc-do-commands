@@ -55,6 +55,10 @@ if [ ! -f $1 ]; then
     exit
 fi
 
+cmd="$1"
+
+[ $(file $cmd|grep -c "shell script") -eq 0 ] && echo "Not a script, please provide the relative path to the script" && exit 
+
 # TODO: check if the command is already present in the git repository
 # check if the command has changes
 n=`git diff $1 | wc -l`
