@@ -20,7 +20,19 @@ cmd=`basename $0`
 function usage() {
         echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [-d <tree_depth>] [-t] <topology>"
         echo "where:"
-        echo "       <topology>                  : topology id (1..10)"
+        echo "       <topology>                  : topology ID where:"
+        echo "             1                       : minimum demo repo"
+        echo "             2                       : minimum demo repo with a merged branch"
+        echo "             3                       : minimum demo repo with an aligned branch"
+        echo "             4                       : demo repo with more commits"
+        echo "             5                       : demo repo with more commits merged in master"
+        echo "             6                       : demo repo with more commits with an aligned branch"
+        echo "             7                       : demo repo with diverged master and branch"
+        echo "             8                       : demo repo with merged diverged branch"
+        echo "             9                       : demo repo with aligned branch after merged diverged branch"
+        echo "            10                       : demo repo with rebased branch with feature branch"
+        echo "            11                       : demo repo with rebased master with feature branch"
+        echo "            12                       : demo repo with commit conflicts"
         echo "       -n <name>                   : name of the repository"
         echo "       -s                          : use sub-module"
         echo "       -f                          : use git flow"
@@ -232,6 +244,8 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 [ $# -ne 1 ] && echo "Wrong input parameters" && usage && exit
+
+[ $(git rev-parse --abbrev-ref HEAD 2>/dev/null|wc -l) -ne 0 ] && echo "Already in a git repo" && exit
 
 A_TOPOLOGY=${1:-}
 BRANCH_DEV="develop"
