@@ -18,7 +18,7 @@ fi
 cmd=`basename $0`
 
 function usage() {
-        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [-d <tree_depth>][<topology>] [-t]"
+        echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [-d <tree_depth>] [-t] <topology>"
         echo "where:"
         echo "       <topology>                  : topology id (1..10)"
         echo "       -n <name>                   : name of the repository"
@@ -231,6 +231,8 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+[ $# -ne 1 ] && echo "Wrong input parameters" && usage && exit
+
 A_TOPOLOGY=${1:-}
 BRANCH_DEV="develop"
 BRANCH_MASTER="master"
@@ -261,7 +263,7 @@ mkdir "$name"
 cd "$name"
 git init -q
 do-git-conf-author "wdicarlo" "walter@di-carlo.it"
-do-git-bump-version -d
+do-git-bump-version -d -c
 if [ $gitflow -eq 1 ]; then
    git flow init -d -f
 fi
