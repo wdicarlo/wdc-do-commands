@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+if [ -t 0 ]; then
+    cmd=`basename $0`
+    echo "Usage: $cmd must be used in a pipe"
+    exit
+fi
+
+function usage() {
+    echo "Usage: <paths-pipe> | do-pipe-file-string-matches [-h] [-q] \"<string>\" "
+    echo "where:"
+    echo "       -h                 : print this help"
+    echo "       -q                 : quiet"
+}
+
+quiet=0
+while getopts qh flag
+do
+    case $flag in
+        q)
+            quiet=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! $# -eq 1 ]; then
+    usage
+    exit
+fi
+
+string="$1"
+
+cat | while read -r file
+do
+  cmd="grep -Hn \"$string\" \"$file\""
+  if [ $quiet -eq 0 ]; then
+      echo "> $cmd"
+  fi
+  eval "$cmd"
+done
+
