@@ -8,3 +8,5 @@ dpa;do-project-activation
 dpc;do-project-creation
 dcb;do-cd-bookmark
 db;do-bookmark
+dvd;do-vimdiff
+dv;do-vim
