@@ -39,8 +39,8 @@ function usage() {
         echo "       -c                          : create clone repository"
         echo "       -d <tree_depth>             : commit into a folder tree with <tree_depth> depth"
         echo "       -r                          : use random generator"
-        echo "       -t                          : use tags"
-        echo "       -T                          : use semver tags"
+        echo "       -t                          : use semver tags"
+        echo "       -T                          : use tags"
         echo "       -h                          : print this help"
         echo "       -q                          : quiet"
 }
@@ -208,10 +208,10 @@ tags=0
 while getopts hqn:sfoctTrd: flag
 do
         case $flag in
-        T)
+        t)
           tags=2 # use semver tags
           ;;
-        t)
+        T)
           tags=1
           ;;
         d)
@@ -288,7 +288,7 @@ mkdir "$name"
 cd "$name"
 git init -q
 do-git-conf-author "wdicarlo" "walter@di-carlo.it"
-do-git-bump-version -d -c
+do-git-bump-version -d 
 if [ $gitflow -eq 1 ]; then
    git flow init -d -f
 fi
