@@ -143,9 +143,9 @@ if [ ! "$task" == "" ]; then
   [ $global -eq 1 ] && nb_cmd="VimNotebookOpenGlobal" 
   if [ -f "$task_path" ]; then
     [ $session_reset -eq 1 ] && rm -f "$task_path"
-    cmd="\vi -S \"$task_path\" -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" -c \":autocmd BufEnter * :lcd $wdir\" $vimopt $@"
+    cmd="\vi -S \"$task_path\" -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" -c \":autocmd BufEnter * :lcd $wdir\" -c \":cabbrev q qa\" $vimopt $@"
   else
-    cmd="\vi -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" -c \":autocmd BufEnter * :lcd $wdir\" $vimopt $@"
+    cmd="\vi -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" -c \":autocmd BufEnter * :lcd $wdir\" -c \":cabbrev q qa\" $vimopt $@"
   fi
   echo "> $cmd"
   eval "$cmd"
