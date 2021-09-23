@@ -18,16 +18,17 @@ BUMP_COMMIT_MSG="Version bump to"
 TAG_COMMIT_MSG="Tagged version"
 
 # Usage help function
-cmd=`basename $0`
+cmd=$(basename $0)
 
 function usage() {
         echo "Usage: $cmd [-h] [-d] [-t] [-q] [-p]i [-c]"
         echo "where:"
         echo "       -h                          : print this help"
         echo "       -d                          : use defaults"
-        echo "       -t                          : use tags"
+        echo "       -t                          : use SemVer tags"
+        echo "       -T                          : use tags"
         echo "       -p                          : push tags"
-        echo "       -c                          : commit CHANGES and VERSION files"
+        echo "       -c                          : do not commit CHANGES and VERSION files"
         echo "       -q                          : quiet"
 }
 
@@ -36,18 +37,21 @@ quiet=0
 defaults=0
 tag=0
 push=0
-commit=0
-while getopts hqdtpc flag
+commit=1
+while getopts hqdtTpc flag
 do
 case $flag in
       c)
-          commit=1
+          commit=0
           ;;
       p)
           push=1
           ;;
       t)
           tag=1
+          ;;
+      T)
+          tag=2
           ;;
       d)
           defaults=1
@@ -67,11 +71,18 @@ esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+[ ! -d ".git" ] && echo "Not in the root of a git repository" && exit
+
+
 remote=$(git remote -v|head -1| awk '{print $1}')
+prefix="" && [ $tag -eq 2 ] && prefix="v"
+usedtag=$([[ $(git tag | wc -l) -eq 0 ]] && echo 0 || echo 1) 
+
+[ $usedtag -eq 1 ] && [ $tag -eq 0 ] && echo "Detected use of tags" && exit
 
 if [ -f VERSION ]; then
-    BASE_STRING=`cat VERSION`
-    BASE_LIST=(`echo $BASE_STRING | tr '.' ' '`)
+    BASE_STRING=$(cat VERSION)
+    BASE_LIST=($(echo "$BASE_STRING" | tr '.' ' '))
     V_MAJOR=${BASE_LIST[0]}
     V_MINOR=${BASE_LIST[1]}
     V_PATCH=${BASE_LIST[2]}
@@ -79,6 +90,12 @@ if [ -f VERSION ]; then
     V_MINOR=$((V_MINOR + 1))
     V_PATCH=0
     SUGGESTED_VERSION="$V_MAJOR.$V_MINOR.$V_PATCH"
+
+    gittag=$(git tag|tail -1)
+    ver=$(cat VERSION)
+    aligned=$([[ "$gittag" == "$ver" ]] && echo 1 || echo 0)
+    [ $aligned -eq 0 ] && [ $tag -ge 1 ] && echo "Git tag ($gittag) not aligned to VERSION file ($ver)" && exit
+
     if [ $defaults -eq 0 ]; then
             read -p "Enter a version number [$SUGGESTED_VERSION]: " INPUT_STRING
     else
@@ -90,7 +107,7 @@ if [ -f VERSION ]; then
     echo "Will set new version to be $INPUT_STRING"
     echo $INPUT_STRING > VERSION
     echo "Version $INPUT_STRING:" > tmpfile
-    BASE_STRING_REF="v$BASE_STRING"
+    BASE_STRING_REF="${prefix}$BASE_STRING"
     if [ $tag -eq 0 ]; then
         BASE_STRING_REF=$(do-git-log | grep "$BUMP_COMMIT_MSG $BASE_STRING" | head -1 | do-pipe-columns -t 1)
     fi
@@ -101,10 +118,10 @@ if [ -f VERSION ]; then
     mv tmpfile CHANGES
     [ $commit -eq 1 ] && git add CHANGES VERSION && git commit -m "$BUMP_COMMIT_MSG $INPUT_STRING"
     if [ $tag -eq 0 ]; then
-        tag=$(git tag|grep "v$BASE_STRING"|wc -l)
+        tag=$(git tag|grep "${prefix}$BASE_STRING"|wc -l)
     fi
     if [ $tag -eq 1 ]; then
-	    git tag -a -m "$TAG_COMMIT_MSG $INPUT_STRING" "v$INPUT_STRING"
+	    git tag -a -m "$TAG_COMMIT_MSG $INPUT_STRING" "${prefix}$INPUT_STRING"
     fi
     if [ "$remote" == "origin" ]; then
         if [ $push -eq 1 ]; then
@@ -113,8 +130,18 @@ if [ -f VERSION ]; then
     fi
 else
     echo "Could not find a VERSION file"
+    tagstr="0.0.0"
+    [ $usedtag -eq 1 ] && tagstr=$(git tag | tail -1) && echo "Detected last tag: $tagstr"
+    BASE_STRING="$tagstr"
+    BASE_LIST=($(echo "$BASE_STRING" | tr '.' ' '))
+    V_MAJOR=${BASE_LIST[0]}
+    V_MINOR=${BASE_LIST[1]}
+    V_PATCH=${BASE_LIST[2]}
+    V_MINOR=$((V_MINOR + 1))
+    V_PATCH=0
+    tagstr="$V_MAJOR.$V_MINOR.$V_PATCH"
     if [ $defaults -eq 0 ]; then
-            read -p "Do you want to create a version file and start from scratch? [y]" RESPONSE
+        read -p "Do you want to create a version file ($tagstr)? [y]" RESPONSE
     else
             RESPONSE="y"
     fi
@@ -124,24 +151,26 @@ else
     if [ "$RESPONSE" = "yes" ]; then RESPONSE="y"; fi
     if [ "$RESPONSE" = "YES" ]; then RESPONSE="y"; fi
     if [ "$RESPONSE" = "y" ]; then
-        echo "0.1.0" > VERSION
-        echo "Version 0.1.0" > CHANGES
+
+        echo "$tagstr" > VERSION
+        echo "Version $tagstr" > CHANGES
         git log --pretty=format:" - %s" >> CHANGES
         echo "" >> CHANGES
         echo "" >> CHANGES
-        [ $commit -eq 1 ] && git add VERSION CHANGES && git commit -m "Added VERSION and CHANGES files, $BUMP_COMMIT_MSG 0.1.0"
-        if [ $tag -eq 1 ]; then
-            git tag -a -m "$TAG_COMMIT_MSG 0.1.0" "v0.1.0"
+        [ $commit -eq 1 ] && git add VERSION CHANGES && git commit -m "Added VERSION and CHANGES files, $BUMP_COMMIT_MSG $tagstr"
+        if [ $tag -ge 1 ]; then
+            git tag -a -m "$TAG_COMMIT_MSG $tagstr" "${prefix}$tagstr"
         else
             echo "Tag not created. Use the following command to create it"
-            echo "git tag -a -m \"$TAG_COMMIT_MSG 0.1.0\" \"v0.1.0\""
+            echo "git tag -a -m \"$TAG_COMMIT_MSG $tagstr\" \"${prefix}$tagstr\""
         fi
-        if [ $tag -eq 1 ]; then
+        if [ $tag -ge 1 ]; then
             if [ "$remote" == "origin" ]; then
                 if [ $push -eq 1 ]; then
                    git push origin --tags
                 fi
             fi
         fi
+        cat CHANGES | head -20
     fi
 fi
