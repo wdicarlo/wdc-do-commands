@@ -57,7 +57,9 @@ fi
 
 cmd="$1"
 
-[ $(file $cmd|grep -c "shell script") -eq 0 ] && echo "Not a script, please provide the relative path to the script" && exit 
+[ ! -f "$cmd" ] && echo "The file does not exists" && exit
+
+[ $(file $cmd|grep -c "shell script") -eq 0 ] && [ $file -eq 0 ] && echo "Not a script, please provide the relative path to the script or use -f option for text files" && exit 
 
 # TODO: check if the command is already present in the git repository
 # check if the command has changes
