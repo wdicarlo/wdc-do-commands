@@ -1,18 +1,15 @@
 #!/usr/bin/env bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 #
-# bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit-preexec.sh -- Bash support for ZSH-like 'preexec' and 'precmd' functions.
-# https://github.com/rcaloras/bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit-preexec
+# bash-preexec.sh -- Bash support for ZSH-like 'preexec' and 'precmd' functions.
+# https://github.com/rcaloras/bash-preexec
 #
 #
 # 'preexec' functions are executed before each interactive command is
 # executed, with the interactive command as its argument. The 'precmd'
 # function is executed before each prompt is displayed.
 #
-# Author: Ryan Caloras (ryan@bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exithub.com)
+# Author: Ryan Caloras (ryan@bashhub.com)
 # Forked from Original Author: Glyph Lefkowitz
 #
 # V0.3.3
@@ -20,8 +17,7 @@
 
 # General Usage:
 #
-#  1. Source this file at the end of your bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit profile so as not to interfere
+#  1. Source this file at the end of your bash profile so as not to interfere
 #     with anything else that's using PROMPT_COMMAND.
 #
 #  2. Add any precmd or preexec functions by appending them to their arrays:
@@ -37,8 +33,7 @@
 #
 #  Note: This module requires two Bash features which you must not otherwise be
 #  using: the "DEBUG" trap, and the "PROMPT_COMMAND" variable. If you override
-#  either of these after bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit-preexec has been installed it will most likely break.
+#  either of these after bash-preexec has been installed it will most likely break.
 
 # Avoid duplicate inclusion
 if [[ "$__bp_imported" == "defined" ]]; then
@@ -108,7 +103,6 @@ __bp_precmd_invoke_cmd() {
 
 # Sets a return value in $?. We may want to get access to the $? variable in our
 # precmd functions. This is available for instance in zsh. We can simulate it in bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 # by setting the value here.
 __bp_set_ret_value() {
     return $1
@@ -141,8 +135,7 @@ __bp_in_prompt_command() {
 # interactively, and invoke 'preexec' if so.
 __bp_preexec_invoke_exec() {
     # Save the contents of $_ so that it can be restored later on.
-    # https://stackoverflow.com/questions/40944532/bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit-preserve-in-a-debug-trap#40944702
+    # https://stackoverflow.com/questions/40944532/bash-preserve-in-a-debug-trap#40944702
     __bp_last_argument_prev_command="$1"
 
     # Checks if the file descriptor is not standard out (i.e. '1')
@@ -265,16 +258,13 @@ __bp_install() {
 }
 
 # Sets our trap and __bp_install as part of our PROMPT_COMMAND to install
-# after our session has started. This allows bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit-preexec to be inlucded
-# at any point in our bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit profile. Ideally we could set our trap inside
+# after our session has started. This allows bash-preexec to be inlucded
+# at any point in our bash profile. Ideally we could set our trap inside
 # __bp_install, but if a trap already exists it'll only set locally to
 # the function.
 __bp_install_after_session_init() {
 
-    # Make sure this is bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit that's running this and return otherwise.
+    # Make sure this is bash that's running this and return otherwise.
     if [[ -z "$BASH_VERSION" ]]; then
         return 1;
     fi

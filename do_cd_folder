@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
 usage() 
 {
@@ -42,8 +42,7 @@ then
     prj=`find $prj_root -maxdepth $maxdepth -type d -name "*$1*" | awk '{ print NR, $0 }' |grep "^$num"|awk '{print $2}'`
 fi
 cd "$prj"
-if [ ! -f .bash
-[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env ]; then
+if [ ! -f .bash_env ]; then
     shift $#
     . $WDC_DO_COMMANDS_DIR/do_setup_env
 fi
