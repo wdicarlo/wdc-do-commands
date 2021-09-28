@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
 
 if [ ! $#  -gt 0 ] || [ "$1" == "-h" ]; then
@@ -20,7 +21,8 @@ fi
 mkdir "$PROJECTS/$1"
 
 
-cat <<END_OF_TEXT >> "$PROJECTS/$1/.bash_env"
+cat <<END_OF_TEXT >> "$PROJECTS/$1/.bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env"
 export EC_HOME=
 export PROJECT_ROOT1=.
 export PROJECT_ROOT2=docs
@@ -31,7 +33,8 @@ if [ $# -gt 1 ]; then
     env="$2"
     n=`ls -1 $env_root/do_setup_env_for_* | grep $env | wc -l`
     if [ $n -eq 1 ]; then
-        echo "do-setup-env $env" >> "$PROJECTS/$1/.bash_env"
+        echo "do-setup-env $env" >> "$PROJECTS/$1/.bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env"
     else 
         if [ $n -gt 1 ]; then
             echo "Specified ambiguous environment name"

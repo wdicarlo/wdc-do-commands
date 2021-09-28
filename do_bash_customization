@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
-echo "Customizing bash"
+echo "Customizing bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit"
 [ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR. Assuming ~/bin" && export WDC_DO_COMMANDS_DIR="$HOME/bin"
-if [ ! -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
-    echo "Missing file: do_bash_env"
+if [ ! -f "$WDC_DO_COMMANDS_DIR/do_bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env" ]; then
+    echo "Missing file: do_bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env"
 fi
 
-cat <<END_OF_TEXT >> "$WDC_DO_COMMANDS_DIR/do_bash_env"
+cat <<END_OF_TEXT >> "$WDC_DO_COMMANDS_DIR/do_bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env"
 export TESTS="$HOME/tests"
 export RELEASES="$HOME/releases"
 export PROJECTS="$HOME/projects"
@@ -14,9 +19,12 @@ export SHARED_FOLDER="/media/share"
 export PROMPT_VARS=""
 END_OF_TEXT
 
-if [ -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
-    # do_bash_env example:
+if [ -f "$WDC_DO_COMMANDS_DIR/do_bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env" ]; then
+    # do_bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env example:
     # #!/usr/bin/env bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
     # 
     # export TESTS=~/tests
     # export RELEASES=~/releases
@@ -24,8 +32,10 @@ if [ -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
     # export SHARED_FOLDER=/wc/wdicarlo/share
     # export PATCHES_DIR=/wc/wdicarlo/share/ec/patches
     # 
-    echo "Sourcing file: do_bash_env"
-    source  $WDC_DO_COMMANDS_DIR/do_bash_env
+    echo "Sourcing file: do_bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env"
+    source  $WDC_DO_COMMANDS_DIR/do_bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env
     echo "PROJECTS               =  $PROJECTS"
     echo "TESTS                  =  $TESTS"
     echo "RELEASES               =  $RELEASES"
@@ -33,12 +43,15 @@ if [ -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
     echo "PROMPT_VARS            =  $PROMPT_VARS"
 fi
 
-export BASH_COMPLETITION_DIR="$WDC_DO_COMMANDS_DIR/bash_completion.d"
-bash_compl_dir=$BASH_COMPLETITION_DIR
+export BASH_COMPLETITION_DIR="$WDC_DO_COMMANDS_DIR/bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_completion.d"
+bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_compl_dir=$BASH_COMPLETITION_DIR
 
 force_color_prompt=yes
 
-# to use vim keybindings in bash, 
+# to use vim keybindings in bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit, 
 # do "set -o vi". Then, you can 
 # press "v" to edit current command 
 # in vim.
@@ -52,24 +65,34 @@ function update_prompt()
         PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
     fi
 }
-function bash_completion()
+function bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_completion()
 {
   exclude="
     make.bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
     subversion.bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
   "
-  if [ "$bash_compl_dir" == "" ]; then
+  if [ "$bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_compl_dir" == "" ]; then
     return
   fi
-  if [ ! -d $bash_compl_dir ]; then
+  if [ ! -d $bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_compl_dir ]; then
     return
   fi
-  FILES=$(ls $bash_compl_dir)
+  FILES=$(ls $bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_compl_dir)
   for FILE in $FILES; do
-    bash_compl_file="$bash_compl_dir/$FILE"
-    [ $(echo "$exclude" | grep -c "$FILE") -gt 0 ] && echo "Skipping file: $bash_compl_file" && continue
-    echo "Sourcing file: $bash_compl_file"
-    source $bash_compl_file
+    bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_compl_file="$bash_compl_dir/$FILE"
+    [ $(echo "$exclude" | grep -c "$FILE") -gt 0 ] && echo "Skipping file: $bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_compl_file" && continue
+    echo "Sourcing file: $bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_compl_file"
+    source $bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_compl_file
   done	
 }
 
@@ -86,7 +109,8 @@ function edit_last()
   eval $cmd
 }
 
-# spinner got from http://fitnr.com/showing-a-bash-spinner.html
+# spinner got from http://fitnr.com/showing-a-bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit-spinner.html
 # When you have a task to run that will take a large (or unknown) amount of time invoke it in a background subshell like this:
 # 
 # (a_long_running_task) &
@@ -95,7 +119,8 @@ function edit_last()
 # 
 # spinner $!
 # 
-# The $! is a bash internal variable for the PID of the last job run in the background. 
+# The $! is a bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit internal variable for the PID of the last job run in the background. 
 #
 # TODO: evaluate pv (pipe viewer) command
 #
@@ -270,10 +295,13 @@ function update_env() {
     #echo "PROJECT_PATH=$PROJECT_PATH"
     #echo "REPO_LOCATION=$REPO_LOCATION"
     #echo "REPO_SYNT=$REPO_SYNT"
-    if [ -f ./.bash_env ]
+    if [ -f ./.bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env ]
     then
-        [ $quiet -eq 0 ] && cat .bash_env | grep "^export .*=" | sed 's/^export \(.*\)=.*/\1/' | xargs -I@ sh -c 'echo "@=\$@"'
-        source ./.bash_env
+        [ $quiet -eq 0 ] && cat .bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env | grep "^export .*=" | sed 's/^export \(.*\)=.*/\1/' | xargs -I@ sh -c 'echo "@=\$@"'
+        source ./.bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env
     else
         shift $#
         source $WDC_DO_COMMANDS_DIR/do_setup_env
@@ -356,8 +384,10 @@ function cdenv() {
     update_env
 }
 function setup_env() {
-    if [ -f .bash_env ]; then
-        source .bash_env
+    if [ -f .bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env ]; then
+        source .bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env
     fi
 }
 function go_repo_root() {
@@ -388,7 +418,8 @@ function go_repo_root() {
         if [ $folder == "$user" ] ||
             [ -d "$path/.git" ] ||
             [ -h "$path/.git" ] ||
-            [ -f "$path/.bash_env" ] ||
+            [ -f "$path/.bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env" ] ||
             [ -d "$parent/$folder.git" ] ||
             [ "$parent_folder" == "projects" ] ||
             [ "$parent_folder" == "releases" ] ||
@@ -464,7 +495,8 @@ function gohome() {
                 [ -d "$path/.git" ] ||
                 [ -h "$path/.git" ] ||
                 [ -d "$path/src" ] ||
-                [ -f "$path/.bash_env" ] ||
+                [ -f "$path/.bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env" ] ||
                 [ -d "$parent/$folder.git" ] ||
                 [ "$parent_folder" == "projects" ] ||
                 [ "$parent_folder" == "releases" ] ||
@@ -479,7 +511,8 @@ function gohome() {
             if [ $folder == "$user" ] ||
                 [ -d "$path/.git" ] ||
                 [ -h "$path/.git" ] ||
-                [ -f "$path/.bash_env" ] ||
+                [ -f "$path/.bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env" ] ||
                 [ -d "$parent/$folder.git" ] ||
                 [ "$parent_folder" == "projects" ] ||
                 [ "$parent_folder" == "releases" ] ||
@@ -630,9 +663,11 @@ GREEN="$(tput setaf 2)"
 RESET="$(tput sgr0)"
 update_prompt
 
-bash_completion
+bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_completion
 
-#alias do-bash-customization='source $WDC_DO_COMMANDS_DIR/do_bash_customization && cd .'
+#alias do-bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit-customization='source $WDC_DO_COMMANDS_DIR/do_bash_customization && cd .'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then

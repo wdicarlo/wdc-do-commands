@@ -1,4 +1,5 @@
 #!/usr/bin/env  bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
 [ "$1" == "-h" ] && echo "do-project-activation [-h] [<project_name_pattern>]" && return
 
@@ -41,7 +42,8 @@ else
 fi
 
 cd "${prj_root}$prj" || return
-if [ ! -f .bash_env ]; then
+if [ ! -f .bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env ]; then
     shift $#
     source "$WDC_DO_COMMANDS_DIR/do_setup_env"
 fi

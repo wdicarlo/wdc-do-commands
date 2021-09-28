@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
 #cmd=`basename $0`
 cpath=`pwd`
@@ -106,7 +107,8 @@ if [ $global == "0" ]; then
 	    bookmarks=`cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| eval $postproc`
     fi
 else
-    # TODO: allows jump into another project's folder by evaluating its .bash_env file
+    # TODO: allows jump into another project's folder by evaluating its .bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env file
     #bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'`
     #bookmarks=`cat $bookmarks_file | grep -v $PROJECTS | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$HOME/##"`
     if [ "$PROJECTS" == "" ]; then
@@ -195,7 +197,8 @@ else
 fi
 
 # TODO: apply destination project env
-if [ ! -f .bash_env ]; then
+if [ ! -f .bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit_env ]; then
 	if [ -z PROJECTS ]; then
 			shift $#
 			. $WDC_DO_COMMANDS_DIR/do_setup_env

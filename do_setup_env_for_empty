@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
 # minimal PATH setup
 # PATH=$WDC_DO_COMMANDS_DIR:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/bin:.
