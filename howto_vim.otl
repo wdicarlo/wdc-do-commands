@@ -358,6 +358,8 @@ ggVGg?                          : rot13 whole file (toggles)
 `.               : jump to exact spot in last modification line
 g;               : cycle thru recent changes (oldest first)
 g,               : reverse direction 
+w                : move forward by a word
+b                : move backword by a word
 :changes
 :h changelist    : help for above
 <C-O>            : retrace your movements in file (starting from most recent)
