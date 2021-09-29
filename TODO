@@ -12,6 +12,7 @@ Commands to evaluate:
     socli
     bats
     cats
+    has (https://github.com/kdabir/has)
     watchdog (https://github.com/gorakhargosh/watchdog.git)
     github.com/micha/json-table
 Integrate vim notebooks
