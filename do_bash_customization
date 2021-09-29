@@ -694,8 +694,7 @@ function mygit() {
 
 alias git='mygit'
 alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
-#function d () { if [ $(echo "$@"|grep -c "^\-[a-z][ ]*") -eq 1 ]; then $WDC_DO_COMMANDS_DIR/_d "$@"; else idx="d$1";shift;cmd="\$(do-cmd-index -T \"^$idx;\" | cut -d';' -f 2) $@"; eval "$cmd"; fi }
-function d () { if [ $(echo "$1"|grep -c "^\-[a-z][ ]*") -eq 1 ]; then $WDC_DO_COMMANDS_DIR/_d "$@"; else idx="d$1";shift;cmd=$(do-cmd-index "^$idx;" | cut -d';' -f 2) && echo "> $cmd $@" && eval "$cmd $@"; fi }
+function d () { source $WDC_DO_COMMANDS_DIR/_d "$@"; }
 export -f d
 
 # default proxy setup
