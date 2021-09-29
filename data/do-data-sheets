@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+[ $(which vd|wc -l) -eq 0 ] && echo "Missing vd (visidata) command.\nsudo apt-get install visidata" && exit
+
+vd "$@"
