@@ -92,6 +92,7 @@ if [ -f VERSION ]; then
     SUGGESTED_VERSION="$V_MAJOR.$V_MINOR.$V_PATCH"
 
     gittag=$(git tag|tail -1)
+    [ $tag -eq 2 ] && gittag=$(echo $gittag|sed "s/^$prefix//")
     ver=$(cat VERSION)
     aligned=$([[ "$gittag" == "$ver" ]] && echo 1 || echo 0)
     [ $aligned -eq 0 ] && [ $tag -ge 1 ] && echo "Git tag ($gittag) not aligned to VERSION file ($ver)" && exit
@@ -120,7 +121,7 @@ if [ -f VERSION ]; then
     if [ $tag -eq 0 ]; then
         tag=$(git tag|grep "${prefix}$BASE_STRING"|wc -l)
     fi
-    if [ $tag -eq 1 ]; then
+    if [ $tag -ge 1 ]; then
 	    git tag -a -m "$TAG_COMMIT_MSG $INPUT_STRING" "${prefix}$INPUT_STRING"
     fi
     if [ "$remote" == "origin" ]; then
