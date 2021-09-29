@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
+
+# To run the container with pandashells:
+# docker run -i -v <host_path_to_plots>:/mnt/plots nate/pandashells p.<command>
+
+[ "$PANDAS_MOUNT_POINT" == "" ] && echo "PANDAS_MOUNT_POINT not defined" && return
+
+
+
+command="\
+function p.help () { \
+echo \"Usage: [<pipe> |] p.<tool> [-h] [<options>]\"; \
+echo \"Tool          |Purpose\"; \
+echo \"---           |---\"; \
+echo \"p.config      |Set default Pandashells configuration options\"; \
+echo \"p.crypt       |Encrypt/decrypt files using open-ssl\"; \
+echo \"p.format      |Render python string templates using input data\"; \
+echo \"p.gui         |Open dataframe in pandasgui interactive environment\"; \
+echo \"p.parallel    |Read shell commands from stdin and run them in parallel\"; \
+echo \"p.example_data|Create sample csv files for training/testing\"; \
+echo \"p.df          |Pandas dataframe manipulation of text files\"; \
+echo \"p.linspace    |Generate a linearly spaced series of numbers\"; \
+echo \"p.lomb_scargle|Generate Lomb-Scarge spectrogram of input time series\"; \
+echo \"p.merge       |Merge two data files by specifying join keys\"; \
+echo \"p.rand        |Generate random numbers\"; \
+echo \"p.regress     |Perform (multi-variate) linear regression with R-like patsy syntax\"; \
+echo \"p.sig_edit    |Remove outliers using iterative sigma-editing\"; \
+echo \"p.smooth      |Smooth data\"; \
+echo \"p.cdf         |Plot emperical distribution function\"; \
+echo \"p.facet_grid  |Create faceted plots for data exploration\"; \
+echo \"p.hist        |Plot histograms\"; \
+echo \"p.plot        |Create xy plot visualizations\"; \
+echo \"p.regplot     |Quickly plot linear regression of data to a polynomial\"; \
+}; \
+export -f p.help \
+"
+echo "function p.help"
+eval "$command"
+
+#cmds="p.example_data p.df p.merge p.plot p.facet_grid p.hist"
+cmds="p.config p.crypt p.format p.gui p.parallel p.example_data p.df p.linspace p.lomb_scargle p.merge p.rand p.regress p.sig_edit p.smooth p.cdf p.facet_grid p.hist p.plot p.regplot"
+for cmd in $(echo $cmds)
+do
+  command="\
+function $(echo $cmd) () { \
+  docker run -i -v $PANDAS_MOUNT_POINT:/mnt/plots nate/pandashells $cmd \"\$@\"; \
+}; \
+export -f $(echo $cmd)\
+"
+  echo "function $cmd"
+  eval "$command"
+done
+
+

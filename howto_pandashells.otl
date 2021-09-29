@@ -75,3 +75,5 @@ Merge CSV files
 	p.merge <(p.example_data -d election) <(p.example_data -d electoral_college) --how left --on state
 Create scatter plot
 	p.example_data -d tips | p.plot -x total_bill -y tip -s 'o' --title 'Tip Vs Bill' --savefig '/mnt/plots/scatter_chart.png'
+Sort values
+	p.example_data -d tips | p.df 'df.head(5)' 'df.sort_values(by=size,ascending=False)' -o table | head -5
