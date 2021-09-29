@@ -1,3 +1,33 @@
+Version 0.7.0:
+ - Update howto_vim.otl file.
+ - Improved cmd/do-cmd-groups-slinks command
+ - Update do_cmd_groups.csv file.
+ - Added data/do-data-sheets command
+ - Renamed do-csv command to do-data-csv
+ - Improved _d command.
+ - Update TODO file.
+ - Improved d command
+ - Improved pandashells command
+ - Fixed wrong substitutions
+ - Fixed wrong substitutions
+ - Added do_pandas_setup command
+ - Added checks to avoid to execute scripts to be sourced
+ - Added do-semver command
+ - Improved git/do-git-build-demo-repo command.
+ - Improved git/do-git-bump-version command. Added support for SemVer
+ - Improved cmd/do-cmd-update command.
+ - Improved vim/do-vim command.
+ - Update do_cmd_index_def.csv file.
+ - Added pipe/do-pipe-file-string-matches command
+ - Improved cmd/do-cmd-update command.
+ - Improved git/do-git-build-demo-repo command. Added SemVer tagging support
+ - Improved git/do-git-build-demo-repo command.
+ - Improved git/do-git-build-demo-repo command.
+ - Improved cmd/do-cmd-index command.
+ - Update howto_git.otl file.
+ - Improved git/do-git-bump-version command. Added option to enable the commit of VERSION and CHANGES files
+ - Update README.md file.
+
 Version 0.6.0:
  - Added howto_do.otl file
  - Update README.md file. Described most important aspects of this repository of Linux commands
