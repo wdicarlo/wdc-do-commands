@@ -55,7 +55,8 @@ do
   do
     cmd="rm $dcmd"
     evalcmd
-    cmd="sed -i '/^/$dcmd$/d' .gitignore"
+    cmdseed="$(echo $dcmd$|sed 's/^\(do-[a-z]*\).*$/\1/')"
+    cmd="sed -i \"/^\/$cmdseed*/d\" .gitignore"
     evalcmd
   done
 done
@@ -71,8 +72,11 @@ do
     [ $(file "$dcmd"|grep -c "symbolic link") -eq 1 ] && continue
     cmd="ln -f -s $group/$dcmd $dcmd"
     evalcmd
-    cmd="echo \"/$dcmd\" >> .gitignore"
-    evalcmd
+    cmdseed="$(echo $dcmd$|sed 's/^\(do-[a-z]*\).*$/\1/')"
+    if [ $(cat .gitignore|grep -c "^/$cmdseed\*") -eq 0 ]; then
+      cmd="echo \"/$cmdseed*\" >> .gitignore"
+      evalcmd
+    fi
   done
 done
 
