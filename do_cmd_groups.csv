@@ -6,6 +6,7 @@ cmd;yes
 compare;no
 cscope;no
 date;no
+data;yes
 deb;yes
 edit;no
 exec;no
