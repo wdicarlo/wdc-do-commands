@@ -2,3 +2,11 @@ WDC Do Commands
 	Personal set of Linux commands
 Find do commands containg the prettyprint string
 	d cf prettyprint
+List commands abbreviations containing cf
+	d -s cf
+List commands abbreviations of commands containing vim
+	d -d vim
+List how many times the vim commands abbreviations have been used
+	d -c vim
+Trace execution of abbreviated command do-project-activation pandas
+	d -v pa pandas
