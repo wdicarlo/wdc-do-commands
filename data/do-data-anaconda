@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h] [-p] [-j]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -p                          : start the python console"
+  echo "       -j                          : start the jupyter notebooks web service"
+}
+
+# Arguments processing
+cli=0
+while getopts hpj flag
+do
+  case $flag in
+    p)
+      cli=1
+      ;;
+    j)
+      cli=2
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+[ $cli -eq 0 ] && usage && exit
+
+[ "$JUPYTER_MOUNT_POINT" == "" ] && echo "JUPYTER_MOUNT_POINT not defined" && exit
+
+if [ $cli -eq 1 ]; then
+  docker run -it --rm -p 8888:8888 -v $JUPYTER_MOUNT_POINT:/opt/notebooks continuumio/anaconda3:latest /opt/conda/bin/python3
+elif [ $cli -eq 2 ]; then
+  docker run -it --rm -p 8888:8888 -v $JUPYTER_MOUNT_POINT:/opt/notebooks continuumio/anaconda3:latest /bin/bash \
+  -c "/opt/conda/bin/conda install jupyter -y --quiet && mkdir -p \
+  /opt/notebooks && /opt/conda/bin/jupyter notebook \
+  --notebook-dir=/opt/notebooks --ip='*' --port=8888 \
+  --no-browser --allow-root"
+fi
+
