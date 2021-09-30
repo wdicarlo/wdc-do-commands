@@ -7,12 +7,12 @@ idxfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_index.csv)"
 [ ! -f "$idxfile" ] && touch "$idxfile"
 idx="d${1}";shift
 [ "$idx" == "d-h" ] && 
-  echo "d [-h] [-s [<patt>]] [-d [<patt>]] [-c] [-v] <cmd> <params>" && 
+  echo "d [-h] [-s [<patt>]] [-d [<patt>]] [-c [<patt>]] [-v] <abbr> [<params>]" && 
   echo "d -h          : help" &&
   echo "d -v          : verbose" &&
-  echo "d -s [<patt>] : list shortcuts filtered by <patt>" &&
+  echo "d -s [<patt>] : list commands abbreviations filtered by <patt>" &&
   echo "d -d [<patt>] : list commands filtered by <patt>" &&
-  echo "d -c          : list usage counter" && return
+  echo "d -c [<patt>] : list usage counter filtered by <patt>" && return
 cmd="";verbose=0
 [ "$idx" == "d-v" ] && verbose=1 && idx="d${1}" && shift
 [ "$idx" == "d-s" ] && do-cmd-index -t "^d[a-z]*$1;" && return
