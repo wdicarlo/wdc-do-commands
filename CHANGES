@@ -1,3 +1,11 @@
+Version 0.8.0:
+ - Major reorganization of commands and abbreviations
+ - Added data/do-data-anaconda command
+ - Update howto_do.otl file.
+ - Improved _d command.
+ - Improved _d command.
+ - Improved git/do-git-bump-version command.
+
 Version 0.7.0:
  - Update howto_vim.otl file.
  - Improved cmd/do-cmd-groups-slinks command
