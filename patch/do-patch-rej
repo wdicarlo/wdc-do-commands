@@ -84,7 +84,7 @@ elif [ $edit -eq 1 ]; then
 		exit
 	fi
 	file=$(eval "$cmd")
-	cmd="do-vimdiff -p $file"
+	cmd="do-vim-diff -p $file"
 elif [ $remove -eq 1 ]; then
 		  files=$(eval "$cmd")
 		  for file in $files
