@@ -14,9 +14,9 @@
 /do-tf*
 /do-vim*
 /do-cli*
-/do-docker*
 /do-fs*
 /do-img*
 /do-pdf*
 /do-web*
 /do-net*
+/do-oci*

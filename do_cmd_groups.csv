@@ -11,7 +11,7 @@ data;yes
 date;no
 deb;yes
 db;no
-docker;yes
+oci;yes
 edit;no
 exec;no
 filter;no
