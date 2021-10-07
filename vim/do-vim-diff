@@ -3,7 +3,7 @@
 #TODO: use only two inout <path/filename> <other-root-path>
 app=`basename $0`
 function usage() {
-    echo "Usage: $app [-d] [-r] [-s] [-w] <root1> <root2>"
+    echo "Usage: $app [-d] [-r] [-s] [-w] [<root1> <root2>|<file1> <file2>]"
     echo "       -r             : recursive"
     echo "       -d             : use DirDiff plugin"
     echo "       -s             : just print a summary of differences"
@@ -125,20 +125,26 @@ fi
 if [ $# -eq 2 ]; then
     path1=$(echo "$1" | sed 's#/$##')
     path2=$(echo "$2" | sed 's#/$##')
-    [ ! -d "$path1" ] || [ ! -d "$path2" ] && echo "Wrong paths" && exit
-
-    if [ $summary -eq 1 ]; then
-      diff -q -r --exclude=".git"  "$path1" "$path2"
-      exit
-    fi
-    [ $dirdiff -eq 1 ] && vim -c ":DirDiff $path1 $path2" < /dev/tty && exit
-    compare "$path1" "$path2"
-    if [ $recurse -eq 1 ]; then
-      for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
-      do
-        [ ! -d "${path2}/${subdir}" ] && echo "Skipping missing path: ${path2} / ${subdir}" && continue
-        compare "${path1}/${subdir}" "${path2}/${subdir}" 
-      done
+    if [ -d "$path1" ] && [ -d "$path2" ]; then
+      if [ $summary -eq 1 ]; then
+        diff -q -r --exclude=".git"  "$path1" "$path2"
+        exit
+      fi
+      [ $dirdiff -eq 1 ] && vim -c ":DirDiff $path1 $path2" < /dev/tty && exit
+      compare "$path1" "$path2"
+      if [ $recurse -eq 1 ]; then
+        for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+        do
+          [ ! -d "${path2}/${subdir}" ] && echo "Skipping missing path: ${path2} / ${subdir}" && continue
+          compare "${path1}/${subdir}" "${path2}/${subdir}" 
+        done
+      fi
+    elif [ -f "$path1" ] && [ -f "$path2" ]; then
+        cmd="vimdiff $opts --noplugin $path1 $path2"
+        echo "> $cmd"
+        eval "$cmd"
+    else
+        usage
     fi
     exit
 elif [ $# -ne 3 ]; then
