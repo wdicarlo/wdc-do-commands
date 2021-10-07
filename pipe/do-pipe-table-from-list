@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+
+cols=${1:-5}
+
+n=0
+
+while read -r line
+do
+  echo -n "$line "
+  n=$((n + 1))
+  [ $n -eq $cols ] && n=0 && echo ""
+done
