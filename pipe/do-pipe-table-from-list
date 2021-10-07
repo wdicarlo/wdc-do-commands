@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 cols=${1:-5}
 
 n=0
@@ -11,3 +10,4 @@ do
   n=$((n + 1))
   [ $n -eq $cols ] && n=0 && echo ""
 done
+echo ""
