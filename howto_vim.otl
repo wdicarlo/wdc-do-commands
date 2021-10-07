@@ -1082,3 +1082,5 @@ call plug#end()
 ----------------------------------------
 " To solve CONVERSION errors during saving use:
 :w ++enc=utf-8
+Vimdiff ignoring white spaces
+	vimdiff -c 'set diffopt+=iwhite' ...
