@@ -50,27 +50,21 @@ if [ ! $# -eq 1 ]; then
     exit
 fi
 
-if [ ! -f $1 ]; then
-    echo "Missing file in $bin_dir/$1"
-    exit
-fi
-
-cmd="$1"
-
-[ ! -f "$cmd" ] && echo "The file does not exists" && exit
+cmd=$(find "${bin_dir}/" -type f -name "do[-_]*" | grep -v "\.sav$" | grep "$1" | sed "s#^$WDC_DO_COMMANDS_DIR/##" )
+[ ! -f "$cmd" ] && echo "The selected file/s does not exists or more than one has been selected: $(echo $cmd|tr '\n' ' ')" && exit
 
 [ $(file $cmd|grep -c "shell script") -eq 0 ] && [ $file -eq 0 ] && echo "Not a script, please provide the relative path to the script or use -f option for text files" && exit 
 
 # TODO: check if the command is already present in the git repository
 # check if the command has changes
-n=`git diff $1 | wc -l`
+n=$(git diff $cmd | wc -l)
 if [ $n -eq 0 ]; then
-    echo "Command without changes: $1"
+    echo "Command without changes: $cmd"
     exit
 fi
 
 if [ $review -eq 1 ]; then
-	do-git-diff -q $1 | do-pipe-to-vim -o $1
+	do-git-diff -q $cmd | do-pipe-to-vim -o $cmd
     read -p "Do you Accept the Changes? <Yy|n> (Y to specify a commit message) " ans
 	if [ "$ans" == "y" ] || [ "$ans" == "Y" ]; then
     [ "$ans" == "Y" ] && echo "Message? [$msg]" && read -p "" message
@@ -80,13 +74,13 @@ if [ $review -eq 1 ]; then
 	fi
 fi
 
-git add $1
+git add $cmd
 
 msg=""
 if [ $file -eq 0 ]; then
-    msg="Improved $1 command."
+    msg="Improved $cmd command."
 else
-    msg="Update $1 file."
+    msg="Update $cmd file."
 fi
 
 [ ! "$message" == "" ] && msg="$msg ${message^}"
