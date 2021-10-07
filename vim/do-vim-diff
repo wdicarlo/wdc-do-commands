@@ -3,10 +3,11 @@
 #TODO: use only two inout <path/filename> <other-root-path>
 app=`basename $0`
 function usage() {
-    echo "Usage: $app [-d] [-r] [-s] <root1> <root2>"
+    echo "Usage: $app [-d] [-r] [-s] [-w] <root1> <root2>"
     echo "       -r             : recursive"
     echo "       -d             : use DirDiff plugin"
     echo "       -s             : just print a summary of differences"
+    echo "       -w             : ignore white spaces"
     echo "Usage: $app <root1> <root2> <common-relative-path-to-file>"
     echo "Usage: $app -f <root> <file1> <file2>"
     echo "Usage: $app -p <file> # edit diff of <file> vs <file>.orig and <file>.rej"
@@ -50,13 +51,17 @@ recurse=0
 summary=0
 git=0
 dirdiff=0
-while getopts qhfprsgd flag
+opts=""
+while getopts qhfprsgdw flag
 do
     case $flag in
 
         q)
             quiet=1
 #            echo pars is $pars
+            ;;
+        w)
+            opts="-c 'set diffopt+=iwhite'"
             ;;
         d)
             dirdiff=1
@@ -110,7 +115,7 @@ if [ $patchmode -eq 1 ]; then
 	if [ -f "$1.rej" ]; then
 		cmd="vim -o $1.rej $1.orig $1 -c \":2,3windo diffthis|:2wincmd k\" < /dev/tty"
 	else
-		cmd="vimdiff $1 $1.orig"
+		cmd="vimdiff $opts $1 $1.orig"
 	fi
 	echo "> $cmd"
 	eval "$cmd"
@@ -149,13 +154,13 @@ if [ $multinames -eq 0 ]; then
     for file in $@;
     do
         if [ -f $path1/$file ] && [ -f $path2/$file ]; then 
-            vimdiff --noplugin $path1/$file $path2/$file
+            vimdiff $opts --noplugin $path1/$file $path2/$file
         fi
     done
 else
     path=$1
     shift
-    cmd="vimdiff --noplugin "
+    cmd="vimdiff $opts --noplugin "
     for file in $@;
     do
         if [ -f $path/$file ]; then
