@@ -136,3 +136,9 @@ List pods, containers and images
 	kubectl get pods -n airflow -o json | jq '.items[] | . as $parent | .spec.containers[] | "\($parent.metadata.name);\(.name);\(.image)"' | column -s';' -t
 List edge IPs
 	kubectl get nodes -owide|grep edge
+Describe a pod
+	kubectl describe pod  -n kube-system tiller-deploy # no need to specify the entire pod name
+Get list of deployments in the namespace superset
+	kubectl get deploy -n superset
+Get YAML configuration of a deployment
+	kubectl get deploy -n superset nokia-superset -o yaml
