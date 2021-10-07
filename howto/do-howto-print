@@ -5,27 +5,31 @@ if [ $# == 0 ]
 then
     cmd=`basename $0`
    echo "Usage: $cmd <category> [<keyword>]"
+   echo "       where <keyword>       term to search"
    echo "       where <category> may be:"
-   echo "          git"
-   echo "          linux"
-   echo "          debian"
-   echo "          ..."
-   echo "             <keyword>       term to search"
+   do-howto-list | do-pipe-table-from-list 8 | column -t -s' ' | sed 's/^/\t/'
    exit
 fi
 
 tool="$1"
-howto=`echo $WDC_DO_COMMANDS_DIR/howto_${tool}.otl`
+howto=$(echo $WDC_DO_COMMANDS_DIR/howto_${tool}.otl)
 shift
-if [ ! -f $howto ]; then
-    echo "Missing howto file for: ${tool}"
+if [ ! -f "$howto" ]; then
+  topic=$(do-howto-list|grep "^${tool}")
+  n=$(echo "$topic"|wc -l)
+  if [ $n -eq 1 ]; then
+    howto=$(echo $WDC_DO_COMMANDS_DIR/howto_${topic}.otl)
+  else
+    echo "Selected howto with pattern \"${tool}\":"
+    echo "$topic" | sed 's/^/\t/'
     echo "Availanble howto:"
-    do-howto-list
+    do-howto-list | do-pipe-table-from-list 8 | column -t -s ' ' | sed 's/^/\t/'
     exit
+  fi
 fi
 
 if [ $# -gt 0 ]; then
-    cat $howto | grep -A 1 -in $@
+  cat $howto | grep -A 1 -in $@
 else
-    cat $howto 
+  cat $howto 
 fi
