@@ -32,6 +32,7 @@ function usage() {
         echo "            10                       : demo repo with rebased branch with feature branch"
         echo "            11                       : demo repo with rebased master with feature branch"
         echo "            12                       : demo repo with commit conflicts"
+        echo "            13                       : demo repo with many commits on the same file"
         echo "       -n <name>                   : name of the repository"
         echo "       -s                          : use sub-module"
         echo "       -f                          : use git flow"
@@ -109,8 +110,20 @@ git_commit() {
 		echo "$commit_i" > ".$tree_path/$commit_i"
     	git add ".$tree_path/$commit_i"
 	fi
-
     git commit -qm "$msg"
+}
+git_commit_file() {
+  file="$1"
+  if [ ! -f "$file" ]; then
+    val=0
+  else
+    val=$(cat $file)
+  fi
+  val=$(( val + 1 ))
+  echo "$val" > "$file"
+  msg="v$val"
+  git add "$file"
+  git commit -qm "$msg"
 }
 git_commit_conflict() {
     # branch1 branch2 file change1 change2
@@ -347,7 +360,17 @@ elif [ "$A_TOPOLOGY" = 12 ]; then
     git_merge $BRANCH_DEV
     git_commit_conflict master develop 1 change1 change2
     git_merge_conflict $BRANCH_DEV
-
+elif [ "$A_TOPOLOGY" = 13 ]; then
+    git_commit
+    git_commit
+    git_commit_file "file_with_many_commits"
+    git_commit_file "file_with_many_commits"
+    git_commit_file "file_with_many_commits"
+    git_commit_file "file_with_many_commits"
+    git_commit
+    git_commit
+    git_commit
+    git_commit
 else
     git_commit
     git_commit
