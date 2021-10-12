@@ -16,7 +16,7 @@ howto=$(echo $WDC_DO_COMMANDS_DIR/howto_${tool}.otl)
 shift
 if [ ! -f "$howto" ]; then
   topic=$(do-howto-list|grep "^${tool}")
-  n=$(echo "$topic"|wc -l)
+  n=$(echo "$topic"|grep -v "^[ \t]*$"|wc -l)
   if [ $n -eq 1 ]; then
     howto=$(echo $WDC_DO_COMMANDS_DIR/howto_${topic}.otl)
   else
