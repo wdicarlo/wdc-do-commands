@@ -25,7 +25,7 @@ history;no
 howto;yes
 img;yes
 jira;no
-k8s;no
+k8s;yes
 linux;no
 list;no
 log;no
