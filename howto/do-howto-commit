@@ -35,7 +35,7 @@ then
   exit
 fi
 
-howto="howto_$1.otl"
+howto="howto_${1}.otl"
 howtofile="$WDC_DO_COMMANDS_DIR/$howto"
 
 if [ ! -f "$howtofile" ]; then
