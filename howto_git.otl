@@ -346,3 +346,21 @@ Clone single branch
 	git clone --single-branch --branch <branch> <repo>
 Delete remote tag
 	git push --delete origin v0.1.0
+Delete a (big) file from the git repository and history
+	# credit: https://stackoverflow.com/a/2158271/3676996
+	# warning: it is highly disruptive to other developers
+	do-git-build-demo-repo -o 13 # build demo repo with a file with many commits to fill the git history
+	cd git_demo/
+	git filter-branch --prune-empty -d /dev/shm/scratch --index-filter "git rm --cached -f --ignore-unmatch file_with_many_commits" --tag-name-filter cat -- --all # rewrite git history
+	# either delete the history or clone the repo to discard the unwanted bits
+	git update-ref -d refs/original/refs/heads/master # delete old git history
+	git reflog expire --expire=now --all
+	git gc --prune=now
+	git push --all --force
+Delete a (big) file from the git repository and history
+	git filter-branch --prune-empty --tree-filter 'rm -f file_with_many_commits' HEAD # can specify commits range
+	# either delete the history or clone the repo to discard the unwanted bits
+	git update-ref -d refs/original/refs/heads/master # delete old git history
+	git reflog expire --expire=now --all
+	git gc --prune=now
+	git push --all --force
