@@ -50,10 +50,17 @@ if [ ! $# -eq 1 ]; then
     exit
 fi
 
-cmd=$(find "${bin_dir}/" -type f -name "do[-_]*" | grep -v "\.sav$" | grep "$1" | sed "s#^$WDC_DO_COMMANDS_DIR/##" )
-[ ! -f "$cmd" ] && echo "The selected file/s does not exists or more than one has been selected: $(echo $cmd|tr '\n' ' ')" && exit
+cmd=""
+if [ $file -eq 0 ]; then
+  cmd=$(find "${bin_dir}/" -type f -name "do[-_]*" | grep -v "\.sav$" | grep "$1" | sed "s#^$WDC_DO_COMMANDS_DIR/##" )
+  [ ! -f "$cmd" ] && echo "The selected file/s does not exists or more than one has been selected: $(echo $cmd|tr '\n' ' ')" && exit
 
-[ $(file $cmd|grep -c "shell script") -eq 0 ] && [ $file -eq 0 ] && echo "Not a script, please provide the relative path to the script or use -f option for text files" && exit 
+  [ $(file $cmd|grep -c "shell script") -eq 0 ] && [ $file -eq 0 ] && echo "Not a script, please provide the relative path to the script or use -f option for text files" && exit 
+else
+  cmd="${1}"
+  [ ! -f "$cmd" ] && cmd=$(find "${bin_dir}/" -type f | grep -v "\.sav$" | grep "$1" | sed "s#^$WDC_DO_COMMANDS_DIR/##" )
+  [ ! -f "$cmd" ] && echo "The selected file/s does not exists or more than one has been selected: $(echo $cmd|tr '\n' ' ')" && exit
+fi
 
 # TODO: check if the command is already present in the git repository
 # check if the command has changes
