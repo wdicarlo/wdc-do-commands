@@ -714,3 +714,5 @@ export -f d
 
 alias k=kubectl
 [ "$(type -t __start_kubectl 2>/dev/null)" == "function" ] &&  complete -F __start_kubectl k
+
+update_env
