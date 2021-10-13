@@ -48,7 +48,7 @@ force_color_prompt=yes
 function update_prompt()
 {
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-        PS1='\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@\[${GREEN}\]$REPO_LOCATION\[${RESET}\][$REPO_SYNT]{${PROMPT_VARS}}\$ '
+        PS1='\[\033[01;31m\]$CONTEXT\[\033[00m\]:\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@\[${GREEN}\]$REPO_LOCATION\[${RESET}\][$REPO_SYNT]{${PROMPT_VARS}}\$ '
     else
         PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
     fi
@@ -222,12 +222,9 @@ function mterm() {
 function update_env() {
     quiet=0
     [ "$1" == "-q" ] && quiet=1
-    #export PROMPT_VARS=""
-    export TYPE=`pwd | sed -e "s/\// /g" | awk '{ print $3}'`
-    # if [ "$TYPE" = "projects" ];
-    # then
-    #     TYPE="p"
-    # fi
+    export CONTEXT="H" # H=host, O=OCI container
+    [ whoami == "dockeruser" ] && CONTEXT="O"
+    export TYPE=$(pwd | sed -e "s/\// /g" | awk '{ print $3}')
     export PROJECT=""
     case $TYPE in
         "projects")
