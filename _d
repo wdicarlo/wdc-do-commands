@@ -15,8 +15,8 @@ idx="d${1}";shift
   echo "d -c [<patt>] : list usage counter filtered by <patt>" && return
 cmd="";verbose=0
 [ "$idx" == "d-v" ] && verbose=1 && idx="d${1}" && shift
-[ "$idx" == "d-s" ] && do-cmd-index -t "^d[a-z]*$1;" && return
-[ "$idx" == "d-d" ] && do-cmd-index -t "do-.*$1.*" && return
+[ "$idx" == "d-s" ] && do-cmd-index -t "^d[a-z]*${1}.*;" | grep "${1}"  && return
+[ "$idx" == "d-d" ] && do-cmd-index -t "do-.*${1}.*" | grep "${1}"  && return
 [ "$idx" == "d-c" ] && cat "$cntfile" | while IFS=';' read -r cmd count; do sc=$(do-cmd-index ";$cmd$"|cut -d';' -f1);echo "${sc:----};$cmd;$count"; done |sort -t';' -n -r -k3| column -s ';' -t | grep "${1:-^}" && return
 [ "${idx:0:2}" == "d-" ] && echo "Wrong option. Use d -h to get availble options." && return 
 cmdname=$(cat "$idxfile"|grep "^${idx};"|cut -d';' -f2|tr -d ' ')
