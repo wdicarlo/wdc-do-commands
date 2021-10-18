@@ -1,12 +1,41 @@
 #!/usr/bin/env bash
 
+[ "$1" == "-h" ] && 
+  echo "$(basename $0) [-h] [-r] [-l]" && 
+  echo "-h          : help" &&
+  echo "-r          : recurse on folders" &&
+  echo "-l          : provide size labels" &&
+  echo "" && exit
 
-if [ "$1" == "-t" ]; then
-    du -hcs $@
-    exit 0
-fi
-
-for folder in $(find . -maxdepth 1 -type d|grep "/") 
+opt=""
+recurse=0
+while getopts hrl flag
 do
-    echo "$(du -cs $folder| grep total | sed 's/^\(.*\)[ \t]\+total/\1/'); $folder"
-done | sort -nr
+  case $flag in
+    r)
+      recurse=1
+      ;;
+    l)
+      opt="-h"
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+if [ $recurse -eq 0 ]; then
+    #du -hcs $@
+    echo "$(du -cs $opt .| grep total | sed 's/^\(.*\)[ \t]\+total/\1/'); ."
+    exit 0
+else
+  for folder in $(find . -maxdepth 1 -type d|grep "/") 
+  do
+      echo "$(du -cs $opt $folder| grep total | sed 's/^\(.*\)[ \t]\+total/\1/'); $folder"
+  done | sort -nr
+fi
