@@ -33,6 +33,7 @@ function usage() {
         echo "            11                       : demo repo with rebased master with feature branch"
         echo "            12                       : demo repo with commit conflicts"
         echo "            13                       : demo repo with many commits on the same file"
+        echo "            14                       : demo repo with many commits on the same big file"
         echo "       -n <name>                   : name of the repository"
         echo "       -s                          : use sub-module"
         echo "       -f                          : use git flow"
@@ -113,6 +114,7 @@ git_commit() {
     git commit -qm "$msg"
 }
 git_commit_file() {
+  [ ! $# -eq 1 ] && echo "Wrong number of parameters; <filename>" && return
   file="$1"
   if [ ! -f "$file" ]; then
     val=0
@@ -122,6 +124,22 @@ git_commit_file() {
   val=$(( val + 1 ))
   echo "$val" > "$file"
   msg="v$val"
+  git add "$file"
+  git commit -qm "$msg"
+}
+git_commit_big_file() {
+  [ ! $# -eq 2 ] && echo "Wrong number of parameters; <filename> <size>" && return
+  file="$1"
+  size="$2"
+  msg="Created $file"
+  if [ -f "$file" ]; then
+    msg="Updated $file"
+    cmd="dd if=/dev/random of=$file bs=1w count=1 conv=notrunc"
+  else
+    cmd="dd if=/dev/zero of=$file bs=$size count=1"
+  fi
+  echo "> $cmd"
+  eval "$cmd"
   git add "$file"
   git commit -qm "$msg"
 }
@@ -360,7 +378,7 @@ elif [ "$A_TOPOLOGY" = 12 ]; then
     git_merge $BRANCH_DEV
     git_commit_conflict master develop 1 change1 change2
     git_merge_conflict $BRANCH_DEV
-elif [ "$A_TOPOLOGY" = 13 ]; then
+elif [ "$A_TOPOLOGY" == 13 ] || [ "$A_TOPOLOGY" == 14 ]; then
     git_commit
     git_commit
     git_commit_file "file_with_many_commits"
@@ -371,6 +389,18 @@ elif [ "$A_TOPOLOGY" = 13 ]; then
     git_commit
     git_commit
     git_commit
+    if [ "$A_TOPOLOGY" == 14 ]; then
+      git_commit_big_file "big_file" 1M
+      git_commit_big_file "big_file" 1M
+      git_commit_big_file "big_file" 1M
+    fi
+    git_commit
+    git_commit
+    if [ "$A_TOPOLOGY" == 14 ]; then
+      git_commit_big_file "another_big_file" 2M
+      git_commit_big_file "another_big_file" 2M
+      git_commit_big_file "another_big_file" 2M
+    fi
 else
     git_commit
     git_commit
