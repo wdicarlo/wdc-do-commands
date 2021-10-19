@@ -223,7 +223,7 @@ function update_env() {
     quiet=0
     [ "$1" == "-q" ] && quiet=1
     export CONTEXT="H" # H=host, O=OCI container
-    [ "$(whoami)" == "dockeruser" ] && CONTEXT="O"
+    [ $(cat /proc/1/cgroup | grep -c docker) -gt 0 ] && CONTEXT="O"
     export TYPE=$(pwd | sed -e "s/\// /g" | awk '{ print $3}')
     export PROJECT=""
     case $TYPE in
