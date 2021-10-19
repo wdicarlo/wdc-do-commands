@@ -22,7 +22,7 @@ then
         exit
     fi
     # TODO: improve filtering considering only the filename but maintaining the path
-    list=$(find $folders -type f -name "do-*" | grep "$@" | grep -v "\.sav$")
+    list=$(find $folders -type f | grep "do[_-].*" | grep "$@" | grep -v "\.sav$")
     num=`ls -1 $list|wc -l`
     if [ "$num" -lt 10 ]
     then
@@ -31,6 +31,6 @@ then
         ls -1 $list
     fi
 else
-    find $folders -type f -name "do-*"
+    find $folders -type f  | grep "^do[_-].*"
 fi
 
