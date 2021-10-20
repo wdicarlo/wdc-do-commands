@@ -1,0 +1,20 @@
+--- git/do-git-filter-repo	2021-10-20 17:30:04.708726251 +0200
++++ git/do-git-filter-repo	2021-10-20 18:11:42.947318626 +0200
+@@ -28,6 +28,17 @@
+   prevent me from changing the API, but it will allow you to look at the
+   history of a testcase to see whether and how the API changed.
+   ***** END API BACKWARD COMPATIBILITY CAVEAT *****
++
++credit: https://github.com/newren/git-filter-repo
++example of usage:
++    $ git clone repo.git && cd repo
++    $ git filter-repo --analyze # to determine what to do next
++    $ git filter-repo --invert-paths --path-match <filename> # to delete a file from the repository
++    $ git filter-repo --strip-blobs-bigger-than <size> # to delete all files with size greater than <size>
++    $ cd .. && mkdir newrepo && cd newrepo && git init # init remote
++    $ git config receive.denyCurrentBranch ignore # allows to receive current branch
++    $ cd ../repo && git push --set-upstream origin master
++    $ cd ../newrepo && git reset -hard
+ """
+ 
+ import argparse

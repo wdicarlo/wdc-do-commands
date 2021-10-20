@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# create patch file with:
+# $ diff -Naru git/git-filter-repo git/do-git-filter-repo > git/do-git-filter-repo.patch
+# edit the patch file to reference only the cmd
+
+tools_file="$WDC_DO_COMMANDS_DIR/do_cmd_tools.csv"
+
+[ ! -f "$tools_file" ] && echo "Missing $tools_file" && exit
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -n                          : dry run"
+}
+
+# Arguments processing
+dryrun=0
+while getopts hn flag
+do
+  case $flag in
+    n)
+      dryrun=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+cd "$WDC_DO_COMMANDS_DIR"
+
+cat "$tools_file" | sed 1d | while IFS=',' read -r CMD URL PATCH
+do
+  [ -f "$CMD" ] && echo "Skipping existing command: $CMD" && continue
+  group=$(echo "$CMD" | cut -d '/' -f 1)
+  [ ! -d "$group" ] && echo "Skipping for unknown command group: $group" && continue
+  active=$(cat "do_cmd_groups.csv" | grep -c "$group;yes")
+  [ $active -eq 0 ] && echo "Skipping for inactive command group: $group" && continue
+  cmd="curl -sS $URL > $CMD"
+  echo "> $cmd"
+  [ $dryrun -eq 0 ] && eval "$cmd"
+
+  if [ ! "$PATCH" == "" ]; then
+    [ ! -f "$PATCH" ] && echo "Missing $PATCH" && exit
+    cmd="patch -p0 < \"$PATCH\""
+    echo "> $cmd"
+    [ $dryrun -eq 0 ] && eval "$cmd"
+  fi
+done
