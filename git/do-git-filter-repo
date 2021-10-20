@@ -30,6 +30,15 @@ operations; however:
   ***** END API BACKWARD COMPATIBILITY CAVEAT *****
 
 credit: https://github.com/newren/git-filter-repo
+example of usage:
+    $ git clone repo.git && cd repo
+    $ git filter-repo --analyze # to determine what to do next
+    $ git filter-repo --invert-paths --path-match <filename> # to delete a file from the repository
+    $ git filter-repo --strip-blobs-bigger-than <size> # to delete all files with size greater than <size>
+    $ cd .. && mkdir newrepo && cd newrepo && git init # init remote
+    $ git config receive.denyCurrentBranch ignore # allows to receive current branch
+    $ cd ../repo && git push --set-upstream origin master
+    $ cd ../newrepo && git reset -hard
 """
 
 import argparse
