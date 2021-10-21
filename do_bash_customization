@@ -645,6 +645,8 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+export HISTSIZE=10000
+export HISEFILESIZE=10000
 
 # some more ls aliases
 alias ll='ls -l'
