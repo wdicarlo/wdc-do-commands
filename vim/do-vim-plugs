@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h] [-q] [-n] [-l] [-t <dir>] [-p <file>]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -n                          : dry run"
+  echo "       -l                          : list current plug repos"
+  echo "       -t <dir>                    : download plugs in the targed <dir>"
+  echo "       -p <file>                   : <file> containing list of plug to download"
+}
+
+# Arguments processing
+quiet=0
+force=0
+exclude=""
+dryrun=0
+verbose=0
+list=0
+target_path="${HOME}/.vim"
+plugs_file=""
+while getopts hlt:p:n flag
+do
+  case $flag in
+    p)
+      plugs_file="$OPTARG"
+      ;;
+    t)
+      target_path="$OPTARG"
+      ;;
+    l)
+      list=1
+      ;;
+    f)
+      force=1
+      ;;
+    v)
+      verbose=1
+      ;;
+    q)
+      quiet=1
+      ;;
+    n)
+      dryrun=1
+      ;;
+    e)
+      exclude=$OPTARG
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+[ ! -d "$target_path" ] && echo "Missing target dir: $target_path" && exit
+target_dir="${target_path}/plugged" && [ -d "$target_dir" ] && mkdir -p "${target_dir}"
+if [ $list -eq 1 ]; then
+  for plug in $(find "$target_dir" -maxdepth 1 -mindepth 1 -type d)
+  do
+    git --git-dir "${plug}/.git" remote -v | head -1 | tr '\t' ' ' | cut -d' ' -f 2
+  done
+  exit
+fi
+if [ ! "$plugs_file" == "" ]; then
+  [ ! -f "$plugs_file" ] && echo "Missing file: $plugs_file" && exit
+  cat "$plugs_file" | while IFS='/' read -r ACCOUNT REPO
+  do
+    cmd="git clone --single-branch --quiet https://github.com/${ACCOUNT}/${REPO}.git ${target_dir}/${REPO}"
+    echo "> $cmd"
+    eval "$cmd"
+  done
+fi
