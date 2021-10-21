@@ -16,13 +16,18 @@ function usage() {
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -n                          : dry run"
+  echo "       -f                          : force the update"
 }
 
 # Arguments processing
 dryrun=0
-while getopts hn flag
+force=0
+while getopts hnf flag
 do
   case $flag in
+    f)
+      force=1
+      ;;
     n)
       dryrun=1
       ;;
@@ -42,11 +47,13 @@ cd "$WDC_DO_COMMANDS_DIR"
 
 cat "$tools_file" | sed 1d | while IFS=',' read -r CMD URL PATCH
 do
-  [ -f "$CMD" ] && echo "Skipping existing command: $CMD" && continue
+  [ -f "$CMD" ] && [ $force -eq 0 ] && echo "Skipping existing command: $CMD" && continue
   group=$(echo "$CMD" | cut -d '/' -f 1)
-  [ ! -d "$group" ] && echo "Skipping for unknown command group: $group" && continue
-  active=$(cat "do_cmd_groups.csv" | grep -c "$group;yes")
-  [ $active -eq 0 ] && echo "Skipping for inactive command group: $group" && continue
+  ntokens=$(echo "$CMD" | sed 's#/# #g' | wc -w )
+  [ ! -d "$group" ] && [ $ntokens -gt 1 ] && echo "Skipping for unknown command group: $group" && continue
+  active=$(cat "do_cmd_groups.csv" | grep -c "^$group;yes")
+  [ $ntokens -eq 1 ] && active=1 # don't need a group
+  [ $active -eq 0 ] && echo "Skipping for inactive command group: $group" && sed -i "/^$(echo $CMD|sed 's#/#\\\/#g')/d" .gitignore && continue
   cmd="curl -sS $URL > $CMD"
   echo "> $cmd"
   [ $dryrun -eq 0 ] && eval "$cmd"
@@ -57,4 +64,5 @@ do
     echo "> $cmd"
     [ $dryrun -eq 0 ] && eval "$cmd"
   fi
+  [ -f "$CMD" ] && [ $(cat .gitignore|grep -c "$CMD") -eq 0 ] && echo "$CMD" >> .gitignore
 done
