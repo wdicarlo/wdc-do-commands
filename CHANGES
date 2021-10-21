@@ -1,3 +1,42 @@
+Version 0.9.0:
+ - Added cmd/do-cmd command
+ - Improved do_bash_customization command.
+ - Update do_cmd_tools.csv file.
+ - Added vim/do-vim-plugs command
+ - Improved cmd/do-cmd-tools command.
+ - Improved cmd/do-cmd-tools command.
+ - Added cmd/do-cmd-tools command.
+ - Improved cmd/do-cmd-update command.
+ - Improved git/do-git-filter-repo command.
+ - Improved do_bash_customization command.
+ - Improved cmd/do-cmd-edit command.
+ - Update do_cmd_index_def.csv file.
+ - Improved sys/do-sys-du command.
+ - Improved git/do-git-build-demo-repo command. Added scenario 14 for big files
+ - Added git/do-git-filter-repo command
+ - Improved vim/do-vim command.
+ - Improved cmd/do-cmd-update command.
+ - Improved _d command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command.
+ - Improved do_bash_customization command. Added context type of the shell in the prompt
+ - Improved howto/do-howto-commit command.
+ - Improved cmd/do-cmd-update command.
+ - Update howto_git.otl file.
+ - Improved git/do-git-build-demo-repo command.
+ - Improved do-cmd-groups-slinks command
+ - Improved howto/do-howto-print command.
+ - Added k8s/do-k8s-kind-registry command
+ - Improved cmd/do-cmd-update command.
+ - Improved vim/do-vim-diff command.
+ - Update howto_vim.otl file.
+ - Update howto_k8s.otl file.
+ - Improved vim/do-vim-diff command. Added option to ignore white spaces
+ - Improved howto/do-howto-print command.
+ - Improved pipe/do-pipe-table-from-list command.
+ - Added pipe/do-pipe-table-from-list command
+ - Renamed docker commands group to oci
+
 Version 0.8.0:
  - Major reorganization of commands and abbreviations
  - Added data/do-data-anaconda command
