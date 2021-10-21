@@ -1,0 +1,122 @@
+#!/bin/bash
+
+set -e
+
+[ "$DEBUG" = "true" ] && set -x
+
+cmd=$(basename $0)
+
+function usage() {
+  echo "Usage: $cmd [-h] [-c <command>] [-d <oci-container>] [-p] [-b|-B]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -c <command>                : command to execute instead of bash"
+  echo "       -d <oci-container>          : container to use instead of default"
+  echo "       -p                          : use host PROJECTS path"
+  echo "       -b                          : re-build the image using the cache"
+  echo "       -B                          : re-build the image without using the cache"
+  echo "Optional environment variables:"
+  echo "  TAG                  - Container tag to use instead of default"
+  echo "  DOCKER_CONTAINER     - Container to use instead of default"
+  echo "  DOCKER_PULL          - Pull container from registry. Default: \"true\""
+  echo "  DOCKER_COMMAND       - Command to run on Docker container instead of /bin/bash"
+  echo "  EXTRA_PARAMETERS     - Extra parameters to pass to docker run"
+  echo "  DOCKER_SOCK          - Path to docker socket. Default: /var/run/docker.sock"
+  echo "  BASE_HOME            - Home path to use instead of \$HOME"
+  echo "  SSH_HOME             - SSH home path to use instead of \$HOME/.ssh"
+}
+
+DOCKER_COMMAND="${DOCKER_COMMAND:-"/bin/bash"}"
+
+# Arguments processing
+projects=0
+build=0
+while getopts hc:d:pbB flag
+do
+  case $flag in
+    B)
+      build=2
+      ;;
+    b)
+      build=1
+      ;;
+    p)
+      projects=1
+      ;;
+    c)
+      DOCKER_COMMAND="$OPTARG"
+      ;;
+    d)
+      DOCKER_CONTAINER="$OPTARG"
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+this_path="$(realpath $(dirname "${BASH_SOURCE[0]}" ))"
+
+if test -z "$DOCKER_CONTAINER"; then
+    TAG="${TAG:-"0.1"}"
+else
+    TAG="${TAG:-$(echo "$DOCKER_CONTAINER" | cut -d':' -f2)}"
+fi
+
+DOCKER_CONTAINER="${DOCKER_CONTAINER:-wdc-do-commands:$TAG}"
+LATEST="${DOCKER_CONTAINER:-wdc-do-commands:latest}"
+
+if [ $build -ge 1 ]; then
+  if [ ! "$WDC_DO_COMMANDS_DIR" == "" ]; then
+    cur_dir=$(pwd)
+    \cd "$WDC_DO_COMMANDS_DIR" >/dev/null 2>&1 
+    if [ -f "./Dockerfile" ]; then
+      OCI_OPTS="" && [ $build -eq 2 ] && OCI_OPTS="--no-cache"
+      docker build $OCI_OPTS -t ${DOCKER_CONTAINER} .
+      docker tag ${DOCKER_CONTAINER} ${LATEST}
+    else
+      echo "Missing Dockerfile"
+    fi
+    \cd "$cur_dir" >/dev/null 2>&1
+  else
+    echo "Missing WDC_DO_COMMANDS_DIR"
+  fi
+fi
+
+BASE_HOME="${BASE_HOME:-"$HOME"}"
+SSH_HOME="${SSH_HOME:-"${BASE_HOME}/.ssh"}"
+
+if ( [[ "${TAG}" = latest* ]] && [ "${DOCKER_PULL}" != 'false' ] ) || [ "${DOCKER_PULL}" = 'true' ]; then
+    docker pull "${DOCKER_CONTAINER}"
+fi
+
+#export CLI_PROMPT="${CLI_PROMPT:-"$(basename $(pwd)):\\w$"}"
+
+docker_args=()
+
+#env_regex="(DO_.*=|CLI_.*=)"
+#while read -r line; do
+#  docker_args+=(-e "${line}")
+#done < <(env | grep -E "${env_regex}")
+
+MOUNT_HOST_PROJECTS="" && [ $projects -eq 1 ] && MOUNT_HOST_PROJECTS="-v $PROJECTS:/home/dockeruser/projects"
+
+docker run -it --rm \
+    $EXTRA_PARAMETERS \
+    "${docker_args[@]}" \
+    -e "CUR_UID=$(id -u)" \
+    -e "CUR_GID=$(id -g)" \
+    -v $(pwd -P):/home/dockeruser/host \
+    ${MOUNT_HOST_PROJECTS} \
+    -v "${SSH_HOME}:/home/dockeruser/.ssh" \
+    -v "${BASE_HOME}/.bash_history:/home/dockeruser/.bash_history" \
+    -v "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock" \
+    "${DOCKER_CONTAINER}" \
+    "${DOCKER_COMMAND}"
+
