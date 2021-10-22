@@ -53,7 +53,6 @@ Plug 'tpope/vim-obsession'
 Plug 'vimoutliner/vimoutliner'
 Plug 'wdicarlo/vim-notebook'
 Plug 'vim-voom/VOoM'
-Plug 'vim-scripts/savevers.vim'
 Plug 'will133/vim-dirdiff'
 Plug 'skywind3000/asyncrun.vim'
 
@@ -309,6 +308,69 @@ let savevers_dirs = &backupdir
 "set g:asyncrun_open=5
 " }
 
+
+" vim-git-backup {
+"let g:custom_backup_dir = "/media/shared/vim/backups/"
+"let g:custom_backup_dir = "~/backups/vim"
+" }
+
+" vim-custom-git-custom {
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim Git Backup
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+augroup custom_backup
+  autocmd!
+  autocmd BufWritePost * call GBackupCurrentFile()
+augroup end
+"
+command! -nargs=0 GBackupCurrentFile :call GBackupCurrentFile()
+command! -nargs=0 GBackupHistory :call GBackupHistory()
+
+" backup dir
+let s:custom_backup_dir='/media/shared/vim/backups/vim_git_backup.git'
+
+
+function! GBackupCurrentFile()
+  if !isdirectory(expand(s:custom_backup_dir))
+    " init git repository
+    let cmd = 'mkdir -p ' . s:custom_backup_dir . ';'
+    let cmd .= 'cd ' . s:custom_backup_dir . ';'
+    let cmd .= 'git init;'
+    let cmd .= 'git config user.name "Walter Di Carlo";'
+    let cmd .= 'git config user.email "walter@di-carlo.it";'
+    call system(cmd)
+  endif
+  let file = expand('%:p')
+  if file =~ fnamemodify(s:custom_backup_dir, ':t') | return | endif
+  let file_dir = s:custom_backup_dir . expand('%:p:h')
+  let backup_file = s:custom_backup_dir . file
+  let cmd = ''
+  if !isdirectory(expand(file_dir))
+    let cmd .= 'mkdir -p ' . file_dir . ';'
+  endif
+  let curdate = strftime('%Y%m%d-%H:%M')
+  let cmd .= 'cp ' . file . ' ' . backup_file . ';'
+  let cmd .= 'cd ' . s:custom_backup_dir . ';'
+  let cmd .= 'git add ' . backup_file . ';'
+  let cmd .= 'git commit -m "'.curdate.';'.file.'";'
+
+  call job_start(['sh', '-c', cmd])
+endfunction
+
+function! GBackupHistory()
+    let backup_dir = expand(g:custom_backup_dir . expand('%:p:h'))
+    let cmd = "cd " . backup_dir
+    let cmd .= "; git log -p --since='1 month' " . expand('%:t')
+
+    silent! exe "noautocmd botright pedit vim_git_backup"
+
+    noautocmd wincmd P
+    set buftype=nofile
+    exe "noautocmd r! ".cmd
+    exe "normal! gg"
+    noautocmd wincmd p
+endfunction
+" }
 
 if &t_Co > 2 || has("gui_running")
   " Switch on highlighting the last used search pattern.
