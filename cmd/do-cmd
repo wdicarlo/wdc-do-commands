@@ -105,7 +105,7 @@ docker_args=()
 #  docker_args+=(-e "${line}")
 #done < <(env | grep -E "${env_regex}")
 
-MOUNT_HOST_PROJECTS="" && [ $projects -eq 1 ] && MOUNT_HOST_PROJECTS="-v $PROJECTS:/home/dockeruser/projects"
+MOUNT_HOST_PROJECTS="" && [ $projects -eq 1 ] && MOUNT_HOST_PROJECTS="-v $PROJECTS:/home/dockeruser/projects -v /media/shared/vim:/media/shared/vim"
 
 docker run -it --rm \
     $EXTRA_PARAMETERS \

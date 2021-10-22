@@ -1,5 +1,4 @@
-#FROM public-dockerhub-remote.artifactory-espoo1.int.net.nokia.com/bitnami/minideb:stretch-amd64
-FROM bitnami/minideb:stretch-amd64
+FROM bitnami/minideb:bullseye
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -10,7 +9,8 @@ RUN apt-get update && apt-get install -y \
     ncurses-bin \
     vim \
     curl \
-    jq
+    jq \
+    bash-completion
 
 RUN curl -fLo /home/dockeruser/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
