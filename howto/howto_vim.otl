@@ -1084,3 +1084,5 @@ call plug#end()
 :w ++enc=utf-8
 Vimdiff ignoring white spaces
 	vimdiff -c 'set diffopt+=iwhite' ...
+Avoid to hit Enter at each echoed message
+	set cmdheight=2
