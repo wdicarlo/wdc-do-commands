@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-folders=`echo $WDC_DO_COMMANDS_DIR`
+[ "$WDC_DO_COMMANDS_HOWTO_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_HOWTO_DIR" && exit
+
+folders=`echo $WDC_DO_COMMANDS_HOWTO_DIR`
 
 if [ $# == 1 ]
 then

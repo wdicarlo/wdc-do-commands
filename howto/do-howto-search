@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+[ "$WDC_DO_COMMANDS_HOWTO_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_HOWTO_DIR" && exit
 
 if [ $# == 0 ]
 then
@@ -8,4 +9,4 @@ then
    exit
 fi
 
-grep -Hn "$1" $(ls -1 $WDC_DO_COMMANDS_DIR/howto_*.otl) | sed 's#\(.*\)/howto_\([a-z_]\+\).otl#\2#'|grep --color "^\|$1"
+grep -Hn "$1" $(ls -1 $WDC_DO_COMMANDS_HOWTO_DIR/howto_*.otl) | sed 's#\(.*\)/howto_\([a-z_]\+\).otl#\2#'|grep --color "^\|$1"

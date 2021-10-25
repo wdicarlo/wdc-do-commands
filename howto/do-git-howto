@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-if [ $# -gt 0 ]
-then
-    cat $WDC_DO_COMMANDS_DIR/howto_git.otl | grep -A 1 -in $@
-else
-    cat $WDC_DO_COMMANDS_DIR/howto_git.otl
-fi

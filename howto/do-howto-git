@@ -4,7 +4,7 @@
 
 if [ $# -gt 0 ]
 then
-    cat $WDC_DO_COMMANDS_HOWTO_DIR/howto_gstreamer.otl | grep -A 1 -in $@
+    cat $WDC_DO_COMMANDS_HOWTO_DIR/howto_git.otl | grep -A 1 -in $@
 else
-    cat $WDC_DO_COMMANDS_HOWTO_DIR/howto_gstreamer.otl
+    cat $WDC_DO_COMMANDS_HOWTO_DIR/howto_git.otl
 fi

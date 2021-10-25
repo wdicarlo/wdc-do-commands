@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+[ "$WDC_DO_COMMANDS_HOWTO_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_HOWTO_DIR" && exit
 
 if [ $# == 0 ]
 then
@@ -12,13 +13,13 @@ then
 fi
 
 tool="$1"
-howto=$(echo $WDC_DO_COMMANDS_DIR/howto_${tool}.otl)
+howto=$(echo $WDC_DO_COMMANDS_HOWTO_DIR/howto_${tool}.otl)
 shift
 if [ ! -f "$howto" ]; then
   topic=$(do-howto-list|grep "^${tool}")
   n=$(echo "$topic"|grep -v "^[ \t]*$"|wc -l)
   if [ $n -eq 1 ]; then
-    howto=$(echo $WDC_DO_COMMANDS_DIR/howto_${topic}.otl)
+    howto=$(echo $WDC_DO_COMMANDS_HOWTO_DIR/howto_${topic}.otl)
   else
     echo "Selected howto with pattern \"${tool}\":"
     echo "$topic" | sed 's/^/\t/'

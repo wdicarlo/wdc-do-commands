@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+[ "$WDC_DO_COMMANDS_HOWTO_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_HOWTO_DIR" && exit
+
 if [ $# -gt 0 ]
 then
-    cat $WDC_DO_COMMANDS_DIR/howto_linux.otl | grep -A 1 -in $@
+    cat $WDC_DO_COMMANDS_HOWTO_DIR/howto_linux.otl | grep -A 1 -in $@
 else
-    cat $WDC_DO_COMMANDS_DIR/howto_linux.otl
+    cat $WDC_DO_COMMANDS_HOWTO_DIR/howto_linux.otl
 fi

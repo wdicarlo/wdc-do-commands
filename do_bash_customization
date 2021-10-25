@@ -34,6 +34,8 @@ if [ -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
     echo "PROMPT_VARS            =  $PROMPT_VARS"
 fi
 
+export WDC_DO_COMMANDS_HOWTO_DIR="$WDC_DO_COMMANDS_DIR/howto"
+
 export BASH_COMPLETITION_DIR="$WDC_DO_COMMANDS_DIR/bash_completion.d"
 bash_compl_dir=$BASH_COMPLETITION_DIR
 

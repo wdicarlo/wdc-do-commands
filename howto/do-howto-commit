@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[ "$WDC_DO_COMMANDS_HOWTO_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_HOWTO_DIR" && exit
+
 function usage() {
   cmd=`basename $0`
   echo "Usage: $cmd [-h] [-m\"commit-message\"] <category>"
@@ -36,7 +38,7 @@ then
 fi
 
 howto="howto_${1}.otl"
-howtofile="$WDC_DO_COMMANDS_DIR/$howto"
+howtofile="$WDC_DO_COMMANDS_HOWTO_DIR/$howto"
 
 if [ ! -f "$howtofile" ]; then
     echo "Missing howto file: $howto"

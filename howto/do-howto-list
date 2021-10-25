@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-find $WDC_DO_COMMANDS_DIR/ -maxdepth 1 -name "howto_*" | xargs -I@ basename @ | sed -e 's/.otl//' -e 's/howto_//' | sort
+[ "$WDC_DO_COMMANDS_HOWTO_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_HOWTO_DIR" && exit
+
+find $WDC_DO_COMMANDS_HOWTO_DIR/ -maxdepth 1 -name "howto_*" | xargs -I@ basename @ | sed -e 's/.otl//' -e 's/howto_//' | sort
