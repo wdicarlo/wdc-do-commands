@@ -141,4 +141,4 @@ Describe a pod
 Get list of deployments in the namespace superset
 	kubectl get deploy -n superset
 Get YAML configuration of a deployment
-	kubectl get deploy -n superset nokia-superset -o yaml
+	kubectl get deploy -n superset my-superset -o yaml
