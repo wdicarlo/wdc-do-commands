@@ -35,6 +35,7 @@ if has('syntax') && has('eval')
   packadd! matchit
 endif
 
+set cmdheight=2 " to avoid to hit Enter at each message
 " Plugins will be downloaded under the specified directory.
 call plug#begin('~/.vim/plugged')
 
@@ -308,7 +309,6 @@ let savevers_dirs = &backupdir
 "set g:asyncrun_open=5
 " }
 
-
 " vim-git-backup {
 "let g:custom_backup_dir = "/media/shared/vim/backups/"
 "let g:custom_backup_dir = "~/backups/vim"
@@ -322,7 +322,7 @@ augroup custom_backup
   autocmd!
   autocmd BufWritePost * call GBackupCurrentFile()
 augroup end
-"
+ 
 command! -nargs=0 GBackupCurrentFile :call GBackupCurrentFile()
 command! -nargs=0 GBackupHistory :call GBackupHistory()
 
@@ -342,6 +342,9 @@ function! GBackupCurrentFile()
   endif
   let file = expand('%:p')
   if file =~ fnamemodify(s:custom_backup_dir, ':t') | return | endif
+  let projects_dir = fnamemodify('~/projects', ':p')
+  if stridx(file,projects_dir) == -1 | echohl WarningMsg | echo "Skipping backup of: ".file | echohl None | return | endif " skip backup of files not under projects folder
+  echomsg "Backup of: ".file
   let file_dir = s:custom_backup_dir . expand('%:p:h')
   let backup_file = s:custom_backup_dir . file
   let cmd = ''
