@@ -77,6 +77,17 @@ bash scripting howto
        echo "       -q                          : quiet"
    }
 
+# Evaluate command help function
+   function evalcmd() {
+     [ "$cmd" == "" ] && return
+     if [ $quiet -eq 0 ]; then
+   	echo "> $cmd"
+     fi
+     if [ $dryrun -eq 0 ]; then
+   	eval "$cmd"
+     fi
+   }
+
 # Arguments processing
    quiet=0
    force=0
