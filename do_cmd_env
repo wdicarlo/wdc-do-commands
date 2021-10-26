@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# script to setup WDC_DO_COMMANDS and PATH variables
+
+[[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
+
+[ $# -ne 1 ] && echo "Missing folder containing commands scripts" && return
+
+BIN_DIR="$(readlink -f $1)" # use absolute path
+
+[ ! -d "$BIN_DIR" ] && echo "Not a folder: $BIN_DIR" && return
+
+[ ! -f "${BIN_DIR}/cmd/do-cmd" ] && echo "Not a valid folder: $BIN_DIR" && return
+
+[ ! "$WDC_DO_COMMANDS_DIR" == "" ] && PATH=$(echo $PATH|sed "s#$WDC_DO_COMMANDS_DIR,##")
+
+export WDC_DO_COMMANDS_DIR="$BIN_DIR"
+export PATH="$WDC_DO_COMMANDS_DIR,$PATH"
+
