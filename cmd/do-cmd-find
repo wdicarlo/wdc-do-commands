@@ -75,13 +75,15 @@ elif [ $all -eq 2 ]; then
     cmd="find . -not -path \"./.git/*\" -type f | sed 's#^\.\/##'"
 fi
 
+pars="$@"
+
 if [ $files -eq 1 ]; then
-    cmd="$cmd | grep $@"
+    cmd="$cmd | grep $pars"
 else
     if [ $options -eq 0 ]; then
-        cmd="$cmd | xargs -I@ \grep --color -Hn $@ @"
+        cmd="$cmd | xargs -I@ sh -c \"\grep --color -Hn \\\"$pars\\\" @\""
     else
-        cmd="$cmd | xargs -I@ grep -Hn \"getopts.*h\" @ |sed 's/^\([a-z/-]*\):.*/\1/'|sort|uniq|xargs -I@ sh -c \"@ -h\"| \grep --color \"${filter}[a-z_-]*\|$@\""
+        cmd="$cmd | xargs -I@ grep -Hn \"getopts.*h\" @ |sed 's/^\([a-z/-]*\):.*/\1/'|sort|uniq|xargs -I@ sh -c \"@ -h\"| \grep --color \"${filter}[a-z_-]*\|$pars\""
     fi
 fi
 
