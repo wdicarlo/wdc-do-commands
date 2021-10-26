@@ -134,3 +134,9 @@ Remove (delete) unused data; containers, networks, images, cache
 	docker system prune
 Update image name and tag
 	docker image tag mynvimi:0.0.1 neovim:0.5
+List repository images
+	docker image ls <repo>/<path>/<to>/<image>
+Change repository, path and tag of an image
+	docker tag ghcr.io/apache/airflow/v2-1-test/prod-build/python3.6:latest <myrepo>/<path>/<to>/<my-airflow>/airflow:0.1.0
+Push an image
+	docker push <myrepo>/<path>/<to>/<my-airflow>/airflow:0.1.0
