@@ -1,16 +1,29 @@
 FROM bitnami/minideb:bullseye
 
-RUN apt-get update && apt-get install -y \
-    git \
-    file \
-    sudo \
-    gosu \
-    bsdmainutils \
-    ncurses-bin \
-    vim \
-    curl \
-    jq \
-    bash-completion
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+      git \
+      file \
+      ca-certificates \
+      apt-transport-https \
+      gnupg \
+      openssh-client \
+      sudo \
+      gosu \
+      bsdmainutils \
+      ncurses-bin \
+      vim \
+      curl \
+      jq \
+      bash-completion \
+    && apt-get autoremove -yqq --purge \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git config --global http.proxy $HTTPS_PROXY \
+    && git clone https://github.com/bats-core/bats-core.git /tmp/bats-core \
+    && cd /tmp/bats-core \
+    && ./install.sh /usr/local
 
 RUN curl -fLo /home/dockeruser/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
