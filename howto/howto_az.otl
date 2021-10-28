@@ -1,12 +1,14 @@
 Azure CLI
 	Azure CLI commands tips and tricks
 Login into Azure
-  az login -u <email_address>
+	az login -u <email_address>
 Login into Azure with a service principal
-  az login --service-principal --username "$CLIENT_ID" --password "$CLIENT_SECRET" --tenant "$TENANT_ID" &> /dev/null
+	az login --service-principal --username "$CLIENT_ID" --password "$CLIENT_SECRET" --tenant "$TENANT_ID" &> /dev/null
 Select a subscription to work with
-  az account set --subscription $SUBSCRIPTION_NAME
+	az account set --subscription $SUBSCRIPTION_NAME
 List permissions for a role
-  az role definition list | jq '.[] | select(.roleName=="Virtual Machine Contributor") | .permissions[] | .actions'
+	az role definition list | jq '.[] | select(.roleName=="Virtual Machine Contributor") | .permissions[] | .actions'
 List all role names matching a regular expression
-  az role definition list | jq '.[] | select(.roleName|match("Machine.*Login")) | .roleName'
+	az role definition list | jq '.[] | select(.roleName|match("Machine.*Login")) | .roleName'
+Install costmanagement extension
+	no_proxy=${no_proxy//.blob.core.windows.net,} az extension add --name costmanagement
