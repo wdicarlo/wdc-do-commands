@@ -1086,3 +1086,8 @@ Vimdiff ignoring white spaces
 	vimdiff -c 'set diffopt+=iwhite' ...
 Avoid to hit Enter at each echoed message
 	set cmdheight=2
+Jump around in a line
+	f{char} - jump to the next occurrence of {char} to the right of the cursor on the same line
+	F{char} - jump to the next occurrence of {char} to the left of the cursor on the same line
+	t{char} - jump to the left of the next occurrence of {char} to the right of the cursor on the same line
+	T{char} - jump to the right of next occurrence of {char} to the left of the cursor on the same line
