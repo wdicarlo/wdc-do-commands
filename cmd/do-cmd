@@ -7,11 +7,11 @@ set -e
 cmd=$(basename $0)
 
 function usage() {
-  echo "Usage: $cmd [-h] [-c <command>] [-d <oci-container>] [-p] [-b|-B]"
+  echo "Usage: $cmd [-h] [-c <command>] [-d <oci-container>:<tag> [-b|-B]"
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -c <command>                : command to execute instead of bash"
-  echo "       -d <oci-container>          : container to use instead of default"
+  echo "       -d <oci-container:<tag>     : container to use instead of default"
   echo "       -p                          : use host PROJECTS path"
   echo "       -b                          : re-build the image using the cache"
   echo "       -B                          : re-build the image without using the cache"
