@@ -27,3 +27,12 @@ teardown() {
   [ "${#lines[@]}" -eq 1 ]
   [ "${lines[0]}" == "dcf;do-cmd-find" ]
 }
+@test "pre-defined abbreviations" {
+  cat do_cmd_index_ref.csv | while IFS=';' read -r abbr cmd
+  do
+    run do-cmd-index $cmd
+    [ $status -eq 0 ]
+    [ "${#lines[@]}" -eq 1 ]
+    [ "${lines[0]}" == "$abbr;$cmd" ]
+  done
+}
