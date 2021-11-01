@@ -44,7 +44,7 @@ fi
 cd "${prj_root}$prj" || return
 if [ ! -f .bash_env ]; then
     shift $#
-    source "$WDC_DO_COMMANDS_DIR/do_setup_env"
+    source "$WDC_DO_COMMANDS_BIN/do_setup_env"
 fi
 
 # set title of terminal window

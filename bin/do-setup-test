@@ -33,4 +33,4 @@ fi
 
 echo "> mkdir $test_path"
 
-mkdir $test_path&&source $WDC_DO_COMMANDS_DIR/do_activate_test $test_name&& echo "Created test: $TEST at $TEST_PATH"
+mkdir $test_path&&source $WDC_DO_COMMANDS_BIN/do_activate_test $test_name&& echo "Created test: $TEST at $TEST_PATH"

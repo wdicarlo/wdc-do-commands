@@ -4,7 +4,7 @@
 # $ diff -Naru git/git-filter-repo git/do-git-filter-repo > git/do-git-filter-repo.patch
 # edit the patch file to reference only the cmd
 
-tools_file="$WDC_DO_COMMANDS_DIR/do_cmd_tools.csv"
+tools_file="$WDC_DO_COMMANDS_BIN/do_cmd_tools.csv"
 
 [ ! -f "$tools_file" ] && echo "Missing $tools_file" && exit
 

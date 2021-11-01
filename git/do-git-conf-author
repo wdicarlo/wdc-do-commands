@@ -22,7 +22,7 @@ fi
 
 [ $(cat "$git_conf"| grep -c "\[user\]") -gt 0 ] && echo "[user] section already present in $git_conf" && exit
 
-cfile="$WDC_DO_COMMANDS_DIR/do_git_conf_author.csv"
+cfile="$WDC_DO_COMMANDS_BIN/do_git_conf_author.csv"
 [ ! -f "$cfile" ] && echo "personal;Walter Di Carlo;walter@di-carlo.it" > "$cfile"
 
 name=""

@@ -8,7 +8,7 @@ then
    exit
 fi
 
-howto=`echo $WDC_DO_COMMANDS_DIR/howto_git.otl`
+howto=`echo $WDC_DO_COMMANDS_HOWTO_DIR/howto_git.otl`
 
 echo -e "$1\n\t$2" >> $howto
 

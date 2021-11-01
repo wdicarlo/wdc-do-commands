@@ -199,6 +199,6 @@ fi
 if [ ! -f .bash_env ]; then
 	if [ -z PROJECTS ]; then
 			shift $#
-			. $WDC_DO_COMMANDS_DIR/do_setup_env
+			. $WDC_DO_COMMANDS_BIN/do_setup_env
 	fi
 fi
