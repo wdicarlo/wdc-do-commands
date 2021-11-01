@@ -4,16 +4,38 @@
 cmd=`basename $0`
 
 function usage() {
-  echo "Usage: $cmd [-h] [-p] [-j]"
+  echo "Usage: $cmd [-h] [-p] [-j] [-J]"
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -p                          : start the python console"
   echo "       -j                          : start the jupyter notebooks web service"
+  echo "       -J                          : build and start the jupyter notebooks web service"
+}
+
+IMAGE_NAME=anaconda-jupyter
+IMAGE_TAG=0.1
+
+function build_jupyter() {
+  mkdir /tmp/aj >/dev/null 2>&1 
+cat <<EOF > /tmp/aj/Dockerfile
+    FROM continuumio/anaconda3:latest
+
+    RUN /opt/conda/bin/conda install jupyter -y --quiet \
+        && mkdir -p /opt/notebooks 
+EOF
+  cd /tmp/aj
+  docker build -t $IMAGE_NAME:$IMAGE_TAG .
+}
+function run_jupyter() {
+  docker run -it --rm -p 8888:8888 -v $JUPYTER_MOUNT_POINT:/opt/notebooks $IMAGE_NAME:$IMAGE_TAG /bin/bash \
+  -c "/opt/conda/bin/jupyter notebook \
+  --notebook-dir=/opt/notebooks --ip='*' --port=8888 \
+  --no-browser --allow-root"
 }
 
 # Arguments processing
 cli=0
-while getopts hpj flag
+while getopts hpjJ flag
 do
   case $flag in
     p)
@@ -21,6 +43,9 @@ do
       ;;
     j)
       cli=2
+      ;;
+    J)
+      cli=3
       ;;
     h)
       usage
@@ -40,11 +65,8 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 if [ $cli -eq 1 ]; then
   docker run -it --rm -p 8888:8888 -v $JUPYTER_MOUNT_POINT:/opt/notebooks continuumio/anaconda3:latest /opt/conda/bin/python3
-elif [ $cli -eq 2 ]; then
-  docker run -it --rm -p 8888:8888 -v $JUPYTER_MOUNT_POINT:/opt/notebooks continuumio/anaconda3:latest /bin/bash \
-  -c "/opt/conda/bin/conda install jupyter -y --quiet && mkdir -p \
-  /opt/notebooks && /opt/conda/bin/jupyter notebook \
-  --notebook-dir=/opt/notebooks --ip='*' --port=8888 \
-  --no-browser --allow-root"
+elif [ $cli -ge 2 ]; then
+  [ $(docker images | grep -c "$IMAGE_NAME.*$IMAGE_TAG") -eq 0 ] && cli=3 # force build
+  [ $cli -eq 3 ] && build_jupyter
+  run_jupyter
 fi
-
