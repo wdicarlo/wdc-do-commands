@@ -55,7 +55,7 @@ if [ $update -eq 1 ]; then
     done
   fi
   (
-    for cmd in $(ls -1 "$WDC_DO_COMMANDS_DIR" | grep "^do-"| grep -v "\.sav$")
+    for cmd in $(ls -1 "$WDC_DO_COMMANDS_BIN" | grep "^do-"| grep -v "\.sav$")
     do
       [ $(cat "$WDC_DO_COMMANDS_BIN/do_cmd_index_def.csv"|cut -d';' -f2|grep -c "$cmd") -gt 0 ] && continue
       idx=""
