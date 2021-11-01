@@ -28,7 +28,7 @@ RUN git config --global http.proxy $HTTPS_PROXY \
 RUN curl -fLo /home/dockeruser/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-RUN git clone https://github.com/wdicarlo/wdc-do-commands.git /tmp/wdc-do-commands
+RUN git clone --single-branch --branch dev_bin_folder https://github.com/wdicarlo/wdc-do-commands.git /tmp/wdc-do-commands
 
 RUN mkdir -p /home/dockeruser \
     && mkdir -p /home/dockeruser/projects \
