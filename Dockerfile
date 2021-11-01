@@ -28,7 +28,7 @@ RUN git config --global http.proxy $HTTPS_PROXY \
 RUN curl -fLo /home/dockeruser/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-RUN git clone --single-branch --branch dev_bin_folder https://github.com/wdicarlo/wdc-do-commands.git /tmp/wdc-do-commands
+RUN NO_PROXY="$NO_PROXY,.github.com" git clone --single-branch --branch dev_bin_folder https://github.com/wdicarlo/wdc-do-commands.git /tmp/wdc-do-commands
 
 RUN mkdir -p /home/dockeruser \
     && mkdir -p /home/dockeruser/projects \
@@ -39,7 +39,7 @@ RUN mkdir -p /home/dockeruser \
 ENV WDC_DO_COMMANDS_DIR="/home/dockeruser/wbin"
 ENV PATH="$PATH:/home/dockeruser/wbin"
 
-COPY ./entrypoint.sh ./do_cmd_counts.csv /home/dockeruser/wbin/
+COPY ./entrypoint.sh ./bin/do_cmd_counts.csv /home/dockeruser/wbin/
 COPY ./vimrc /home/dockeruser/.vimrc
 
 RUN cd /home/dockeruser/wbin \
@@ -47,7 +47,7 @@ RUN cd /home/dockeruser/wbin \
     && ./cmd/do-cmd-index -u \
     && curl -fLo /home/dockeruser/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
-    && ./vim/do-vim-plugs -t /home/dockeruser/.vim/ -p do_vim_plugs.csv
+    && ./vim/do-vim-plugs -t /home/dockeruser/.vim/ -p ./bin/do_vim_plugs.csv
 
 RUN ["chmod", "+x", "/home/dockeruser/wbin/entrypoint.sh"]
 
