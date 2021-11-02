@@ -2,6 +2,9 @@
 # Usage help function
 cmd=`basename $0`
 
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
+export WDC_DO_COMMANDS_BIN="${WDC_DO_COMMANDS_DIR}/bin"
+
 function usage() {
   echo "Usage: $cmd [-h] [-t] [-T] [<grep_pattern>]"
   echo "where:"
@@ -38,6 +41,7 @@ do
   esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 
 idxfile="$(echo $WDC_DO_COMMANDS_BIN/do_cmd_index.csv)"
 [ ! -f "$idxfile" ] && update=1 # force the creation of the index
