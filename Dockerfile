@@ -34,13 +34,15 @@ RUN NO_PROXY="$NO_PROXY,.github.com" git clone --single-branch --branch dev_bin_
 RUN mkdir -p /home/dockeruser \
     && mkdir -p /home/dockeruser/projects \
     && cp -r /tmp/wdc-do-commands /home/dockeruser/wbin \
-    && export PATH="$PATH:/home/dockeruser/wbin"
+    && export PATH="$PATH:/home/dockeruser/wbin/bin"
 
 
 ENV WDC_DO_COMMANDS_DIR="/home/dockeruser/wbin"
-ENV PATH="$PATH:/home/dockeruser/wbin"
+ENV WDC_DO_COMMANDS_BIN="/home/dockeruser/wbin/bin"
+ENV PATH="$PATH:/home/dockeruser/wbin/bin"
 
-COPY ./entrypoint.sh ./bin/do_cmd_counts.csv /home/dockeruser/wbin/
+COPY ./entrypoint.sh /home/dockeruser/wbin/
+COPY ./bin/do_cmd_counts.csv /home/dockeruser/wbin/bin/
 COPY ./vimrc /home/dockeruser/.vimrc
 
 RUN cd /home/dockeruser/wbin \
