@@ -32,14 +32,15 @@ RUN NO_PROXY="$NO_PROXY,.githubusercontent.com" curl -fLo /home/dockeruser/.vim/
 RUN NO_PROXY="$NO_PROXY,.github.com" git clone --single-branch --branch master https://github.com/wdicarlo/wdc-do-commands.git /tmp/wdc-do-commands
 
 RUN mkdir -p /home/dockeruser \
+    && mkdir -p /home/dockeruser/mbin \
     && mkdir -p /home/dockeruser/projects \
     && cp -r /tmp/wdc-do-commands /home/dockeruser/wbin \
-    && export PATH="$PATH:/home/dockeruser/wbin/bin"
+    && export PATH="$PATH:/home/dockeruser/wbin/bin:/home/dockeruser/mbin"
 
 
 ENV WDC_DO_COMMANDS_DIR="/home/dockeruser/wbin"
 ENV WDC_DO_COMMANDS_BIN="/home/dockeruser/wbin/bin"
-ENV PATH="$PATH:/home/dockeruser/wbin/bin"
+ENV PATH="$PATH:/home/dockeruser/wbin/bin:/home/dockeruser/mbin"
 
 COPY ./entrypoint.sh /home/dockeruser/wbin/
 COPY ./bin/do_cmd_counts.csv /home/dockeruser/wbin/bin/

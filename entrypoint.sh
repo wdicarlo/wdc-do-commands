@@ -24,6 +24,7 @@ if [[ "${CUR_UID:-"0"}" != '0' ]]; then
   echo '%sudo ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
   export HOME=/home/dockeruser
   echo "source \$WDC_DO_COMMANDS_DIR/bin/do_bash_customization" > /home/dockeruser/.bashrc
+  echo "export PATH=\"\$PATH:/home/dockeruser/mbin\"" >> /home/dockeruser/.bashrc
 
   chown -R dockeruser:dockeruser /home/dockeruser/ 
 
