@@ -7,12 +7,14 @@ set -e
 cmd=$(basename $0)
 
 function usage() {
-  echo "Usage: $cmd [-h] [-c <command>] [-d <oci-container>:<tag> [-b|-B]"
+  echo "Usage: $cmd [-h] [-c <command>] [-d <oci-container>:<tag> [-b|-B] [-s] [-m <path>]"
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -c <command>                : command to execute instead of bash"
   echo "       -d <oci-container:<tag>     : container to use instead of default"
   echo "       -p                          : use host PROJECTS path"
+  echo "       -s                          : use host shared path"
+  echo "       -m <path>                   : use host more commands path"
   echo "       -b                          : re-build the image using the cache"
   echo "       -B                          : re-build the image without using the cache"
   echo "Optional environment variables:"
@@ -31,7 +33,9 @@ DOCKER_COMMAND="${DOCKER_COMMAND:-"/bin/bash"}"
 # Arguments processing
 projects=0
 build=0
-while getopts hc:d:pbB flag
+shared=0
+mbin_path=""
+while getopts hc:d:pbBsm: flag
 do
   case $flag in
     B)
@@ -42,6 +46,12 @@ do
       ;;
     p)
       projects=1
+      ;;
+    s)
+      shared=1
+      ;;
+    m)
+      mbin_path="$OPTARG"
       ;;
     c)
       DOCKER_COMMAND="$OPTARG"
@@ -62,9 +72,12 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 this_path="$(realpath $(dirname "${BASH_SOURCE[0]}" ))"
-
+ver=$(git tag | sort -rV | head -1)
+branch=$(git rev-parse --abbrev-ref HEAD)
+postfix="" && [ $(git diff $ver..$branch|wc -l) -gt 0 ] && postfix="-dev"
 if test -z "$DOCKER_CONTAINER"; then
-    TAG="${TAG:-"0.1"}"
+  GIT_TAG="$(echo $ver|tr -d 'v')$postfix"
+  TAG="${TAG:-$GIT_TAG}"
 else
     TAG="${TAG:-$(echo "$DOCKER_CONTAINER" | cut -d':' -f2)}"
 fi
@@ -105,7 +118,10 @@ docker_args=()
 #  docker_args+=(-e "${line}")
 #done < <(env | grep -E "${env_regex}")
 
-MOUNT_HOST_PROJECTS="" && [ $projects -eq 1 ] && MOUNT_HOST_PROJECTS="-v $PROJECTS:/home/dockeruser/projects -v /media/shared/vim:/media/shared/vim"
+MOUNT_HOST_PROJECTS="" && [ $projects -eq 1 ] && MOUNT_HOST_PROJECTS="-v $PROJECTS:/home/dockeruser/projects"
+MOUNT_HOST_SHARED="" && [ $shared -eq 1 ] && MOUNT_HOST_SHARED="-v /media/shared/:/media/shared"
+MOUNT_HOST_MBIN="" && [ ! "$mbin_path" == "" ] && MOUNT_HOST_MBIN="-v $mbin_path:/home/dockeruser/mbin"
+
 
 docker run -it --rm \
     $EXTRA_PARAMETERS \
@@ -114,6 +130,8 @@ docker run -it --rm \
     -e "CUR_GID=$(id -g)" \
     -v $(pwd -P):/home/dockeruser/host \
     ${MOUNT_HOST_PROJECTS} \
+    ${MOUNT_HOST_SHARED} \
+    ${MOUNT_HOST_MBIN} \
     -v "${SSH_HOME}:/home/dockeruser/.ssh" \
     -v "${BASE_HOME}/.bash_history:/home/dockeruser/.bash_history" \
     -v "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock" \
