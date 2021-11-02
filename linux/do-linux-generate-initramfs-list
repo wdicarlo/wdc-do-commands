@@ -16,12 +16,12 @@ folder=`echo $1|sed 's/\/$//'`
 
 if [ $# == 2 ]
 then
-    $WDC_DO_COMMANDS_DIR/gen_initramfs_list -u 1001 -g 100 $folder > ${folder}_list.tmp || exit
+    $WDC_DO_COMMANDS_HOWTO_BIN/gen_initramfs_list -u 1001 -g 100 $folder > ${folder}_list.tmp || exit
 
     cat ${folder}_list.tmp|sed -e "s/ $folder/ $2\/$folder/"  >  ${folder}_list
     rm ${folder}_list.tmp
 else
-    $WDC_DO_COMMANDS_DIR/gen_initramfs_list -u 1001 -g 100 $folder > ${folder}_list || exit
+    $WDC_DO_COMMANDS_HOWTO_BIN/gen_initramfs_list -u 1001 -g 100 $folder > ${folder}_list || exit
 fi
 
 if [ -d "${folder}_dbg" ]
@@ -31,7 +31,7 @@ then
     if [ "$answer" == "Y" ]
     then
         # build custom extension
-        $WDC_DO_COMMANDS_DIR/gen_initramfs_list -u 1001 -g 100 ${folder}_dbg >> ${folder}_list || exit
+        $WDC_DO_COMMANDS_HOWTO_BIN/gen_initramfs_list -u 1001 -g 100 ${folder}_dbg >> ${folder}_list || exit
     fi
 fi
 

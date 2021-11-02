@@ -2,6 +2,9 @@
 # Usage help function
 cmd=`basename $0`
 
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
+export WDC_DO_COMMANDS_BIN="${WDC_DO_COMMANDS_DIR}/bin"
+
 function usage() {
   echo "Usage: $cmd [-h] [-t] [-T] [<grep_pattern>]"
   echo "where:"
@@ -39,13 +42,14 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-idxfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_index.csv)"
+
+idxfile="$(echo $WDC_DO_COMMANDS_BIN/do_cmd_index.csv)"
 [ ! -f "$idxfile" ] && update=1 # force the creation of the index
 if [ $update -eq 1 ]; then
   declare -A cmds
-  if [ -f "$WDC_DO_COMMANDS_DIR/do_cmd_index_def.csv" ]; then
+  if [ -f "$WDC_DO_COMMANDS_BIN/do_cmd_index_def.csv" ]; then
     # load pre-defined index
-    for line in $(cat "$WDC_DO_COMMANDS_DIR/do_cmd_index_def.csv"|grep -v "^[ \t]*$")
+    for line in $(cat "$WDC_DO_COMMANDS_BIN/do_cmd_index_def.csv"|grep -v "^[ \t]*$")
     do
       idx=$(echo "$line"|cut -d';' -f1)
       [ ! "${cmds[$idx]}" == "" ] && echo "Bad predefined commands index" && exit 1
@@ -55,9 +59,9 @@ if [ $update -eq 1 ]; then
     done
   fi
   (
-    for cmd in $(ls -1 "$WDC_DO_COMMANDS_DIR" | grep "^do-"| grep -v "\.sav$")
+    for cmd in $(ls -1 "$WDC_DO_COMMANDS_BIN" | grep "^do-"| grep -v "\.sav$")
     do
-      [ $(cat "$WDC_DO_COMMANDS_DIR/do_cmd_index_def.csv"|cut -d';' -f2|grep -c "$cmd") -gt 0 ] && continue
+      [ $(cat "$WDC_DO_COMMANDS_BIN/do_cmd_index_def.csv"|cut -d';' -f2|grep -c "$cmd") -gt 0 ] && continue
       idx=""
       for w in $(echo "$cmd" | tr '-' ' '); 
       do 
@@ -75,7 +79,7 @@ if [ $update -eq 1 ]; then
       cmds["$idx"]="$cmd"
       echo "$idx;$cmd" 
     done; 
-    cat "$WDC_DO_COMMANDS_DIR/do_cmd_index_def.csv"
+    cat "$WDC_DO_COMMANDS_BIN/do_cmd_index_def.csv"
   ) | grep -v "^[ \t]*$" | sort -t';' -k 1 > "$idxfile"
 fi
 

@@ -2,20 +2,27 @@
 [[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
 echo "Customizing bash"
-[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR. Assuming ~/bin" && export WDC_DO_COMMANDS_DIR="$HOME/bin"
-if [ ! -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
-    echo "Missing file: do_bash_env"
-fi
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR." && exit
 
-cat <<END_OF_TEXT >> "$WDC_DO_COMMANDS_DIR/do_bash_env"
+export WDC_DO_COMMANDS_HOWTO_DIR="$WDC_DO_COMMANDS_DIR/howto"
+export WDC_DO_COMMANDS_BIN="$WDC_DO_COMMANDS_DIR/bin"
+
+export BASH_COMPLETITION_DIR="$WDC_DO_COMMANDS_DIR/bash_completion.d"
+
+if [ ! -f "$WDC_DO_COMMANDS_BIN/do_bash_env" ]; then
+    echo "Missing file: do_bash_env"
+
+    cat <<END_OF_TEXT >> "$WDC_DO_COMMANDS_BIN/do_bash_env"
 export TESTS="$HOME/tests"
 export RELEASES="$HOME/releases"
 export PROJECTS="$HOME/projects"
 export SHARED_FOLDER="/media/share"
 export PROMPT_VARS=""
 END_OF_TEXT
+fi
 
-if [ -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
+bash_compl_dir=$BASH_COMPLETITION_DIR
+if [ -f "$WDC_DO_COMMANDS_BIN/do_bash_env" ]; then
     # do_bash_env example:
     # #!/usr/bin/env bash
     # 
@@ -26,7 +33,7 @@ if [ -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
     # export PATCHES_DIR=/wc/wdicarlo/share/ec/patches
     # 
     echo "Sourcing file: do_bash_env"
-    source  $WDC_DO_COMMANDS_DIR/do_bash_env
+    source  $WDC_DO_COMMANDS_BIN/do_bash_env
     echo "PROJECTS               =  $PROJECTS"
     echo "TESTS                  =  $TESTS"
     echo "RELEASES               =  $RELEASES"
@@ -34,10 +41,6 @@ if [ -f "$WDC_DO_COMMANDS_DIR/do_bash_env" ]; then
     echo "PROMPT_VARS            =  $PROMPT_VARS"
 fi
 
-export WDC_DO_COMMANDS_HOWTO_DIR="$WDC_DO_COMMANDS_DIR/howto"
-
-export BASH_COMPLETITION_DIR="$WDC_DO_COMMANDS_DIR/bash_completion.d"
-bash_compl_dir=$BASH_COMPLETITION_DIR
 
 force_color_prompt=yes
 
@@ -211,7 +214,7 @@ function vim_launcher() {
   eval $cmd
 }
 
-source $WDC_DO_COMMANDS_DIR/do_setup_env 
+source $WDC_DO_COMMANDS_BIN/do_setup_env 
 
 function mkcd() {
     mkdir "$1"
@@ -276,7 +279,7 @@ function update_env() {
         source ./.bash_env
     else
         shift $#
-        source $WDC_DO_COMMANDS_DIR/do_setup_env
+        source $WDC_DO_COMMANDS_BIN/do_setup_env
     fi
     update_prompt
 }
@@ -556,7 +559,7 @@ function last() {
 }
 
 function do_activate_release() {
-    script=`echo $WDC_DO_COMMANDS_DIR/do_activate_release`
+    script=`echo $WDC_DO_COMMANDS_BIN/do_activate_release`
     source $script
 }
 
@@ -632,7 +635,7 @@ update_prompt
 
 bash_completion
 
-#alias do-bash-customization='source $WDC_DO_COMMANDS_DIR/do_bash_customization && cd .'
+#alias do-bash-customization='source $WDC_DO_COMMANDS_BIN/do_bash_customization && cd .'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -695,7 +698,7 @@ function mygit() {
 
 alias git='mygit'
 alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
-function d () { source $WDC_DO_COMMANDS_DIR/_d "$@"; }
+function d () { source $WDC_DO_COMMANDS_BIN/_d "$@"; }
 export -f d
 
 # default proxy setup
@@ -704,9 +707,9 @@ export -f d
 #export ftp_proxy=$http_proxy
 #export rsync_proxy=$http_proxy
 #export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
-#if [ -f $WDC_DO_COMMANDS_DIR/do_proxy_setup ]; then
+#if [ -f $WDC_DO_COMMANDS_BIN/do_proxy_setup ]; then
 #    echo "Sourcing file: do_proxy_setup"
-#    source  $WDC_DO_COMMANDS_DIR/do_proxy_setup
+#    source  $WDC_DO_COMMANDS_BIN/do_proxy_setup
 #    echo "http_proxy    = $http_proxy"
 #    echo "https_proxy   = $https_proxy"
 #    echo "ftp_proxy     = $ftp_proxy"

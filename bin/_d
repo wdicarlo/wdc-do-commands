@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-[ -z $WDC_DO_COMMANDS_DIR ] && echo "Undefined WDC_DO_COMMANDS_DIR." && return
+[ -z $WDC_DO_COMMANDS_BIN ] && echo "Undefined WDC_DO_COMMANDS_BIN." && return
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
-cntfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_counts.csv)"
+cntfile="$(echo $WDC_DO_COMMANDS_BIN/do_cmd_counts.csv)"
 [ ! -f "$cntfile" ] && touch "$cntfile"
-idxfile="$(echo $WDC_DO_COMMANDS_DIR/do_cmd_index.csv)"
+idxfile="$(echo $WDC_DO_COMMANDS_BIN/do_cmd_index.csv)"
 [ ! -f "$idxfile" ] && touch "$idxfile"
 idx="d${1}";shift
 [ "$idx" == "d-h" ] && 

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 script="\n\
-[ -f \"\$WDC_DO_COMMANDS_DIR/do_bash_customization\" ] && source \"\$WDC_DO_COMMANDS_DIR/do_bash_customization\"\n\
+[ -f \"\$WDC_DO_COMMANDS_BIN/do_bash_customization\" ] && source \"\$WDC_DO_COMMANDS_BIN/do_bash_customization\"\n\
 "
 
-is_custom=$(cat ~/.bashrc | grep -c "source .*\$WDC_DO_COMMANDS_DIR/do_bash_customization")
+is_custom=$(cat ~/.bashrc | grep -c "source .*\$WDC_DO_COMMANDS_BIN/do_bash_customization")
 
 [ $is_custom -gt 0 ] && echo "Customization already installed" && exit
 

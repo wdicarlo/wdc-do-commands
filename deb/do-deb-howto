@@ -2,7 +2,7 @@
 
 if [ $# -gt 0 ]
 then
-    cat $WDC_DO_COMMANDS_DIR/howto_debian.otl | grep -A 1 -in $@
+    cat $WDC_DO_COMMANDS_HOWTO_DIR/howto_debian.otl | grep -A 1 -in $@
 else
-    cat $WDC_DO_COMMANDS_DIR/howto_debian.otl
+    cat $WDC_DO_COMMANDS_HOWTO_DIR/howto_debian.otl
 fi

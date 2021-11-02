@@ -26,4 +26,4 @@ else
     exit 1
 fi
 
-$JAVA -jar $WDC_DO_COMMANDS_DIR/plantuml.jar ${@}
+$JAVA -jar $WDC_DO_COMMANDS_BIN/plantuml.jar ${@}

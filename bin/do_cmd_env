@@ -15,5 +15,6 @@ BIN_DIR="$(readlink -f $1)" # use absolute path
 [ ! "$WDC_DO_COMMANDS_DIR" == "" ] && PATH=$(echo $PATH|sed "s#$WDC_DO_COMMANDS_DIR,##")
 
 export WDC_DO_COMMANDS_DIR="$BIN_DIR"
+export WDC_DO_COMMANDS_BIN="$BIN_DIR/bin"
 export PATH="$WDC_DO_COMMANDS_DIR,$PATH"
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-root="$WDC_DO_COMMANDS_DIR"
+root="$WDC_DO_COMMANDS_BIN"
 
 [ ! -d "$root" ] && echo "Wrong command folder: $root" && exit
 
@@ -17,12 +17,11 @@ do
   args="${cmds[$file]}"
   [ "$1" == "-l" ] && echo "$file"|tr '_' '-' && continue
   if [ $func -eq 0 ]; then
-    echo "alias $(echo $file|tr '_' '-')='source \$WDC_DO_COMMANDS_DIR/$file $args'" | sed "s/ '$/'/"
+    echo "alias $(echo $file|tr '_' '-')='source \$WDC_DO_COMMANDS_BIN/$file $args'" | sed "s/ '$/'/"
   else
     cat << EOF
-#echo "Sourcing file: $WDC_DO_COMMANDS_DIR/$file"
 function $(echo $file|tr '_' '-') () {
-  source \$WDC_DO_COMMANDS_DIR/$file $args
+  source \$WDC_DO_COMMANDS_BIN/$file $args
 }
 export -f $(echo $file|tr '_' '-')
 EOF

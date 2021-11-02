@@ -47,4 +47,4 @@ if [ $# -gt 1 ]; then
 fi
 
 
-source $WDC_DO_COMMANDS_DIR/do_project_activation $1
+source $WDC_DO_COMMANDS_BIN/do_project_activation $1

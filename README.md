@@ -42,7 +42,7 @@ Execute the following setup command
 ```
 which will add the following lines into the ~/.bashrc file
 ```bash
-[ -f "$WDC_DO_COMMANDS_DIR/do_bash_customization" ] && source "$WDC_DO_COMMANDS_DIR/do_bash_customization"
+[ -f "$WDC_DO_COMMANDS_BIN/do_bash_customization" ] && source "$WDC_DO_COMMANDS_BIN/do_bash_customization"
 ```
 Source .bashrc to activate the customizations
 ```bash

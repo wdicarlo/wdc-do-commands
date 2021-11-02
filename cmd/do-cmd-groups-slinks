@@ -43,38 +43,39 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 [ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR variable" && exit
 
+WDC_DO_COMMANDS_BIN="${WDC_DO_COMMANDS_DIR}/bin"
 cd $WDC_DO_COMMANDS_DIR
 
 
 # remove links of disabled commands
-nolist=$(cat do_cmd_groups.csv | grep ";no" | cut -d';' -f 1)
+nolist=$(cat ${WDC_DO_COMMANDS_BIN}/do_cmd_groups.csv | grep ";no" | cut -d';' -f 1)
 for group in $(echo $nolist| tr ' ' '\n')
 do
-  clist=$(find * -maxdepth 1 -type l | grep "do-${group}$\|do-${group}-.*")
+  clist=$(find $WDC_DO_COMMANDS_BIN/ -maxdepth 1 -type l | grep "do-${group}$\|do-${group}-.*")
   for dcmd in $(echo $clist)
   do
     cmd="rm $dcmd"
     evalcmd
     cmdseed="$(echo $dcmd$|sed 's/^\(do-[a-z0-9]*\).*$/\1/')"
-    cmd="sed -i \"/^\/$cmdseed*/d\" .gitignore"
+    cmd="sed -i \"/^\/bin\/$cmdseed*/d\" .gitignore"
     evalcmd
   done
 done
 
 
 # create links of enabled commands
-yeslist=$(cat do_cmd_groups.csv | grep ";yes" | cut -d';' -f 1)
+yeslist=$(cat ${WDC_DO_COMMANDS_BIN}/do_cmd_groups.csv | grep ";yes" | cut -d';' -f 1)
 for group in $(echo $yeslist| tr ' ' '\n')
 do
   clist=$(find $group/ -maxdepth 1 -type f | sed "s#$group/##" | grep "do-${group}$\|do-${group}-.*" | grep -v "\.sav" | grep -v "\.patch")
   for dcmd in $(echo $clist)
   do
     [ $(file "$dcmd"|grep -c "symbolic link") -eq 1 ] && continue
-    cmd="ln -f -s $group/$dcmd $dcmd"
+    cmd="ln -f -s $WDC_DO_COMMANDS_DIR/$group/$dcmd $WDC_DO_COMMANDS_BIN/$dcmd"
     evalcmd
     cmdseed="$(echo $dcmd$|sed 's/^\(do-[a-z0-9]*\).*$/\1/')"
-    if [ $(cat .gitignore|grep -c "^/$cmdseed\*") -eq 0 ]; then
-      cmd="echo \"/$cmdseed*\" >> .gitignore"
+    if [ $(cat .gitignore|grep -c "^/bin/$cmdseed\*") -eq 0 ]; then
+      cmd="echo \"/bin/$cmdseed*\" >> .gitignore"
       evalcmd
     fi
   done
