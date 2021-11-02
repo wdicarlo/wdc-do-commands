@@ -29,7 +29,7 @@ RUN NO_PROXY="$NO_PROXY,.github.com" git clone https://github.com/bats-core/bats
 RUN NO_PROXY="$NO_PROXY,.githubusercontent.com" curl -fLo /home/dockeruser/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-RUN NO_PROXY="$NO_PROXY,.github.com" git clone --single-branch --branch dev_bin_folder https://github.com/wdicarlo/wdc-do-commands.git /tmp/wdc-do-commands
+RUN NO_PROXY="$NO_PROXY,.github.com" git clone --single-branch --branch master https://github.com/wdicarlo/wdc-do-commands.git /tmp/wdc-do-commands
 
 RUN mkdir -p /home/dockeruser \
     && mkdir -p /home/dockeruser/projects \
