@@ -1,3 +1,28 @@
+Version 0.10.0:
+ - Fixed Dockerfile
+ - Moved active commands in bin folder
+ - Updated howto/howto_bash.otl file
+ - Improved data/do-data-anaconda command. Added option to build the image.
+ - Updated tests/cmd/do-cmd-index.bats tests
+ - Added tests/cmd/do-cmd-index.bats file
+ - Improved _d command. Added backup of d abbreviations usage counts
+ - Update /home/devkit/wbin/howto/howto_vim.otl file.
+ - Update /home/devkit/wbin/howto/howto_az.otl file.
+ - Update Dockerfile file.
+ - Improved cmd/do-cmd command.
+ - Added test/cmd/do-cmd-find.bats test file
+ - Added do_cmd_env command
+ - Update howto/howto_docker.otl file.
+ - Improved git/do-git-bump-version command.
+ - Improved cmd/do-cmd-find command.
+ - Update vimrc file.
+ - Update /home/devkit/wbin/howto/howto_k8s.otl file.
+ - Update /home/devkit/wbin/howto/howto_vim.otl file.
+ - Update /home/devkit/wbin/howto/howto_bash_scripting.otl file.
+ - Reorganized howto section
+ - Updated vimrc file. Replaced Vim backup mechanism
+ - Improved cmd/do-cmd command
+
 Version 0.9.0:
  - Added cmd/do-cmd command
  - Improved do_bash_customization command.
