@@ -122,19 +122,35 @@ MOUNT_HOST_PROJECTS="" && [ $projects -eq 1 ] && MOUNT_HOST_PROJECTS="-v $PROJEC
 MOUNT_HOST_SHARED="" && [ $shared -eq 1 ] && MOUNT_HOST_SHARED="-v /media/shared/:/media/shared"
 MOUNT_HOST_MBIN="" && [ ! "$mbin_path" == "" ] && MOUNT_HOST_MBIN="-v $mbin_path:/home/dockeruser/mbin"
 
+cmd="docker run -it --rm \
+${EXTRA_PARAMETERS:-} \
+${docker_args[@]:-} \
+-e \"CUR_UID=$(id -u)\" \
+-e \"CUR_GID=$(id -g)\" \
+-v $(pwd -P):/home/dockeruser/host \
+${MOUNT_HOST_PROJECTS} \
+${MOUNT_HOST_SHARED} \
+${MOUNT_HOST_MBIN} \
+-v \"${SSH_HOME}:/home/dockeruser/.ssh\" \
+-v \"${BASE_HOME}/.bash_history:/home/dockeruser/.bash_history\" \
+-v \"${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock\" \
+${DOCKER_CONTAINER} \
+${DOCKER_COMMAND}"
 
-docker run -it --rm \
-    $EXTRA_PARAMETERS \
-    "${docker_args[@]}" \
-    -e "CUR_UID=$(id -u)" \
-    -e "CUR_GID=$(id -g)" \
-    -v $(pwd -P):/home/dockeruser/host \
-    ${MOUNT_HOST_PROJECTS} \
-    ${MOUNT_HOST_SHARED} \
-    ${MOUNT_HOST_MBIN} \
-    -v "${SSH_HOME}:/home/dockeruser/.ssh" \
-    -v "${BASE_HOME}/.bash_history:/home/dockeruser/.bash_history" \
-    -v "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock" \
-    "${DOCKER_CONTAINER}" \
-    "${DOCKER_COMMAND}"
+#docker run -it --rm \
+#    $EXTRA_PARAMETERS \
+#    "${docker_args[@]}" \
+#    -e "CUR_UID=$(id -u)" \
+#    -e "CUR_GID=$(id -g)" \
+#    -v $(pwd -P):/home/dockeruser/host \
+#    ${MOUNT_HOST_PROJECTS} \
+#    ${MOUNT_HOST_SHARED} \
+#    ${MOUNT_HOST_MBIN} \
+#    -v "${SSH_HOME}:/home/dockeruser/.ssh" \
+#    -v "${BASE_HOME}/.bash_history:/home/dockeruser/.bash_history" \
+#    -v "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock" \
+#    "${DOCKER_CONTAINER}" \
+#    "${DOCKER_COMMAND}"
 
+echo "> $cmd"
+eval "$cmd"
