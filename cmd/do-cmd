@@ -71,6 +71,10 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+HOST_PATH=$(pwd -P)
+
+cd "$WDC_DO_COMMANDS_DIR"
+
 this_path="$(realpath $(dirname "${BASH_SOURCE[0]}" ))"
 ver=$(git tag | sort -rV | head -1)
 branch=$(git rev-parse --abbrev-ref HEAD)
@@ -127,7 +131,7 @@ ${EXTRA_PARAMETERS:-} \
 ${docker_args[@]:-} \
 -e \"CUR_UID=$(id -u)\" \
 -e \"CUR_GID=$(id -g)\" \
--v $(pwd -P):/home/dockeruser/host \
+-v ${HOST_PATH}:/home/dockeruser/host \
 ${MOUNT_HOST_PROJECTS} \
 ${MOUNT_HOST_SHARED} \
 ${MOUNT_HOST_MBIN} \
