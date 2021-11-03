@@ -1,5 +1,6 @@
 db;do-bookmark
 dcb;do-cd-bookmark
+dcd;do-cmd-diff
 dff;do-find-files
 dgcu;do-git-commit-unstaged
 dgpul;do-git-pull
