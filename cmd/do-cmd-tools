@@ -4,6 +4,8 @@
 # $ diff -Naru git/git-filter-repo git/do-git-filter-repo > git/do-git-filter-repo.patch
 # edit the patch file to reference only the cmd
 
+[ "$WDC_DO_COMMANDS_BIN" == "" ] && echo "Missing WDC_DO_COMMANDS_BIN" && exit
+
 tools_file="$WDC_DO_COMMANDS_BIN/do_cmd_tools.csv"
 
 [ ! -f "$tools_file" ] && echo "Missing $tools_file" && exit
@@ -12,22 +14,27 @@ tools_file="$WDC_DO_COMMANDS_BIN/do_cmd_tools.csv"
 cmd=`basename $0`
 
 function usage() {
-  echo "Usage: $cmd [-h] [-n] [-f] [-g]"
+  echo "Usage: $cmd [-h] [-n] [-f] [-G <group>] [-g <command>]"
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -n                          : dry run"
   echo "       -f                          : force the update"
-  echo "       -g                          : group tools to consider"
+  echo "       -G <group>                  : group tools to consider"
+  echo "       -g <command>                : do command to consider"
 }
 
 # Arguments processing
 dryrun=0
 force=0
 tgroup=""
-while getopts hnfg: flag
+dcmd=""
+while getopts hnfG:g: flag
 do
   case $flag in
     g)
+      dcmd="$OPTARG"
+      ;;
+    G)
       tgroup="$OPTARG"
       ;;
     f)
@@ -50,23 +57,24 @@ shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 cd "$WDC_DO_COMMANDS_DIR"
 
 if [ ! "$tgroup" == "" ]; then
-  [ $(cat do_cmd_groups.csv | cut -d';' -f 1 | grep -c "^$tgroup$") -ne 1 ] \
+  [ $(cat "$WDC_DO_COMMANDS_BIN/do_cmd_groups.csv" | cut -d';' -f 1 | grep -c "^$tgroup$") -ne 1 ] \
     && echo "Invalid group: $tgroup" && exit 
-  [ $(cat do_cmd_groups.csv | grep -c "^$tgroup;yes") -eq 0 ] \
+  [ $(cat "$WDC_DO_COMMANDS_BIN/do_cmd_groups.csv" | grep -c "^$tgroup;yes") -eq 0 ] \
     && echo "Inactive commands group: $tgroup" && exit
 fi
 
-[ "$tgroup" == "" ] && tgroup="^"
-cat "$tools_file" | sed 1d | grep "^$tgroup"| while IFS=',' read -r CMD URL PATCH
+[ "$dcmd" == "" ] && dcmd="^"
+cat "$tools_file" | sed 1d | grep "^$tgroup"| grep "$dcmd" | while IFS=',' read -r CMD URL PATCH
 do
   [ -f "$CMD" ] && [ $force -eq 0 ] && echo "Skipping existing command: $CMD" && continue
   group=$(echo "$CMD" | cut -d '/' -f 1)
   ntokens=$(echo "$CMD" | sed 's#/# #g' | wc -w )
   [ ! -d "$group" ] && [ $ntokens -gt 1 ] && echo "Skipping for unknown command group: $group" && continue
-  active=$(cat "do_cmd_groups.csv" | grep -c "^$group;yes")
+  active=$(cat "$WDC_DO_COMMANDS_BIN/do_cmd_groups.csv" | grep -c "^$group;yes")
+  [ "$group" == "bin" ] && active=1
   [ $ntokens -eq 1 ] && active=1 # don't need a group
   [ $active -eq 0 ] && echo "Skipping for inactive command group: $group" && sed -i "/^$(echo $CMD|sed 's#/#\\\/#g')/d" .gitignore && continue
-  cmd="curl -sS $URL > $CMD"
+  cmd="curl -sSL $URL > $CMD"
   echo "> $cmd"
   [ $dryrun -eq 0 ] && eval "$cmd"
 
@@ -77,4 +85,5 @@ do
     [ $dryrun -eq 0 ] && eval "$cmd"
   fi
   [ -f "$CMD" ] && [ $(cat .gitignore|grep -c "$CMD") -eq 0 ] && echo "$CMD" >> .gitignore
+  [ -f "$CMD" ] && chmod u+x "$CMD"
 done | tee >(grep "> curl" | wc -l) # count number of downloaded tools
