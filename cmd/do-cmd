@@ -28,6 +28,50 @@ function usage() {
   echo "  SSH_HOME             - SSH home path to use instead of \$HOME/.ssh"
 }
 
+function cache_do_commands() {
+  for dcmd in $(git ls-files)
+  do
+    tdir=$(dirname "$WDC_DO_COMMANDS_DIR/.cache/wbin/$dcmd")
+    [ ! -d "$tdir" ] && mkdir -p "$tdir"
+    cmd="cp $WDC_DO_COMMANDS_DIR/$dcmd $WDC_DO_COMMANDS_DIR/.cache/wbin/$dcmd"
+    echo "> $cmd"
+    eval "$cmd"
+  done
+}
+function cache_vim_plugins() {
+  for plug in $(cat $WDC_DO_COMMANDS_DIR/bin/do_vim_plugs.csv|cut -d'/' -f2)
+  do
+    [ ! -d "$HOME/.vim/plugged/$plug" ] && echo "Missing plugin: $plug" && continue
+    cmd="cp -r $HOME/.vim/plugged/$plug $WDC_DO_COMMANDS_DIR/.cache/vim/plugged/"
+    echo "> $cmd"
+    eval "$cmd"
+  done
+  cmd="cp -r $HOME/.vim/autoload/plug.vim $WDC_DO_COMMANDS_DIR/.cache/vim/autoload/"
+  eval "$cmd"
+}
+function unpack_neovim() {
+  # unpack neovim
+  [ ! -f "$WDC_DO_COMMANDS_DIR/.cache/bin/bin/nvim" ] && return
+  mkdir -p "$WDC_DO_COMMANDS_DIR/.cache/neovim"
+  cmd="mv $WDC_DO_COMMANDS_DIR/.cache/bin/bin/nvim $WDC_DO_COMMANDS_DIR/.cache/neovim/nvim.appimage"
+  echo "> $cmd"
+  eval "$cmd"
+  cd "$WDC_DO_COMMANDS_DIR/.cache/neovim"
+  ./nvim.appimage --appimage-extract # create squashfs-root/usr/
+  cd "$WDC_DO_COMMANDS_DIR"
+}
+function cache_cmd_tools() {
+  for tool in $(cat "$WDC_DO_COMMANDS_DIR/bin/do_cmd_tools.csv" | sed 1d | cut -d ',' -f1)
+  do
+    [ ! -f "$WDC_DO_COMMANDS_DIR/$tool" ] && echo "Missing tool: $tool" && continue
+    tdir=$(dirname "$WDC_DO_COMMANDS_DIR/.cache/bin/$tool")
+    [ ! -d "$tdir" ] && mkdir -p "$tdir"
+    cmd="cp $WDC_DO_COMMANDS_DIR/$tool $WDC_DO_COMMANDS_DIR/.cache/bin/$tool"
+    echo "> $cmd"
+    eval "$cmd"
+  done
+}
+
 DOCKER_COMMAND="${DOCKER_COMMAND:-"/bin/bash"}"
 
 # Arguments processing
@@ -94,7 +138,28 @@ if [ $build -ge 1 ]; then
     cur_dir=$(pwd)
     \cd "$WDC_DO_COMMANDS_DIR" >/dev/null 2>&1 
     if [ -f "./Dockerfile" ]; then
-      OCI_OPTS="" && [ $build -eq 2 ] && OCI_OPTS="--no-cache"
+      OCI_OPTS=""
+      rm -rf "$WDC_DO_COMMANDS_DIR/.cache" > /dev/null 2>&1
+      mkdir -p "$WDC_DO_COMMANDS_DIR/.cache/wbin/"
+      mkdir -p "$WDC_DO_COMMANDS_DIR/.cache/vim/plugged"
+      mkdir -p "$WDC_DO_COMMANDS_DIR/.cache/vim/autoload"
+      mkdir -p "$WDC_DO_COMMANDS_DIR/.cache/bin/"
+      mkdir -p "$WDC_DO_COMMANDS_DIR/.cache/bats-core/"
+      if [ $build -eq 1 ]; then
+        cache_do_commands
+        cache_vim_plugins
+        cache_cmd_tools
+      else
+        OCI_OPTS="--no-cache"
+        NO_PROXY="$NO_PROXY,.github.com" git clone https://github.com/bats-core/bats-core.git .cache/bats-core 
+        NO_PROXY="$NO_PROXY,.github.com" git clone --single-branch --branch master https://github.com/wdicarlo/wdc-do-commands.git ./.cache/wbin
+        NO_PROXY="$NO_PROXY,.githubusercontent.com" curl -fLo "$WDC_DO_COMMANDS_DIR/.cache/vim/autoload/plug.vim" --create-dirs \
+          https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        NO_PROXY="$NO_PROXY,.github.com" ./vim/do-vim-plugs -t "$WDC_DO_COMMANDS_DIR/.cache/vim/plugged/" -p ./bin/do_vim_plugs.csv
+        NO_PROXY="$NO_PROXY,.github.com" ./cmd/do-cmd-tools -f -t "$WDC_DO_COMMANDS_DIR/.cache/bin"
+      fi
+      unpack_neovim
+
       docker build $OCI_OPTS -t ${DOCKER_CONTAINER} .
       docker tag ${DOCKER_CONTAINER} ${LATEST}
     else
