@@ -96,7 +96,7 @@ if [ -f VERSION ]; then
     V_PATCH=0
     SUGGESTED_VERSION="$V_MAJOR.$V_MINOR.$V_PATCH"
 
-    gittag=$(git tag|tail -1)
+    gittag=$(git tag --sort=-v:refname|head -1)
     [ $tag -eq 2 ] && gittag=$(echo $gittag|sed "s/^$prefix//")
     ver=$(cat VERSION)
     aligned=$([[ "$gittag" == "$ver" ]] && echo 1 || echo 0)
