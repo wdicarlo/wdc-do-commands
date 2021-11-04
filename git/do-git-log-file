@@ -1,10 +1,43 @@
 #!/usr/bin/env bash
 
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-p] [-h] <file>"
+  echo "where:"
+  echo "       -p                : list patches"
+  echo "       -h                : print this help"
+}
+
+# Arguments processing
+opts=""
+while getopts hp flag
+do
+  case $flag in
+    p)
+      opts="-p"
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 if [ ! $# == 1 ]; then
-    cmd=`basename $0`
-    echo "Usage: $cmd <file>"
-    exit
+  usage
+  exit
 fi
 
 echo "> git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative --follow -- $1"
-git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative --follow -- $1
+if [ "$opts" == "" ]; then
+  git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative --follow -- $1
+else
+  git log $opts $1
+fi
