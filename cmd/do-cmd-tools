@@ -14,7 +14,7 @@ tools_file="$WDC_DO_COMMANDS_BIN/do_cmd_tools.csv"
 cmd=`basename $0`
 
 function usage() {
-  echo "Usage: $cmd [-h] [-n] [-f] [-G <group>] [-g <command>] [-e]"
+  echo "Usage: $cmd [-h] [-n] [-f] [-G <group>] [-g <command>] [-e] [-t <target-dir>]"
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -n                          : dry run"
@@ -22,6 +22,7 @@ function usage() {
   echo "       -f                          : force the update"
   echo "       -G <group>                  : group tools to consider"
   echo "       -g <command>                : do command to consider"
+  echo "       -t <target-dir>             : use target dir"
 }
 
 # Arguments processing
@@ -29,9 +30,13 @@ dryrun=0
 force=0
 tgroup=""
 dcmd=""
-while getopts hnfG:g:e flag
+tdir=""
+while getopts hnfG:g:et: flag
 do
   case $flag in
+    t)
+      tdir="$OPTARG"
+      ;;
     g)
       dcmd="$OPTARG"
       ;;
@@ -59,6 +64,9 @@ do
   esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+[ ! "$tdir" == "" ] && mkdir -p "$tdir"
+
 cd "$WDC_DO_COMMANDS_DIR"
 
 if [ ! "$tgroup" == "" ]; then
@@ -71,7 +79,6 @@ fi
 [ "$dcmd" == "" ] && dcmd="^"
 cat "$tools_file" | sed 1d | grep "^$tgroup"| grep "$dcmd" | while IFS=',' read -r CMD URL PATCH
 do
-  [ -f "$CMD" ] && [ $force -eq 0 ] && echo "Skipping existing command: $CMD" && continue
   group=$(echo "$CMD" | cut -d '/' -f 1)
   ntokens=$(echo "$CMD" | sed 's#/# #g' | wc -w )
   [ ! -d "$group" ] && [ $ntokens -gt 1 ] && echo "Skipping for unknown command group: $group" && continue
@@ -79,7 +86,11 @@ do
   [ "$group" == "bin" ] && active=1
   [ $ntokens -eq 1 ] && active=1 # don't need a group
   [ $active -eq 0 ] && echo "Skipping for inactive command group: $group" && sed -i "/^$(echo $CMD|sed 's#/#\\\/#g')/d" .gitignore && continue
-  cmd="curl -sSL $URL > $CMD && chmod u+x $CMD"
+
+  [ ! "$tdir" == "" ] && CMD="$tdir/$CMD"
+  [ -f "$CMD" ] && [ $force -eq 0 ] && echo "Skipping existing command: $CMD" && continue
+
+  cmd="NO_PROXY=\"$NO_PROXY\" curl -sSL $URL -o $CMD --create-dirs && chmod u+x $CMD"
   echo "> $cmd"
   [ $dryrun -eq 0 ] && eval "$cmd"
 
