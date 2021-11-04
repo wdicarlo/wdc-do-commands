@@ -1,3 +1,23 @@
+Version 0.11.0:
+ - Update Dockerfile file. Added support for the cache
+ - Improved cmd/do-cmd command. Added possibility to use a cache
+ - Improved cmd/do-cmd-edit command.
+ - Improved cmd/do-cmd-tools command. Added option to specify the target directory
+ - Improved cmd/do-cmd-update command.
+ - Improved git/do-git-log-file command.
+ - Improved cmd/do-cmd-index command.
+ - Update bin/do_cmd_index_def.csv file.
+ - Update bin/do_cmd_tools.csv file. Added neovim entry
+ - Improved cmd/do-cmd-tools command.
+ - Update bin/do_cmd_index_def.csv file.
+ - Improved cmd/do-cmd command.
+ - Update bin/do_cmd_tools.csv file. Added arkade tool
+ - Improved cmd/do-cmd-tools command. Added option to filter command names.
+ - Deleted files to be not tracked
+ - Improved do-cmd OCI container image
+ - Improved cmd/do-cmd command.
+ - Improved cmd/do-cmd command. Added support for host shared folder and commands
+
 Version 0.10.0:
  - Fixed Dockerfile
  - Moved active commands in bin folder
