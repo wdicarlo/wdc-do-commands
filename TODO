@@ -10,12 +10,10 @@ Commands to evaluate:
     fasd
     direnv
     socli
-    bats
     cats
     has (https://github.com/kdabir/has)
     watchdog (https://github.com/gorakhargosh/watchdog.git)
     github.com/micha/json-table
-Integrate vim notebooks
 Evaluate command history by folder
 Add todo management
 Develop Lua simple type checking
