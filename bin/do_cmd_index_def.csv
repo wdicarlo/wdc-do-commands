@@ -8,6 +8,7 @@ dgpul;do-git-pull
 dgpus;do-git-push
 dgs;do-git-status
 dhe;do-howto-edit
+dhl;do-howto-list
 dpa;do-project-activation
 dpc;do-project-creation
 dsd;do-sec-decrypt
