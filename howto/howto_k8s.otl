@@ -142,3 +142,9 @@ Get list of deployments in the namespace superset
 	kubectl get deploy -n superset
 Get YAML configuration of a deployment
 	kubectl get deploy -n superset my-superset -o yaml
+Start k9s in a particular namespace
+	k9s --namespace mynamespace
+YAML configuration file object spec and status
+	# spec -> desired object state, status -> current status updated by k8s
+YAML configuration file object required fields
+	# apiVersion, kind, metadata and spec
