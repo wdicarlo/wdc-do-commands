@@ -5,7 +5,7 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-f] [-c] [-a] [-o] [-t] [-r <root>] <string>"
+    echo "Usage: $cmd [-h] [-q] [-f] [-c] [-a] [-o] [-t] [-r <root>] [-p] <string>"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -f                          : find the filenames"
@@ -14,6 +14,7 @@ function usage() {
     echo "       -o                          : find only in the options"
     echo "       -r                          : find in the <root> folder"
     echo "       -t                          : find only in the howto files"
+    echo "       -p                          : print absolute paths"
     echo "       -q                          : quiet"
 }
 
@@ -24,14 +25,18 @@ options=0
 files=0
 root="$WDC_DO_COMMANDS_DIR"
 filter="do[-_]"
-while getopts hqaocfr:t flag
+apaths=0
+while getopts hqaocfr:tp flag
 do
     case $flag in
 	t)
       filter="howto_"
 	    ;;
 	r)
-	    root="$OPTARG"
+      root="$OPTARG"
+	    ;;
+	p)
+	    apaths=1
 	    ;;
 	o)
 	    options=1
@@ -65,6 +70,7 @@ if [ $# == 0 ]; then
     exit
 fi
 
+root=$(echo "$root"| sed 's#\(.*\)\/$#\1#') # remove trailing slash
 [ ! -d "$root" ] && echo "Wrong command folder: $root" && exit
 
 cd "$root"
@@ -76,6 +82,8 @@ elif [ $all -eq 2 ]; then
 fi
 
 pars="$@"
+
+[ $apaths -eq 1 ] && cmd="$cmd | sed \"s#^#$root/#\""
 
 if [ $files -eq 1 ]; then
     cmd="$cmd | grep $pars"
