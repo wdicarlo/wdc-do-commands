@@ -3,12 +3,14 @@ Azure CLI
 Login into Azure
 	az login -u <email_address>
 Login into Azure with a service principal
-	az login --service-principal --username "$CLIENT_ID" --password "$CLIENT_SECRET" --tenant "$TENANT_ID" &> /dev/null
+	az login --service-principal --username "$AZ_CLIENT_ID" --password "$AZ_CLIENT_SECRET" --tenant "$AZ_TENANT_ID" &> /dev/null
 Select a subscription to work with
-	az account set --subscription $SUBSCRIPTION_NAME
+	az account set --subscription $AZ_SUBSCRIPTION_NAME
 List permissions for a role
 	az role definition list | jq '.[] | select(.roleName=="Virtual Machine Contributor") | .permissions[] | .actions'
 List all role names matching a regular expression
 	az role definition list | jq '.[] | select(.roleName|match("Machine.*Login")) | .roleName'
 Install costmanagement extension
 	no_proxy=${no_proxy//.blob.core.windows.net,} az extension add --name costmanagement
+Query top 3 resources
+	az rest --method get --url https://management.azure.com/subscriptions/$AZ_SUBSCRIPTION_ID/resources?api-version=2019-07-01 --url-parameters \$top=3
