@@ -2,4 +2,37 @@
 
 [ "$WDC_DO_COMMANDS_HOWTO_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_HOWTO_DIR" && exit
 
-find $WDC_DO_COMMANDS_HOWTO_DIR/ -maxdepth 1 -name "howto_*" | xargs -I@ basename @ | sed -e 's/.otl//' -e 's/howto_//' | sort
+function usage() {
+  cmd=`basename $0`
+  echo "Usage: $cmd [-h] [-d] [<pattern>]"
+       echo "       -h                          : print this help"
+       echo "       -d                          : list differences"
+}
+
+diff=0
+while getopts hd flag
+do
+	case $flag in
+		d)
+			diff=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+filter="^"
+[ ! "$1" == "" ] && filter="$1"
+
+if [ $diff -eq 0 ]; then 
+  find $WDC_DO_COMMANDS_HOWTO_DIR/ -maxdepth 1 -name "howto_*" | xargs -I@ basename @ | sed -e 's/.otl//' -e 's/howto_//' | grep "$filter" | sort
+else
+  git ls-files howto/howto_* | grep "$filter" | xargs -I@ sh -c "git diff @"
+fi
