@@ -79,4 +79,9 @@ Role of parentheses
 	# Double Parenthesis - (( ... )) is for arithmetic operation
 	# Single Square Bracket - [ ... ] is the syntax for the POSIX test
 	# Double Square Brackets - [[ ... ]] is the syntax for bash conditional expressions (similar to test but more powerful)
-
+Sum piped sequence of numbers
+	<numbers> | awk '{s+=$1}END{print s}'
+Sum piped sequence of numbers printing the partial sum
+	<numbers> | awk '{s+=$1;print s}END{print "Tot: " s}'
+Sum piped <num> <date> sequence printing the partial sum
+	<number date> | awk '{s+=$1;print $2 " " s}END{print "Tot: " s}'
