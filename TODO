@@ -22,3 +22,5 @@ Add command to join output from different other commands (git blame, git diff, g
 Solve bug with 'grep "$num"' by adding a space after num
 https://github.com/0k/shyaml for YAML from command line
 Extract aknowledgements with command d fs "\"#.*http[s]*://\""
+Store executed commands in project specific history file
+
