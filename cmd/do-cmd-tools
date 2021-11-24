@@ -96,9 +96,11 @@ do
 
   if [ ! "$PATCH" == "" ]; then
     [ ! -f "$PATCH" ] && echo "Missing $PATCH" && exit
+    [ $dryrun -eq 0 ] && rm $(cat "$PATCH" | grep +++ | cut -d' ' -f2)
     cmd="patch -p0 < \"$PATCH\""
     echo "> $cmd"
     [ $dryrun -eq 0 ] && eval "$cmd"
+    [ $dryrun -eq 0 ] && chmod u+x $(cat "$PATCH" | grep +++ | cut -d' ' -f2)
   fi
   [ -f "$CMD" ] && [ $(cat .gitignore|grep -c "$CMD") -eq 0 ] && echo "$CMD" >> .gitignore
   [ -f "$CMD" ] && chmod u+x "$CMD"
