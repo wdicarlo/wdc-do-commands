@@ -3,3 +3,4 @@ git/do-git-filter-repo,https://raw.githubusercontent.com/newren/git-filter-repo/
 sqlet/do-sqlet,https://raw.githubusercontent.com/ghumlet/sqlet/master/sqlet.py,
 bin/do-arkade,https://github.com/alexellis/arkade/releases/download/0.8.8/arkade,
 bin/nvim,https://github.com/neovim/neovim/releases/download/stable/nvim.appimage,
+bin/wezterm,https://github.com/wez/wezterm/releases/download/20210814-124438-54e29167/WezTerm-20210814-124438-54e29167-Ubuntu16.04.AppImage,bin/do-wezterm.patch
