@@ -1,0 +1,4 @@
+Python tips and tricks
+	List of python tips and tricks
+Install requirements from trusted host
+	pip3 install -r requirements.txt -i http://<domain>/artifactory/api/pypi/python-remote/simple/ --trusted-host <domain>
