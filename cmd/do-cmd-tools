@@ -90,18 +90,23 @@ do
   [ ! "$tdir" == "" ] && CMD="$tdir/$CMD"
   [ -f "$CMD" ] && [ $force -eq 0 ] && echo "Skipping existing command: $CMD" && continue
 
-  cmd="NO_PROXY=\"$NO_PROXY\" curl -sSL $URL -o $CMD --create-dirs && chmod u+x $CMD"
+  cmd="NO_PROXY=\"$NO_PROXY\" curl -sSL $URL -o $CMD --create-dirs"
   echo "> $cmd"
   [ $dryrun -eq 0 ] && eval "$cmd"
 
+  [ ! -f "$CMD" ] && echo "Missing $CMD" && continue
+
+  [ $dryrun -eq 0 ] && chmod u+x "$CMD"
+
   if [ ! "$PATCH" == "" ]; then
     [ ! -f "$PATCH" ] && echo "Missing $PATCH" && exit
-    [ $dryrun -eq 0 ] && rm $(cat "$PATCH" | grep +++ | cut -d' ' -f2)
+    DEST=$(cat "$PATCH" | grep +++ | cut -d' ' -f2)
+    [ $dryrun -eq 0 ] && [ ! "$DEST" == "$CMD" ] && rm "$DEST"
     cmd="patch -p0 < \"$PATCH\""
     echo "> $cmd"
     [ $dryrun -eq 0 ] && eval "$cmd"
-    [ $dryrun -eq 0 ] && chmod u+x $(cat "$PATCH" | grep +++ | cut -d' ' -f2)
+    [ $dryrun -eq 0 ] && chmod u+x "$DEST"
   fi
-  [ -f "$CMD" ] && [ $(cat .gitignore|grep -c "$CMD") -eq 0 ] && echo "$CMD" >> .gitignore
-  [ -f "$CMD" ] && chmod u+x "$CMD"
+  [ $dryrun -eq 0 ] && [ -f "$CMD" ] && [ $(cat .gitignore|grep -c "$CMD") -eq 0 ] && echo "$CMD" >> .gitignore
+  [ $dryrun -eq 0 ] && [ -f "$CMD" ] && chmod u+x "$CMD"
 done | tee >(grep "> curl" | wc -l) # count number of downloaded tools
