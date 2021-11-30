@@ -1,5 +1,5 @@
---- git/do-git-filter-repo	2021-10-20 17:30:04.708726251 +0200
-+++ git/do-git-filter-repo	2021-10-20 18:11:42.947318626 +0200
+--- git/do-git-filter-repo
++++ git/do-git-filter-repo
 @@ -28,6 +28,17 @@
    prevent me from changing the API, but it will allow you to look at the
    history of a testcase to see whether and how the API changed.

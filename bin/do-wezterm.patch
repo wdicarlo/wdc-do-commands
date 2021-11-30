@@ -1,0 +1,7 @@
+--- /dev/null
++++ bin/do-wezterm
+@@ -0,0 +1,3 @@
++#!/usr/bin/env bash
++[ $(which wezterm|wc -l) -eq 0 ] && echo "Missing wezterm command.\ndo-cmd-tools -g wezterm" && exit
++wezterm >/dev/null 2>&1 &
+
