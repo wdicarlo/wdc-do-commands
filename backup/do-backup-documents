@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if [ "${BACKUP_DIR}" == "" ]
+if [ "${BACKUPS_DIR}" == "" ]
 then
-  echo "Please, set BACKUP_DIR"
+  echo "Please, set BACKUPS_DIR"
   exit
 fi
 
@@ -17,9 +17,9 @@ cd "$DOCUMENTS_DIR"
 
 do-list-uniq-text-files | do-pipe-trimmed | do-pipe-no-empty-lines | do-pipe-files-to-backup-archive || { echo 'Failed' ; exit 1; }
 
-backup=$(ls -1t $BACKUP_DIR/ | head -1)
+backup=$(ls -1t $BACKUPS_DIR/ | head -1)
 
-n=$(tar -tzf $BACKUP_DIR/$backup|wc -l)
+n=$(tar -tzf $BACKUPS_DIR/$backup|wc -l)
 
 echo "Backuped $n files"
 
