@@ -4,13 +4,13 @@
 bakfile="backup"
 curdate="`date '+%y%m%d-%H%M%S'`"
 
-if [ "${BACKUP_DIR}" == "" ]
+if [ "${BACKUPS_DIR}" == "" ]
 then
-  echo "Please, set BACKUP_DIR"
+  echo "Please, set BACKUPS_DIR"
   exit
 fi
 
-bakdir="$BACKUP_DIR"
+bakdir="$BACKUPS_DIR"
 
 MY_FILES=$(cat)
 
