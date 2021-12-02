@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+[ ! -d "$WDC_DO_COMMANDS_DIR" ] && echo "Wrong WDC_DO_COMMANDS_DIR=$WDC_DO_COMMANDS_DIR" && exit
+[ ! -d "$BACKUPS_DIR" ] && echo "Wrong BACKUPS_DIR=$BACKUPS_DIR" && exit
+
+home_dir="$WDC_DO_COMMANDS_DIR"
+
+function usage() {
+    echo "Usage: $cmd [-n] [<post-fix>]"
+    echo "where:"
+    echo "            -n          : dry run"
+}
+
+dryrun=0
+while getopts hn flag
+do
+	case $flag in
+		n)
+			dryrun=1
+			;;
+		h)
+			usage
+			exit
+			;;
+		?)
+			usage
+			exit
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+bakfile="$(basename $(readlink -f $(pwd)))-backup"
+curdate="`date '+%y%m%d-%H%M%S'`"
+bakdir="$BACKUPS_DIR"
+if [ "$1" == "" ]; then
+	tarfile="$bakfile-$curdate.tar.bz2"
+else
+  postfix="$(echo $1|tr ' ' '_')"
+	tarfile="$bakfile-$curdate-${postfix}.tar.bz2"
+fi
+
+cd $home_dir
+[ ! -d "$home_dir" ] && echo "Not in a git repository: $home_dir" && exit
+files="$(git diff --name-only --cached|tr '\n' ' ')"
+files="${files} $(git diff --name-only|tr '\n' ' ')"
+others="$(git ls-files --other | grep -v "^neovim/\|^.cache")"
+others="$(echo $others | xargs -I@ sh -c "file @" | grep "ASCII text" | sed 's#^\(.*\):.*#\1#' | tr '\n' ' ')"
+cmd="tar -cjvf ${bakdir}/${tarfile} --exclude=.git $files $others"
+echo "> $cmd"
+[ $dryrun -eq 0 ] && eval "$cmd" && ls -l "${bakdir}/${tarfile}"
