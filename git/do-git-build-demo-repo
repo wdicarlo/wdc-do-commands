@@ -34,6 +34,7 @@ function usage() {
         echo "            12                       : demo repo with commit conflicts"
         echo "            13                       : demo repo with many commits on the same file"
         echo "            14                       : demo repo with many commits on the same big file"
+        echo "            15                       : demo repo with more than 10 commits on the same file"
         echo "       -n <name>                   : name of the repository"
         echo "       -s                          : use sub-module"
         echo "       -f                          : use git flow"
@@ -114,16 +115,17 @@ git_commit() {
     git commit -qm "$msg"
 }
 git_commit_file() {
+  append=0
+  [ "$1" == "-a" ] && append=1 && shift
   [ ! $# -eq 1 ] && echo "Wrong number of parameters; <filename>" && return
   file="$1"
-  if [ ! -f "$file" ]; then
-    val=0
-  else
-    val=$(cat $file)
+  val=0
+  if [ -f "$file" ]; then
+    val=$(cat ${file}|tail -1|cut -d':' -f2)
   fi
-  val=$(( val + 1 ))
-  echo "$val" > "$file"
-  msg="v$val"
+  val=$(($val + 1))
+  [ $append -eq 0 ] && echo "${file}:${val}" > "$file" || echo "${file}:${val}" >> "$file"
+  msg="Updated ${file}:${val}"
   git add "$file"
   git commit -qm "$msg"
 }
@@ -401,6 +403,15 @@ elif [ "$A_TOPOLOGY" == 13 ] || [ "$A_TOPOLOGY" == 14 ]; then
       git_commit_big_file "another_big_file" 2M
       git_commit_big_file "another_big_file" 2M
     fi
+elif [ "$A_TOPOLOGY" == 15 ]; then
+  for i in $(seq 5); do git_commit; done
+  for i in $(seq 1 25)
+    do
+      num=$(cat /dev/urandom | tr -dc '0-9' | fold -w 2 | head -n 1) 
+      git_commit_file -a "file_with_many_commits"
+      [ $num -lt 50 ] && git_commit || git_commit_file -a "another_file_with_many_commits"
+    done
+  for i in $(seq 5); do git_commit; done
 else
     git_commit
     git_commit
