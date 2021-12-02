@@ -2,22 +2,22 @@
 
 
 bakfile="backup"
-curdate="`date '+%y%m%d-%H%M%S'`"
-bakdir=`echo ~/backups`
+curdate="$(date '+%y%m%d-%H%M%S')"
+bakdir=$(echo ~/backups)
 
-export MY_VIM_FILES=`eval echo " \
+export MY_VIM_FILES=$(eval echo " \
 ~/git/wdc-vim-generic/README.md \
 ~/git/wdc-vim-generic/install.sh \
 ~/git/wdc-vim-generic/vimrc \
-"`
+")
 
-export MY_FILES=`eval echo " \
+export MY_FILES=$(eval echo " \
 $WDC_DO_COMMANDS_DIR/* \
 ~/.bashrc \
 ~/.bash_aliases \
 ~/.notebook/* \
 $MY_VIM_FILES \
-"`
+")
 
 if [ ${#MY_FILES} -eq 0 ]
 then
@@ -29,7 +29,7 @@ files=$MY_FILES
 #echo "Backuping $files"
 
 
-if [ $1 ]; then
+if [ ! "$1" == "" ]; then
 	tarfile="$bakfile-$curdate-$1.tar"
 else
 	tarfile="$bakfile-$curdate.tar"
