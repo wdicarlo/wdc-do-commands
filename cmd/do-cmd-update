@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-bin_dir=`echo $WDC_DO_COMMANDS_DIR`
+[ ! -d "$WDC_DO_COMMANDS_DIR" ] && echo "Wrong WDC_DO_COMMANDS_DIR=$WDC_DO_COMMANDS_DIR" && exit
 
+home_dir="$WDC_DO_COMMANDS_DIR"
 
 function usage() {
     echo "Usage: $cmd [-f] [-r] [-m \"message\"] <improved-bin-cmd>"
@@ -42,7 +43,7 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-cd $bin_dir
+cd $home_dir
 
 
 if [ ! $# -eq 1 ]; then
@@ -58,7 +59,7 @@ if [ $file -eq 0 ]; then
   [ $(file $cmd|grep -c "text executable") -eq 0 ] && [ $file -eq 0 ] && echo "Not a script, please provide the relative path to the script or use -f option for text files" && exit 
 else
   cmd="${1}"
-  [ ! -f "$cmd" ] && cmd=$(find "${bin_dir}/" -type f | grep -v "\.sav$" | grep -v "\/\.cache\/" | grep "$1" | sed "s#^$WDC_DO_COMMANDS_DIR/##" )
+  [ ! -f "$cmd" ] && cmd=$(find "${home_dir}/" -type f | grep -v "\.sav$" | grep -v "\/\.cache\/" | grep "$1" | sed "s#^$WDC_DO_COMMANDS_DIR/##" )
   [ ! -f "$cmd" ] && echo "The selected file/s does not exists or more than one has been selected: $(echo $cmd|tr '\n' ' ')" && exit
 fi
 
