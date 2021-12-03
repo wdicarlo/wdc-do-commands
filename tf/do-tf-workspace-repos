@@ -8,7 +8,7 @@ function usage() {
 	echo "Usage: $cmd [-h] [-g <repo:branch>] [-u] [-a <user:token@domain>] <workspace_folder>"
 	echo "where:"
 	echo "       -a <user:token@domain>      : account for gitlab domain"
-	echo "       -g <repo:branch>            : master git repo and branch of workspace"
+	echo "       -g <repo@branch>            : master git repo and branch of workspace"
 	echo "       -r                          : reset workspace"
 	echo "       -u                          : update workspace"
 	echo "       -h                          : print this help"
