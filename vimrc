@@ -314,13 +314,14 @@ let savevers_dirs = &backupdir
 "let g:custom_backup_dir = "~/backups/vim"
 " }
 
-" vim-custom-git-custom {
+" vim-git-backup {
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim Git Backup
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 augroup custom_backup
   autocmd!
   autocmd BufWritePost * call GBackupCurrentFile()
+  autocmd BufReadPost * call GBackupProjectInit()
 augroup end
  
 command! -nargs=0 GBackupCurrentFile :call GBackupCurrentFile()
@@ -329,49 +330,83 @@ command! -nargs=0 GBackupHistory :call GBackupHistory()
 " backup dir
 let s:custom_backup_dir='/media/shared/vim/backups/vim_git_backup.git'
 
+if !isdirectory(expand(s:custom_backup_dir))
+  " init git repository
+  let cmd = 'mkdir -p '.s:custom_backup_dir.' && \cd '.s:custom_backup_dir.' && \git init -q && \git config init.defaultBranch master && \git config user.name "Walter Di Carlo" && \git config user.email "walter@di-carlo.it" && \git commit --allow-empty -n -m "Initial commit."'
+  echomsg "Init backup repo: ".s:custom_backup_dir
+  call job_start(['sh','-c',cmd])
+endif
+
+
+function! GBackupProjectInit()
+  let file = expand('%:p')
+  let projects_dir = fnamemodify('~/projects', ':p')
+  if stridx(file,projects_dir) == -1 | return | endif " skip init of repo
+  let project_name=split(substitute(file,projects_dir,"",""),'/')[0] " extract project name
+  let project_backup_dir='/media/shared/vim/backups/'.project_name.'.git'
+  if !isdirectory(expand(project_backup_dir))
+    " init git repository
+    let cmd = 'mkdir -p '.project_backup_dir.' && \cd '.project_backup_dir.' && \git init -q && \git config init.defaultBranch master && \git config user.name "Walter Di Carlo" && \git config user.email "walter@di-carlo.it" && \git commit --allow-empty -n -m "Initial commit."'
+    echomsg "Init backup repo: ".project_backup_dir
+    call job_start(['sh','-c',cmd])
+  endif
+endfunction
 
 function! GBackupCurrentFile()
-  if !isdirectory(expand(s:custom_backup_dir))
-    " init git repository
-    let cmd = 'mkdir -p ' . s:custom_backup_dir . ';'
-    let cmd .= 'cd ' . s:custom_backup_dir . ';'
-    let cmd .= 'git init;'
-    let cmd .= 'git config user.name "Walter Di Carlo";'
-    let cmd .= 'git config user.email "walter@di-carlo.it";'
-    call system(cmd)
-  endif
   let file = expand('%:p')
-  if file =~ fnamemodify(s:custom_backup_dir, ':t') | return | endif
   let projects_dir = fnamemodify('~/projects', ':p')
-  if stridx(file,projects_dir) == -1 | echohl WarningMsg | echo "Skipping backup of: ".file | echohl None | return | endif " skip backup of files not under projects folder
-  echomsg "Backup of: ".file
-  let file_dir = s:custom_backup_dir . expand('%:p:h')
-  let backup_file = s:custom_backup_dir . file
-  let cmd = ''
-  if !isdirectory(expand(file_dir))
-    let cmd .= 'mkdir -p ' . file_dir . ';'
-  endif
-  let curdate = strftime('%Y%m%d-%H:%M')
-  let cmd .= 'cp ' . file . ' ' . backup_file . ';'
-  let cmd .= 'cd ' . s:custom_backup_dir . ';'
-  let cmd .= 'git add ' . backup_file . ';'
-  let cmd .= 'git commit -m "'.curdate.';'.file.'";'
-
-  call job_start(['sh', '-c', cmd])
+  let curdate = strftime('%Y%m%d-%H%M')
+  let cmd=''
+  if stridx(file,projects_dir) == -1 
+    echomsg "Backup: ".file." in: ".s:custom_backup_dir 
+    let file_dir = s:custom_backup_dir . expand('%:p:h')
+    let backup_file = s:custom_backup_dir .'/'. file
+    let cmd='mkdir -p '.file_dir.' && cp '.file.' '.backup_file.' && \cd '.s:custom_backup_dir.' && \git add '.backup_file.' && \git commit -m "'.curdate.':'.file.'"'  
+  else
+    let project_name=split(substitute(file,projects_dir,"",""),'/')[0] " extract project name
+    let project_backup_dir='/media/shared/vim/backups/'.project_name.'.git'
+    echomsg "Backup: ".file." in: ".project_backup_dir 
+    let backup_file = project_backup_dir . substitute(file,projects_dir.project_name,"","")
+    let file_dir = fnamemodify(backup_file,':p:h')
+    let cmd='mkdir -p '.file_dir.' && cp '.file.' '.backup_file.' && \cd '.project_backup_dir.' && \git add '.backup_file.' && \git commit -m "'.curdate.':'.substitute(file,'/home/devkit/projects/'.project_name.'/',"","").'"'  
+  endif 
+  let job = job_start(['sh', '-c', ''.cmd])
 endfunction
 
 function! GBackupHistory()
-    let backup_dir = expand(g:custom_backup_dir . expand('%:p:h'))
-    let cmd = "cd " . backup_dir
-    let cmd .= "; git log -p --since='1 month' " . expand('%:t')
+  let file = expand('%:p')
 
-    silent! exe "noautocmd botright pedit vim_git_backup"
+  let projects_dir = fnamemodify('~/projects', ':p')
 
-    noautocmd wincmd P
-    set buftype=nofile
-    exe "noautocmd r! ".cmd
-    exe "normal! gg"
-    noautocmd wincmd p
+  let backup_dir=''
+  let backup_file=''
+  if stridx(file,projects_dir) == -1 
+    let backup_dir=s:custom_backup_dir 
+    let backup_file = s:custom_backup_dir .'/'. file
+  else
+    let project_name=split(substitute(file,projects_dir,"",""),'/')[0] " extract project name
+    let backup_dir='/media/shared/vim/backups/'.project_name.'.git'
+    let backup_file = backup_dir . substitute(file,projects_dir.project_name,"","")
+  endif 
+
+  if !isdirectory(expand(backup_dir)) | return | endif
+
+  let cmd = "cd " . backup_dir
+  let cmd .= "; git log -p --since='1 month' " . backup_file
+
+  silent! exe "noautocmd botright pedit vim_git_backup"
+
+  noautocmd wincmd P
+  set buftype=nowrite
+  set filetype=diff
+  exe "noautocmd r! ".cmd
+  exe "normal! gg"
+  noautocmd wincmd p
+
+  let windowNr = bufwinnr('vim_git_backup')
+  if windowNr > 0
+    execute windowNr 'wincmd w'
+  endif
 endfunction
 " }
 
