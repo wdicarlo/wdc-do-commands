@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+[ ! -d "$BACKUPS_DIR" ] && echo "Wrong BACKUPS_DIR=$BACKUPS_DIR to store patch files" && exit
+
+cmd=`basename $0`
+function usage() {
+    echo "Usage: $cmd [-h] [-a] [-s <squashes>] [-t <threshold>] <file>"
+    echo "where:"
+    echo "       -h                 : help"
+    echo "       -a                 : squash all commits"
+    echo "       -s <squashes>      : num (def 5) commit squashed"
+    echo "       -t <threshold>     : threshold (def 10) of commits to apply the squashes"
+    echo "       -q                 : quiet"
+    exit
+}
+
+quiet=0
+threshold=10
+squashes=5
+all=0
+while getopts hqt:s:a flag
+do
+    case $flag in
+        t)
+            threshold=$OPTARG
+            ;;
+        s)
+            squashes=$OPTARG
+            ;;
+        a)
+            all=1
+            ;;
+        q)
+            quiet=1
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+[ ! -d ".git" ] && echo "Not in git root folder" && exit
+
+file="$1"
+[ ! -f "$file" ] && echo "Missing file: $file" && exit
+
+num=$(git log --oneline "$file" | wc -l)
+
+[ $num -ge 0 ] && [ $num -le 1 ] && echo "Nothing to squash" && exit
+
+PATCHES_DIR="$BACKUPS_DIR/git/patches"
+[ ! -d "$PATCHES_DIR" ] && mkdir -p "$PATCHES_DIR"
+# rest patches folder
+rm "$PATCHES_DIR/*"
+
+if [ $all -eq 1 ]; then
+  # backup file
+  filename="$(basename $file)"
+  file_dir="$(dirname $file)"
+  dest_dir="${PATCHES_DIR}/$file_dir"
+  mkdir -p "${dest_dir}"
+  cp "$file" "$dest_dir"
+  
+  # delete history
+  do-git-filter-repo --force --invert-paths --path "$file"
+
+  # add back the squashed file commits
+  mkdir -p "${file_dir}"
+  cp "${dest_dir}/${filename}" "./${file_dir}/"
+  git add "$file"
+  git commit -m "Squashed $file commits"
+else
+  [ $threshold -lt $squashes ] && echo "Wrong threshold: $threshold <= $squashes" && exit
+
+  [ $num -lt $threshold ] && echo "Less than $threshold commits: $num" && exit 
+
+  # create patch files
+  git format-patch --root -o "$PATCHES_DIR" -- "$file"
+
+  # delete history
+  do-git-filter-repo --force --invert-paths --path "$file"
+
+  # apply commits to be squashed
+  filename=$(basename $file)
+  seq $squashes |xargs -I@ sh -c 'ls $PATCHES_DIR|grep "^[0]*@-.*${filename}.patch"' | xargs -I@ sh -c "git am -3 $PATCHES_DIR/@"
+
+  # squash commits
+  git reset --soft HEAD~$squashes
+  git commit -m "Squashed initial $squashes commits of $file"
+
+  # apply the rest of commits
+  seq $(( $squashes + 1 )) $num |xargs -I@ sh -c 'ls $PATCHES_DIR|grep "^[0]*@-.*${filename}.patch"' | xargs -I@ sh -c "git am -3 $PATCHES_DIR/@"
+fi
