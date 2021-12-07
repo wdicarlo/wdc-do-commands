@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+[ ! -d ".git" ] && echo "Not in the root folder of the git repository" && exit
+
+git ls-files | xargs -I@ sh -c "echo -n \"@;\"; git log --oneline @ | wc -l" | sort -r -t';' -k2
+
