@@ -55,7 +55,7 @@ gen_path() {
 	if [ $tree -eq 0 ]; then
 		return
 	fi
-	tree_path=""
+	tree_path="."
 	if [ $random -eq 1 ]; then
 			for i in $(seq 1 $(gen_num 1 $tree));
 			do 
@@ -63,7 +63,7 @@ gen_path() {
 					tree_path="${tree_path}/d$dir"
 			done
 	else
-			tree_path="/d$tree_root"
+			tree_path="./d$tree_root"
 			for i in $(seq 1 $tree);
 			do 
 					dir="d$i"
@@ -71,6 +71,7 @@ gen_path() {
 			done
 			tree_root=$(($tree_root + 1))
 	fi
+  echo "$tree_path" # return relative path
 }
 
 git_tag() {
@@ -107,10 +108,10 @@ git_commit() {
 		echo "$commit_i" > "$commit_i"
     	git add "$commit_i"
 	else
-		gen_path
-		mkdir -p ".$tree_path"
-		echo "$commit_i" > ".$tree_path/$commit_i"
-    	git add ".$tree_path/$commit_i"
+    tree_path=$(gen_path)
+		mkdir -p "$tree_path"
+		echo "$commit_i" > "$tree_path/$commit_i"
+    	git add "$tree_path/$commit_i"
 	fi
     git commit -qm "$msg"
 }
@@ -119,6 +120,7 @@ git_commit_file() {
   [ "$1" == "-a" ] && append=1 && shift
   [ ! $# -eq 1 ] && echo "Wrong number of parameters; <filename>" && return
   file="$1"
+  [ ! -d "$(dirname $file)" ] && mkdir -p "$(dirname $file)"
   val=0
   if [ -f "$file" ]; then
     val=$(cat ${file}|tail -1|cut -d':' -f2)
@@ -381,12 +383,14 @@ elif [ "$A_TOPOLOGY" = 12 ]; then
     git_commit_conflict master develop 1 change1 change2
     git_merge_conflict $BRANCH_DEV
 elif [ "$A_TOPOLOGY" == 13 ] || [ "$A_TOPOLOGY" == 14 ]; then
+    file="file_with_many_commits"
+    [ $tree -gt 0 ] && $file="$(gen_path)/$file"
     git_commit
     git_commit
-    git_commit_file "file_with_many_commits"
-    git_commit_file "file_with_many_commits"
-    git_commit_file "file_with_many_commits"
-    git_commit_file "file_with_many_commits"
+    git_commit_file "$file"
+    git_commit_file "$file"
+    git_commit_file "$file"
+    git_commit_file "$file"
     git_commit
     git_commit
     git_commit
@@ -405,11 +409,15 @@ elif [ "$A_TOPOLOGY" == 13 ] || [ "$A_TOPOLOGY" == 14 ]; then
     fi
 elif [ "$A_TOPOLOGY" == 15 ]; then
   for i in $(seq 5); do git_commit; done
+  file="file_with_many_commits"
+  [ $tree -gt 0 ] && file="$(gen_path)/$file"
+  another_file="another_file_with_many_commits"
+  [ $tree -gt 0 ] && another_file="$(gen_path)/$another_file"
   for i in $(seq 1 25)
     do
       num=$(cat /dev/urandom | tr -dc '0-9' | fold -w 2 | head -n 1) 
-      git_commit_file -a "file_with_many_commits"
-      [ $num -lt 50 ] && git_commit || git_commit_file -a "another_file_with_many_commits"
+      git_commit_file -a "$file"
+      [ $num -lt 50 ] && git_commit || git_commit_file -a "$another_file"
     done
   for i in $(seq 5); do git_commit; done
 else
