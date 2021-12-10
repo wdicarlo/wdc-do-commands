@@ -85,3 +85,5 @@ Sum piped sequence of numbers printing the partial sum
 	<numbers> | awk '{s+=$1;print s}END{print "Tot: " s}'
 Sum piped <num> <date> sequence printing the partial sum
 	<number date> | awk '{s+=$1;print $2 " " s}END{print "Tot: " s}'
+Solve terminal issue with special font characters
+	export LC_ALL=C
