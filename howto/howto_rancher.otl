@@ -2,9 +2,13 @@ Rancher
 	Rancher tips and tricks
 Login with a token no cluster scoped
 	rancher login --token $rtoken $rendpoint
+Print cluster settings
+	rancher settings
 List apps deployed with helm charts
 	rancher apps ls
 List templates for installation
 	rancher apps list-templates
 List available app versions
 	rancher app show-template cattle-global-data:apache-airflow-airflow
+Use kubectl command
+	rancher kubectl get pods -n <namespace>
