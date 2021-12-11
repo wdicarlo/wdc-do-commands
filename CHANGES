@@ -1,3 +1,37 @@
+Version 0.12.0:
+ - Improved find/do-find-string command. Added topic management options
+ - Improved pipe/do-pipe-cfile-to-vim command.
+ - Update /home/devkit/wbin/howto/howto_rancher.otl file.
+ - Update /home/devkit/wbin/howto/howto_k8s.otl file.
+ - Update /home/devkit/wbin/howto/howto_bash.otl file.
+ - Added git/do-git-squash-file-history command
+ - Added git/do-git-list-tracked-files-history-count command
+ - Improved git/do-git-build-demo-repo command.
+ - Update vimrc file. Improved Vim Git backup feature
+ - Improved tf/do-tf-workspace-repos command.
+ - Added cmd/do-cmd-backup command
+ - Improved git/do-git-build-demo-repo command. Added generation of repository with files having multiple commits
+ - Improved pipe/do-pipe-files-to-backup-archive command.
+ - Improved cmd/do-cmd-update command.
+ - Improved backup/do-backup-documents command.
+ - Improved backup/do-backup command.
+ - Fixed patch files
+ - Improved cmd/do-cmd-tools command.
+ - Added howto/howto_rancher.otl command
+ - Added howto/howto_python.otl file
+ - Update bash_completion.d/git-completion.bash file.
+ - Update bin/do_cmd_tools.csv file.
+ - Improved cmd/do-cmd-tools command.
+ - Updated TODO file
+ - Update howto/howto_bash.otl file.
+ - Updated TODO file
+ - Update howto/howto_az.otl file.
+ - Update howto/howto_k8s.otl file.
+ - Improved howto/do-howto-list command. Added option to list changes
+ - Update bin/do_cmd_index_def.csv file.
+ - Improved cmd/do-cmd-find command. Added option to print the absolute paths
+ - Improved git/do-git-bump-version command.
+
 Version 0.11.0:
  - Update Dockerfile file. Added support for the cache
  - Improved cmd/do-cmd command. Added possibility to use a cache
