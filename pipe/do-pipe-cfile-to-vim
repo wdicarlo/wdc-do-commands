@@ -5,17 +5,17 @@ if [ -t 0 ]; then
     echo "Usage: $cmd must be used in a pipe"
     echo "            which generate a list of"
     echo "            files suitable for cfile"
-    echo "                <path1>:<n1> <comment1>"
-    echo "                <path2>:<n2> <comment2>"
-    echo "                <path3>:<n3> <comment3>"
+    echo "                <path1>:<n1>:<comment1>"
+    echo "                <path2>:<n2>:<comment2>"
+    echo "                <path3>:<n3>:<comment3>"
     exit
 fi
 
 
-cat | grep ".*:[0-9]*: *.*" > ~/.vim/vim_cfile.txt
+cat | grep "^.*:[0-9]*: *.*" > ~/.vim/vim_cfile.txt
 
-if [ `cat ~/.vim/vim_cfile.txt | head -1 | wc -l` -eq 1 ]; then
-    cmd="vim -c \"cfile ~/.vim/vim_cfile.txt\" -c \"copen\""
+if [ $(cat ~/.vim/vim_cfile.txt | head -1 | wc -l) -eq 1 ]; then
+    cmd="\vim -c \"cfile ~/.vim/vim_cfile.txt\" -c \"copen\""
 
     if [ $# == 1 ]; then
         cmd="$cmd -c \"let @/=\\\"$1\\\"\""
