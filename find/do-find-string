@@ -5,7 +5,7 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-a] [-i] [-b] [-p] [-c ] [-s "substitute-string"][-e <exclude-patt>] [-r <root>] [-n <depth>] [-f <file-pattern>] [-g] [-C n] [-w] <string>"
+    echo "Usage: $cmd [-h] [-a] [-i] [-b] [-p] [-c ] [-l|L] [-s "substitute-string"][-e <exclude-patt>] [-r <root>] [-n <depth>] [-f <file-pattern>] [-C n] [-w] [-t|T|R <topic>] <string>"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -i                          : ignore case"
@@ -19,12 +19,28 @@ function usage() {
     echo "       -a                          : use ack-grep"
     echo "       -s \"substitute-string\"    : substitute <string> with substitute-string"
     echo "       -C n                        : context like A2 B1 C3..."
-    echo "       -g                          : find string storing the result"
+    echo "       -l                          : list available topics"
+    echo "       -L                          : print last topic, same as -T -"
+    echo "       -t <topic|->                : append the result to [-=last] topic file"
+    echo "       -T <topic|->                : print [-=last] topic file"
+    echo "       -R <topic|->                : reset [-=last] topic file"
     echo "       -w                          : find whole word"
     echo "       -v                          : verbose"
     echo "       -q                          : quiet"
 }
 
+function print_topic() {
+  topic="$1"
+  topic_file=$(echo "${HOME}/.do-find-string/${topic}.txt")
+  [ ! -f "${topic_file}" ] && return
+  root=""
+  cat "$topic_file" | while read -r line
+  do
+    [ "${line:0:6}" == "# PWD=" ] && root="${line:6}" && continue
+    [ "${line:0:1}" == "#" ] && continue
+    echo "$line" | sed "s#^\.#$root#"
+  done
+}
 if [ $# == 0 ]; then
     usage
     exit
@@ -40,14 +56,33 @@ quiet=0
 binary=0
 grep_cmd="\grep"
 ss=""
-justgrep=1
 verbose=0
+taction=0
+topic=""
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts habqicpr:n:f:e:s:gC:vw flag
+while getopts habqicpr:n:f:e:s:gC:vwt:T:lLR: flag
 do
     case $flag in
+        t)
+            topic=$OPTARG
+            taction=1 # append
+            ;;
+        T)
+            topic=$OPTARG
+            taction=2 # print
+            ;;
+        l)
+            taction=3 # list
+            ;;
+        L)
+            taction=5 # print last used topic
+            ;;
+        R)
+            topic=$OPTARG
+            taction=4 # append
+            ;;
         a)
             ack_grep=`which ack-grep`
             if [ ! -z "$ack_grep" ]; then
@@ -57,9 +92,6 @@ do
 
         v)
             verbose=1
-            ;;
-        g)
-            justgrep=0
             ;;
         b)
             binary=1
@@ -140,16 +172,23 @@ if [ ! "$postproc" == "" ]; then
     cmd+="|$postproc"
 fi
 cmd+=" 2>/dev/null"
-if [ $quiet -eq 0 ]; then
-    echo "> $cmd"
-fi
 
-#TODO: remove whitespaces and special characters from $string
-output_file=$(echo ~/.do-find-string/$string)
-
-if [ $justgrep -eq 0 ]; then
-    #eval $cmd | tee ~/.bash_output  | \grep --color "^\|$string"
-    eval $cmd | tee $output_file  | \grep --color "^\|$string"
+if [ $taction -gt 0 ]; then
+    [ ! -d '${HOME}/.do-find-string' ] && mkdir -p "${HOME}/.do-find-string"
+    #TODO: remove special characters from $string
+    [ $taction -eq 5 ] && topic="-" && taction=2
+    [ "$topic" == "-" ] && topic=$(ls -1t ~/.do-find-string/ | grep "\.txt$" | head -1 | sed 's#\.txt##') 
+    [ $taction -eq 3 ] && ls -1 "${HOME}/.do-find-string/" | grep "\.txt$" | sed 's#\.txt##' && exit
+    topic_file=$(echo "${HOME}/.do-find-string/${topic}.txt")
+    [ $taction -eq 4 ] && cp "${topic_file}" "${topic_file}.bak" && rm -f "${topic_file}" && echo "Reset: ${topic_file} Backup: ${topic_file}.bak" && exit
+    [ ! -f "${topic_file}" ] && echo "# do-find-string: topic=$topic" > "${topic_file}"
+    [ $taction -eq 2 ] && print_topic "${topic}" && exit
+    echo "# PWD=$PWD" >> "${topic_file}"
+    #cmd+=" | sed \"s#^\\.#\$PWD#\""
+    echo "# $cmd" >> "${topic_file}"
+    [ $quiet -eq 0 ] && echo "> $cmd"
+    eval $cmd | tee -a $topic_file  | \grep --color "^\|$string"
 else
+    [ $quiet -eq 0 ] && echo "> $cmd"
     eval $cmd 
 fi
