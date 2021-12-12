@@ -187,8 +187,9 @@ docker_args=()
 #  docker_args+=(-e "${line}")
 #done < <(env | grep -E "${env_regex}")
 cur_prj="$(echo ${HOST_PATH:$((${#PROJECTS}+1))} | cut -d'/' -f 1)"
-MOUNT_HOST_PROJECT="-v ${HOST_PATH}:/home/dockeruser/host" && [ ! "$cur_prj" == "" ] && MOUNT_HOST_PROJECT="-v ${PROJECTS}/${cur_prj}:/home/dockeruser/host"
-MOUNT_HOST_PROJECTS="" && [ $projects -eq 1 ] && MOUNT_HOST_PROJECTS="-v $PROJECTS:/home/dockeruser/projects"
+MOUNT_HOST_PATH="" && [ "$cur_prj" == "" ] && MOUNT_HOST_PATH="-v ${HOST_PATH}:/home/dockeruser/host"
+MOUNT_HOST_PROJECTS="" && [ ! "$cur_prj" == "" ] && MOUNT_HOST_PROJECTS="-v ${PROJECTS}/${cur_prj}:/home/dockeruser/projects/${cur_prj}"
+[ $projects -eq 1 ] && MOUNT_HOST_PROJECTS="-v $PROJECTS:/home/dockeruser/projects"
 MOUNT_HOST_SHARED="" && [ $shared -eq 1 ] && MOUNT_HOST_SHARED="-v /media/shared/:/media/shared"
 MOUNT_HOST_MBIN="" && [ ! "$mbin_path" == "" ] && MOUNT_HOST_MBIN="-v $mbin_path:/home/dockeruser/mbin"
 
@@ -197,7 +198,7 @@ ${EXTRA_PARAMETERS:-} \
 ${docker_args[@]:-} \
 -e \"CUR_UID=$(id -u)\" \
 -e \"CUR_GID=$(id -g)\" \
-${MOUNT_HOST_PROJECT} \
+${MOUNT_HOST_PATH} \
 ${MOUNT_HOST_PROJECTS} \
 ${MOUNT_HOST_SHARED} \
 ${MOUNT_HOST_MBIN} \
