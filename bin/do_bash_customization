@@ -582,9 +582,19 @@ parse_git_branch() {
 
 function prompt_command()
 {
-    # TODO: add repo status syntesis: [M|A|?] 
     update_prompt 
-    history -a; history -c; history -r
+    history -a; history -c
+    if [ ! "${PROJECTS}" == "" ]; then
+      HISTCMDS_FILE="${HOME}/.bash_commands"
+      if [ ${#PROJECT_PATH} -gt ${#PROJECTS} ]; then # PROJECT_PATH ends either with / or /<prj_name>
+        HISTCMDS_FILE="${PROJECT_PATH}/.bash_commands"
+        [ "$PROJECT_PATH" == "${PROJECTS}/" ] && HISTCMDS_FILE="${PROJECTS}/.bash_commands"
+      fi
+      last_cmd=$(cat $HOME/.bash_history|tail -1|sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null)
+      [ ! -f "$HISTCMDS_FILE" ] && touch "$HISTCMDS_FILE"
+      [ ! "$last_cmd" == "" ] && [ $(grep -c "$last_cmd" "$HISTCMDS_FILE") -eq 0 ] && echo "$last_cmd" >> "${HISTCMDS_FILE}"
+    fi
+    history -r
 }
 function fsv()
 {
