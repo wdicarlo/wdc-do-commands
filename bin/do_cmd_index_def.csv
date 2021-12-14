@@ -1,5 +1,6 @@
 db;do-bookmark
 dcb;do-cd-bookmark
+dcbk;do-cmd-backup
 dcd;do-cmd-diff
 dct;do-cmd-tools
 dff;do-find-files
