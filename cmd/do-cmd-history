@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+sort=""
+[ "$1" == "-s" ] && shift && sort="| sort"
+
+HISTCMDS_FILE="${HOME}/.bash_commands"
+[ "$(echo ${PWD:0:${#PROJECTS}})" == "${PROJECTS}" ] && HISTCMDS_FILE="${PROJECTS}/$(echo ${PWD:$((${#PROJECTS}+1))} | cut -d'/' -f 1)/.bash_commands"
+
+cmd="cat "${HISTCMDS_FILE}" $sort"
+[ ! "$1" == "" ] && cmd="cat \"${HISTCMDS_FILE}\" | grep \"$1\" $sort"
+echo "> $cmd"
+eval "$cmd"
