@@ -1,12 +1,47 @@
 #!/usr/bin/env bash
 
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h] [-a] [-s] [<filter-pattern>]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -a                          : consider project and gloabl commands"
+  echo "       -s                          : sort commands"
+}
+
+# Arguments processing
 sort=""
-[ "$1" == "-s" ] && shift && sort="| sort"
+global=0
+while getopts has flag
+do
+  case $flag in
+    a)
+      global=1
+      ;;
+    s)
+      sort="| sort"
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 
 HISTCMDS_FILE="${HOME}/.bash_commands"
 [ "$(echo ${PWD:0:${#PROJECTS}})" == "${PROJECTS}" ] && HISTCMDS_FILE="${PROJECTS}/$(echo ${PWD:$((${#PROJECTS}+1))} | cut -d'/' -f 1)/.bash_commands"
 
+[ $global -eq 1 ] && [ ! "$HISTCMDS_FILE" == "${HOME}/.bash_commands" ] && HISTCMDS_FILE="$HISTCMDS_FILE ${HOME}/.bash_commands"
+
 cmd="cat "${HISTCMDS_FILE}" $sort"
-[ ! "$1" == "" ] && cmd="cat \"${HISTCMDS_FILE}\" | grep \"$1\" $sort"
+[ ! "$1" == "" ] && cmd="cat ${HISTCMDS_FILE} | grep \"$1\" $sort"
 echo "> $cmd"
 eval "$cmd"
