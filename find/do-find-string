@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-
-
 cmd=`basename $0`
 
+TOPICS_DIR="${HOME}/.do-find-string"
+[ ! "$TASKS" == "" ] && TOPICS_DIR="$TASKS"
+[ ! -d '${TOPICS_DIR}' ] && mkdir -p "${TOPICS_DIR}"
+
 function usage() {
-    echo "Usage: $cmd [-h] [-a] [-i] [-b] [-p] [-c ] [-l|L] [-s "substitute-string"][-e <exclude-patt>] [-r <root>] [-n <depth>] [-f <file-pattern>] [-C n] [-w] [-t|T|R <topic>] <string>"
+    echo "Usage: $cmd [-h] [-a] [-i] [-b] [-p] [-c ] [-l|L] [-s "substitute-string"][-e <exclude-patt>] [-r <root>] [-n <depth>] [-f <file-pattern>] [-C n] [-w] [-t|T|V|R <topic>] <string>"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -i                          : ignore case"
@@ -23,6 +25,7 @@ function usage() {
     echo "       -L                          : print last topic, same as -T -"
     echo "       -t <topic|->                : append the result to [-=last] topic file"
     echo "       -T <topic|->                : print [-=last] topic file"
+    echo "       -V <topic|->                : view [-=last] topic file"
     echo "       -R <topic|->                : reset [-=last] topic file"
     echo "       -w                          : find whole word"
     echo "       -v                          : verbose"
@@ -31,7 +34,7 @@ function usage() {
 
 function print_topic() {
   topic="$1"
-  topic_file=$(echo "${HOME}/.do-find-string/${topic}.txt")
+  topic_file=$(echo "${TOPICS_DIR}/${topic}/${topic}.txt")
   [ ! -f "${topic_file}" ] && return
   root=""
   cat "$topic_file" | while read -r line
@@ -62,7 +65,7 @@ topic=""
 if [ ! -t 1 ]; then
     quiet=1
 fi
-while getopts habqicpr:n:f:e:s:gC:vwt:T:lLR: flag
+while getopts habqicpr:n:f:e:s:gC:vwt:T:lLR:V: flag
 do
     case $flag in
         t)
@@ -72,6 +75,10 @@ do
         T)
             topic=$OPTARG
             taction=2 # print
+            ;;
+        V)
+            topic=$OPTARG
+            taction=6 # print
             ;;
         l)
             taction=3 # list
@@ -164,25 +171,26 @@ if [ $verbose -eq 1 ]; then
 	verbose_cmd="echo @;"
 fi
 if [ "$exclude" == "" ]; then
-    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f $file $bin_filter $sav_filter | xargs -I@ sh -c \"$verbose_cmd $grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"\""
+    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune -o -type d -name .cache -prune \) -o -type f $file $bin_filter $sav_filter | xargs -I@ sh -c \"$verbose_cmd $grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"\""
 else
-    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune \) -o -type f $file $bin_filter $sav_filter | xargs -I@ sh -c \"$grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
+    cmd="find \"$root\" -maxdepth \"$depth\" \( -type d -name .svn -prune -o -type d -name .git -prune -o -type d -name .cache -prune \) -o -type f $file $bin_filter $sav_filter | xargs -I@ sh -c \"$grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
 fi
 if [ ! "$postproc" == "" ]; then
     cmd+="|$postproc"
 fi
 cmd+=" 2>/dev/null"
 
+[ $taction -eq 0 ] && [ ! "$PROJECT_TASK" == "" ] && taction=1 && topic="$PROJECT_TASK"
 if [ $taction -gt 0 ]; then
-    [ ! -d '${HOME}/.do-find-string' ] && mkdir -p "${HOME}/.do-find-string"
     #TODO: remove special characters from $string
-    [ $taction -eq 5 ] && topic="-" && taction=2
-    [ "$topic" == "-" ] && topic=$(ls -1t ~/.do-find-string/ | grep "\.txt$" | head -1 | sed 's#\.txt##') 
-    [ $taction -eq 3 ] && ls -1 "${HOME}/.do-find-string/" | grep "\.txt$" | sed 's#\.txt##' && exit
-    topic_file=$(echo "${HOME}/.do-find-string/${topic}.txt")
+    [ $taction -eq 5 ] && topic="-" && taction=2 && [ ! "$PROJECT_TASK" == "" ] && topic="$PROJECT_TASK"
+    [ "$topic" == "-" ] && topic=$(basename $(find $TASKS -type f -exec ls -l --time-style +%Y%m%d%H%M {} \; | sort -t' ' -r -k6 | head -1 | cut -d' ' -f7) | sed 's#^\(.*\)\..*$#\1#') 
+    [ $taction -eq 3 ] && find $TASKS -type f -exec ls -l --time-style +%Y%m%d%H%M {} \; | sort -t' ' -r -k6 | cut -d' ' -f7 | xargs -I@ sh -c "basename @ " | sed 's#^\(.*\)\..*$#\1#' && exit
+    topic_file=$(echo "${TOPICS_DIR}/${topic}/${topic}.txt")
     [ $taction -eq 4 ] && cp "${topic_file}" "${topic_file}.bak" && rm -f "${topic_file}" && echo "Reset: ${topic_file} Backup: ${topic_file}.bak" && exit
-    [ ! -f "${topic_file}" ] && echo "# do-find-string: topic=$topic" > "${topic_file}"
+    [ ! -f "${topic_file}" ] && mkdir -p $(dirname $topic_file) && echo "# do-find-string: topic=$topic" > "${topic_file}"
     [ $taction -eq 2 ] && print_topic "${topic}" && exit
+    [ $taction -eq 6 ] && print_topic "${topic}" | do-pipe-cfile-to-vim && exit
     echo "# PWD=$PWD" >> "${topic_file}"
     #cmd+=" | sed \"s#^\\.#\$PWD#\""
     echo "# $cmd" >> "${topic_file}"

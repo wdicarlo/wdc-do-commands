@@ -1,0 +1,69 @@
+#!/usr/bin/env  bash
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
+
+[ ! -d "$TASKS" ] && echo "Wrong TASKS: $TASKS" && return
+
+cmd=`basename $0`
+function usage() {
+  echo "Usage: $cmd [-h] [-n] [-t <task_name>]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -t <task>                   : start/continue work on <task>"
+  echo "       -n                          : stop work on active task"
+}
+
+# Arguments processing
+task_name=""
+OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
+while getopts ht:n flag
+do
+  case $flag in
+    n)
+      PROJECT_TASK=""
+      return
+      ;;
+    t)
+      task_name="$OPTARG"
+      ;;
+    h)
+      usage
+      return
+      ;;
+    ?)
+      usage
+      return
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+filter="^"
+[ ! "$1" == "" ] && filter="$1"
+
+function list_tasks() {
+  action="NEW"
+  [ ! "$1" == "" ] && action="$1"
+  ACTIVE_TASK="$PROJECT_TASK"
+  [ "$ACTIVE_TASK" == "" ] && ACTIVE_TASK="^$"
+  (echo "NONE"; echo "$action"; 
+  (ls -1 "$TASKS"|grep "$filter") | sort | uniq) | sed "s#${ACTIVE_TASK}#>${ACTIVE_TASK}#" | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t
+}
+if [ "$task_name" == "" ]; then
+  list_tasks
+  read -p "task? " num
+
+  [ "$num" == "" ] && return
+
+  task_name=""
+  if [ "$num" == "1" ]; then
+    task_name=""
+    export PROJECT_TASK=""
+  elif [ "$num" == "2" ]; then
+    read -p "task name? " task_name
+  else
+    task_name="$(list_tasks|grep "^$num "|sed 's/[ \t]\+/ /g'|cut -d' ' -f2)"
+  fi
+fi
+[ "$task_name" == "" ] && return
+[ ! -d "$task_name" ] && mkdir -p "${TASKS}/${task_name}"
+export PROJECT_TASK=$task_name

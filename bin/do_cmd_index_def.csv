@@ -13,5 +13,6 @@ dhl;do-howto-list
 dpa;do-project-activation
 dpc;do-project-creation
 dsd;do-sec-decrypt
-dvd;do-vim-diff
+dt;do-task
 dv;do-vim
+dvd;do-vim-diff
