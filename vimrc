@@ -250,11 +250,13 @@ let g:airline#extensions#obsession#indicator_text = '$'
 
     " Stupid shift key fixes
     "map W w
-    cmap WQ wq
-    cmap wQ wq
-    cmap WQ wq
-    cmap Wq wq
-    cmap Wqa wqa
+    cmap WQ w
+    cmap wQ w
+    cmap WQ w
+    cmap Wq w
+    cmap Wqa w
+    cmap wq w
+    cmap wqa wa
     cmap Qa qa
     cmap qA qa
     cmap QA qa
@@ -326,34 +328,57 @@ augroup end
  
 command! -nargs=0 GBackupCurrentFile :call GBackupCurrentFile()
 command! -nargs=0 GBackupHistory :call GBackupHistory()
+command! -nargs=0 GBackupSquashHistory :call GBackupSquashHistory()
 
 " backup dir
 let s:custom_backup_dir='/media/shared/vim/backups/vim_git_backup.git'
 
 if !isdirectory(expand(s:custom_backup_dir))
+  " TODO: use one repo per project
+  " TODO: use global repo for file out of projects
   " init git repository
   let cmd = 'mkdir -p '.s:custom_backup_dir.' && \cd '.s:custom_backup_dir.' && \git init -q && \git config init.defaultBranch master && \git config user.name "Walter Di Carlo" && \git config user.email "walter@di-carlo.it" && \git commit --allow-empty -n -m "Initial commit."'
   echomsg "Init backup repo: ".s:custom_backup_dir
   call job_start(['sh','-c',cmd])
 endif
 
-
 function! GBackupProjectInit()
-  let file = expand('%:p')
-  let projects_dir = fnamemodify('~/projects', ':p')
-  if stridx(file,projects_dir) == -1 | return | endif " skip init of repo
-  let project_name=split(substitute(file,projects_dir,"",""),'/')[0] " extract project name
+  let file = resolve(expand('%:p'))
+  "echomsg 'GBackupProjectInit: '.file
+  "if file =~ fnamemodify(s:custom_backup_dir, ':t') | return | endif
+  let projects_dir = resolve(expand(fnamemodify('~/projects', '%:p')))
+  "echomsg 'GBackupProjectInit: '.projects_dir
+  let project_name=''
+  if stridx(file,projects_dir) == -1 
+    let project_name="vim_git_backup"
+  else
+    let project_name=split(substitute(file,projects_dir,"",""),'/')[0] " extract project name
+  endif " skip init of repo
   let project_backup_dir='/media/shared/vim/backups/'.project_name.'.git'
+  "echomsg 'GBackupProjectInit: '.project_backup_dir
   if !isdirectory(expand(project_backup_dir))
     " init git repository
     let cmd = 'mkdir -p '.project_backup_dir.' && \cd '.project_backup_dir.' && \git init -q && \git config init.defaultBranch master && \git config user.name "Walter Di Carlo" && \git config user.email "walter@di-carlo.it" && \git commit --allow-empty -n -m "Initial commit."'
-    echomsg "Init backup repo: ".project_backup_dir
+    "echomsg "Init backup repo: ".project_backup_dir
     call job_start(['sh','-c',cmd])
+  else
+    " check git repository health
+    let cmd = '\cd '.project_backup_dir.' && git status --short | wc -l' " no changes/untracked files must exist
+    "echomsg 'Checking git repo: '.cmd
+    let out = system(cmd)
+    if ! out[0:1] ==# '0'
+      let cmd = '\cd '.project_backup_dir.' && git add . && git commit -m "Repaired repository"' 
+      "echomsg 'Rapaining the repository with: '.cmd
+      call job_start(['sh','-c',cmd])
+    else
+      "echomsg 'Vim backup git repository: '.project_backup_dir
+    endif
   endif
 endfunction
 
 function! GBackupCurrentFile()
   let file = expand('%:p')
+  "if file =~ fnamemodify(s:custom_backup_dir, ':t') | return | endif
   let projects_dir = fnamemodify('~/projects', ':p')
   let curdate = strftime('%Y%m%d-%H%M')
   let cmd=''
@@ -407,6 +432,34 @@ function! GBackupHistory()
   if windowNr > 0
     execute windowNr 'wincmd w'
   endif
+endfunction
+function! GBackupSquashHistory()
+  let file = expand('%:p')
+
+  let projects_dir = fnamemodify('~/projects', ':p')
+
+  let backup_dir=''
+  let backup_file=''
+  let project_name=''
+  if stridx(file,projects_dir) == -1 
+    let backup_dir=s:custom_backup_dir 
+    let backup_file = s:custom_backup_dir .'/'. file
+  else
+    let project_name=split(substitute(file,projects_dir,"",""),'/')[0] " extract project name
+    let backup_dir='/media/shared/vim/backups/'.project_name.'.git'
+    let backup_file = backup_dir . substitute(file,projects_dir.project_name,"","")
+  endif 
+
+  if !isdirectory(expand(backup_dir)) | return | endif
+  let file_path=substitute(file,projects_dir.project_name."/","","")
+  let cmd = "cd " . backup_dir ." && "
+  let cmd .= "cp ". file_path ." ". file_path .".bak && "   
+  let cmd .= "/home/devkit/wbin/git/do-git-filter-repo --force --invert-paths --path ". file_path  ." && "   
+  let cmd .= "mv ". file_path .".bak ". file_path ." && "   
+  let cmd .= "git add ". file_path ." && "   
+  let cmd .= "git commit -m \"Squashed ". file_path ." commits\""   
+  echomsg "Squash command: ".cmd
+  call job_start(['sh','-c',cmd])
 endfunction
 " }
 
