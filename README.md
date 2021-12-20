@@ -81,22 +81,7 @@ Some help can be obtained in the following ways:
 * command options - by executing the command with the -h option
 * command code - by reading the code of the command
 * howto - by using the do-howto-print command. For example ```do-howto-print git tag``` will print all reference to tag present in the file howto_git.otl
-* do-web-man - by using the do-man command. For example ```do-web-man find``` will print details and examples of the linux find command
-
-## Project management ##
-A project can be managed with the following commands:
-* do-project-creation and do-project-activation - to create and activate it
-* do-bookmark and do-cd-bookmark - to jump into tagged folder of the project
-* do-vim -t <task> - to edit files of the project related to the specified task
-
-### Project setup script templates ###
-TBD
-
-### Folder bookmarks ###
-TBD
-
-### do-vim command ###
-TBD
+* web man - by using the do-web-man command. For example ```do-web-man find``` will print details and examples of the linux find command
 
 ## d commands ##
 In order to reduce the keys to type to specify a command a d command has been created.
@@ -149,7 +134,6 @@ dpc;do-project-creation
 dcb;do-cd-bookmark
 db;do-bookmark
 ```
-
 ## howto commands ##
 The following command create the howto_do.otl which will contain tips and tricks for the do commands
 ```bash
@@ -159,10 +143,10 @@ WDC Do Commands
 ```
 The following command will update the do howto file
 ```bash
-$ do-howto-update do "Find do commands containg the prettyprint string" "d cf prettyprint"
+$ do-howto-update do "Find do commands containing the prettyprint string" "d cf prettyprint"
 WDC Do Commands
 	Personal set of Linux commands
-Find do commands containg the prettyprint string
+Find do commands containing the prettyprint string
 	d cf prettyprint
 ```
 Indeed using the mentioned command
@@ -226,6 +210,29 @@ yq
 ```
 or more shortly with ```d hl```
 
+## Project management ##
+A project can be managed with the following commands:
+* do-project-creation and do-project-activation - to create and activate it
+* do-bookmark and do-cd-bookmark - to jump into tagged folder of the project
+* do-task - to manage the context of different other commands (eg. do-find-string)
+* do-vim -t <task> - to edit files of the project related to the specified task
+
+### Project setup script templates ###
+TBD
+
+### Folder bookmarks ###
+TBD
+
+### do-vim command ###
+TBD
+
+### do-task command ###
+TBD
+
+### do-cmd-history command ###
+TBD
+
+
 
 ## Advanced setup ##
 ### Bash completions ###
@@ -236,6 +243,14 @@ TBD
 
 ### Commands management ###
 TBD
+
+### Tools management ###
+TBD
+
+### Containerized do commands ###
+TBD
+
+### Commands testing ###
 
 ## TODO ##
 * [ ] improve howto print command
