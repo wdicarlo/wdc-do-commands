@@ -42,7 +42,7 @@ Execute the following setup command
 ```
 which will add the following lines into the ~/.bashrc file
 ```bash
-[ -f "$WDC_DO_COMMANDS_BIN/do_bash_customization" ] && source "$WDC_DO_COMMANDS_BIN/do_bash_customization"
+[ -f "$WDC_DO_COMMANDS_BIN/bin/do_bash_customization" ] && source "$WDC_DO_COMMANDS_BIN/bin/do_bash_customization"
 ```
 Source .bashrc to activate the customizations
 ```bash
@@ -81,7 +81,7 @@ Some help can be obtained in the following ways:
 * command options - by executing the command with the -h option
 * command code - by reading the code of the command
 * howto - by using the do-howto-print command. For example ```do-howto-print git tag``` will print all reference to tag present in the file howto_git.otl
-* do-man - by using the do-man command. For example ```do-man find``` will print details and examples of the linux find command
+* do-web-man - by using the do-man command. For example ```do-web-man find``` will print details and examples of the linux find command
 
 ## Project management ##
 A project can be managed with the following commands:
