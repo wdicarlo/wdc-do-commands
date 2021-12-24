@@ -5,7 +5,8 @@ function usage() {
 	echo "             -b <branch>            : show log of the branch"
 	echo "             -a <author>            : show log of the author"
 	echo "             -r                     : raw"
-	echo "             -s                     : show files' status"
+	echo "             -s                     : show files status"
+	echo "             -p                     : show files patches"
 	echo "             -n <num>               : show just <num> logs"
 	echo "             -g                     : force graph representation in pipes"
 	echo "             -q                     : quiet"
@@ -18,14 +19,18 @@ author=""
 files=0
 num=-1
 piping=0
+patch=0
 if [ ! -t 1 ]; then
     quiet=1
     raw=1
     piping=1
 fi
-while getopts hqrb:a:sn:g flag
+while getopts hqrb:a:sn:gp flag
 do
     case $flag in
+        p)
+            patch=1
+            ;;
         s)
             files=1
             ;;
@@ -69,6 +74,7 @@ if [ $files -eq 1 ]; then
 	graph=""
 	details="--name-status"
 fi
+[ $patch -eq 1 ] && opts+=" --patch" && graph=""
 
 # graph branch oriented
 #git log --graph --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
