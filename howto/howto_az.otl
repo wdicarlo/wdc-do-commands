@@ -14,3 +14,7 @@ Install costmanagement extension
 	no_proxy=${no_proxy//.blob.core.windows.net,} az extension add --name costmanagement
 Query top 3 resources
 	az rest --method get --url https://management.azure.com/subscriptions/$AZ_SUBSCRIPTION_ID/resources?api-version=2019-07-01 --url-parameters \$top=3
+Setup EncryptionAtHost
+	az feature register --subscription <subscription-name> --namespace Microsoft.Compute --name EncryptionAtHost # Once the feature 'EncryptionAtHost' is registered, invoking 'az provider register -n Microsoft.Compute' is required to get the change propagated
+Get k8s credentials
+	az aks get-credentials --subscription mysub --resource-group myrg --name myrg-k8s --admin --file myk8s.yaml
