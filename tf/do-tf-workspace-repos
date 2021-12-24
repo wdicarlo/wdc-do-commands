@@ -38,9 +38,7 @@ do
       mainrepo="$OPTARG"
 			;;
 		r)
-      reset=1 # TODO: add support for reset
-      echo "Reset still not supported"
-      exit
+      reset=1
 			;;
 		u)
       #update=1
@@ -70,7 +68,7 @@ wsdir="$1"
 # must support cases where the same module is referenced with different tags/branches/commit: <git_repo_name>@<reference>
 
 [ "$mainrepo" == "" ] && echo "No main repo." && exit
-[ $reset -eq 1 ] && rm -rf "$wsdir"
+[ $reset -eq 1 ] && rm -rf "$wsdir" > /dev/null 2>&1
 [ ! -d "$wsdir" ] && mkdir -p "$wsdir"
 
 destdir="$(basename $mainrepo)"
