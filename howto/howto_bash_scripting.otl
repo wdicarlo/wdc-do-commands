@@ -43,6 +43,7 @@ bash scripting howto
    }
 
 # Arguments processing
+   OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
    while getopts h flag
    do
    case $flag in
@@ -94,6 +95,7 @@ bash scripting howto
    exclude=""
    dryrun=0
    verbose=0
+   OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
    while getopts hqnve:f flag
    do
    case $flag in
