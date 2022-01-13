@@ -6,7 +6,9 @@
 # use @{u} for the upstream branch (eg origin/master)
 
 # Update tracking branches with: git remote -v update
-
+function status() {
+  \git status -s | awk '{print $1}'|sort|uniq|tr -d '\n'
+}
 function check() {
   GITDIR=$(git rev-parse --git-dir 2>/dev/null)
   [ -z $GITDIR ] && echo "Not a git repository" && return
@@ -16,11 +18,11 @@ function check() {
   BASE=$(git merge-base @ "$UPSTREAM" 2>/dev/null)
 
   if [ "$LOCAL" = "$REMOTE" ]; then
-      echo "Up-to-date"
+      echo "Up_to_date"
   elif [ "$LOCAL" = "$BASE" ]; then
-      echo "Need to pull"
+      echo "Need_to_pull"
   elif [ "$REMOTE" = "$BASE" ]; then
-      echo "Need to push"
+      echo "Need_to_push"
   else
       echo "Diverged"
   fi
@@ -33,7 +35,7 @@ else
   do
     [ ! -d "$dir" ] && continue
     cd "$dir"
-    echo "$dir: $(git rev-parse --abbrev-ref HEAD 2>/dev/null): $(check)"
+    echo "$dir: $(git rev-parse --abbrev-ref HEAD 2>/dev/null): $(check): $(status)"
     cd ..
   done | column -t -s':'
 fi
