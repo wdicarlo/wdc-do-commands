@@ -10,10 +10,10 @@ function usage() {
     echo "         where:"
     echo "                  -g                 : globals - do not restrict to current project"
 #echo "       -b                 : just consider the basename"
-    echo "                  -s                 : input is a tag"
+    echo "                  -t                 : input is a tag"
     echo "                  -l                 : list bookmarks"
     echo "                  -a                 : returns absolute paths"
-    echo "                  -t                 : print the available tags"
+    echo "                  -T                 : print the available tags"
     return
 }
 
@@ -26,39 +26,39 @@ absolute="0"
 tags="0"
 symbol="0"
 
-while [ $# -gt 0 ]; do
-    if [ "$1" == "-h" ]; then
-        usage
-        return
-    fi
-    if [ "$1" == "-g" ]; then
-        global="1"
-    fi
-
-    if [ "$1" == "-a" ]; then
-        absolute="1"
-    fi
-
-    if [ "$1" == "-l" ]; then
-        list="1"
-    fi
-    if [ "$1" == "-t" ]; then
-        tags="1"
-    fi
-
-    if [ "$1" == "-s" ]; then
-        symbol="1"
-    fi
-
-    #if [ ! "${1:0,1}" == "-" ]; then
-    if [ ! "$1" == "-h" ] && [ ! "$1" == "-l" ] && [ ! "$1" == "-a" ] && [ ! "$1" == "-g" ] && [ ! "$1" == "-s" ]; then
-        break
-    fi
-    shift
+# Arguments processing
+OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
+while getopts hgaltT flag
+do
+  case $flag in
+    g)
+      global="1"
+      ;;
+    a)
+      absolute="1"
+      ;;
+    l)
+      list="1"
+      ;;
+    T)
+      tags="1"
+      ;;
+    t)
+      symbol="1"
+      ;;
+    h)
+      usage
+      return
+      ;;
+    ?)
+      usage
+      return
+      ;;
+  esac
 done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 bookmarks_file=`echo ~/.bookmarks`
-
 
 if [ ! -f $bookmarks_file ]; then
     echo "No Bookmark/s not found!!!"
@@ -85,7 +85,6 @@ if [ "$PROJECT" == "" ]; then
 else
     relpath=`echo $cpath|sed "s#$PROJECT_PATH/##"`
 fi
-
 
 postproc="cat"
 if [ $absolute == "0" ]; then
