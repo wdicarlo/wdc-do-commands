@@ -109,3 +109,5 @@ Save new credentials into state if the certificates (or other authentication att
 Replace the underlying AKS cluster (for example, changing VM sizes), removing module.kubernetes-config prior to replacing the cluster credentials
   terraform state rm module.kubernetes-config
   terraform apply
+Enable logging using TF_LOG environment variable
+	export TF_LOG={DEBUG|TRACE}
