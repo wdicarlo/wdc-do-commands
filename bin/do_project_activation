@@ -41,9 +41,10 @@ else
     prj=$(ls -1 "$prj_root" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 fi
 
+export PROJECT_ENV=empty
 cd "${prj_root}$prj" || return
 
-# reset PROJECT_TASK environment variable
+# reset environment variables
 export PROJECT_TASK=
 if [ ! -f .bash_env ]; then
     shift $#
