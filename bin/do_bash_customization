@@ -14,7 +14,7 @@ if [ ! -f "$WDC_DO_COMMANDS_BIN/do_bash_env" ]; then
 
     cat <<END_OF_TEXT >> "$WDC_DO_COMMANDS_BIN/do_bash_env"
 export TESTS="$HOME/tests"
-export TASKS="$HOME/tasks"
+export TASKS="$HOME/.tasks"
 export RELEASES="$HOME/releases"
 export PROJECTS="$HOME/projects"
 export SHARED_FOLDER="/media/share"
@@ -89,7 +89,7 @@ function cd_folder()
 
 function edit_last()
 {
-  cmd=`history |grep "^[0-9]* *vi "|tail -1|sed "s/^[0-9]* *//"`
+  cmd=$(history |grep "^[0-9]* *vi "|tail -1|sed "s/^[0-9]* *//")
   echo "> $cmd"
   eval $cmd
 }
@@ -168,7 +168,7 @@ function vim_launcher() {
   opts=""
   if [ $# -eq 1 ]; then
     if [ -f "$1" ]; then
-      n=`cat "$1" | wc -l`
+      n=$(cat "$1" | wc -l)
       if [ $n -gt 5000 ]; then
         opts="--noplugin $1"
         shift
@@ -184,12 +184,12 @@ function vim_launcher() {
   for opt in $@
   do
     if [ -f "$opt" ]; then
-      if [ `file "$opt" | grep -o executable` ]; then
+      if [ $(file "$opt" | grep -o executable) ]; then
         # make sure it is a binary file
-        if [ ! `file "$opt" | grep -o text` ]; then
-          for file in `ls "$opt".*| grep -v "\.sav$"`
+        if [ ! $(file "$opt" | grep -o text) ]; then
+          for file in $(ls "$opt".*| grep -v "\.sav$")
           do
-            if [ `file "$file" | grep -o text` ]; then
+            if [ $(file "$file" | grep -o text) ]; then
               opts="$opts -p $file"
             fi
           done
@@ -198,9 +198,9 @@ function vim_launcher() {
       fi
     else
       n=0
-      for file in `ls "$opt"*|grep -v ".sav$"`
+      for file in $(ls "$opt"*|grep -v ".sav$")
       do
-        if [ `file "$file" | grep -o text` ]; then
+        if [ $(file "$file" | grep -o text) ]; then
           opts="$opts -p $file"
           n=$((n+1))
         fi
@@ -216,7 +216,7 @@ function vim_launcher() {
   eval $cmd
 }
 
-source $WDC_DO_COMMANDS_BIN/do_setup_env 
+source $WDC_DO_COMMANDS_BIN/do_setup_env -s
 
 function mkcd() {
     mkdir "$1"
@@ -236,22 +236,23 @@ function update_env() {
     case $TYPE in
         "projects")
             TYPE="p"
-            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+            PROJECT=$(pwd | sed -e "s/\// /g" | awk '{ print $4}')
             ;;
         "tests")
             TYPE="t"
-            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+            PROJECT=$(pwd | sed -e "s/\// /g" | awk '{ print $4}')
             ;;
         "releases")
             TYPE="r"
-            PROJECT=`pwd | sed -e "s/\// /g" | awk '{ print $4}'`
+            PROJECT=$(pwd | sed -e "s/\// /g" | awk '{ print $4}')
             ;;
     esac
 
-    export PROJECT_PATH=`echo $PROJECTS/$PROJECT`
-    export TEST_PATH=`echo $TESTS/$PROJECT`
-    export RELEASE_PATH=`echo $RELEASES/$PROJECT`
-    export LOCATION=`basename $PWD`
+    export PROJECT_PATH=$(echo $PROJECTS/$PROJECT)
+    export PROJECT_TASKS=$(echo $PROJECT_PATH/$(basename $TASKS))
+    export TEST_PATH=$(echo $TESTS/$PROJECT)
+    export RELEASE_PATH=$(echo $RELEASES/$PROJECT)
+    export LOCATION=$(basename $PWD)
     if [ "$PROJECT_PATH" == $PWD ]
     then
         LOCATION=""
@@ -281,7 +282,7 @@ function update_env() {
         source ./.bash_env
     else
         shift $#
-        source $WDC_DO_COMMANDS_BIN/do_setup_env
+        source $WDC_DO_COMMANDS_BIN/do_setup_env -s
     fi
     update_prompt
 }
@@ -366,8 +367,8 @@ function setup_env() {
     fi
 }
 function go_repo_root() {
-    path=`dirname $PWD`
-    folder=`basename $PWD`
+    path=$(dirname $PWD)
+    folder=$(basename $PWD)
     if [ $folder == "/" ]
     then
         return
@@ -376,16 +377,16 @@ function go_repo_root() {
     then
         path="/"
         echo "$path"
-        \cd `echo $path`
+        \cd $(echo $path)
         return
     fi
     found=0
-    user=`whoami`
+    user=$(whoami)
     while [ $found -eq 0 ]
     do
-        folder=`basename $path`
-        parent=`dirname $path`
-        parent_folder=`basename $parent`
+        folder=$(basename $path)
+        parent=$(dirname $path)
+        parent_folder=$(basename $parent)
 
         #echo $path
         #echo $folder
@@ -405,7 +406,7 @@ function go_repo_root() {
             path=$parent
         fi
     done
-    \cd `echo $path`
+    \cd $(echo $path)
 }
 function gohome() {
     # find upword the following: .git, project folder, user home
@@ -428,7 +429,7 @@ function gohome() {
            return
         fi
         if [ "$1" == "-u" ]; then
-            \cd `echo ~`
+            \cd "$HOME"
             setup_env
             update_env
             return
@@ -438,8 +439,8 @@ function gohome() {
         fi
     fi
 
-    path=`dirname $PWD`
-    folder=`basename $PWD`
+    path=$(dirname $PWD)
+    folder=$(basename $PWD)
     if [ $folder == "/" ]
     then
         return
@@ -448,18 +449,18 @@ function gohome() {
     then
         path="/"
         echo "$path"
-        \cd `echo $path`
+        \cd "$(echo $path)"
         setup_env
         update_env
         return
     fi
     found=0
-    user=`whoami`
+    user=$(whoami)
     while [ $found -eq 0 ]
     do
-        folder=`basename $path`
-        parent=`dirname $path`
-        parent_folder=`basename $parent`
+      folder="$(basename $path)"
+      parent="$(dirname $path)"
+      parent_folder="$(basename $parent)"
 
         #echo $path
         #echo $folder
@@ -498,7 +499,7 @@ function gohome() {
         fi
     done
     echo "$path"
-    \cd `echo $path`
+    \cd "$(echo $path)"
     ls
     setup_env
     update_env
@@ -561,7 +562,7 @@ function last() {
 }
 
 function do_activate_release() {
-    script=`echo $WDC_DO_COMMANDS_BIN/do_activate_release`
+  script="$(echo $WDC_DO_COMMANDS_BIN/do_activate_release)"
     source $script
 }
 

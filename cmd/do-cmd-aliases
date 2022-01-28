@@ -9,7 +9,7 @@ func=0
 
 # do_setup_env -s
 declare -A cmds
-cmds["do_setup_env"]="-s"
+#cmds["do_setup_env"]="-s"
 cmds["do_bash_customization"]="&& cd ."
 cmds["do_setup_ld_library_path"]="\$@"
 ls -1 "$root"| grep "^do_" | grep -v "\." | while read -r file

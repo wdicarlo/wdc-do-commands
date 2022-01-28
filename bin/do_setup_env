@@ -1,49 +1,71 @@
 #!/usr/bin/env bash
 [[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
+# TODO: use optarg
+# TODO: allow global and project specific environments
+# TODO: replace use of ` with $(
+# TODO: store env files in $HOME/.envs or $PROJECT_PATH/.envs
+# TODO: store env template files in WDC_DO_COMMANDS_BIN/envs or $PROJECT_PATH/.envs
 
-if [ $# == 0 ]; then
-    is_project_folder=`pwd|grep $PROJECTS`
-    if [ -z "$is_project_folder" ];then
-        . $WDC_DO_COMMANDS_BIN/do_setup_env empty
-    else
-        curr_folder=`basename $PWD`
-        if [ -f "$PROJECTS/$curr_folder" ]; then
-            . $WDC_DO_COMMANDS_BIN/do_setup_env okl4sdk-5.1.8m4
-        fi
-    fi
-    unset is_project_folder
-    return
-fi
 
+function usage() {
+  echo "Usage:  do-setup-env [-h] [-s] [-l] [<find options>]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -s                          : setup empty environment"
+  echo "       -l                          : list available environments"
+}
+
+# Arguments processing
+OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
 list=0
-if [ $# -gt 0 ]
-then
-    if [ "$1" == "-h" ]
-    then
-        app=`basename $0`
-        echo "Usage: $app [<find options>]"
-        exit
-    fi
-    if [ "$1" == "-s" ]; then
-        shift
-    fi
-    if [ "$1" == "-l" ]; then
-        list=1
-        shift
-    fi
+empty=0
+while getopts hsl flag
+do
+  case $flag in
+    l)
+      list=1
+      ;;
+    s)
+      empty=1
+      ;;
+    h)
+      usage
+      return
+      ;;
+    ?)
+      usage
+      return
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+is_prj=$(pwd|grep -c $PROJECTS)
+
+envs_tpl_dir="$WDC_DO_COMMANDS_DIR/env"
+envs_dir="$HOME/.envs"
+if [ $is_prj -eq 1 ]; then
+  envs_dir="$PROJECT_PATH/.envs"
 fi
 
-prj_root=`echo $WDC_DO_COMMANDS_BIN`
+[ ! -d "$envs_dir" ] && mkdir -p "$envs_dir"
+[ $(ls -1 "$envs_dir"|wc -l) -eq 0 ] && cp ${envs_tpl_dir}/* ${envs_dir}/
+
 export PROJECT_VARS=""
 
 if [ $list -eq 1 ]; then
     if [ $# == 1 ]
     then
-        ls -1 $prj_root/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | sed "s#$prj_root/do_setup_env_for_##"
+        ls -1 ${envs_dir}/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
     else
-        ls -1 $prj_root/do_setup_env_for_* | awk '{ print NR, $0 }' | sed "s#$prj_root/do_setup_env_for_##"
+        ls -1 ${envs_dir}/do_setup_env_for_* | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
     fi
+    return
+fi
+
+if [ $empty -eq 1 ]; then
+    source $WDC_DO_COMMANDS_BIN/do_setup_env empty
     return
 fi
 
@@ -53,11 +75,11 @@ then
     if [ "$PROJECT_ENV" == "$1" ]; then
         return
     fi
-    n=`ls -1 $prj_root/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | wc -l`
-    ls -1 $prj_root/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | sed "s#$prj_root/do_setup_env_for_##"
+    n=$(ls -1 ${envs_dir}/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | wc -l)
+    ls -1 ${envs_dir}/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
 else
-    n=`ls -1 $prj_root/do_setup_env_for_* | awk '{ print NR, $0 }' | wc -l`
-    ls -1 $prj_root/do_setup_env_for_* | awk '{ print NR, $0 }' | sed "s#$prj_root/do_setup_env_for_##"
+    n=$(ls -1 ${envs_dir}/do_setup_env_for_* | awk '{ print NR, $0 }' | wc -l)
+    ls -1 ${envs_dir}/do_setup_env_for_* | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
 fi
 
 num=-1
@@ -80,13 +102,13 @@ fi
 
 if [ $# == 1 ]
 then
-    prj=`ls -1 $prj_root/do_setup_env_for_* | grep $1 | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+    prj=$(ls -1 ${envs_dir}/do_setup_env_for_* | grep $1 | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 else
-    prj=`ls -1 $prj_root/do_setup_env_for_* | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
+    prj=$(ls -1 ${envs_dir}/do_setup_env_for_* | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 fi
 
 # TODO: check if the file $prj contains the function setup_project_env
-env_path=`basename $prj`
+env_path=$(basename $prj)
 env_name=${env_path#do_setup_env_for_}
 if [ "$env_name" == "$PROJECT_ENV" ]; then
     return
@@ -97,7 +119,7 @@ PATH=$WDC_DO_COMMANDS_BIN:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr
 PROJECT_VARS=
 export PROJECT_ENV=$env_name
 echo "Applying settings: $PROJECT_ENV"
-. "$prj"
+source "$prj"
 setup_project_env
 
 if [ -z "$PROJECT_VARS" ]; then

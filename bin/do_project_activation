@@ -42,9 +42,12 @@ else
 fi
 
 cd "${prj_root}$prj" || return
+
+# reset PROJECT_TASK environment variable
+export PROJECT_TASK=
 if [ ! -f .bash_env ]; then
     shift $#
-    source "$WDC_DO_COMMANDS_BIN/do_setup_env"
+    source "$WDC_DO_COMMANDS_BIN/do_setup_env -s"
 fi
 
 # set title of terminal window

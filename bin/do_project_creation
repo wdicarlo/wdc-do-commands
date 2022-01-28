@@ -27,10 +27,10 @@ export PROJECT_ROOT1=.
 export PROJECT_ROOT2=docs
 END_OF_TEXT
 
-env_root=`echo $WDC_DO_COMMANDS_DIR`
+env_root=$(echo $WDC_DO_COMMANDS_DIR/env)
 if [ $# -gt 1 ]; then
     env="$2"
-    n=`ls -1 $env_root/do_setup_env_for_* | grep $env | wc -l`
+    n=$(ls -1 $env_root/do_setup_env_for_* | grep $env | wc -l)
     if [ $n -eq 1 ]; then
         echo "do-setup-env $env" >> "$PROJECTS/$1/.bash_env"
     else 
