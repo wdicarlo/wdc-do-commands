@@ -73,10 +73,11 @@ n=0
 if [ $# == 1 ]
 then
     if [ "$PROJECT_ENV" == "$1" ]; then
+        echo "Active environment: $PROJECT_ENV"
         return
     fi
-    n=$(ls -1 ${envs_dir}/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | wc -l)
-    ls -1 ${envs_dir}/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
+    n=$(ls -1 ${envs_dir}/do_setup_env_for_* | grep "do_setup_env_for_$1" | awk '{ print NR, $0 }' | wc -l)
+    ls -1 ${envs_dir}/do_setup_env_for_* | grep "do_setup_env_for_$1" | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
 else
     n=$(ls -1 ${envs_dir}/do_setup_env_for_* | awk '{ print NR, $0 }' | wc -l)
     ls -1 ${envs_dir}/do_setup_env_for_* | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
@@ -102,7 +103,7 @@ fi
 
 if [ $# == 1 ]
 then
-    prj=$(ls -1 ${envs_dir}/do_setup_env_for_* | grep $1 | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
+    prj=$(ls -1 ${envs_dir}/do_setup_env_for_* | grep "do_setup_env_for_$1" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 else
     prj=$(ls -1 ${envs_dir}/do_setup_env_for_* | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 fi
@@ -113,7 +114,7 @@ fi
 env_path=$(basename $prj)
 env_name=${env_path#do_setup_env_for_}
 if [ "$env_name" == "$PROJECT_ENV" ]; then
-    echo "Active settings: $PROJECT_ENV"
+    echo "Active environment: $PROJECT_ENV"
     return
 fi
 

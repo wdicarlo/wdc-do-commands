@@ -55,7 +55,7 @@ force_color_prompt=yes
 function update_prompt()
 {
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-        PS1='\[\033[01;31m\]$CONTEXT\[\033[00m\]:\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@\[${GREEN}\]$REPO_LOCATION\[${RESET}\][$REPO_SYNT]{${PROMPT_VARS}}>\[${YELLOW}\]${PROJECT_TASK}\[${RESET}\]\$ '
+        PS1='\[\033[01;31m\]$CONTEXT\[\033[00m\]:\t:\[\033[01;32m\]$TYPE\[\033[00m\]:\[\033[01;31m\]$PROJECT\[\033[00m\]:\[\033[01;34m\]$LOCATION\[\033[00m\]@\[${GREEN}\]$REPO_LOCATION[$REPO_SYNT]\[${RESET}\]{${PROJECT_ENV}}>\[${YELLOW}\]${PROJECT_TASK}\[${RESET}\]\$ '
     else
         PS1='\t:$TYPE:$PROJECT:$LOCATION \$ '
     fi
