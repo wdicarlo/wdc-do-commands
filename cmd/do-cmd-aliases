@@ -21,7 +21,10 @@ do
   else
     cat << EOF
 function $(echo $file|tr '_' '-') () {
+  shcmd="\$(shopt -po xtrace)"
+  [[ "\$CMD_DEBUG" == "true" ]] && set -x
   source \$WDC_DO_COMMANDS_BIN/$file $args
+  [[ "\$CMD_DEBUG" == "true" ]] && set +x && eval "\$shcmd"
 }
 export -f $(echo $file|tr '_' '-')
 EOF

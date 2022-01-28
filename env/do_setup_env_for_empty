@@ -2,11 +2,11 @@
 [[ ${BASH_SOURCE[0]} == ${0} ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
 # minimal PATH setup
-# PATH=$WDC_DO_COMMANDS_BIN:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/bin:.
+# PATH=$HOME/.arkade/bin:$WDC_DO_COMMANDS_BIN:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/bin:.:$HOME/go/bin:$HOME/nbin:$HOME/node_modules/.bin:/snap/bin:$HOME/.krew/bin:$HOME/.fzf/bin
 
 function setup_project_env() {
     # reset PATH
-    PATH=$WDC_DO_COMMANDS_BIN:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/bin:.
+    PATH=$HOME/.arkade/bin:$WDC_DO_COMMANDS_BIN:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/bin:.:$HOME/go/bin:$HOME/nbin:$HOME/node_modules/.bin:/snap/bin:$HOME/.krew/bin:$HOME/.fzf/bin
 
     export PROJECT_VARS="PATH"
 }

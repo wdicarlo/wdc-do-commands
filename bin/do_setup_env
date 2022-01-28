@@ -94,7 +94,7 @@ then
     num=1
 else
     read -p "Environment Num: " num
-    if [ -z "$num" ]; then
+    if [ "$num" == "" ]; then
         return
     fi
 fi
@@ -107,15 +107,19 @@ else
     prj=$(ls -1 ${envs_dir}/do_setup_env_for_* | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 fi
 
+[ "$prj" == "" ] && return
+
 # TODO: check if the file $prj contains the function setup_project_env
 env_path=$(basename $prj)
 env_name=${env_path#do_setup_env_for_}
 if [ "$env_name" == "$PROJECT_ENV" ]; then
+    echo "Active settings: $PROJECT_ENV"
     return
 fi
 
 # reset environment 
-PATH=$WDC_DO_COMMANDS_BIN:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:.
+#PATH=$WDC_DO_COMMANDS_BIN:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:.
+PATH=$HOME/.arkade/bin:$WDC_DO_COMMANDS_BIN:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/bin:.:$HOME/go/bin:$HOME/nbin:$HOME/node_modules/.bin:/snap/bin:$HOME/.krew/bin:$HOME/.fzf/bin
 PROJECT_VARS=
 export PROJECT_ENV=$env_name
 echo "Applying settings: $PROJECT_ENV"
