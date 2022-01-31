@@ -93,3 +93,33 @@ Generate secret
 	cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | base64
 Print content of a file in a tar archive
 	tar -xf ~/backups/wdc-do-commands-backup-211202-143838.tar.bz2 bin/do_cmd_counts.csv -O
+List shell options status
+	shop -o # list of active options in $SHELLOPTS
+		allexport      	off
+		braceexpand    	on
+		emacs          	on
+		errexit        	off
+		errtrace       	off
+		functrace      	off
+		hashall        	on
+		histexpand     	on
+		history        	on
+		ignoreeof      	off
+		interactive-comments	on
+		keyword        	off
+		monitor        	on
+		noclobber      	off
+		noexec         	off
+		noglob         	off
+		nolog          	off
+		notify         	off
+		nounset        	off
+		onecmd         	off
+		physical       	off
+		pipefail       	off
+		posix          	off
+		privileged     	off
+		verbose        	off
+		vi             	off
+		xtrace         	off
+
