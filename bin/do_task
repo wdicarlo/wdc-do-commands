@@ -5,17 +5,19 @@
 
 cmd=`basename $0`
 function usage() {
-  echo "Usage: $cmd [-h] [-n] [-t <task_name>]"
+  echo "Usage: $cmd [-h] [-n] [-t|-T <task_name>]"
   echo "where:"
   echo "       -h                          : print this help"
-  echo "       -t <task>                   : start/continue work on <task>"
+  echo "       -t <task>                   : start/continue work on project <task>"
+  echo "       -T <task>                   : start/continue work on global <task>"
   echo "       -n                          : stop work on active task"
 }
 
 # Arguments processing
 task_name=""
+global=-1
 OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
-while getopts ht:n flag
+while getopts ht:T:n flag
 do
   case $flag in
     n)
@@ -24,6 +26,15 @@ do
       ;;
     t)
       task_name="$OPTARG"
+      [ $global -ne -1 ] && echo "Use either -t or -T option once" && return
+      global=0
+      TASKS_PATH="$PROJECT_TASKS"
+      ;;
+    T)
+      task_name="$OPTARG"
+      [ $global -ne -1 ] && echo "Use either -t or -T option once" && return
+      global=1
+      TASKS_PATH="$TASKS"
       ;;
     h)
       usage
@@ -37,18 +48,29 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+[ $global -eq -1 ] && global=0
 filter="^"
 [ ! "$1" == "" ] && filter="$1"
 
 function list_tasks() {
+  TASKS_PATH="$TASKS"
+  [ $global -eq 0 ] && TASKS_PATH="$PROJECT_TASKS"
+  [ ! -d "$TASKS_PATH" ] && mkdir -p "$TASKS_PATH"
   action="NEW"
   [ ! "$1" == "" ] && action="$1"
   ACTIVE_TASK="$PROJECT_TASK"
   [ "$ACTIVE_TASK" == "" ] && ACTIVE_TASK="^$"
   (echo "NONE"; echo "$action"; 
-  (ls -1 "$TASKS"|grep "$filter") | sort | uniq) | sed "s#${ACTIVE_TASK}#>${ACTIVE_TASK}#" | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t
+  (ls -1 "$TASKS_PATH"|grep "$filter") | sort | uniq) | sed "s#${ACTIVE_TASK}#>${ACTIVE_TASK}#" | awk '{ printf "%-2s %-60s\n", NR, $0 }' | column -t
 }
-if [ "$task_name" == "" ]; then
+
+if [ "$task_name" == "-" ]; then
+  TASKS_PATH="$TASKS"
+  task_name=""
+  [ $global -eq 0 ] && TASKS_PATH="$PROJECT_TASKS"
+  [ ! -d "${TASKS_PATH}" ] && mkdir -p "${TASKS_PATH}"
+  [ $(find "$TASKS_PATH" -type f|wc -l) -gt 0 ] && task_name=$(basename $(find $TASKS_PATH -type f -exec ls -l --time-style +%Y%m%d%H%M {} \; | sort -t' ' -r -k6 | head -1 | cut -d' ' -f7) | sed 's#^\(.*\)\..*$#\1#') 
+elif [ "$task_name" == "" ] || [ "$task_name" == "." ]; then
   list_tasks
   read -p "task? " num
 
@@ -65,5 +87,9 @@ if [ "$task_name" == "" ]; then
   fi
 fi
 [ "$task_name" == "" ] && return
-[ ! -d "$task_name" ] && mkdir -p "${TASKS}/${task_name}"
-export PROJECT_TASK=$task_name
+
+[ ! -d "${TASKS_PATH}/$task_name" ] && mkdir -p "${TASKS_PATH}/${task_name}"
+[ -d "${TASKS_PATH}/$task_name" ] && ls -1 "${TASKS_PATH}/${task_name}" | xargs -I@ touch @ # TODO: touch only the folder
+
+export PROJECT_TASK="_:$task_name"
+[ $global -eq 1 ] && export PROJECT_TASK="^:$task_name"

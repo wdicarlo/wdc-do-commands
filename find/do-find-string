@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 
+# TODO: post-process topic search result to store git branches as metadata
+
 cmd=`basename $0`
 
 TOPICS_DIR="${HOME}/.do-find-string"
-[ ! "$TASKS" == "" ] && TOPICS_DIR="$TASKS"
+if [ ! "$PROJECT_TASK" == "" ]; then
+  if [ "$(echo $PROJECT_TASK|cut -d':' -f1)" == "^" ]; then
+    TOPICS_DIR="$TASKS"
+  else
+    TOPICS_DIR="$PROJECT_TASKS"
+  fi
+fi
 [ ! -d '${TOPICS_DIR}' ] && mkdir -p "${TOPICS_DIR}"
 
 function usage() {
@@ -25,7 +33,7 @@ function usage() {
     echo "       -L                          : print last topic, same as -T -"
     echo "       -t <topic|->                : append the result to [-=last] topic file"
     echo "       -T <topic|->                : print [-=last] topic file"
-    echo "       -V <topic|->                : view [-=last] topic file"
+    echo "       -V <topic|->                : explore [-=last] topic file in Vim"
     echo "       -R <topic|->                : reset [-=last] topic file"
     echo "       -w                          : find whole word"
     echo "       -v                          : verbose"
@@ -179,13 +187,13 @@ if [ ! "$postproc" == "" ]; then
     cmd+="|$postproc"
 fi
 cmd+=" 2>/dev/null"
-
-[ $taction -eq 0 ] && [ ! "$PROJECT_TASK" == "" ] && taction=1 && topic="$PROJECT_TASK"
+TASK=$(echo $PROJECT_TASK|cut -d':' -f2)
+[ $taction -eq 0 ] && [ ! "$TASK" == "" ] && taction=1 && topic="$TASK"
 if [ $taction -gt 0 ]; then
     #TODO: remove special characters from $string
-    [ $taction -eq 5 ] && topic="-" && taction=2 && [ ! "$PROJECT_TASK" == "" ] && topic="$PROJECT_TASK"
-    [ "$topic" == "-" ] && topic=$(basename $(find $TASKS -type f -exec ls -l --time-style +%Y%m%d%H%M {} \; | sort -t' ' -r -k6 | head -1 | cut -d' ' -f7) | sed 's#^\(.*\)\..*$#\1#') 
-    [ $taction -eq 3 ] && find $TASKS -type f -exec ls -l --time-style +%Y%m%d%H%M {} \; | sort -t' ' -r -k6 | cut -d' ' -f7 | xargs -I@ sh -c "basename @ " | sed 's#^\(.*\)\..*$#\1#' && exit
+    [ $taction -eq 5 ] && topic="-" && taction=2 && [ ! "$TASK" == "" ] && topic="$TASK"
+    [ "$topic" == "-" ] && topic=$(basename $(find $TOPICS_DIR -type f -exec ls -l --time-style +%Y%m%d%H%M {} \; | sort -t' ' -r -k6 | head -1 | cut -d' ' -f7) | sed 's#^\(.*\)\..*$#\1#') 
+    [ $taction -eq 3 ] && find $TOPICS_DIR -type f -exec ls -l --time-style +%Y%m%d%H%M {} \; | sort -t' ' -r -k6 | cut -d' ' -f7 | xargs -I@ sh -c "basename @ " | sed 's#^\(.*\)\..*$#\1#' && exit
     topic_file=$(echo "${TOPICS_DIR}/${topic}/${topic}.txt")
     [ $taction -eq 4 ] && cp "${topic_file}" "${topic_file}.bak" && rm -f "${topic_file}" && echo "Reset: ${topic_file} Backup: ${topic_file}.bak" && exit
     [ ! -f "${topic_file}" ] && mkdir -p $(dirname $topic_file) && echo "# do-find-string: topic=$topic" > "${topic_file}"
