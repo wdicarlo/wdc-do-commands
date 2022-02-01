@@ -4,6 +4,9 @@
 # $ diff -Naru git/git-filter-repo git/do-git-filter-repo > git/do-git-filter-repo.patch
 # edit the patch file to reference only the cmd
 
+# TODO: support tools installation through bash script
+# ex. curl https://raw.githubusercontent.com/helm/chartmuseum/main/scripts/get-chartmuseum | bash
+
 [ "$WDC_DO_COMMANDS_BIN" == "" ] && echo "Missing WDC_DO_COMMANDS_BIN" && exit
 
 tools_file="$WDC_DO_COMMANDS_BIN/do_cmd_tools.csv"
