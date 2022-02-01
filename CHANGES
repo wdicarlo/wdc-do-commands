@@ -1,3 +1,38 @@
+Version 0.13.0:
+ - Refactored do_setup_env into do_env_setup
+ - Update .gitignore file.
+ - Improved cmd/do-cmd-tools command.
+ - Improved cmd/do-cmd-index command. Added shortcuts for commands to be sourced
+ - Improved tasks management
+ - Update /home/devkit/wbin/howto/howto_bash_scripting.otl file.
+ - Update /home/devkit/wbin/howto/howto_bash.otl file.
+ - Improved management of environments
+ - Improved management of environments
+ - Improved management of environments
+ - Improved management of environments
+ - Update bin/do_cmd_tools.csv file.
+ - Improved bin/do_cd_bookmark command.
+ - Update /home/devkit/wbin/howto/howto_terraform.otl file.
+ - Update /home/devkit/wbin/howto/howto_bash.otl file.
+ - Update howto/howto_bash_scripting.otl file.
+ - Improved git/do-git-status-check command.
+ - Update /home/devkit/wbin/howto/howto_bash.otl file.
+ - Update /home/devkit/wbin/howto/howto_python.otl file.
+ - Update /home/devkit/wbin/howto/howto_az.otl file.
+ - Improved tf/do-tf-workspace-repos command.
+ - Improved git/do-git-log command.
+ - Improved vimrc configuration
+ - Update README.md file.
+ - Improved sys/do-sys-install-bash-customization
+ - Added bin/do-task command
+ - Improved cmd/do-cmd-history command.
+ - Update /home/devkit/wbin/howto/howto_bash.otl file.
+ - Update bin/do_cmd_index_def.csv file.
+ - Added cmd/do-cmd-history command
+ - Improved bin/do_bash_customization command. Added project scoped commands history saving
+ - Improved cmd/do-cmd command.
+ - Improved cmd/do-cmd command.
+
 Version 0.12.0:
  - Improved find/do-find-string command. Added topic management options
  - Improved pipe/do-pipe-cfile-to-vim command.
