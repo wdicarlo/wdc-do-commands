@@ -30,17 +30,17 @@ END_OF_TEXT
 env_root=$(echo $WDC_DO_COMMANDS_DIR/env)
 if [ $# -gt 1 ]; then
     env="$2"
-    n=$(ls -1 $env_root/do_setup_env_for_* | grep $env | wc -l)
+    n=$(ls -1 ${env_root}/do_env_setup_for_* | grep "do_env_setup_for_${env}" | wc -l)
     if [ $n -eq 1 ]; then
-        echo "do-setup-env $env" >> "$PROJECTS/$1/.bash_env"
+        echo "do-env-setup $env" >> "$PROJECTS/$1/.bash_env"
     else 
         if [ $n -gt 1 ]; then
             echo "Specified ambiguous environment name"
-            ls -1 $env_root/do_setup_env_for_* | sed "s#$env_root/do_setup_env_for_##"| grep $env
+            ls -1 ${env_root}/do_env_setup_for_* | sed "s#$env_root/do_env_setup_for_##"| grep $env
         else
             echo "Specified missing environment name"
             echo "Available environment name:"
-            ls -1 $env_root/do_setup_env_for_* | sed "s#$env_root/do_setup_env_for_##"
+            ls -1 ${env_root}/do_env_setup_for_* | sed "s#$env_root/do_env_setup_for_##"
         fi
         return
     fi

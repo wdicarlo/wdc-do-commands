@@ -44,5 +44,5 @@ fi
 cd "$prj"
 if [ ! -f .bash_env ]; then
     shift $#
-    source $WDC_DO_COMMANDS_BIN/do_setup_env -s
+    source $WDC_DO_COMMANDS_BIN/do_env_setup -s
 fi

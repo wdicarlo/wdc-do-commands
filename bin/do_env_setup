@@ -9,17 +9,17 @@
 
 
 function usage() {
-  echo "Usage:  do-setup-env [-h] [-s] [-l] [<find options>]"
+  echo "Usage:  do-env-setup [-h] [-s] [-l] [<find options>]"
   echo "where:"
   echo "       -h                          : print this help"
-  echo "       -s                          : setup empty environment"
+  echo "       -s                          : setup ini environment"
   echo "       -l                          : list available environments"
 }
 
 # Arguments processing
 OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
 list=0
-empty=0
+init=0
 while getopts hsl flag
 do
   case $flag in
@@ -27,7 +27,7 @@ do
       list=1
       ;;
     s)
-      empty=1
+      init=1
       ;;
     h)
       usage
@@ -50,22 +50,22 @@ if [ $is_prj -eq 1 ]; then
 fi
 
 [ ! -d "$envs_dir" ] && mkdir -p "$envs_dir"
-[ $(ls -1 "$envs_dir"|wc -l) -eq 0 ] && cp ${envs_tpl_dir}/* ${envs_dir}/
+[ $(ls -1 "$envs_dir"|wc -l) -eq 0 ] && cp ${envs_tpl_dir}/do_env_setup_for_ini ${envs_dir}/
 
 export PROJECT_VARS=""
 
 if [ $list -eq 1 ]; then
     if [ $# == 1 ]
     then
-        ls -1 ${envs_dir}/do_setup_env_for_* | grep $1 | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
+        ls -1 ${envs_dir}/do_env_setup_for_* | grep $1 | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_env_setup_for_##"
     else
-        ls -1 ${envs_dir}/do_setup_env_for_* | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
+        ls -1 ${envs_dir}/do_env_setup_for_* | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_env_setup_for_##"
     fi
     return
 fi
 
-if [ $empty -eq 1 ]; then
-    source $WDC_DO_COMMANDS_BIN/do_setup_env empty
+if [ $init -eq 1 ]; then
+    source $WDC_DO_COMMANDS_BIN/do_env_setup ini
     return
 fi
 
@@ -76,11 +76,11 @@ then
         echo "Active environment: $PROJECT_ENV"
         return
     fi
-    n=$(ls -1 ${envs_dir}/do_setup_env_for_* | grep "do_setup_env_for_$1" | awk '{ print NR, $0 }' | wc -l)
-    ls -1 ${envs_dir}/do_setup_env_for_* | grep "do_setup_env_for_$1" | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
+    n=$(ls -1 ${envs_dir}/do_env_setup_for_* | grep "do_env_setup_for_$1" | awk '{ print NR, $0 }' | wc -l)
+    ls -1 ${envs_dir}/do_env_setup_for_* | grep "do_env_setup_for_$1" | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_env_setup_for_##"
 else
-    n=$(ls -1 ${envs_dir}/do_setup_env_for_* | awk '{ print NR, $0 }' | wc -l)
-    ls -1 ${envs_dir}/do_setup_env_for_* | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_setup_env_for_##"
+    n=$(ls -1 ${envs_dir}/do_env_setup_for_* | awk '{ print NR, $0 }' | wc -l)
+    ls -1 ${envs_dir}/do_env_setup_for_* | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_env_setup_for_##"
 fi
 
 num=-1
@@ -103,16 +103,16 @@ fi
 
 if [ $# == 1 ]
 then
-    prj=$(ls -1 ${envs_dir}/do_setup_env_for_* | grep "do_setup_env_for_$1" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
+    prj=$(ls -1 ${envs_dir}/do_env_setup_for_* | grep "do_env_setup_for_$1" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 else
-    prj=$(ls -1 ${envs_dir}/do_setup_env_for_* | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
+    prj=$(ls -1 ${envs_dir}/do_env_setup_for_* | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 fi
 
 [ "$prj" == "" ] && return
 
 # TODO: check if the file $prj contains the function setup_project_env
 env_path=$(basename $prj)
-env_name=${env_path#do_setup_env_for_}
+env_name=${env_path#do_env_setup_for_}
 if [ "$env_name" == "$PROJECT_ENV" ]; then
     echo "Active environment: $PROJECT_ENV"
     return

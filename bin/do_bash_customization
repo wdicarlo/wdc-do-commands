@@ -216,7 +216,7 @@ function vim_launcher() {
   eval $cmd
 }
 
-source $WDC_DO_COMMANDS_BIN/do_setup_env -s
+source $WDC_DO_COMMANDS_BIN/do_env_setup -s
 
 function mkcd() {
     mkdir "$1"
@@ -282,7 +282,7 @@ function update_env() {
         source ./.bash_env
     else
         shift $#
-        source $WDC_DO_COMMANDS_BIN/do_setup_env -s
+        source $WDC_DO_COMMANDS_BIN/do_env_setup -s
     fi
     update_prompt
 }

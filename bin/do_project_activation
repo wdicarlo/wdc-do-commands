@@ -41,14 +41,14 @@ else
     prj=$(ls -1 "$prj_root" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 fi
 
-export PROJECT_ENV=empty
+export PROJECT_ENV=ini
 cd "${prj_root}$prj" || return
 
 # reset environment variables
 export PROJECT_TASK=
 if [ ! -f .bash_env ]; then
     shift $#
-    source "$WDC_DO_COMMANDS_BIN/do_setup_env -s"
+    source "$WDC_DO_COMMANDS_BIN/do_env_setup -s"
 fi
 
 # set title of terminal window
