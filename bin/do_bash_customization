@@ -276,14 +276,19 @@ function update_env() {
     #echo "PROJECT_PATH=$PROJECT_PATH"
     #echo "REPO_LOCATION=$REPO_LOCATION"
     #echo "REPO_SYNT=$REPO_SYNT"
+    is_prj=$(pwd|grep -c "${PROJECTS}/[A-Za-z0-9]*")
     if [ -f ./.bash_env ]
     then
         [ $quiet -eq 0 ] && cat .bash_env | grep "^export .*=" | sed 's/^export \(.*\)=.*/\1/' | xargs -I@ sh -c 'echo "@=\$@"'
         source ./.bash_env
     else
         shift $#
-        source $WDC_DO_COMMANDS_BIN/do_env_setup -s
+        is_env=0
+        [ ! "$PROJECT_ENV" == "" ] && [ $is_prj -eq 1 ] && is_env=$(ls -1 ${PROJECT_PATH}/.envs | grep -c "do_env_setup_for_${PROJECT_ENV}")
+        [ ! "$PROJECT_ENV" == "" ] && [ $is_prj -eq 0 ] && is_env=$(ls -1 ${HOME}/.envs | grep -c "do_env_setup_for_${PROJECT_ENV}")
+        [ $is_env -eq 0 ] && source $WDC_DO_COMMANDS_BIN/do_env_setup -s && return
     fi
+    # TODO: evaluate to move the following in update_prompt
     # set title of terminal window
     if [ $is_prj -eq 1 ]; then 
       echo -ne "\033]0;$PROJECT{$PROJECT_ENV}\007"

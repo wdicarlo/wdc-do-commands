@@ -9,20 +9,25 @@
 
 
 function usage() {
-  echo "Usage:  do-env-setup [-h] [-s] [-l] [<find options>]"
+  echo "Usage:  do-env-setup [-h] [-s] [-l] [-c] [<env_name_pattern>]"
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -s                          : setup ini environment"
   echo "       -l                          : list available environments"
+  echo "       -c                          : check current and if not valid activate specified env"
 }
 
 # Arguments processing
 OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
 list=0
 init=0
-while getopts hsl flag
+check=0
+while getopts hslc flag
 do
   case $flag in
+    c)
+      check=1
+      ;;
     l)
       list=1
       ;;
@@ -41,12 +46,12 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-is_prj=$(pwd|grep -c $PROJECTS)
+is_prj=$(pwd|grep -c "${PROJECTS}/[A-Za-z0-9]*")
 
-envs_tpl_dir="$WDC_DO_COMMANDS_DIR/env"
-envs_dir="$HOME/.envs"
+envs_tpl_dir="${WDC_DO_COMMANDS_DIR}/env"
+envs_dir="${HOME}/.envs"
 if [ $is_prj -eq 1 ]; then
-  envs_dir="$PROJECT_PATH/.envs"
+  envs_dir="${PROJECT_PATH}/.envs"
 fi
 
 [ ! -d "$envs_dir" ] && mkdir -p "$envs_dir"
@@ -68,6 +73,14 @@ if [ $init -eq 1 ]; then
     source $WDC_DO_COMMANDS_BIN/do_env_setup ini
     return
 fi
+
+if [ $check -eq 1 ]; then
+  is_env=0
+  [ ! "$PROJECT_ENV" == "" ] && [ $is_prj -eq 1 ] && is_env=$(ls -1 ${PROJECT_PATH}/.envs | grep -c "do_env_setup_for_${PROJECT_ENV}")
+  [ ! "$PROJECT_ENV" == "" ] && [ $is_prj -eq 0 ] && is_env=$(ls -1 ${HOME}/.envs | grep -c "do_env_setup_for_${PROJECT_ENV}")
+  [ $is_env -eq 1 ] && return
+fi
+
 
 n=0
 if [ $# == 1 ]
@@ -141,6 +154,7 @@ if [ -z "$PROJECT_ENV" ]; then
 else
     echo "PROJECT_ENV=$PROJECT_ENV"
 fi
+# TODO: evaluate to move the following in update_prompt
 # set title of terminal window
 if [ $is_prj -eq 1 ]; then 
   echo -ne "\033]0;$PROJECT{$PROJECT_ENV}\007"
