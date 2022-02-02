@@ -78,7 +78,7 @@ if [ $check -eq 1 ]; then
   is_env=0
   [ ! "$PROJECT_ENV" == "" ] && [ $is_prj -eq 1 ] && is_env=$(ls -1 ${PROJECT_PATH}/.envs | grep -c "do_env_setup_for_${PROJECT_ENV}")
   [ ! "$PROJECT_ENV" == "" ] && [ $is_prj -eq 0 ] && is_env=$(ls -1 ${HOME}/.envs | grep -c "do_env_setup_for_${PROJECT_ENV}")
-  [ $is_env -eq 1 ] && return
+  [ $is_env -eq 1 ] && [ ! "$PROJECT_ENV" == "ini" ] && return
 fi
 
 
