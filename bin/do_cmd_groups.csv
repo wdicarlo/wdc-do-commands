@@ -1,6 +1,6 @@
 arc;yes
 artifactory;no
-az;no
+az;yes
 backup;yes
 build;no
 cli;yes

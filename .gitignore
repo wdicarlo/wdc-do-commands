@@ -34,3 +34,4 @@ bin/wezterm
 bin/do-wezterm
 bin/gucci
 neovim
+/bin/do-az*

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+[ "$USER_EMAIL" == "" ] && echo "Missing USER_EMAIL" && exit
+[ "$(which az)" == "" ] && echo "Missing az command" && exit
+
+az login -u $USER_EMAIL
