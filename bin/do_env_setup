@@ -100,18 +100,18 @@ else
     fi
 fi
 
-
+envpath=""
 if [ $# == 1 ]
 then
-    prj=$(ls -1 ${envs_dir}/do_env_setup_for_* | grep "do_env_setup_for_$1" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
+    envpath=$(ls -1 ${envs_dir}/do_env_setup_for_* | grep "do_env_setup_for_$1" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 else
-    prj=$(ls -1 ${envs_dir}/do_env_setup_for_* | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
+    envpath=$(ls -1 ${envs_dir}/do_env_setup_for_* | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 fi
 
-[ "$prj" == "" ] && return
+[ "$envpath" == "" ] && return
 
-# TODO: check if the file $prj contains the function setup_project_env
-env_path=$(basename $prj)
+# TODO: check if the file $envpath contains the function setup_project_env
+env_path=$(basename $envpath)
 env_name=${env_path#do_env_setup_for_}
 if [ "$env_name" == "$PROJECT_ENV" ]; then
     echo "Active environment: $PROJECT_ENV"
@@ -124,7 +124,7 @@ PATH=$HOME/.arkade/bin:$WDC_DO_COMMANDS_BIN:/usr/local/sbin:/usr/local/bin:/usr/
 PROJECT_VARS=
 export PROJECT_ENV=$env_name
 echo "Applying settings: $PROJECT_ENV"
-source "$prj"
+source "$envpath"
 setup_project_env
 
 if [ -z "$PROJECT_VARS" ]; then
@@ -140,4 +140,10 @@ if [ -z "$PROJECT_ENV" ]; then
     echo "WARNING: PROJECT_ENV not defined"
 else
     echo "PROJECT_ENV=$PROJECT_ENV"
+fi
+# set title of terminal window
+if [ $is_prj -eq 1 ]; then 
+  echo -ne "\033]0;$PROJECT{$PROJECT_ENV}\007"
+else
+  echo -ne "\033]0;${PWD}{$PROJECT_ENV}\007"
 fi

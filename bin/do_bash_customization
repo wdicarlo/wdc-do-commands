@@ -284,6 +284,12 @@ function update_env() {
         shift $#
         source $WDC_DO_COMMANDS_BIN/do_env_setup -s
     fi
+    # set title of terminal window
+    if [ $is_prj -eq 1 ]; then 
+      echo -ne "\033]0;$PROJECT{$PROJECT_ENV}\007"
+    else
+      echo -ne "\033]0;${PWD}{$PROJECT_ENV}\007"
+    fi
     update_prompt
 }
 

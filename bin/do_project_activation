@@ -34,15 +34,16 @@ if [ "$num" == "" ]; then
     return
 fi
 
+prjname=""
 if [ $# -eq 1 ]
 then
-    prj=$(ls -1 "$prj_root" | grep "$1" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
+    prjname=$(ls -1 "$prj_root" | grep "$1" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 else
-    prj=$(ls -1 "$prj_root" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
+    prjname=$(ls -1 "$prj_root" | awk '{print NR,$0}'|grep "^$num "|awk '{print $2}')
 fi
 
 export PROJECT_ENV=ini
-cd "${prj_root}$prj" || return
+cd "${prj_root}$prjname" || return
 
 # reset environment variables
 export PROJECT_TASK=
@@ -52,4 +53,4 @@ if [ ! -f .bash_env ]; then
 fi
 
 # set title of terminal window
-echo -ne "\033]0;$prj\007"
+echo -ne "\033]0;$PROJECT{$PROJECT_ENV}\007"
