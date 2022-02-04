@@ -27,7 +27,7 @@ List all containers
 Create a new image from a container
 	docker commit 089a3e27346a wdicarlo_golang_hello
 Export content of a container
-	docker export  --output=busybox-mkdir.tar d93201be1712
+	docker export --output=busybox-mkdir.tar d93201be1712
 Delete an image
 	docker rmi training/sinatra
 Search for an image
@@ -140,3 +140,5 @@ Change repository, path and tag of an image
 	docker tag ghcr.io/apache/airflow/v2-1-test/prod-build/python3.6:latest <myrepo>/<path>/<to>/<my-airflow>/airflow:0.1.0
 Push an image
 	docker push <myrepo>/<path>/<to>/<my-airflow>/airflow:0.1.0
+Delete all images related to a topic
+	docker images | grep airflow |sed 's/[ \t]\+/ /g' | cut -d' ' -f3 | xargs -I@ docker rmi -f @

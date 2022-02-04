@@ -122,4 +122,8 @@ List shell options status
 		verbose        	off
 		vi             	off
 		xtrace         	off
-
+List files in tars of tars
+	tar t --wildcards -f mycomponent-3.0.1.tar '*.tar' | while read a
+	do
+		tar xvf mycomponent-3.0.1.tar "$a" -O | tar tvf -
+	done | grep -e "log4j.*\.jar"

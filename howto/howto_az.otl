@@ -18,3 +18,7 @@ Setup EncryptionAtHost
 	az feature register --subscription <subscription-name> --namespace Microsoft.Compute --name EncryptionAtHost # Once the feature 'EncryptionAtHost' is registered, invoking 'az provider register -n Microsoft.Compute' is required to get the change propagated
 Get k8s credentials
 	az aks get-credentials --subscription mysub --resource-group myrg --name myrg-k8s --admin --file myk8s.yaml
+Login into ACR service
+	az acr login --name myprjcontainers.azurecr.io
+Pull image from ACR
+	docker pull myprj2containers.azurecr.io/my/path/to/image/prjimage:1.0.0
