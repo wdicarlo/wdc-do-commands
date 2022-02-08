@@ -32,7 +32,7 @@ function usage() {
     echo "       -l                          : list available topics"
     echo "       -L                          : print last topic, same as -T -"
     echo "       -t <topic|->                : append the result to [-=last] topic file"
-    echo "       -T <topic|->                : print [-=last] topic file"
+    echo "       -T <topic|-|^>              : print [-=last, ^=last global] topic file"
     echo "       -V <topic|->                : explore [-=last] topic file in Vim"
     echo "       -R <topic|->                : reset [-=last] topic file"
     echo "       -w                          : find whole word"
@@ -189,9 +189,11 @@ fi
 cmd+=" 2>/dev/null"
 TASK=$(echo $PROJECT_TASK|cut -d':' -f2)
 [ $taction -eq 0 ] && [ ! "$TASK" == "" ] && taction=1 && topic="$TASK"
+[ $taction -eq 0 ] && [ "$TASK" == "" ] && taction=99 && topic="do-find-string"
 if [ $taction -gt 0 ]; then
     #TODO: remove special characters from $string
     [ $taction -eq 5 ] && topic="-" && taction=2 && [ ! "$TASK" == "" ] && topic="$TASK"
+    [ $taction -eq 2 ] && [ "$topic" == "^" ] && topic="do-find-string" && TOPICS_DIR="$HOME/.do-find-string"
     [ "$topic" == "-" ] && topic=$(basename $(find $TOPICS_DIR -type f -exec ls -l --time-style +%Y%m%d%H%M {} \; | sort -t' ' -r -k6 | head -1 | cut -d' ' -f7) | sed 's#^\(.*\)\..*$#\1#') 
     [ $taction -eq 3 ] && find $TOPICS_DIR -type f -exec ls -l --time-style +%Y%m%d%H%M {} \; | sort -t' ' -r -k6 | cut -d' ' -f7 | xargs -I@ sh -c "basename @ " | sed 's#^\(.*\)\..*$#\1#' && exit
     topic_file=$(echo "${TOPICS_DIR}/${topic}/${topic}.txt")
@@ -199,6 +201,7 @@ if [ $taction -gt 0 ]; then
     [ ! -f "${topic_file}" ] && mkdir -p $(dirname $topic_file) && echo "# do-find-string: topic=$topic" > "${topic_file}"
     [ $taction -eq 2 ] && print_topic "${topic}" && exit
     [ $taction -eq 6 ] && print_topic "${topic}" | do-pipe-cfile-to-vim && exit
+    [ $taction -eq 99 ] && rm -f "${topic_file}" # reset result file
     echo "# PWD=$PWD" >> "${topic_file}"
     #cmd+=" | sed \"s#^\\.#\$PWD#\""
     echo "# $cmd" >> "${topic_file}"
