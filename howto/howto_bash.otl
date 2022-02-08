@@ -127,3 +127,7 @@ List files in tars of tars
 	do
 		tar xvf mycomponent-3.0.1.tar "$a" -O | tar tvf -
 	done | grep -e "log4j.*\.jar"
+Preview files with fzf
+	alias pf="fzf --preview='less {}' --bind shift-up:preview-page-up,shift-down:preview-page-down"
+Preview files with fzf, bat and vim
+	alias vf="fzf -m --preview='bat --color=always {}' --bind shift-up:preview-page-up,shift-down:preview-page-down --bind \"ctrl-e:execute(v im -O {+})\""
