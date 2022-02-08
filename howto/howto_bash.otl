@@ -131,3 +131,5 @@ Preview files with fzf
 	alias pf="fzf --preview='less {}' --bind shift-up:preview-page-up,shift-down:preview-page-down"
 Preview files with fzf, bat and vim
 	alias vf="fzf -m --preview='bat --color=always {}' --bind shift-up:preview-page-up,shift-down:preview-page-down --bind \"ctrl-e:execute(v im -O {+})\""
+Preview git diff
+	alias gd='git diff $@ --name-only | fzf -m --ansi --preview "git diff $@ --color=always -- {-1}"'
