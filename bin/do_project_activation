@@ -1,7 +1,35 @@
 #!/usr/bin/env  bash
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
 
-[ "$1" == "-h" ] && echo "do-project-activation [-h] [<project_name_pattern>]" && return
+cmd=$(basename $0)
+
+function usage() {
+  echo "Usage: $cmd [-h] [-b <bookmark>] [<project_name_pattern>]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -b <bookmark>               : cd into bookmarked folder"
+}
+# Arguments processing for sources script
+OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
+bookmark=""
+while getopts hb: flag
+do
+  case $flag in
+    b)
+      bookmark="$OPTARG"
+      ;;
+    h)
+      usage
+      return
+      ;;
+    ?)
+      usage
+      return
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
 
 # shellcheck disable=SC2116
 prj_root=$(echo "$PROJECTS/")
@@ -54,3 +82,5 @@ fi
 
 # set title of terminal window
 echo -ne "\033]0;$PROJECT{$PROJECT_ENV}\007"
+
+[ ! "$bookmark" == "" ] && source $WDC_DO_COMMANDS_BIN/do_cd_bookmark -t $bookmark
