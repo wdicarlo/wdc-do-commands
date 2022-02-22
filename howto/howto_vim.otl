@@ -1091,3 +1091,22 @@ Jump around in a line
 	F{char} - jump to the next occurrence of {char} to the left of the cursor on the same line
 	t{char} - jump to the left of the next occurrence of {char} to the right of the cursor on the same line
 	T{char} - jump to the right of next occurrence of {char} to the left of the cursor on the same line
+Vimdiff cheat sheet
+	do: get changes from other window into the current window
+	dp: put the changes from current window into the other window
+	]c: jump to the next change
+	[c: jump to the previous change
+	zo: open fold
+	zc: close fold
+	zr: reducing folding level
+	zm: one more folding level, please
+	:diffupdate, :diffu: recalculate the diff
+	:diffg RE: get from REMOTE
+	:diffg BA: get from BASE
+	:diffg LO: get from LOCAL
+Linediff
+	:'<,'>Linediff " mark first code block
+	:'<,'>Linediff " mark secong code block and a new tab is opened with the two blocks
+	" when any one of them is saved, its original buffer is updated. Note that this does not save the original buffer
+	:LinediffReset " will delete the temporary buffers
+	" a third :Linediff will do the same as :LinediffReset, but will also initiate a new diff process
