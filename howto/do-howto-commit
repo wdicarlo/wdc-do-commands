@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-[ "$WDC_DO_COMMANDS_HOWTO_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_HOWTO_DIR" && exit
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
 
 function usage() {
   cmd=`basename $0`
@@ -37,16 +37,17 @@ then
   exit
 fi
 
-howto="howto_${1}.otl"
-howtofile="$WDC_DO_COMMANDS_HOWTO_DIR/$howto"
+cd "$WDC_DO_COMMANDS_DIR"
 
-if [ ! -f "$howtofile" ]; then
+howto="howto/howto_${1}.otl"
+
+if [ ! -f "$howto" ]; then
     echo "Missing howto file: $howto"
     exit
 fi
 
 if [ "$message" == "" ]; then
-  do-cmd-update -f "$howtofile"
+  do-cmd-update -f "$howto"
 else
-  do-cmd-update -f -m "$message" "$howtofile"
+  do-cmd-update -f -m "$message" "$howto"
 fi
