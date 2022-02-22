@@ -83,8 +83,10 @@ if [ ! "$task" == "" ]; then
   fi
   OBSESSIONS_PATH="$wdir/.obsessions"
   NOTEBOOKS_PATH="$wdir/.notebooks"
+  TASKS_PATH="$wdir/.tasks"
   [ ! -d "$OBSESSIONS_PATH" ] && mkdir -p "$OBSESSIONS_PATH"
   [ ! -d "$NOTEBOOKS_PATH" ] && mkdir -p "$NOTEBOOKS_PATH"
+  [ ! -d "$TASKS_PATH" ] && mkdir -p "$TASKS_PATH"
 
   if [ "$task" == "." ]; then
     list_tasks
@@ -142,6 +144,9 @@ if [ ! "$task" == "" ]; then
     task_name="task_${task}"
     task_filename="${task_name}.vim"
   fi
+  find_path="$TASKS_PATH/${task}/${task}.txt"
+  cfile_path=""
+  [ -f "$find_path" ] && do-find-string -T "$task" > "$HOME/.vim/vim_cfile.txt" && cfile_path="$HOME/.vim/vim_cfile.txt"
   task_path="$OBSESSIONS_PATH/${task_filename}"
   nb_cmd="VimNotebookOpen"
   [ $global -eq 1 ] && nb_cmd="VimNotebookOpenGlobal" 
@@ -151,6 +156,7 @@ if [ ! "$task" == "" ]; then
   else
     cmd="\vi -c \":silent Obsession $task_path\" -c \":$nb_cmd $task_name\" -c \":autocmd BufEnter * :lcd $wdir\" -c \":cabbrev q qa\" -c \":cabbrev wq wqa\" $vimopt $@"
   fi
+  [ ! "$cfile_path" == "" ] && cmd="$cmd -c \"cfile $cfile_path\""
   echo "> $cmd"
   eval "$cmd"
   exit
