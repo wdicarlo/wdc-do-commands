@@ -22,3 +22,5 @@ Login into ACR service
 	az acr login --name myprjcontainers.azurecr.io
 Pull image from ACR
 	docker pull myprj2containers.azurecr.io/my/path/to/image/prjimage:1.0.0
+List AKS versions in a region
+	az aks get-versions --location <region> | jq '.orchestrators[] | .orchestratorVersion'
