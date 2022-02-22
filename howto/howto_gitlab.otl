@@ -4,4 +4,5 @@ Move Project
     only owner can move project
 Project Ownership
     cannot give directly ownership of a project
-
+Clone all projects under a group
+	for repo in $(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" https://<gitlab_host>/api/v4/groups/<group_id>?include_subgroups=true | jq ".projects[].ssh_url_to_repo" | tr -d '"'); do git clone --bare $repo; done;
