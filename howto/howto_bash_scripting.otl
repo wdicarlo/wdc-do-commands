@@ -172,7 +172,24 @@ bash scripting howto
    local str
    printf -v str ' %s' "${myArray[@]}"  # save to variable str without printing
    printf '%s' "${str:1}"  # to remove the leading space 
-
+# more array manipulation (https://stackoverflow.com/a/10586169)
+	string="Paris, France, Europe"
+	IFS=', ' read -r -a array <<< "$string"
+	echo "${array[0]}"
+	for element in "${array[@]}"
+	do
+		echo "$element"
+	done
+	for index in "${!array[@]}"
+	do
+		echo "$index ${array[index]}"
+	done
+    # Bash arrays are sparse -> indices are not contiguous.
+	unset "array[1]"
+	array[42]=Earth
+	echo "${#array[@]}" # number of array elements -> you shouldn't use the length to get the last element
+	echo "${array[-1]}" # last element
+	echo "${array[@]: -1:1}" # last element (old version). note the needed space after :
 # docs as code
     #!/usr/bin/env bash
     # Example of Documentation as Code
@@ -217,3 +234,10 @@ bash scripting howto
     T | A | B | L | E
     DACv2
 
+# [[ is bash's improvement to the [ command.
+	# must use #!/bin/bash shebang line
+	# no longer have to quote variables
+	# can use && and || operators for boolean tests and < and > for string comparisons
+	# can use =~ operator for doing regular expression matches
+	# get pattern matching aka globbing for free
+	# prevents word splitting of variable values

@@ -142,3 +142,5 @@ Push an image
 	docker push <myrepo>/<path>/<to>/<my-airflow>/airflow:0.1.0
 Delete all images related to a topic
 	docker images | grep airflow |sed 's/[ \t]\+/ /g' | cut -d' ' -f3 | xargs -I@ docker rmi -f @
+Sort images by size
+	docker images --format "{{.ID}}\t{{.Size}}\t{{.Repository}}\t{{.Tag}}" | sort -k 2 -h | column -t
