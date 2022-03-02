@@ -3,38 +3,95 @@
 #TODO: use only two inout <path/filename> <other-root-path>
 app=`basename $0`
 function usage() {
-    echo "Usage: $app [-d] [-r] [-s] [-w] [<root1> <root2>|<file1> <file2>]"
-    echo "       -r             : recursive"
-    echo "       -d             : use DirDiff plugin"
-    echo "       -s             : just print a summary of differences"
-    echo "       -w             : ignore white spaces"
+    echo "Usage: $app [-d] [-r|-R [-G <filter>]] [-s] [-w] [-v <p1:e1#p2:e2>] [<root1> <root2>|<file1> <file2>]"
+    echo "       -r                  : sequential recursive selection"
+    echo "       -R                  : selective recursive selection"
+    echo "       -G <filter>         : filter pattern"
+    echo "       -d                  : use DirDiff plugin"
+    echo "       -s                  : just print a summary of differences"
+    echo "       -w                  : ignore white spaces"
+    echo "       -v <p1:e1#p2:e2>    : compare (project1,env1) with (project2,env2)"
     echo "Usage: $app <root1> <root2> <common-relative-path-to-file>"
     echo "Usage: $app -f <root> <file1> <file2>"
     echo "Usage: $app -p <file> # edit diff of <file> vs <file>.orig and <file>.rej"
     echo "Usage: $app -g <file> # view diff of <file> vs un-staged git changes"
 }
 
+function short_path() {
+  [ $# -ne 3 ] && return
+
+  mode="$1"
+  pin1="$2"
+  pin2="$3"
+
+  [ $mode -eq 1 ] && echo "$pin1 $pin2" && return
+
+  pout1=""
+  pout2=""
+  IFS='/' read -r -a parr1 <<< "$pin1"
+  IFS='/' read -r -a parr2 <<< "$pin2"
+  n="${#parr1[@]}"
+  c=0
+  for index in "${!parr1[@]}"
+  do
+    item1="${parr1[index]}"
+    item2="${parr2[index]}"
+    c=$((c+1))
+    if [ "$item1" == "$item2" ]; then
+      [ $c -eq $n ] && pout1+="${item1}" || pout1+="${item1}/"
+      [ $c -eq $n ] && pout2+="${item2}" || pout2+=".../"
+    else
+      pout1+="${item1}/"
+      pout2+="${item2}/"
+    fi
+  done
+  #echo "$(echo $pout1|sed 's#/$##') $(echo $pout2|sed 's#/$##')"
+  echo "$pout1 $pout2"
+}
 function compare() {
-    dir1=$(echo "$1" | sed 's#/$##')
-    dir2=$(echo "$2" | sed 's#/$##')
+    mode=$1
+    dir1=$(echo "$2" | sed 's#/$##')
+    dir2=$(echo "$3" | sed 's#/$##')
+    prj1=$4
+    env1=$5
+    prj2=$6
+    env2=$7
+
+    [ ! "$prj1" == "" ] && dir2=$(echo $dir2 | sed "s#\<$prj1\>#$prj2#g" | sed "s#\<$env1\>#$env2#g")
+
+    [ ! -d "${dir1}" ] && echo "< null_dir ${dir2}" && return
+    [ ! -d "${dir2}" ] && echo "> ${dir1} null_dir" && return
 
     # find common filenames
     for file in $(find "$dir1" -maxdepth 1 -type f | sed "s#${dir1}/##")
     do
-      ok=$(find "$dir2" -maxdepth 1 -type f | sed "s#${dir2}/##" | grep "^${file}$" | wc -l)
+      file1="${dir1}/${file}"
+      file2=$(echo "${dir2}/${file}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#\<$env1\>#$env2#g")
       cmd="vimdiff --noplugin "
-      if [ $ok -gt 0 ]; then
-        [ $(diff "${dir1}/${file}" "${dir2}/${file}"|wc -l) -eq 0 ] && echo "Skipping equal file: ${dir2}/${file}" && continue
-        cmd="$cmd ${dir1}/${file} ${dir2}/${file}"
-        echo "> $cmd"
-        read -p "Compare? y/[n]/q > " answer 
-        if [ "$answer" == "y" ]; then
-          eval "$cmd"
-        elif [ "$answer" == "q" ]; then
-          exit
+      if [ -f "${file2}" ]; then
+        #[ $(diff "${file1}" "${file2}"|wc -l) -eq 0 ] && echo "= ${file1} ${file2}" && continue
+        [ $(diff --ignore-space-change "${file1}" "${file2}"|wc -l) -eq 0 ] && echo "= $(short_path $mode ${file1} ${file2})" && continue
+        #echo "% ${file1} ${file2}"
+        echo "% $(short_path $mode ${file1} ${file2})"
+        if [ $recurse -eq 1 ]; then
+          read -p "Compare? y/[n]/q > " answer
+          if [ "$answer" == "y" ]; then
+            cmd="$cmd ${file1} ${file2}"
+            echo "> $cmd"
+            eval "$cmd"
+          elif [ "$answer" == "q" ]; then
+            exit
+          fi
         fi
       else
-        echo "Skipping missing file: ${dir2}/${file}"
+        echo "> ${file2}"
+      fi
+    done
+    for file in $(find "$dir2" -maxdepth 1 -type f | sed "s#${dir2}/##")
+    do
+      ok=$(find "$dir1" -maxdepth 1 -type f | sed "s#${dir1}/##" | grep "^${file}$" | wc -l)
+      if [ $ok -eq 0 ]; then
+        echo "< ${dir1}/${file}"
       fi
     done
 }
@@ -52,10 +109,32 @@ summary=0
 git=0
 dirdiff=0
 opts=""
-while getopts qhfprsgdw flag
+ntoken=""
+vs=""
+prj1=""
+env1=""
+prj2=""
+env2=""
+filter="^"
+while getopts qhfprRsgdwv:G: flag
 do
     case $flag in
-
+        G)
+            filter="$OPTARG"
+            ;;
+        v)
+            vs="$OPTARG"
+            src=$(echo $vs|cut -d'#' -f1)
+            dst=$(echo $vs|cut -d'#' -f2)
+            prj1=$(echo $src|cut -d':' -f1)
+            env1=$(echo $src|cut -d':' -f2)
+            prj2=$(echo $dst|cut -d':' -f1)
+            env2=$(echo $dst|cut -d':' -f2)
+            [ "$prj1" == "$prj2" ] && [ "$env1" == "$env2" ] && echo "Cannot compare $vs" && exit
+            ;;
+        n)
+            ntoken="$OPTARG"
+            ;;
         q)
             quiet=1
 #            echo pars is $pars
@@ -71,6 +150,9 @@ do
             ;;
         s)
             summary=1
+            ;;
+        R)
+            recurse=2
             ;;
         r)
             recurse=1
@@ -94,19 +176,14 @@ done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
 if [ $git -eq 1 ]; then
-	if [ $# -ne 1 ]; then
-	    usage
-	    exit
-	fi 
+	[ $# -ne 1 ] && usage && exit
+
   git difftool -t vimdiff -y "$1"
   exit
 fi
 
 if [ $patchmode -eq 1 ]; then
-	if [ $# -ne 1 ]; then
-	    usage
-	    exit
-	fi 
+	[ $# -ne 1 ] && usage && exit
 	
 	if [ ! -f "$1.orig" ]; then
 		echo "Missing $1.orig file"
@@ -131,12 +208,68 @@ if [ $# -eq 2 ]; then
         exit
       fi
       [ $dirdiff -eq 1 ] && vim -c ":DirDiff $path1 $path2" < /dev/tty && exit
-      compare "$path1" "$path2"
+
       if [ $recurse -eq 1 ]; then
-        for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+        compare 0 "$path1" "$path2" $prj1 $env1 $prj2 $env2
+
+        if [ $recurse -ge 1 ]; then
+          for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+          do
+            compare 0 "${path1}/${subdir}" "${path2}/${subdir}"  $prj1 $env1 $prj2 $env2
+          done
+          for subdir in $(find "$path2" -type d | sed "s#${path2}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+          do
+            [ ! -d "${path1}/${subdir}" ] && compare 0 "${path1}/${subdir}" "${path2}/${subdir}" $prj1 $env1 $prj2 $env2 # one path is missing
+          done
+        fi
+      elif [ $recurse -eq 2 ]; then
+        while true
         do
-          [ ! -d "${path2}/${subdir}" ] && echo "Skipping missing path: ${path2} / ${subdir}" && continue
-          compare "${path1}/${subdir}" "${path2}/${subdir}" 
+          (compare 0 "$path1" "$path2" $prj1 $env1 $prj2 $env2
+
+          if [ $recurse -ge 1 ]; then
+            for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+            do
+              compare 0 "${path1}/${subdir}" "${path2}/${subdir}"  $prj1 $env1 $prj2 $env2
+            done
+            for subdir in $(find "$path2" -type d | sed "s#${path2}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+            do
+              [ ! -d "${path1}/${subdir}" ] && compare 0 "${path1}/${subdir}" "${path2}/${subdir}" $prj1 $env1 $prj2 $env2 # one path is missing
+            done
+          fi) | grep "$filter" | awk '{print NR,$0}'
+
+          read -p "Compare number or q to quit? " num
+          [ "$num" == "q" ] && exit
+          line=$((compare 1 "$path1" "$path2" $prj1 $env1 $prj2 $env2
+
+          if [ $recurse -ge 1 ]; then
+            for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+            do
+              compare 1 "${path1}/${subdir}" "${path2}/${subdir}"  $prj1 $env1 $prj2 $env2
+            done
+            for subdir in $(find "$path2" -type d | sed "s#${path2}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+            do
+              [ ! -d "${path1}/${subdir}" ] && compare 1 "${path1}/${subdir}" "${path2}/${subdir}" $prj1 $env1 $prj2 $env2 # one path is missing
+            done
+          fi) | grep "$filter" | awk '{print NR,$0}' | grep "^$num ")
+          [ "$line" == "" ] && continue
+          echo "$line" | while IFS=' ' read -r num res f1 f2
+          do
+            cmd=""
+            case "$res" in
+              "=" | "%")
+                cmd="vimdiff -c 'set diffopt+=iwhite' --noplugin $f1 $f2 < /dev/tty"
+                ;;
+              ">")
+                cmd="vim -c 'set diffopt+=iwhite' --noplugin $f1 < /dev/tty"
+                ;;
+              "?")
+                cmd=""
+                ;;
+            esac
+            echo "> $cmd"
+            eval "$cmd"
+          done
         done
       fi
     elif [ -f "$path1" ] && [ -f "$path2" ]; then
@@ -150,7 +283,7 @@ if [ $# -eq 2 ]; then
 elif [ $# -ne 3 ]; then
     usage
     exit
-fi 
+fi
 
 if [ $multinames -eq 0 ]; then
     path1="$1"
@@ -159,11 +292,12 @@ if [ $multinames -eq 0 ]; then
     shift
     for file in $@;
     do
-        if [ -f $path1/$file ] && [ -f $path2/$file ]; then 
+        if [ -f $path1/$file ] && [ -f $path2/$file ]; then
             vimdiff $opts --noplugin $path1/$file $path2/$file
         fi
     done
 else
+    [ $# -ne 3 ] && usage && exit
     path=$1
     shift
     cmd="vimdiff $opts --noplugin "
