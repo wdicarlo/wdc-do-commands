@@ -55,6 +55,7 @@ Plug 'vimoutliner/vimoutliner'
 Plug 'wdicarlo/vim-notebook'
 Plug 'vim-voom/VOoM'
 Plug 'will133/vim-dirdiff'
+Plug 'AndrewRadev/linediff.vim'
 Plug 'skywind3000/asyncrun.vim'
 
 " List ends here. Plugins become visible to Vim after this call.
