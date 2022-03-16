@@ -364,3 +364,5 @@ Delete a (big) file from the git repository and history
 	git reflog expire --expire=now --all
 	git gc --prune=now
 	git push --all --force
+Print commit SHA of a tag
+	git rev-list -n 1 $TAG

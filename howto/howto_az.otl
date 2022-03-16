@@ -24,3 +24,7 @@ Pull image from ACR
 	docker pull myprj2containers.azurecr.io/my/path/to/image/prjimage:1.0.0
 List AKS versions in a region
 	az aks get-versions --location <region> | jq '.orchestrators[] | .orchestratorVersion'
+List regions
+	az account list-locations | jq -r '.[] | "\(.name) \(.regionalDisplayName)"'
+Show secrets in keyvault
+	az keyvault secret show --name "my-secret-name" --vault-name "mykeyvault-b3e2" # add --query "value" to get only the content of "value" attribute
