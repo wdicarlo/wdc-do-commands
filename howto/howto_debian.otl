@@ -10,3 +10,7 @@ Start fluxbox at startup
 	echo "exec startfluxbox" >> ~/.xinitrc
 Add proxy conf for apt
 	echo "Acquire::http::Proxy \"http://proxy:8080\";" >> /etc/apt/apt.conf.d/70debconf
+Check if gitlab service is available
+	systemctl list-units | grep gitlab
+Get status of gitlab service
+	systemctl status gitlab-runner.service

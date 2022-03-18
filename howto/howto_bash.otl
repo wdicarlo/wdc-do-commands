@@ -139,3 +139,5 @@ Reset terminal
 	stty sane
 Update date with internet NTP server
 	sudo ntpdate time.nist.gov
+Clean PATH variable
+	echo $PATH|tr ':' '\n'|sed "s#~#$HOME#" |sort |uniq |tr '\n' ':'
