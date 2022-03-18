@@ -346,6 +346,7 @@ if [ "$A_TOPOLOGY" = 10 ]; then
     git_checkout -q $BRANCH_DEV
     git_commit
     git_commit
+    git --no-pager log --oneline --graph --decorate --all
     git rebase --onto "$c" $BRANCH_DEV $BRANCH_FEATURE
 elif [ "$A_TOPOLOGY" = 11 ]; then
     git_commit
@@ -367,6 +368,7 @@ elif [ "$A_TOPOLOGY" = 11 ]; then
     git_checkout -q $BRANCH_MASTER
     git_commit
     git_commit
+    git --no-pager log --oneline --graph --decorate --all
     git rebase --onto "$c" $BRANCH_MASTER $BRANCH_FEATURE
 elif [ "$A_TOPOLOGY" = 12 ]; then
     git_commit
