@@ -1,37 +1,43 @@
 #!/usr/bin/env bash
 
+# TODO: add clone of repo with submodules
+
 function usage() {
     cmd=`basename $0`
-    echo "Usage: $cmd [-d] <repo-url> [<dest-folder>]"
+    echo "Usage: $cmd [-f] [-a <rpofile>] [-d] <repo-url> [<dest-folder>]"
     echo "             -d            : do a deep clone"
-    echo "             -a            : setup author"
+    echo "             -a <profile>  : setup author (.=select)"
 }
 
 
 
 quiet=0
 deep=0
-author=0
-while getopts hqda flag
+author=""
+force=0
+while getopts hqda:f flag
 do
     case $flag in
-	q)
-	    quiet=1
-	    ;;
-	a)
-	    author=1
-	    ;;
-	d)
-	    deep=1
-	    ;;
-	h)
-	    usage
-	    exit
-	    ;;
-	?)
-	    usage
-	    exit
-	    ;;
+    f)
+        force=1
+        ;;
+    q)
+        quiet=1
+        ;;
+    a)
+        author="$OPTARG"
+        ;;
+    d)
+        deep=1
+        ;;
+    h)
+        usage
+        exit
+        ;;
+    ?)
+        usage
+        exit
+        ;;
     esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
@@ -47,10 +53,13 @@ else
     repo_folder=$2
 fi
 
-if [ -d "$repo_folder" ]; then
-	echo "$repo_folder already exists"
+if [ -d "$repo_folder" ] && [ $force -eq 0 ]; then
+	echo "$repo_folder already exists. Use -f to force the clone"
 	exit
 fi
+
+[ -d "$repo_folder" ] && [ $force -eq 1 ] && [ $(git -C "$repo_folder" status --porcelain | wc -l) -gt 0 ] && echo "Error - Repository with changes" && exit
+[ -d "$repo_folder" ] && [ $force -eq 1 ] && rm -rf "$repo_folder"
 
 cmd="git clone $repo_url $repo_folder"
 
@@ -68,13 +77,8 @@ if [ $deep -eq 1 ]; then
 	cd ..
 fi
 
-if [ $author -eq 1 ]; then
-	read -p "Name: " name
-	read -p "eMail: " email
-
-	echo -e "
-	[user]
-		name = $name
-		email = $email
-	" >> $repo_folder/.git/config
+if [ ! "$author" == "" ]; then
+	cd "$repo_folder"
+  [ $(do-git-conf-author -l | grep -c "$author") -ne 1 ] && echo "Error - Wrong author profile" && exit
+  do-git-conf-author -c "$author"
 fi
