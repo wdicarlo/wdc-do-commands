@@ -9,6 +9,13 @@ bash scripting howto
    die() { yell "$*"; exit 111; }
    try() { "$@" || die "cannot $*"; }
    echoerr() { printf "%s\n" "$*" >&2; }
+   function quote () { 
+      local quoted=${1// /%20};
+      quoted=${quoted//=/%3D};
+      quoted=${quoted//,/%2C};
+      printf "%s" "$quoted"
+   }
+
 
 # Check it is used correctly   
    if [ -t 0 ]; then
