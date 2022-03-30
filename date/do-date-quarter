@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+mon=$(date +'%m')
+if [ $mon -ge 1 -a $mon -le 3 ]; then
+     qtr=1
+elif [ $mon -ge 4 -a $mon -le 6 ]; then
+     qtr=2
+elif [ $mon -ge 7 -a $mon -le 9 ]; then
+     qtr=3
+elif [ $mon -ge 10 -a $mon -le 12 ]; then
+     qtr=4
+fi
+printf "%02d\n" $qtr
