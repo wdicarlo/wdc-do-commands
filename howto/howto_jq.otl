@@ -13,7 +13,7 @@ Convert CSV to JSON
 	cat data.csv | jq -Rsn '{occurrences: [inputs | . / "
 Convert JSON to CSV
 	cat data.yaml | yq eval -j | jq -r '.[] | [ .value1, "NA", .value2 ] | @tsv'
-" | (.[] | select(length > 0) | . / ";") as  | {"name": [$input[0], $input[1]], "address": {"city": $input[2]}}]}'
+	" | (.[] | select(length > 0) | . / ";") as $input | {"name": [$input[0], $input[1]], "address": {"city": $input[2]}}]}'
 Build JSON with values of another JSON
 	cat data.json | jq '[.[].fields | {(.customfield_29497): (.summary)}]'
 Filter and rename JSON fields
@@ -41,9 +41,9 @@ Filter by number range
 Conditionally change values 
 	cat data.json | jq '.[] |if .key == "MYISSUE-2" then .fields.resolutiondate = "2019-07-01T17:22:52.000+0300" else . end'| jq '"\(.key);\(.fields.resolutiondate)"'
 Filter by values and items
-	cat certificates.json | jq  '.[]|select(.certificateId == "6312" )| {"name":.certificateName,"id":.certificateId}'
+	cat certificates.json | jq '.[]|select(.certificateId == "6312" )| {"name":.certificateName,"id":.certificateId}'
 Filter using regular expression
-	cat certificates.json | jq  '.[]|select(.certificateName|match(^UC[[:digit:]][[:digit:]][[:digit:]][[:digit:]]) )'
+	cat certificates.json | jq '.[]|select(.certificateName|match(^UC[[:digit:]][[:digit:]][[:digit:]][[:digit:]]) )'
 List root nodes
 	cat data.json | jq keys_unsorted[] -r
 Sort by a field
@@ -52,3 +52,5 @@ Count occurences in an array
 	cat data.json | jq '.subnets[]|select(.name == "Low") | "\(.ipConfigs | length)"' 
 Encode (escape) string for URI/URL
 	date | jq -sRr @uri
+Convert enabled subnodes keys into attributes called node
+	cat data.json | jq '.subnodes | to_entries | map_values(.value + { node: .key}) | .[] | select(.enabled == true) | select(.imgsnode != null) | .imgsnode | select(.tag != null) | "snodetag: \(.tag)"'
