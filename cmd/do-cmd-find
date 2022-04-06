@@ -5,10 +5,11 @@
 cmd=`basename $0`
 
 function usage() {
-    echo "Usage: $cmd [-h] [-q] [-f] [-c] [-a] [-o] [-t] [-r <root>] [-p] <string>"
+    echo "Usage: $cmd [-h] [-q] [-f] [-F] [-c] [-a] [-o] [-t] [-r <root>] [-p] <string>"
     echo "where:"
     echo "       -h                          : print this help"
     echo "       -f                          : find the filenames"
+    echo "       -F                          : find the filenames of commands not tracked"
     echo "       -c                          : find in all commands (even not versioned)"
     echo "       -a                          : find in all files (even not versioned)"
     echo "       -o                          : find only in the options"
@@ -26,7 +27,7 @@ files=0
 root="$WDC_DO_COMMANDS_DIR"
 filter="do[-_]"
 apaths=0
-while getopts hqaocfr:tp flag
+while getopts hqaocfFr:tp flag
 do
     case $flag in
 	t)
@@ -40,6 +41,9 @@ do
 	    ;;
 	o)
 	    options=1
+	    ;;
+	F)
+	    files=2
 	    ;;
 	f)
 	    files=1
@@ -70,6 +74,15 @@ if [ $# == 0 ]; then
     exit
 fi
 
+if [ $files -eq 2 ]; then
+  cmd="find $PROJECTS -type f | grep -v \"wdc-do-commands\" | grep \"/do-[a-z-]*$\" | grep \"$@\""
+  if [ $quiet -eq 0 ]; then
+      echo "> $cmd"
+  fi
+  eval "$cmd"
+  exit
+fi
+
 root=$(echo "$root"| sed 's#\(.*\)\/$#\1#') # remove trailing slash
 [ ! -d "$root" ] && echo "Wrong command folder: $root" && exit
 
@@ -80,6 +93,7 @@ if [ $all -eq 1 ]; then
 elif [ $all -eq 2 ]; then
     cmd="find . -not -path \"./.git/*\" -type f | sed 's#^\.\/##'"
 fi
+
 
 pars="$@"
 
@@ -99,4 +113,4 @@ fi
 if [ $quiet -eq 0 ]; then
     echo "> $cmd"
 fi
-eval $cmd
+eval "$cmd"
