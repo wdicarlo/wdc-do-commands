@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
+
+echoerr() { printf "Error: %s\n" "$*" >&2; }
+
+# Usage help function
+cmd=$(basename ${BASH_SOURCE[0]})
+envfile="./variables.env"
+varfile="./variables.csv"
+
+function usage() {
+  echo "Usage: $cmd [-h] [-e <envfile>] [-g <gitlabdomain>] [-v <varfile>] <env>"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -e <envfile>                : envfile to use (default $envfile)"
+  echo "       -v <varfile>                : varfile to use (default $varfile)"
+  echo "       -g <gitlabdomain>           : overwrite gitlab domain extracted from envfile"
+  echo "       <env>                       : dev, qa, evo, etc."
+  echo "Environment variable file: $envfile"
+  echo "   declare -x GITLAB_DOMAIN_NAME=\"mygitlab.domain.org\""
+  echo "   export AZ_SUBSCRIPTION_NAME=\"MY_SUB_NAME\""
+  echo "Variable file: $varfile"
+  echo "   TYPE (M=MANDATORY,P=POSTPROC),NAME,DEFAULT"
+  echo "   M,AZ_SUBSCRIPTION_NAME,\"\""
+  echo "   P,ENVIRONMENT,$1"
+  echo "   P,TF_project,\${PROJECT}"
+}
+
+function extractenv() {
+ echo "$(cat $envfile|grep "$1="|cut -d'=' -f2|tr -d '"')"
+}
+function echoenv() {
+  echo "$1 => \"$(eval echo \$$1)\"" >&2;
+}
+
+# Arguments processing for sources script
+OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
+gitlabdomain=""
+while getopts he:g:v: flag
+do
+  case $flag in
+    g)
+      gitlabdomain="$OPTARG"
+      ;;
+    v)
+      varfile="$OPTARG"
+      ;;
+    e)
+      envfile="$OPTARG"
+      ;;
+    h)
+      usage
+      return
+      ;;
+    ?)
+      usage
+      return
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+if [ $# -ne 1 ]; then
+  usage
+  return
+fi
+
+[ ! -f "$envfile" ] && echoerr "Missing environment variables file" && return
+[ ! -f "$varfile" ] && echoerr "Missing variables file" && return
+
+declare -A vars
+
+while IFS=' ' read -r var
+do
+  vars["$var"]=$(extractenv "$var")
+done < <(cat "$varfile"|grep "^M"|cut -d',' -f2)
+
+while IFS=' ' read -r prefix opts assignment
+do
+ name="$(echo $assignment|cut -d'=' -f1|tr -d '"')"
+ value="$(echo $assignment|cut -d'=' -f2|tr -d '"')"
+ vars["$name"]="$value"
+done < <(cat "$envfile" | grep "TF_VAR_[a-z0-9_]\+=")
+
+while IFS=' ' read -r var val
+do
+  vars["$var"]=$(eval "echo ${val@E}")
+done < <(cat "$varfile"|grep "^P"|cut -d',' -f2,3|tr ',' ' ')
+
+[ ! "$gitlabdomain" == "" ] && vars["GITLAB_DOMAIN_NAME"]="$gitlabdomain"
+
+while IFS=' ' read -r var
+do
+  [ "${vars["$var"]}" == "" ] && echoerr "Missing $var" && return
+done < <(cat "$varfile"|grep "^M"|cut -d',' -f2)
+
+for var in "${!vars[@]}"
+do
+ cmd="export $var=\"${vars[$var]}\""
+ [ $(echo "$var"|grep -c -i "password\|secret\|key") -eq 0 ] && echo "> $cmd" || echo "> export $var=\"*******\""
+ eval "$cmd"
+done
+
