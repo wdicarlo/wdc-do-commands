@@ -57,7 +57,7 @@ function compare() {
     prj2=$6
     env2=$7
 
-    [ ! "$prj1" == "" ] && dir2=$(echo $dir2 | sed "s#\<$prj1\>#$prj2#g" | sed "s#\<$env1\>#$env2#g")
+    [ ! "$prj1" == "" ] && dir2=$(echo $dir2 | sed "s#\<$prj1\>#$prj2#g" | sed "s#$env1#$env2#g")
 
     [ ! -d "${dir1}" ] && echo "< null_dir ${dir2}" && return
     [ ! -d "${dir2}" ] && echo "> ${dir1} null_dir" && return
@@ -66,7 +66,7 @@ function compare() {
     for file in $(find "$dir1" -maxdepth 1 -type f | sed "s#${dir1}/##")
     do
       file1="${dir1}/${file}"
-      file2=$(echo "${dir2}/${file}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#\<$env1\>#$env2#g")
+      file2=$(echo "${dir2}/${file}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#$env1#$env2#g")
       cmd="vimdiff --noplugin "
       if [ -f "${file2}" ]; then
         #[ $(diff "${file1}" "${file2}"|wc -l) -eq 0 ] && echo "= ${file1} ${file2}" && continue
@@ -137,7 +137,6 @@ do
             ;;
         q)
             quiet=1
-#            echo pars is $pars
             ;;
         w)
             opts="-c 'set diffopt+=iwhite'"
@@ -272,7 +271,7 @@ if [ $# -eq 2 ]; then
           done
         done
       fi
-    elif [ -f "$path1" ] && [ -f "$path2" ]; then
+    elif ([ -f "$path1" ] || [ -h "$path1" ]) && ([ -f "$path2" ] || [ -h "$path2" ]); then
         cmd="vimdiff $opts --noplugin $path1 $path2"
         echo "> $cmd"
         eval "$cmd"
