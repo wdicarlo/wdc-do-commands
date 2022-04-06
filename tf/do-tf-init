@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+[ "${TF_ADDRESS}"      == "" ] && echo "Missing TF_ADDRESS" && exit
+[ "${TF_USERNAME}"     == "" ] && echo "Missing TF_USERNAME" && exit
+[ "${TF_PASSWORD}"     == "" ] && echo "Missing TF_PASSWORD" && exit
+
+function tf_init_cmd () {
+  [ ! $# -eq 3 ] && echo "tf_init_cmd: Wrong parameters" && return 
+  TF_ADDRESS="${1}"
+  TF_USERNAME="${2}"
+  TF_PASSWORD="${3}"
+
+  [ "${TF_ADDRESS}"  == "" ] && echo "Missing TF_ADDRESS" && return
+  [ "${TF_USERNAME}" == "" ] && echo "Missing TF_USERNAME" && return
+  [ "${TF_PASSWORD}" == "" ] && echo "Missing TF_PASSWORD" && return
+
+  cmd="terraform init \
+            -backend-config=address=${TF_ADDRESS} \
+            -backend-config=lock_address=${TF_ADDRESS}/lock \
+            -backend-config=unlock_address=${TF_ADDRESS}/lock \
+            -backend-config=username=${TF_USERNAME} \
+            -backend-config=password=${TF_PASSWORD} \
+            -backend-config=\"lock_method=POST\" \
+            -backend-config=\"unlock_method=DELETE\" \
+            -backend-config=\"retry_wait_min=5\""
+  echo "$cmd"
+}
+
+# Usage help function
+cmd=$(basename $0)
+
+function usage() {
+  echo "Usage: $cmd [-h]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -n                          : dry run"
+  echo "Environment variables:"
+  echo "       TF_ADDRESS"
+  echo "       TF_USERNAME"
+  echo "       TF_PASSWORD"
+}
+
+# Arguments processing for sources script
+migrate=""
+dryrun=0
+while getopts hn flag
+do
+  case $flag in
+    n)
+      dryrun=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+cmd=$(tf_init_cmd "$TF_ADDRESS" "$TF_USERNAME" "$TF_PASSWORD") 
+echo "> $(echo "$cmd" | sed 's/             /\n/g')"
+[ $dryrun -eq 0 ] && eval "$cmd"
