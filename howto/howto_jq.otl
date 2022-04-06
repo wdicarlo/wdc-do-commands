@@ -54,3 +54,5 @@ Encode (escape) string for URI/URL
 	date | jq -sRr @uri
 Convert enabled subnodes keys into attributes called node
 	cat data.json | jq '.subnodes | to_entries | map_values(.value + { node: .key}) | .[] | select(.enabled == true) | select(.imgsnode != null) | .imgsnode | select(.tag != null) | "snodetag: \(.tag)"'
+Compare json files
+	vimdiff <(jq --sort-keys . data_a.json) <(jq --sort-keys . data_b.json)

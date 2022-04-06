@@ -151,3 +151,5 @@ Update date with internet NTP server
 	sudo ntpdate time.nist.gov
 Clean PATH variable
 	echo $PATH|tr ':' '\n'|sed "s#~#$HOME#" |sort |uniq |tr '\n' ':'
+Compare lists of files
+	vimdiff <(cd project1/configs1/ && find . | sort) <(cd project2/configs2 && find . | sort)
