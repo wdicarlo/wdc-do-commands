@@ -8,6 +8,7 @@ function usage() {
     echo "       -R                  : selective recursive selection"
     echo "       -G <filter>         : filter pattern"
     echo "       -d                  : use DirDiff plugin"
+    echo "       -m                  : use meld tool"
     echo "       -s                  : just print a summary of differences"
     echo "       -w                  : ignore white spaces"
     echo "       -v <p1:e1#p2:e2>    : compare (project1,env1) with (project2,env2)"
@@ -68,6 +69,7 @@ function compare() {
       file1="${dir1}/${file}"
       file2=$(echo "${dir2}/${file}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#$env1#$env2#g")
       cmd="vimdiff --noplugin "
+      [ $meld -eq 1 ] && cmd="meld "
       if [ -f "${file2}" ]; then
         #[ $(diff "${file1}" "${file2}"|wc -l) -eq 0 ] && echo "= ${file1} ${file2}" && continue
         [ $(diff --ignore-space-change "${file1}" "${file2}"|wc -l) -eq 0 ] && echo "= $(short_path $mode ${file1} ${file2})" && continue
@@ -116,7 +118,8 @@ env1=""
 prj2=""
 env2=""
 filter="^"
-while getopts qhfprRsgdwv:G: flag
+meld=0
+while getopts qhfprRsgdwv:G:m flag
 do
     case $flag in
         G)
@@ -134,6 +137,9 @@ do
             ;;
         n)
             ntoken="$OPTARG"
+            ;;
+        m)
+            meld=1
             ;;
         q)
             quiet=1
@@ -273,6 +279,7 @@ if [ $# -eq 2 ]; then
       fi
     elif ([ -f "$path1" ] || [ -h "$path1" ]) && ([ -f "$path2" ] || [ -h "$path2" ]); then
         cmd="vimdiff $opts --noplugin $path1 $path2"
+        [ $meld -eq 1 ] && cmd="meld $path1 $path2"
         echo "> $cmd"
         eval "$cmd"
     else
@@ -292,7 +299,11 @@ if [ $multinames -eq 0 ]; then
     for file in $@;
     do
         if [ -f $path1/$file ] && [ -f $path2/$file ]; then
+          if [ $meld -eq 0 ]; then
             vimdiff $opts --noplugin $path1/$file $path2/$file
+          else
+            meld $path1/$file $path2/$file
+          fi
         fi
     done
 else
