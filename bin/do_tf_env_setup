@@ -27,7 +27,12 @@ function usage() {
 }
 
 function extractenv() {
- echo "$(cat $envfile|grep "$1="|cut -d'=' -f2|tr -d '"')"
+ val="$(cat $envfile|grep "$1="|cut -d'=' -f2)"
+ if [ $(echo $val|tr -cd '"'|wc -c) -eq 2 ]; then
+   echo "$(cat $envfile|grep "$1="|cut -d'=' -f2|tr -d '"')"
+ else
+   echo "$(cat $envfile|sed "/$1=/,/^\"/!d"|sed "s/^.*$1=//"|tr -d '"')"
+ fi
 }
 function echoenv() {
   echo "$1 => \"$(eval echo \$$1)\"" >&2;
