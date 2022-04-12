@@ -10,8 +10,11 @@ function usage() {
     echo "       -d                  : use DirDiff plugin"
     echo "       -m                  : use meld tool"
     echo "       -s                  : just print a summary of differences"
+    echo "       -l                  : compare folders list"
+    echo "       -L                  : compare files list"
     echo "       -w                  : ignore white spaces"
     echo "       -v <p1:e1#p2:e2>    : compare (project1,env1) with (project2,env2)"
+    echo "       -V <file1#file2>    : compare file1 with file2"
     echo "Usage: $app <root1> <root2> <common-relative-path-to-file>"
     echo "Usage: $app -f <root> <file1> <file2>"
     echo "Usage: $app -p <file> # edit diff of <file> vs <file>.orig and <file>.rej"
@@ -67,7 +70,9 @@ function compare() {
     for file in $(find "$dir1" -maxdepth 1 -type f | sed "s#${dir1}/##")
     do
       file1="${dir1}/${file}"
+      [ "$file" == "$fcmp1" ] && file1="${dir1}/${fcmp1}"
       file2=$(echo "${dir2}/${file}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#$env1#$env2#g")
+      [ "$file" == "$fcmp1" ] && file2=$(echo "${dir2}/${fcmp2}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#$env1#$env2#g")
       cmd="vimdiff --noplugin "
       [ $meld -eq 1 ] && cmd="meld "
       if [ -f "${file2}" ]; then
@@ -75,10 +80,11 @@ function compare() {
         [ $(diff --ignore-space-change "${file1}" "${file2}"|wc -l) -eq 0 ] && echo "= $(short_path $mode ${file1} ${file2})" && continue
         #echo "% ${file1} ${file2}"
         echo "% $(short_path $mode ${file1} ${file2})"
-        if [ $recurse -eq 1 ]; then
+        if [ $recurse -le 1 ]; then
           read -p "Compare? y/[n]/q > " answer
           if [ "$answer" == "y" ]; then
             cmd="$cmd ${file1} ${file2}"
+            [ $meld -eq 1 ] && cmd="$cmd > /dev/null 2>&1"
             echo "> $cmd"
             eval "$cmd"
           elif [ "$answer" == "q" ]; then
@@ -119,11 +125,19 @@ prj2=""
 env2=""
 filter="^"
 meld=0
-while getopts qhfprRsgdwv:G:m flag
+fcmp1=""
+fcmp2=""
+list=0
+while getopts qhfprRsgdwv:G:mV:lL flag
 do
     case $flag in
         G)
             filter="$OPTARG"
+            ;;
+        V)
+            vs="$OPTARG"
+            fcmp1=$(echo $vs|cut -d'#' -f1)
+            fcmp2=$(echo $vs|cut -d'#' -f2)
             ;;
         v)
             vs="$OPTARG"
@@ -155,6 +169,12 @@ do
             ;;
         s)
             summary=1
+            ;;
+        L)
+            list=2
+            ;;
+        l)
+            list=1
             ;;
         R)
             recurse=2
@@ -212,9 +232,26 @@ if [ $# -eq 2 ]; then
         diff -q -r --exclude=".git"  "$path1" "$path2"
         exit
       fi
+      cmd="vimdiff --noplugin "
+      [ $meld -eq 1 ] && cmd="meld "
+      maxdepth=10 && [ $recurse -eq 0 ] && maxdepth=1
+      if [ $list -eq 1 ]; then
+        cmd="$cmd <(cd $path1;find . -maxdepth $maxdepth -type d) <(cd $path2;find . -maxdepth $maxdepth -type d)"
+      elif [ $list -eq 2 ]; then
+        cmd="$cmd <(cd $path1;find . -maxdepth $maxdepth -type f) <(cd $path2;find . -maxdepth $maxdepth -type f)"
+      fi
+      if [ $list -ge 1 ]; then
+        [ $meld -eq 1 ] && cmd="$cmd > /dev/null 2>&1"
+        echo "> $cmd"
+        eval "$cmd"
+        exit
+      fi
+
       [ $dirdiff -eq 1 ] && vim -c ":DirDiff $path1 $path2" < /dev/tty && exit
 
-      if [ $recurse -eq 1 ]; then
+      if [ $recurse -eq 0 ]; then
+        compare 0 "$path1" "$path2" $prj1 $env1 $prj2 $env2
+      elif [ $recurse -eq 1 ]; then
         compare 0 "$path1" "$path2" $prj1 $env1 $prj2 $env2
 
         if [ $recurse -ge 1 ]; then
@@ -279,7 +316,7 @@ if [ $# -eq 2 ]; then
       fi
     elif ([ -f "$path1" ] || [ -h "$path1" ]) && ([ -f "$path2" ] || [ -h "$path2" ]); then
         cmd="vimdiff $opts --noplugin $path1 $path2"
-        [ $meld -eq 1 ] && cmd="meld $path1 $path2"
+        [ $meld -eq 1 ] && cmd="meld $path1 $path2 > /dev/null 2>&1"
         echo "> $cmd"
         eval "$cmd"
     else
@@ -302,7 +339,7 @@ if [ $multinames -eq 0 ]; then
           if [ $meld -eq 0 ]; then
             vimdiff $opts --noplugin $path1/$file $path2/$file
           else
-            meld $path1/$file $path2/$file
+            meld $path1/$file $path2/$file > /dev/null 2>&1 
           fi
         fi
     done
