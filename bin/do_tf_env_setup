@@ -74,11 +74,15 @@ fi
 
 declare -A vars
 
+# read mandatory variables
 while IFS=' ' read -r var
 do
   vars["$var"]=$(extractenv "$var")
+  # check for mandatory variables
+  [ "${vars["$var"]}" == "" ] && echoerr "Missing $var" && return
 done < <(cat "$varfile"|grep "^M"|cut -d',' -f2)
 
+# read terraform variables
 while IFS=' ' read -r prefix opts assignment
 do
  name="$(echo $assignment|cut -d'=' -f1|tr -d '"')"
@@ -86,22 +90,28 @@ do
  vars["$name"]="$value"
 done < <(cat "$envfile" | grep "TF_VAR_[a-z0-9_]\+=")
 
+# read variables to be generated
 while IFS=' ' read -r var val
 do
-  vars["$var"]=$(eval "echo ${val@E}")
+  vars["$var"]="$val"
 done < <(cat "$varfile"|grep "^P"|cut -d',' -f2,3|tr ',' ' ')
 
 [ ! "$gitlabdomain" == "" ] && vars["GITLAB_DOMAIN_NAME"]="$gitlabdomain"
 
-while IFS=' ' read -r var
-do
-  [ "${vars["$var"]}" == "" ] && echoerr "Missing $var" && return
-done < <(cat "$varfile"|grep "^M"|cut -d',' -f2)
-
+tmp=$(mktemp) 
 for var in "${!vars[@]}"
 do
- cmd="export $var=\"${vars[$var]}\""
- [ $(echo "$var"|grep -c -i "password\|secret\|key") -eq 0 ] && echo "> $cmd" || echo "> export $var=\"*******\""
- eval "$cmd"
-done
+ val="${vars[$var]}"
+ cmd="export $var=\"${val}\""
+ echo "$cmd"
+done >> "$tmp"
 
+source "$tmp" # evaluate direct assignments
+source "$tmp" # evaluate indirect assignments
+
+# print assignments
+for var in "${!vars[@]}"
+do
+ cmd="export $var=\"${!var}\""
+ [ $(echo "$var"|grep -c -i "password\|secret\|key") -eq 0 ] && echo "> $cmd" || echo "> export $var=\"*******\""
+done
