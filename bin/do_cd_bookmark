@@ -10,41 +10,42 @@ function usage() {
     echo "         where:"
     echo "                  -g                 : globals - do not restrict to current project"
 #echo "       -b                 : just consider the basename"
-    echo "                  -t                 : input is a tag"
+    echo "                  -t                 : input is not a tag"
+    echo "                  -T                 : input is a substring of a tag"
     echo "                  -l                 : list bookmarks"
+    echo "                  -L                 : list the available tags"
     echo "                  -a                 : returns absolute paths"
-    echo "                  -T                 : print the available tags"
     return
 }
 
-
-# TODO: use getopts
-
-global="0"
-list="0"
-absolute="0"
-tags="0"
-symbol="0"
+global=0
+list=0
+absolute=0
+tags=0
+symbol=1
 
 # Arguments processing
 OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow.com/a/23615586/3676996)
-while getopts hgaltT flag
+while getopts hgaltLT flag
 do
   case $flag in
     g)
-      global="1"
+      global=1
       ;;
     a)
-      absolute="1"
+      absolute=1
       ;;
     l)
-      list="1"
+      list=1
       ;;
-    T)
-      tags="1"
+    L)
+      tags=1
       ;;
     t)
-      symbol="1"
+      symbol=0
+      ;;
+    T)
+      symbol=2
       ;;
     h)
       usage
@@ -65,7 +66,7 @@ if [ ! -f $bookmarks_file ]; then
     return
 fi
 
-if [ $tags == "1" ]; then
+if [ $tags -eq 1 ]; then
     if [ "$PROJECT" == "" ]; then
     	if [ "$PROJECT_PATH" == "" ]; then # missing PROJECT should be missing also PROJECT_PATH
 		cat $bookmarks_file | xargs -I@ sh -c "echo \"@\"" | grep " # " | sed "s/^.*#//" | tr " " "\n"|grep -v "^$"|sort|uniq|tr "\n" " "; echo
@@ -81,14 +82,14 @@ fi
 
 if [ "$PROJECT" == "" ]; then
     relpath=`echo $cpath|sed "s#$HOME/##"`
-    global="1"
+    global=1
 else
     relpath=`echo $cpath|sed "s#$PROJECT_PATH/##"`
 fi
 
 postproc="cat"
-if [ $absolute == "0" ]; then
-    if [ $global == "0" ]; then
+if [ $absolute -eq 0 ]; then
+    if [ $global -eq 0 ]; then
         postproc="sed \"s#$PROJECT_PATH/##\""
     else
         postproc="sed \"s#$HOME/##\""
@@ -97,7 +98,7 @@ fi
 
 bookmarks=""
 
-if [ $global == "0" ]; then
+if [ $global -eq 0 ]; then
     #bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | xargs -I@ sh -c "if [ -d @ ]; then echo @; fi"| sed "s#$PROJECT_PATH/##"`
     #bookmarks=`cat $bookmarks_file | grep $PROJECT_PATH/ | awk -F"#" '/1/2 { if( !system("test -d " $1) ){if (length($2)>0){printf "%-50s # %-30s\n",$1,$2}else{print $1} } }'| sed "s#$PROJECT_PATH/##"`
     if [ "$PROJECT_PATH" == "" ]; then
@@ -117,10 +118,12 @@ else
 fi
 
 patt=$1
-if [ $symbol == "1" ]; then
+if [ $symbol -eq 1 ]; then
+   patt="#.*\<$1\>"
+elif [ $symbol -eq 2 ]; then
    patt="#.*$1"
 fi
-if [ "$list" == "1" ]; then
+if [ $list -eq 1 ]; then
     if [ $# -gt 0 ]; then
         echo "$bookmarks"| grep $patt | grep --color "^\|$relpath *$\|$relpath *#.*"
     else
@@ -147,7 +150,7 @@ num=-1
 #fi
 
 n=0
-if [ $# == 1 ]
+if [ $# -eq 1 ]
 then
     n=`echo "$bookmarks" | grep $patt | awk '{ printf "%-2s %-60s\n", NR, $0 }' | wc -l`
     echo "$bookmarks" | grep $patt | awk '{ printf "%-2s %-60s\n", NR, $0 }'| grep --color "^\|$relpath *$\|$relpath *#.*"
@@ -156,13 +159,13 @@ else
     echo "$bookmarks" | awk '{ printf "%-2s %-60s\n", NR, $0 }'| grep --color "^\|$relpath *$\|$relpath *#.*"
 fi
 
-if [ "$n" == 0 ]
+if [ $n -eq 0 ]
 then
     echo "Bookmark/s not found!!!"
     return
 fi
 
-if [ "$n" == 1 ]
+if [ $n -eq 1 ]
 then
     num=1
 else
@@ -173,17 +176,17 @@ if [ "$num" == "" ]; then
     return
 fi
 
-if [ $# == 1 ]
+if [ $# -eq 1 ]
 then
     bpath=`echo "$bookmarks" | grep $patt | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
 else
     bpath=`echo "$bookmarks" | awk '{print NR,$0}'|grep "^$num"|awk '{print $2}'`
 fi
 
-if [ $global == "0" ]; then
+if [ $global -eq 0 ]; then
     cd "$PROJECT_PATH/${bpath}"
 else
-    if [ "$absolute" == "0" ]; then
+    if [ $absolute -eq 0 ]; then
     	if [ -d "$HOME/${bpath}" ]; then
 	    cd "$HOME/${bpath}"
 	else
