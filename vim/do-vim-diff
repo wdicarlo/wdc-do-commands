@@ -61,7 +61,7 @@ function compare() {
     prj2=$6
     env2=$7
 
-    [ ! "$prj1" == "" ] && dir2=$(echo $dir2 | sed "s#\<$prj1\>#$prj2#g" | sed "s#$env1#$env2#g")
+    [ ! "$prj1" == "" ] && dir2=$(echo $dir2 | sed "s#\<$prj1\>#$prj2#g" | sed "s#\<$env1\>#$env2#g")
 
     [ ! -d "${dir1}" ] && echo "< null_dir ${dir2}" && return
     [ ! -d "${dir2}" ] && echo "> ${dir1} null_dir" && return
@@ -71,8 +71,8 @@ function compare() {
     do
       file1="${dir1}/${file}"
       [ "$file" == "$fcmp1" ] && file1="${dir1}/${fcmp1}"
-      file2=$(echo "${dir2}/${file}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#$env1#$env2#g")
-      [ "$file" == "$fcmp1" ] && file2=$(echo "${dir2}/${fcmp2}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#$env1#$env2#g")
+      file2=$(echo "${dir2}/${file}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#\<$env1\>#$env2#g")
+      [ "$file" == "$fcmp1" ] && file2=$(echo "${dir2}/${fcmp2}"| sed "s#\<$prj1\>#$prj2#g" | sed "s#\<$env1\>#$env2#g")
       cmd="vimdiff --noplugin "
       [ $meld -eq 1 ] && cmd="meld "
       if [ -f "${file2}" ]; then
@@ -80,13 +80,15 @@ function compare() {
         [ $(diff --ignore-space-change "${file1}" "${file2}"|wc -l) -eq 0 ] && echo "= $(short_path $mode ${file1} ${file2})" && continue
         #echo "% ${file1} ${file2}"
         echo "% $(short_path $mode ${file1} ${file2})"
-        if [ $recurse -le 1 ]; then
-          read -p "Compare? y/[n]/q > " answer
+        if [ $recurse -le 1 ] && [ $skip -eq 0 ]; then
+          read -p "Compare? y/[n]/s/q > " answer
           if [ "$answer" == "y" ]; then
             cmd="$cmd ${file1} ${file2}"
             [ $meld -eq 1 ] && cmd="$cmd > /dev/null 2>&1"
             echo "> $cmd"
             eval "$cmd"
+          elif [ "$answer" == "s" ]; then
+            skip=1
           elif [ "$answer" == "q" ]; then
             exit
           fi
@@ -128,6 +130,7 @@ meld=0
 fcmp1=""
 fcmp2=""
 list=0
+skip=0
 while getopts qhfprRsgdwv:G:mV:lL flag
 do
     case $flag in
@@ -225,11 +228,23 @@ if [ $patchmode -eq 1 ]; then
 fi
 
 if [ $# -eq 2 ]; then
-    path1=$(echo "$1" | sed 's#/$##')
-    path2=$(echo "$2" | sed 's#/$##')
+    path1=""
+    path2=""
+    if [ "${1:0:2}" == "b:" ]; then
+      tag=${1:2}
+      path1=$(cat ~/.bookmarks | grep "$PROJECT_PATH" | grep "#.*\<$tag\>" | cut -d' ' -f 1)
+    else
+      path1=$(echo "$1" | sed 's#/$##')
+    fi
+    if [ "${2:0:2}" == "b:" ]; then
+      tag=${2:2}
+      path2=$(cat ~/.bookmarks | grep "$PROJECT_PATH" | grep "#.*\<$tag\>" | cut -d' ' -f 1)
+    else
+      path2=$(echo "$2" | sed 's#/$##')
+    fi
     if [ -d "$path1" ] && [ -d "$path2" ]; then
       if [ $summary -eq 1 ]; then
-        diff -q -r --exclude=".git"  "$path1" "$path2"
+        diff -q -r --exclude=".git" --exclude=".terraform"  "$path1" "$path2"
         exit
       fi
       cmd="vimdiff --noplugin "
@@ -255,11 +270,11 @@ if [ $# -eq 2 ]; then
         compare 0 "$path1" "$path2" $prj1 $env1 $prj2 $env2
 
         if [ $recurse -ge 1 ]; then
-          for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+          for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git\|\.terraform" | grep -v "^$")
           do
             compare 0 "${path1}/${subdir}" "${path2}/${subdir}"  $prj1 $env1 $prj2 $env2
           done
-          for subdir in $(find "$path2" -type d | sed "s#${path2}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+          for subdir in $(find "$path2" -type d | sed "s#${path2}##" | sed 's#^/##' | grep -v "\.git\|\.terraform" | grep -v "^$")
           do
             [ ! -d "${path1}/${subdir}" ] && compare 0 "${path1}/${subdir}" "${path2}/${subdir}" $prj1 $env1 $prj2 $env2 # one path is missing
           done
@@ -270,11 +285,11 @@ if [ $# -eq 2 ]; then
           (compare 0 "$path1" "$path2" $prj1 $env1 $prj2 $env2
 
           if [ $recurse -ge 1 ]; then
-            for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+            for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git\|\.terraform" | grep -v "^$")
             do
               compare 0 "${path1}/${subdir}" "${path2}/${subdir}"  $prj1 $env1 $prj2 $env2
             done
-            for subdir in $(find "$path2" -type d | sed "s#${path2}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+            for subdir in $(find "$path2" -type d | sed "s#${path2}##" | sed 's#^/##' | grep -v "\.git\|\.terraform" | grep -v "^$")
             do
               [ ! -d "${path1}/${subdir}" ] && compare 0 "${path1}/${subdir}" "${path2}/${subdir}" $prj1 $env1 $prj2 $env2 # one path is missing
             done
@@ -285,11 +300,11 @@ if [ $# -eq 2 ]; then
           line=$((compare 1 "$path1" "$path2" $prj1 $env1 $prj2 $env2
 
           if [ $recurse -ge 1 ]; then
-            for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+            for subdir in $(find "$path1" -type d | sed "s#${path1}##" | sed 's#^/##' | grep -v "\.git\|\.terraform" | grep -v "^$")
             do
               compare 1 "${path1}/${subdir}" "${path2}/${subdir}"  $prj1 $env1 $prj2 $env2
             done
-            for subdir in $(find "$path2" -type d | sed "s#${path2}##" | sed 's#^/##' | grep -v "\.git" | grep -v "^$")
+            for subdir in $(find "$path2" -type d | sed "s#${path2}##" | sed 's#^/##' | grep -v "\.git\|\.terraform" | grep -v "^$")
             do
               [ ! -d "${path1}/${subdir}" ] && compare 1 "${path1}/${subdir}" "${path2}/${subdir}" $prj1 $env1 $prj2 $env2 # one path is missing
             done
