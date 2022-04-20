@@ -152,3 +152,9 @@ Dump the resource (CPU, memory) usage per namespace
 	kubectl -n <namespace> top pod
 List pod containers
 	kubectl get pods -n <namespace> <pod> -o json | jq -r '. | .status.containerStatuses[] | .name'
+List installed kubectl plugins
+	kubectl krew list
+Update the list of available kubectl plugins
+	kubectl krew update
+Install unused-volumes kubectl plugin
+	kubectl krew install myplugin
