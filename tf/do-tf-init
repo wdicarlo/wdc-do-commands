@@ -5,10 +5,11 @@
 [ "${TF_PASSWORD}"     == "" ] && echo "Missing TF_PASSWORD" && exit
 
 function tf_init_cmd () {
-  [ ! $# -eq 3 ] && echo "tf_init_cmd: Wrong parameters" && return 
-  TF_ADDRESS="${1}"
-  TF_USERNAME="${2}"
-  TF_PASSWORD="${3}"
+  [ ! $# -eq 4 ] && echo "tf_init_cmd: Wrong parameters" && return 
+  TF_MIGRATE=$1
+  TF_ADDRESS="${2}"
+  TF_USERNAME="${3}"
+  TF_PASSWORD="${4}"
 
   [ "${TF_ADDRESS}"  == "" ] && echo "Missing TF_ADDRESS" && return
   [ "${TF_USERNAME}" == "" ] && echo "Missing TF_USERNAME" && return
@@ -23,6 +24,18 @@ function tf_init_cmd () {
             -backend-config=\"lock_method=POST\" \
             -backend-config=\"unlock_method=DELETE\" \
             -backend-config=\"retry_wait_min=5\""
+  if [ $TF_MIGRATE -eq 1 ]; then
+  cmd="terraform init \
+            -migrate-state \
+            -backend-config=address=${TF_ADDRESS} \
+            -backend-config=lock_address=${TF_ADDRESS}/lock \
+            -backend-config=unlock_address=${TF_ADDRESS}/lock \
+            -backend-config=username=${TF_USERNAME} \
+            -backend-config=password=${TF_PASSWORD} \
+            -backend-config=\"lock_method=POST\" \
+            -backend-config=\"unlock_method=DELETE\" \
+            -backend-config=\"retry_wait_min=5\""
+  fi
   echo "$cmd"
 }
 
@@ -34,6 +47,7 @@ function usage() {
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -n                          : dry run"
+  echo "       -m                          : migrate state"
   echo "Environment variables:"
   echo "       TF_ADDRESS"
   echo "       TF_USERNAME"
@@ -41,11 +55,14 @@ function usage() {
 }
 
 # Arguments processing for sources script
-migrate=""
+migrate=0
 dryrun=0
-while getopts hn flag
+while getopts hnm flag
 do
   case $flag in
+    m)
+      migrate=1
+      ;;
     n)
       dryrun=1
       ;;
@@ -61,6 +78,6 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
-cmd=$(tf_init_cmd "$TF_ADDRESS" "$TF_USERNAME" "$TF_PASSWORD") 
+cmd=$(tf_init_cmd $migrate "$TF_ADDRESS" "$TF_USERNAME" "$TF_PASSWORD") 
 echo "> $(echo "$cmd" | sed 's/             /\n/g')"
 [ $dryrun -eq 0 ] && eval "$cmd"
