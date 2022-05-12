@@ -22,7 +22,7 @@ Pull changes from a specific remote branch
 Pull changes from a specific remote branch and merge into a different branch
 	git checkout abranch
 	git pull origin anotherbranch
-Undo all changes
+Undo/delete all changes
 	git checkout HEAD
 	git reset HEAD --hard
 	git clean -f -d
@@ -96,7 +96,7 @@ Undo changes (revert) of a file un-stagged
 	git checkout arch/arm/mach-gitdemos/clock.c
 Display simplified git status
 	git status -s
-Remove untracked files and directory together with ignored one. Replace -f with -n to test the command
+Remove/delete untracked files and directory together with ignored one. Replace -f with -n to test the command
 	git clean -f -d -x # replace -x with -X to remove only ignored files
 Delete last commit (uncommit) still not pushed
 	git reset --hard HEAD~1
@@ -193,6 +193,9 @@ Rename the current branch
 	git branch -m my_new_branch_name
 Rename a branch
 	git branch -m my_current_branch_name my_new_branch_name
+Rename remote branch
+	git push -u origin my_new_branch_name
+	git push --delete origin my_current_branch_name
 Get current branch name
 	git rev-parse --abbrev-ref HEAD
 Print the branches with their last commit and remote reference
@@ -366,3 +369,7 @@ Delete a (big) file from the git repository and history
 	git push --all --force
 Print commit SHA of a tag
 	git rev-list -n 1 $TAG
+Solve fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+	git commit --allow-empty -n -m "Initial commit."
+Checkout a tag and create the corresponding branch
+	git checkout tags/<tag> -b <branch>
