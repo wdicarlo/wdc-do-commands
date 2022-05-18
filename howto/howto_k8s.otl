@@ -172,3 +172,8 @@ Clear PVCs that are not bound
 	kubectl get pvc --all-namespaces | tail -n +2 | grep -v Bound | awk '{print $1,$2}' | xargs -L1 kubectl delete pvc -n
 Clear the PVs that are not bound
 	kubectl get pv | tail -n +2 | grep -v Bound | awk '{print $1}' | xargs -L1 kubectl delete pv
+Resize volume (PVC) of PostgreSql pod
+	kubectl get statefulset -n <namespace> # get the list of statefulsets
+	kubectl -n <namespace> scale statefulset <statefulset_name> --replicas=0
+	# wait the pod shutdown gracefully
+	kubectl -n <namespace> scale statefulset <statefulset_name> --replicas=1

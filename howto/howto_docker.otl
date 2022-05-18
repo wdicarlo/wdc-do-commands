@@ -18,7 +18,7 @@ Dockerfile to modify existing image
     RUN echo "Hello Go" > ~/hello.txt
 Build docker image
 	docker build -t wdicarlo/golang:v1 .
-Print image history/layers
+Print image history/layers with sizes
 	docker history wdicarlo/golang:v1
 Check the personalized image
 	do-docker-run cat /root/hello.txt
@@ -144,3 +144,7 @@ Delete all images related to a topic
 	docker images | grep airflow |sed 's/[ \t]\+/ /g' | cut -d' ' -f3 | xargs -I@ docker rmi -f @
 Sort images by size
 	docker images --format "{{.ID}}\t{{.Size}}\t{{.Repository}}\t{{.Tag}}" | sort -k 2 -h | column -t
+Run a local registry
+	docker run -d -p 5000:5000 --restart=always --name registry registry:2
+Stop a local registry
+	docker container stop registry && docker container rm -v registry
