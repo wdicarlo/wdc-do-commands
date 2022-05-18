@@ -88,7 +88,7 @@ msg=""
 if [ $file -eq 0 ]; then
     msg="Improved $cmd command."
 else
-    msg="Update $cmd file."
+    msg="Updated $cmd file."
 fi
 
 [ ! "$message" == "" ] && msg="$msg ${message^}"
