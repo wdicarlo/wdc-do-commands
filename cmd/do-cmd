@@ -61,7 +61,7 @@ function unpack_neovim() {
   cd "$WDC_DO_COMMANDS_DIR"
 }
 function cache_cmd_tools() {
-  for tool in $(cat "$WDC_DO_COMMANDS_DIR/bin/do_cmd_tools.csv" | sed 1d | cut -d ',' -f1)
+  for tool in $(cat "$WDC_DO_COMMANDS_DIR/bin/do_cmd_tools.csv" | sed 1d | grep "^CURL," | cut -d ',' -f2)
   do
     [ ! -f "$WDC_DO_COMMANDS_DIR/$tool" ] && echo "Missing tool: $tool" && continue
     tdir=$(dirname "$WDC_DO_COMMANDS_DIR/.cache/bin/$tool")

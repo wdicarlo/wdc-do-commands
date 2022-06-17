@@ -47,7 +47,7 @@ do
       tgroup="$OPTARG"
       ;;
     e)
-      vim "$WDC_DO_COMMANDS_BIN/do_cmd_tools.csv" < /dev/tty
+      vim "$tools_file" < /dev/tty
       exit
       ;;
     f)
@@ -80,7 +80,7 @@ if [ ! "$tgroup" == "" ]; then
 fi
 
 [ "$dcmd" == "" ] && dcmd="^"
-cat "$tools_file" | sed 1d | grep "^$tgroup"| grep "$dcmd" | while IFS=',' read -r CMD URL PATCH
+cat "$tools_file" | sed 1d | grep "^CURL,$tgroup"| grep "$dcmd" | while IFS=',' read -r TYPE CMD URL PATCH
 do
   group=$(echo "$CMD" | cut -d '/' -f 1)
   ntokens=$(echo "$CMD" | sed 's#/# #g' | wc -w )
