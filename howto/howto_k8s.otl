@@ -177,3 +177,5 @@ Resize volume (PVC) of PostgreSql pod
 	kubectl -n <namespace> scale statefulset <statefulset_name> --replicas=0
 	# wait the pod shutdown gracefully
 	kubectl -n <namespace> scale statefulset <statefulset_name> --replicas=1
+Patch PVC to remove the finalizers
+	kubectl patch pvc <pvc-name> -p '{metadata:{finalizers:null}}' -n <namespace>

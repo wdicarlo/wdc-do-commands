@@ -148,3 +148,6 @@ Run a local registry
 	docker run -d -p 5000:5000 --restart=always --name registry registry:2
 Stop a local registry
 	docker container stop registry && docker container rm -v registry
+Update restart policy
+	docker update --restart=no <container-name>
+	docker container inspect <container-name> | grep -A3 "RestartPolicy" # name: [ no, always ]

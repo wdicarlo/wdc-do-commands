@@ -628,6 +628,8 @@ gvim -c 's/^/\=@*/|hardcopy!|q!'
 " Using vimgrep with copen                              [N]
 :vimgrep /keywords/ *.php
 :copen
+" Create quickfix with all markdown heading
+:vimgrep /^#\+/ % | copen
 ----------------------------------------
 " GVIM Difference Function (Brilliant)
 gvim -d file1 file2        : vimdiff (compare differences)
