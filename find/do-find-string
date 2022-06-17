@@ -207,13 +207,15 @@ if [ $taction -gt 0 ]; then
     [ $taction -eq 4 ] && cp "${topic_file}" "${topic_file}.bak" && rm -f "${topic_file}" && echo "Reset: ${topic_file} Backup: ${topic_file}.bak" && exit
     [ ! -f "${topic_file}" ] && mkdir -p $(dirname $topic_file) && echo "# do-find-string: topic=$topic" > "${topic_file}"
     [ $taction -eq 2 ] && print_topic "${topic}" && exit
-    [[ $taction -eq 6 || $taction -eq 7 ]] && print_topic "${topic}" | do-pipe-cfile-to-vim && exit
     [ $taction -eq 99 ] && rm -f "${topic_file}" # reset result file
-    echo "# PWD=$PWD" >> "${topic_file}"
-    #cmd+=" | sed \"s#^\\.#\$PWD#\""
-    echo "# $cmd" >> "${topic_file}"
-    [ $quiet -eq 0 ] && echo "> $cmd"
-    eval $cmd | tee -a $topic_file  | \grep --color "^\|$string"
+    if [ ! "$string" == "" ]; then
+      echo "# PWD=$PWD" >> "${topic_file}"
+      #cmd+=" | sed \"s#^\\.#\$PWD#\""
+      echo "# $cmd" >> "${topic_file}"
+      [ $quiet -eq 0 ] && echo "> $cmd"
+      eval $cmd | tee -a $topic_file  | \grep --color "^\|$string"
+    fi
+    [[ $taction -eq 6 || $taction -eq 7 ]] && print_topic "${topic}" | do-pipe-cfile-to-vim && exit
 else
     [ $quiet -eq 0 ] && echo "> $cmd"
     eval $cmd 
