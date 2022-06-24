@@ -133,8 +133,8 @@ fi
 
 # reset environment 
 #PATH=$WDC_DO_COMMANDS_BIN:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:.
-PATH=$HOME/.arkade/bin:$WDC_DO_COMMANDS_BIN:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/bin:.:$HOME/go/bin:$HOME/nbin:$HOME/node_modules/.bin:/snap/bin:$HOME/.krew/bin:$HOME/.fzf/bin
-PROJECT_VARS=
+export PATH=$HOME/.arkade/bin:$WDC_DO_COMMANDS_BIN:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/bin:.:$HOME/go/bin:$HOME/nbin:$HOME/node_modules/.bin:/snap/bin:$HOME/.krew/bin:$HOME/.fzf/bin
+export PROJECT_VARS=
 export PROJECT_ENV=$env_name
 echo "Applying settings: $PROJECT_ENV"
 source "$envpath"
