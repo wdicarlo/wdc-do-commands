@@ -57,6 +57,12 @@ Delete a tag
 Create a tag
 	git tag -m "GitDemos 1.2.4" gitdemos-1.2.4
 Track a specific remote branch of a different repository
+	git remote add upstream https://<domain>/path/to/git/repository/reference-repo.git
+	git remote -v
+	git fetch upstream 
+	git branch -f --track <new-local-branch> upstream/<remote-branch> 
+	git branch -a -vv # list tracked branches
+Track a specific remote branch of a different repository
 	git remote add -t GitDemos gitdemos ssh://gitvcs@192.168.10.1/mnt/devrepos/gitrepos/STMANTA/linux-2.6.35
 List all tags
 	git tag -l
@@ -212,8 +218,9 @@ Print differences in the last commit
 	git diff HEAD~
 Use external tool to view differences in the last commit
 	git difftool HEAD~
-Uncommit latest commits without loosing the history
-	git revert --no-commit <sha-1>..HEAD; git commit
+Uncommit (delete) latest commit/s without loosing the history
+	git revert --no-commit <sha>         # revert one commit
+	git revert --no-commit <sha-1>..HEAD # revert set of commits
 Uncommit latest commits still not pushed (loosing the history)
 	git reset --hard <sha-1>
 Checkout files from another branch
@@ -307,6 +314,17 @@ Generate diff for untracked file
 Rebase feature branch to new integration branch
 	git checkout my_feature
 	git rebase new_int_branch
+Rebase develop on diverged master
+	git rebase master develop
+	git checkout master
+	git push origin master
+	git checkout develop
+	git push --force-with-lease origin develop # do a forced push but still ensure you don't overwrite other's work
+Rebase with fetch in place of pull
+	git update-ref refs/develop-pre-rebase refs/remotes/origin/develop
+	git rebase master
+	git fetch # avoid fetch without merge, use pull
+	git push --force-with-lease=develop:refs/develop-pre-rebase
 Display branch oriented log graph
 	git log --graph --pretty=format:'%Cred%h%Creset %ad %s %C(yellow)%d%Creset %C(bold blue)<%an>%Creset' --date=short
 Display repository oriented log graph
