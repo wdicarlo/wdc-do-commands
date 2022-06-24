@@ -5,6 +5,9 @@
 # use @ for the current branch (assuming you're not in a detached-head state) 
 # use @{u} for the upstream branch (eg origin/master)
 
+function remote() {
+  \git remote -v | head -1 | sed 's/[ \t]\+/ /g' | cut -d ' ' -f 2
+}
 # Update tracking branches with: git remote -v update
 function status() {
   \git status -s | awk '{print $1}'|sort|uniq|tr -d '\n'
@@ -35,7 +38,8 @@ else
   do
     [ ! -d "$dir" ] && continue
     cd "$dir"
-    echo "$dir: $(git rev-parse --abbrev-ref HEAD 2>/dev/null): $(check): $(status)"
+    [ ! -d ".git" ] && cd .. && continue
+    echo "$dir: $(git rev-parse --abbrev-ref HEAD 2>/dev/null): $(check): $(status): $(remote)"
     cd ..
   done | column -t -s':'
 fi
