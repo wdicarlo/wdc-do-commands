@@ -279,7 +279,7 @@ function update_env() {
     is_prj=$(pwd|grep -c "${PROJECTS}/[A-Za-z0-9]*")
     if [ -f ./.bash_env ]
     then
-        [ $quiet -eq 0 ] && cat .bash_env | grep "^export .*=" | sed 's/^export \(.*\)=.*/\1/' | xargs -I@ sh -c 'echo "@=\$@"'
+        [ $quiet -eq 0 ] && cat .bash_env | grep "^export [a-zA-Z_-]\+=" | sed 's/^export \([a-zA-Z_-]\+\)=.*/\1/' | xargs -I@ sh -c 'echo "@"'
         source ./.bash_env
     else
         shift $#
@@ -594,6 +594,14 @@ parse_git_branch() {
     \git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
+function quote () { 
+  #local quoted=${1// /%20};
+  #quoted=${quoted//=/%3D};
+  #quoted=${quoted//,/%2C};
+  #printf "%s" "$quoted"
+  #printf "%q" "$1"
+  printf "%s" "$1"
+}
 function prompt_command()
 {
     update_prompt 
@@ -604,9 +612,15 @@ function prompt_command()
         HISTCMDS_FILE="${PROJECT_PATH}/.bash_commands" # keep storing general projects commands executed at top projects folder
         [ "$PROJECT_PATH" == "${PROJECTS}/" ] && HISTCMDS_FILE="${PROJECTS}/.bash_commands"
       fi
-      last_cmd=$(cat $HOME/.bash_history|tail -1|sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null)
-      [ ! -f "$HISTCMDS_FILE" ] && touch "$HISTCMDS_FILE"
-      [ ! "$last_cmd" == "" ] && [ $(grep -c "$last_cmd" "$HISTCMDS_FILE") -eq 0 ] && echo "$last_cmd" >> "${HISTCMDS_FILE}"
+      new_cmd=$(cat $HOME/.bash_history|tail -1|sed "s/^[[:space:]]*//;s/[[:space:]]*$//" 2>/dev/null)
+      new_cmd=$(quote "$new_cmd")
+      if [ ! "$new_cmd" == "$last_cmd" ]; then
+        last_cmd="$new_cmd"
+        #echo ">> $last_cmd"
+        [ ! -f "$HISTCMDS_FILE" ] && touch "$HISTCMDS_FILE"
+        #[ ! "$last_cmd" == "" ] && [ $(grep -c "$last_cmd" "$HISTCMDS_FILE" 2>/dev/null) -eq 0 ] && echo "$last_cmd" >> "${HISTCMDS_FILE}"
+        [ ! "$last_cmd" == "" ] && echo "$last_cmd" >> "${HISTCMDS_FILE}" && cat "${HISTCMDS_FILE}" | sort | uniq > /tmp/histcmds && cat /tmp/histcmds > "${HISTCMDS_FILE}"
+      fi
     fi
     history -r
 }
