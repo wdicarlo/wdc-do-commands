@@ -391,3 +391,9 @@ Solve fatal: ambiguous argument 'HEAD': unknown revision or path not in the work
 	git commit --allow-empty -n -m "Initial commit."
 Checkout a tag and create the corresponding branch
 	git checkout tags/<tag> -b <branch>
+Prune/delete local tags removed in remote
+	git fetch --prune --prune-tags
+Configure git to prune deleted tags while fetching
+	git config fetch.pruneTags true # add --global to configure globally
+Configure git to prune deleted tags while fetching from a specific remote
+	git config remote.origin.pruneTags true # add --global to configure globally
