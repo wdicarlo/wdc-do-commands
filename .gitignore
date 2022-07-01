@@ -2,6 +2,8 @@
 *.bak
 *.bz2
 /bin/nvim
+/bin/mgit
+/howto/howto_mgit.otl
 /bin/wezterm
 /bin/do-wezterm
 /bin/do_cmd_counts.csv
@@ -32,3 +34,4 @@
 /bin/do-web*
 /bin/do-az*
 /bin/do-arkade
+bin/sops

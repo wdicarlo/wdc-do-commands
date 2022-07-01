@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+[ $# -ne 2 ] && echo "Wrong parameters: <URL> <target-bin>" && exit
+
+URL="$1"
+BIN="$2"
+DIR="/tmp"
+TAR="${DIR}/multigit.tar.gz"
+
+curl -sLS "$URL" -o "$TAR"
+
+[ ! -f "$TAR" ] && exit
+tar -xzvf "$TAR" -C "${DIR}"
+[ ! -d "${DIR}/multigit-5.0" ] && exit
+cp "${DIR}/multigit-5.0/mgit" "${WDC_DO_COMMANDS_DIR}/${BIN}"
+cp "${DIR}/multigit-5.0/README.md" howto/howto_mgit.otl
