@@ -38,15 +38,15 @@ git clone https://github.com/wdicarlo/wdc-do-commands
 ### Setup .bashrc ###
 Execute the following setup command
 ```bash
-./sys/do-sys-install-bash-customization
+./do-setup-wdc-commands
 ```
 which will add the following lines into the ~/.bashrc file
 ```bash
-[ -f "$WDC_DO_COMMANDS_BIN/bin/do_bash_customization" ] && source "$WDC_DO_COMMANDS_BIN/bin/do_bash_customization"
+[ -f "$WDC_DO_COMMANDS_DIR/bin/do_bash_customization" ] && source "$WDC_DO_COMMANDS_DIR/bin/do_bash_customization"
 ```
 Source .bashrc to activate the customizations
 ```bash
-source ~/.bsahrc
+source ~/.bashrc
 ```
 
 ### Setup commands modules ###

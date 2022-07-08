@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
+
+script="\n\
+[ -f \"\$WDC_DO_COMMANDS_DIR/bin/do_bash_customization\" ] && source \"\$WDC_DO_COMMANDS_DIR/bin/do_bash_customization\"\n\
+"
+
+is_custom=$(cat ~/.bashrc | grep -c "source .*\$WDC_DO_COMMANDS_DIR/bin/do_bash_customization")
+
+[ $is_custom -gt 0 ] && echo "WDC commands ready to be used" && exit
+
+echo -e "$script" >> "${HOME}/.bashrc"
