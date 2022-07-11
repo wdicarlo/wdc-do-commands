@@ -56,3 +56,7 @@ Convert enabled subnodes keys into attributes called node
 	cat data.json | jq '.subnodes | to_entries | map_values(.value + { node: .key}) | .[] | select(.enabled == true) | select(.imgsnode != null) | .imgsnode | select(.tag != null) | "snodetag: \(.tag)"'
 Compare json files
 	vimdiff <(jq --sort-keys . data_a.json) <(jq --sort-keys . data_b.json)
+	Generate a json with an (escaped) html entry value
+		jq -Rs '{ text: . | @html }' page.html
+	Embed html into json
+		jq --slurpfile texts <(jq -Rs '{ text: .| @html }' page.html) '.path.to.item.value=$texts[0].text' doc.json
