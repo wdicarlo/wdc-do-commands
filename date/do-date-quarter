@@ -1,13 +1,37 @@
 #!/usr/bin/env bash
 
+cmd=$(basename $0)
+
+[ "$1" == "-h" ] && echo -e "$cmd [-h] [-r] [yyyy-mm-dd]\n    -r          : print the quarter date range" && exit
+
+range=0
+[ "$1" == "-r" ] && range=1 && shift
+
+d=""
+[ $# -eq 1 ] && d="$1"
+
 mon=$(date +'%m')
+[ ! "$d" == "" ] && mon=$(date -d "$d" +'%m')
+y=$(date +'%Y')
+[ ! "$d" == "" ] && y=$(date -d "$d" +'%Y')
+qtr=0
+begin=""
+end=""
 if [ $mon -ge 1 -a $mon -le 3 ]; then
      qtr=1
+     begin="01/01/$y"
+     end="31/03/$y"
 elif [ $mon -ge 4 -a $mon -le 6 ]; then
      qtr=2
+     begin="01/04/$y"
+     end="30/06/$y"
 elif [ $mon -ge 7 -a $mon -le 9 ]; then
      qtr=3
+     begin="01/07/$y"
+     end="30/09/$y"
 elif [ $mon -ge 10 -a $mon -le 12 ]; then
      qtr=4
+     begin="01/10/$y"
+     end="31/12/$y"
 fi
-printf "%02d\n" $qtr
+[ $range -eq 1 ] && printf "%02d %s %s\n" $qtr $begin $end  || printf "%02d\n" $qtr
