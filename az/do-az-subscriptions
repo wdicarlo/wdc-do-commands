@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+function echoerr() { printf "%s\n" "$*" >&2; }
+
+[ "$AZ_TENANT_ID" == "" ] && echoerr "Missing AZ_TENANT_ID" && exit 
+[ "$AZ_USERNAME" == "" ] && echoerr "Missing AZ_USERNAME" && exit 
+[ "$AZ_DATA" == "" ] \
+  && AZ_DATA="$(dirname $(readlink -f $(which $(basename $0))))/data"
+
+az_subs="${AZ_DATA}/azure_subscriptions"
+az_subs_csv="${az_subs}.csv"
+
+[ ! -f "$az_subs_csv" ] && echoerr "Missing $az_subs_csv" && exit
+
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h] [-p] [<patt>]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -p                          : pretty print"
+}
+
+# Arguments processing
+pp=0
+while getopts hp flag
+do
+  case $flag in
+    p)
+      pp=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+patt="^" # list all
+[ ! "$1" == "" ] && patt="$1"
+
+cmd="cat \"$az_subs_csv\" | grep \"$patt\""
+[ $pp -eq 1 ] && cmd="$cmd | column -t -s','"
+
+eval "$cmd"
