@@ -8,3 +8,4 @@ CURL,bin/gucci,https://github.com/noqcks/gucci/releases/download/1.5.2/gucci-v1.
 CURL,bin/sops,https://github.com/mozilla/sops/releases/download/v3.7.2/sops-v3.7.2.linux.amd64,
 OCI,oci/do-oci-explore,wagoodman/dive:latest,--rm -it -v /var/run/docker.sock:/var/run/docker.sock
 PKG,bin/mgit,https://github.com/capr/multigit/archive/refs/tags/5.0.tar.gz,cmd/do-cmd-tool-setup-multigit
+GO,bin/shfmt,mvdan.cc/sh/v3/cmd/shfmt@latest,
