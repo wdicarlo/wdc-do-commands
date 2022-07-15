@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+function echoerr() { printf "%s\n" "$*" >&2; }
+
+# Usage help function
+cmd=`basename $0`
+
+function usage() {
+  echo "Usage: $cmd [-h] [-u] [-d <yyyy-mm-dd:yyyy-mm-dd>] [-s <subname>:<subid>]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -u                          : update data from azure"
+  echo "       -s <subname>:<subid>        : azure subscription details"
+  echo "       -d <yyyy-mm-dd:yyyy-mm-dd>  : date range to consider"
+
+}
+
+# Arguments processing
+update=0
+sub=""
+drange=""
+while getopts hus:d: flag
+do
+  case $flag in
+    d)
+      drange="$OPTARG"
+      ;;
+    s)
+      sub="$OPTARG"
+      ;;
+    u)
+      update=1
+      [ "$(which az)" == "" ] && echoerr "Missing az command" && exit
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! "$sub" == "" ]; then
+  AZ_SUBSCRIPTION_NAME=$(echo $sub|cut -d',' -f 1)
+  AZ_SUBSCRIPTION_ID=$(echo $sub|cut -d',' -f 2)
+fi
+
+[ "$AZ_SUBSCRIPTION_NAME" == "" ] && echoerr "Missing AZ_SUBSCRIPTION_NAME" && exit
+[ "$AZ_SUBSCRIPTION_ID" == "" ] && echoerr "Missing AZ_SUBSCRIPTION_ID" && exit
+
+from="2022-01-01"
+to="2022-12-31"
+if [ $(echo "$drange"|grep -c -E "^[0-9]{4}-[0-9]{2}-[0-9]{2}:[0-9]{4}-[0-9]{2}-[0-9]{2}") -eq 1 ]; then
+  from=$(echo "$drange" | cut -d':' -f1)
+  to=$(echo "$drange" | cut -d':' -f2)
+fi
+cat > forecast_body.json <<EOF
+{
+  "type": "Usage",
+  "timeframe": "Custom",
+  "timePeriod": {
+    "from": "${from}T00:00:00Z",
+    "to": "${to}T00:00:00Z"
+  },
+  "dataset": {
+    "granularity": "Daily",
+    "aggregation": {
+        "totalCost": {
+            "name": "Cost",
+            "function": "Sum"
+        }
+     },
+  },
+  "includeActualCost": true,
+  "includeFreshPartialCost": false
+}
+EOF
+
+[ $update -eq 0 ] && [ ! -f "$AZ_SUBSCRIPTION_NAME.json" ] && echoerr "Missing $AZ_SUBSCRIPTION_NAME.json, please update data (-u)" && exit
+
+if [ $update -eq 1 ]; then
+  cmd="az rest -m POST --headers \"Content-Type=application/json Accept=application/json\" --body \"@forecast_body.json\" -u \"https://management.azure.com/subscriptions/$AZ_SUBSCRIPTION_ID/providers/Microsoft.CostManagement/forecast?api-version=2021-10-01\""
+  eval "$cmd" | tee "$AZ_SUBSCRIPTION_NAME.json"
+fi
+
+if [ -f "$AZ_SUBSCRIPTION_NAME.json" ]; then
+  cat "$AZ_SUBSCRIPTION_NAME.json" | jq -r '.properties.rows[] | "\(.[1]) \(.[0])"' | awk '{s+=$2;print $1 "," s}END{print "tot," s}' | tee "$AZ_SUBSCRIPTION_NAME.csv"
+fi
