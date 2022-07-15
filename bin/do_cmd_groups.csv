@@ -39,7 +39,7 @@ patch;no
 pdf;yes
 pipe;yes
 project;no
-publish;no
+publish;yes
 random;no
 run;no
 screen;no
