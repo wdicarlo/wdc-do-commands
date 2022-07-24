@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
-[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
+WDC_DO_COMMANDS_REPO_DIR="$(dirname $0)"
 
+[ -h "${HOME}/wbin" ] && rm "${HOME}/wbin"
+ln -s "$WDC_DO_COMMANDS_REPO_DIR" "${HOME}/wbin"
+
+export WDC_DO_COMMANDS_DIR="${HOME}/wbin"
+export WDC_DO_COMMANDS_BIN="${WDC_DO_COMMANDS_DIR}/bin"
 script="\n\
+export WDC_DO_COMMANDS_DIR=\"\${HOME}/wbin\"\n
+export WDC_DO_COMMANDS_BIN=\"\${WDC_DO_COMMANDS_DIR}/bin\"\n
 [ -f \"\$WDC_DO_COMMANDS_DIR/bin/do_bash_customization\" ] && source \"\$WDC_DO_COMMANDS_DIR/bin/do_bash_customization\"\n\
 "
 
@@ -11,3 +18,6 @@ is_custom=$(cat ~/.bashrc | grep -c "source .*\$WDC_DO_COMMANDS_DIR/bin/do_bash_
 [ $is_custom -gt 0 ] && echo "WDC commands ready to be used" && exit
 
 echo -e "$script" >> "${HOME}/.bashrc"
+
+${WDC_DO_COMMANDS_DIR}/cmd/do-cmd-groups-slinks
+${WDC_DO_COMMANDS_DIR}/cmd/do-cmd-index -u
