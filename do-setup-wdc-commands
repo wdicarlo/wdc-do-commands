@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-WDC_DO_COMMANDS_REPO_DIR="$(dirname $0)"
+WDC_DO_COMMANDS_REPO_DIR="$(readlink -f $(dirname $0))"
 
 [ -h "${HOME}/wbin" ] && rm "${HOME}/wbin"
 ln -s "$WDC_DO_COMMANDS_REPO_DIR" "${HOME}/wbin"
@@ -15,9 +15,7 @@ export WDC_DO_COMMANDS_BIN=\"\${WDC_DO_COMMANDS_DIR}/bin\"\n
 
 is_custom=$(cat ~/.bashrc | grep -c "source .*\$WDC_DO_COMMANDS_DIR/bin/do_bash_customization")
 
-[ $is_custom -gt 0 ] && echo "WDC commands ready to be used" && exit
-
-echo -e "$script" >> "${HOME}/.bashrc"
+[ $is_custom -eq 0 ] && echo -e "$script" >> "${HOME}/.bashrc"
 
 ${WDC_DO_COMMANDS_DIR}/cmd/do-cmd-groups-slinks
 ${WDC_DO_COMMANDS_DIR}/cmd/do-cmd-index -u
