@@ -1,12 +1,14 @@
 *.sav
 *.bak
 *.bz2
+/az/data
 /bin/nvim
 /bin/mgit
 /bin/wezterm
 /bin/do-wezterm
 /bin/do_cmd_counts.csv
 /bin/do_cmd_index.csv
+/bin/do_git_conf_author.csv
 /bin/gucci
 /neovim
 /.cache
