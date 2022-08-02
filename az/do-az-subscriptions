@@ -2,10 +2,13 @@
 
 function echoerr() { printf "%s\n" "$*" >&2; }
 
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echoerr "Missing WDC_DO_COMMANDS_DIR." && exit
+
+
 [ "$AZ_TENANT_ID" == "" ] && echoerr "Missing AZ_TENANT_ID" && exit 
 [ "$AZ_USERNAME" == "" ] && echoerr "Missing AZ_USERNAME" && exit 
 [ "$AZ_DATA" == "" ] \
-  && AZ_DATA="$(dirname $(readlink -f $(which $(basename $0))))/data"
+  && AZ_DATA="${WDC_DO_COMMANDS_DIR}/az/data"
 
 az_subs="${AZ_DATA}/azure_subscriptions"
 az_subs_csv="${az_subs}.csv"
