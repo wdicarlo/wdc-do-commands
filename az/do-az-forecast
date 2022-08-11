@@ -82,11 +82,24 @@ EOF
 
 [ $update -eq 0 ] && [ ! -f "$AZ_SUBSCRIPTION_NAME.json" ] && echoerr "Missing $AZ_SUBSCRIPTION_NAME.json, please update data (-u)" && exit
 
+maxretry=2
 if [ $update -eq 1 ]; then
   cmd="az rest -m POST --headers \"Content-Type=application/json Accept=application/json\" --body \"@forecast_body.json\" -u \"https://management.azure.com/subscriptions/$AZ_SUBSCRIPTION_ID/providers/Microsoft.CostManagement/forecast?api-version=2021-10-01\""
-  eval "$cmd" | tee "$AZ_SUBSCRIPTION_NAME.json"
+  echo "Updating subscription: $AZ_SUBSCRIPTION_NAME"
+  eval "$cmd" > "$AZ_SUBSCRIPTION_NAME.json"
+  if [ ! -f "$AZ_SUBSCRIPTION_NAME.json" ] || [ $(cat "$AZ_SUBSCRIPTION_NAME.json" | wc -l) -eq 0 ]; then
+    for retry in $(seq 1 $maxretry)
+    do
+      echo "Retrying (${retry}/$maxretry) to update subscription: $AZ_SUBSCRIPTION_NAME"
+      eval "$cmd" > "$AZ_SUBSCRIPTION_NAME.json"
+      [ -f "$AZ_SUBSCRIPTION_NAME.json" ] && [ $(cat "$AZ_SUBSCRIPTION_NAME.json" | wc -l) -gt 0 ] && break
+    done
+  fi
 fi
 
-if [ -f "$AZ_SUBSCRIPTION_NAME.json" ]; then
-  cat "$AZ_SUBSCRIPTION_NAME.json" | jq -r '.properties.rows[] | "\(.[1]) \(.[0])"' | awk '{s+=$2;print $1 "," s}END{print "tot," s}' | tee "$AZ_SUBSCRIPTION_NAME.csv"
+if [ -f "$AZ_SUBSCRIPTION_NAME.json" ] && [ $(cat "$AZ_SUBSCRIPTION_NAME.json" | wc -l) -gt 0 ]; then
+  echo "Calculating forecast for: $AZ_SUBSCRIPTION_NAME"
+  cat "$AZ_SUBSCRIPTION_NAME.json" | jq -r '.properties.rows[] | "\(.[1]) \(.[0])"' | awk '{s+=$2;print $1 "," s}END{print "tot," s}' > "$AZ_SUBSCRIPTION_NAME.csv"
+else
+  echo "FAILED TO UPDATE THE SUBSCRIPTION: $AZ_SUBSCRIPTION_NAME"
 fi

@@ -88,9 +88,9 @@ report=azure_forecast_${year}_q${quarter}_p${period}_w${week}.csv
 
 
 if [ $halfyear -ne 0 ]; then
-  IFS=':' read -r period begin end <<< $(hy $halfyear)
+  IFS=':' read -r hperiod begin end <<< $(hy $halfyear)
   drange="$begin:$end"
-  report=azure_forecast_${year}_${period}.csv
+  report=azure_forecast_${year}_${hperiod}_p${period}_w${week}.csv
 fi
 
 do-az-subscriptions | grep "$AZ_SUBSCRIPTIONS_PATT_IN" | grep -v "$AZ_SUBSCRIPTIONS_PATT_OUT" | while IFS=',' read sub id; do do-az-forecast -d "$drange" -u -s "$sub,$id"; done
