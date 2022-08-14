@@ -1,4 +1,90 @@
 Version 0.13.0:
+ - Improved whoami and hostname commands.
+ - Improved Azure forecast scripts
+ - Improved az/do-az-forecast-report command.
+ - Updated git/do-git-conf-author command.
+ - Improved az/do-az-forecast-report command.
+ - Improved publish/do-publish command.
+ - Improved do-setup-wdc-commands
+ - Improved do-setup-wdc-commands
+ - Updated .gitignore file.
+ - Added az/do-az-forecast-report command
+ - Added az/do-az-forecast command
+ - Added az/do-az-subscriptions command
+ - Improved publish/do-publish command.
+ - Updated bin/do_cmd_groups.csv file.
+ - Updated bin/do_cmd_tools.csv file.
+ - Improved date/do-date-quarter command.
+ - Added howto/howto_mgit.otl file.
+ - Updated howto/howto_jq.otl file.
+ - Improved setup procedure
+ - Updated howto/howto_git.otl file.
+ - Improved tf/do-tf-workspace-repos command. Added option to fetch all branches
+ - Updated bin/do_cmd_tools.csv file.
+ - Improved initialization of bash
+ - Improved git/do-git-status-check command.
+ - Improved bin/do_env_setup command.
+ - Updated howto/howto_git.otl file.
+ - Improved do-cmd-tools command.
+ - Improved find/do-find-string command.
+ - Updated howto files
+ - Improved cmd/do-cmd-update command.
+ - Updated howto files
+ - Improved tf/do-tf-init command. Added support to migrate the state file
+ - Updated howto files
+ - Update howto/howto_k8s.otl file.
+ - Improved bin/do_cd_bookmark command.
+ - Improved vim/do-vim-diff command.
+ - Improved vim/do-vim-diff command.
+ - Improved bin/do_tf_env_setup command.
+ - Improved find/do-find-string command.
+ - Improved vim/do-vim-diff command.
+ - Improved bin/do_tf_env_setup command.
+ - Improved vim/do-vim-diff command.
+ - Improved cmd/do-cmd-find command.
+ - Added bin/do_tf_env_setup command
+ - Added tf/do-tf-init command
+ - Updated howto files.
+ - Improved cmd/do-cmd-history command.
+ - Update howto/howto_bash.otl file.
+ - Update howto/howto_jq.otl file.
+ - Added date/do-date-quarter command
+ - Improved az/do-az-login command.
+ - Improved az/do-az-get-aks-credentials command.
+ - Update bin/do_cmd_tools.csv file.
+ - Update howto/howto_bash_scripting.otl file.
+ - Updated howto files.
+ - Improved git/do-git-build-demo-repo command.
+ - Improved git/do-git-log command.
+ - Improved git/do-git-clone command.
+ - Updated howto files.
+ - Update vimrc file.
+ - Updated howto files
+ - Improved vim/do-vim-diff command.
+ - Update TODO file.
+ - Improved vim/do-vim command. Added support for task related searches
+ - Improved pipe/do-pipe-cfile-to-vim command.
+ - Improved howto/do-howto-commit command.
+ - Update howto/howto_vim.otl file.
+ - Update howto/howto_gitlab.otl file.
+ - Update howto/howto_az.otl file.
+ - Improved vim/do-vim command.
+ - Added git/do-git-diff-preview command
+ - Update /home/devkit/wbin/howto/howto_bash.otl file.
+ - Improved bin/do_project_activation command.
+ - Improved pipe/do-pipe-cntlrless-text command.
+ - Improved cmd/do-cmd-history command.
+ - Update /home/devkit/wbin/howto/howto_bash.otl file.
+ - Update /home/devkit/wbin/howto/howto_bash.otl file.
+ - Improved find/do-find-string command.
+ - Updated .gitignore
+ - Updated howto files
+ - Improved bin/do_env_setup command.
+ - Added az commands
+ - Improved environment management
+ - Improved bin/do_cd_folder command.
+ - Improved management of terminal title
+ - Version bump to 0.13.0
  - Refactored do_setup_env into do_env_setup
  - Update .gitignore file.
  - Improved cmd/do-cmd-tools command.
