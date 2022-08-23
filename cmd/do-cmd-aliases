@@ -7,9 +7,9 @@ root="$WDC_DO_COMMANDS_BIN"
 func=0
 [ "$1" == "-f" ] && func=1
 
-# do_env_setup -s
+# do_env_setup -i
 declare -A cmds
-#cmds["do_env_setup"]="-s"
+#cmds["do_env_setup"]="-i"
 cmds["do_bash_customization"]="&& cd ."
 cmds["do_setup_ld_library_path"]="\$@"
 ls -1 "$root"| grep "^do_" | grep -v "\." | while read -r file

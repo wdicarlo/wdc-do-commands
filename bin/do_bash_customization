@@ -216,7 +216,7 @@ function vim_launcher() {
   eval $cmd
 }
 
-source $WDC_DO_COMMANDS_BIN/do_env_setup -s
+source $WDC_DO_COMMANDS_BIN/do_env_setup -i
 
 function mkcd() {
     mkdir "$1"
@@ -286,7 +286,7 @@ function update_env() {
         is_env=0
         [ ! "$PROJECT_ENV" == "" ] && [ $is_prj -eq 1 ] && is_env=$(ls -1 ${PROJECT_PATH}/.envs | grep -c "do_env_setup_for_${PROJECT_ENV}")
         [ ! "$PROJECT_ENV" == "" ] && [ $is_prj -eq 0 ] && is_env=$(ls -1 ${HOME}/.envs | grep -c "do_env_setup_for_${PROJECT_ENV}")
-        [ $is_env -eq 0 ] && source $WDC_DO_COMMANDS_BIN/do_env_setup -s && return
+        [ $is_env -eq 0 ] && source $WDC_DO_COMMANDS_BIN/do_env_setup -i && return
     fi
     # TODO: evaluate to move the following in update_prompt
     # set title of terminal window

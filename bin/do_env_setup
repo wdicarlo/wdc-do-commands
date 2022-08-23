@@ -9,12 +9,13 @@
 
 
 function usage() {
-  echo "Usage:  do-env-setup [-h] [-s] [-l] [-c] [<env_name_pattern>]"
+  echo "Usage:  do-env-setup [-h] [-i] [-l] [-c] [<env_name_pattern>]"
   echo "where:"
   echo "       -h                          : print this help"
-  echo "       -s                          : setup ini environment"
+  echo "       -i                          : setup ini environment"
   echo "       -l                          : list available environments"
   echo "       -c                          : check current and if not valid activate specified env"
+  echo "       -e <env>                    : create and activate environment <env>"
 }
 
 # Arguments processing
@@ -22,16 +23,20 @@ OPTIND=1 # reset getopts pointer when sourcing the script (https://stackoverflow
 list=0
 init=0
 check=0
-while getopts hslc flag
+env=""
+while getopts hilce: flag
 do
   case $flag in
+    e)
+      env="$OPTARG"
+      ;;
     c)
       check=1
       ;;
     l)
       list=1
       ;;
-    s)
+    i)
       init=1
       ;;
     h)
@@ -74,6 +79,7 @@ if [ $init -eq 1 ]; then
     return
 fi
 
+
 if [ $check -eq 1 ]; then
   is_env=0
   [ ! "$PROJECT_ENV" == "" ] && [ $is_prj -eq 1 ] && is_env=$(ls -1 ${PROJECT_PATH}/.envs | grep -c "do_env_setup_for_${PROJECT_ENV}")
@@ -81,6 +87,13 @@ if [ $check -eq 1 ]; then
   [ $is_env -eq 1 ] && [ ! "$PROJECT_ENV" == "ini" ] && return
 fi
 
+if [ ! "$env" == "" ]; then
+  envpath="${envs_dir}/do_env_setup_for_$env" 
+  [ -f "$envpath" ] && echo "Environment already exist!!!" 
+  [ ! -f "$envpath" ] && cp "${envs_tpl_dir}/do_env_setup_for_ini" "${envpath}"
+  source $WDC_DO_COMMANDS_BIN/do_env_setup $env
+  return
+fi
 
 n=0
 if [ $# == 1 ]
