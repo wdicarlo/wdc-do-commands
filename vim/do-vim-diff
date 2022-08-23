@@ -3,10 +3,10 @@
 #TODO: use only two inout <path/filename> <other-root-path>
 app=`basename $0`
 function usage() {
-    echo "Usage: $app [-d] [-r|-R [-G <filter>]] [-s] [-w] [-v <p1:e1#p2:e2>] [<root1> <root2>|<file1> <file2>]"
+    echo "Usage: $app [-d] [-r|-R [-F <filter>]] [-s] [-w] [-v <p1:e1#p2:e2>] [<root1> <root2>|<file1> <file2>]"
     echo "       -r                  : sequential recursive selection"
     echo "       -R                  : selective recursive selection"
-    echo "       -G <filter>         : filter pattern"
+    echo "       -F <filter>         : filter pattern"
     echo "       -d                  : use DirDiff plugin"
     echo "       -m                  : use meld tool"
     echo "       -s                  : just print a summary of differences"
@@ -15,10 +15,11 @@ function usage() {
     echo "       -w                  : ignore white spaces"
     echo "       -v <p1:e1#p2:e2>    : compare (project1,env1) with (project2,env2)"
     echo "       -V <file1#file2>    : compare file1 with file2"
-    echo "Usage: $app <root1> <root2> <common-relative-path-to-file>"
-    echo "Usage: $app -f <root> <file1> <file2>"
-    echo "Usage: $app -p <file> # edit diff of <file> vs <file>.orig and <file>.rej"
-    echo "Usage: $app -g <file> # view diff of <file> vs un-staged git changes"
+    echo "Usage: $app <root1> <root2> <common-relative-path-to-file> # compare same relative file path in different roots"
+    echo "Usage: $app -f <root> <file1> <file2>                      # compare <file1> and <file2> starting from <root>"
+    echo "Usage: $app -p <file>                                      # edit diff of <file> vs <file>.orig and <file>.rej"
+    echo "Usage: $app -g <file>                                      # view diff of <file> vs un-staged git changes"
+    echo "Usage: $app -G \"ver1:ver2\" <file>                        # view diff of <file:ver1> vs <file:ver2>, where ver can be any git ref as branch/tag/HEAD/."
 }
 
 function short_path() {
@@ -131,10 +132,14 @@ fcmp1=""
 fcmp2=""
 list=0
 skip=0
-while getopts qhfprRsgdwv:G:mV:lL flag
+vers=""
+while getopts qhfprRsgdwv:F:mV:lLG: flag
 do
     case $flag in
         G)
+            vers="$OPTARG"
+            ;;
+        F)
             filter="$OPTARG"
             ;;
         V)
@@ -202,6 +207,19 @@ do
     esac
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+if [ ! "$vers" == "" ]; then
+  [ $# -ne 1 ] && usage && exit
+  ver1=$(echo "$vers" | cut -d':' -f 1)
+  ver2=$(echo "$vers" | cut -d':' -f 2)
+  [[ "$ver1" == "" || "$ver2" == "" ]] && usage && exit 
+  cmd1="git show $ver1:$1"
+  [ "$ver1" == "." ] && cmd1="cat $1"
+  cmd2="git show $ver2:$1"
+  [ "$ver2" == "." ] && cmd2="cat $1"
+  vimdiff <($cmd1) <($cmd2)
+  exit
+fi
 
 if [ $git -eq 1 ]; then
 	[ $# -ne 1 ] && usage && exit
