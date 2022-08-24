@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
+
+cd "$WDC_DO_COMMANDS_DIR"
+
+for tool in $(grep -RHn "[\`(]which [a-zA-Z0-9_-]\+[\`)]" * 2>/dev/null | sed 1d | sed 's/^.*[\`(]which \([a-zA-Z0-9_-]\+\)[\`)].*$/\1/g' | grep -v "\\$" | sort | uniq); do echo "$tool:$(which $tool)"; done | column -s':' -t
+
