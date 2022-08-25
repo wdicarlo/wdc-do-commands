@@ -267,10 +267,15 @@ function update_env() {
     fi
     export REPO_LOCATION=""
     export REPO_SYNT=""
-    GIT_LOCATION=""
-    \git status >/dev/null 2>&1 && GIT_LOCATION=$(\git rev-parse --abbrev-ref HEAD)
-    if [ ! "$GIT_LOCATION" == "" ]; then
-        REPO_LOCATION="G:$GIT_LOCATION"
+    GIT_NAME=""
+    \git status >/dev/null 2>&1 && GIT_NAME="$(basename $(\git rev-parse --show-toplevel))"
+    if [ ! "$GIT_NAME" == "" ]; then
+        GIT_BRANCH="$(\git rev-parse --abbrev-ref HEAD)"
+        CUR_DIR="$(basename $PWD)"
+        [ "$GIT_NAME" == "$CUR_DIR" ] && GIT_NAME="<o>"
+
+        [ ${#GIT_BRANCH} -ge 30 ] && REPO_LOCATION="G:${GIT_NAME}#${GIT_BRANCH::1,29}>" || REPO_LOCATION="G:${GIT_NAME}#${GIT_BRANCH}"
+
         REPO_SYNT=$(\git status -s | awk '{print $1}'|sort|uniq|tr -d '\n')
     fi
     #echo "PROJECT_PATH=$PROJECT_PATH"
