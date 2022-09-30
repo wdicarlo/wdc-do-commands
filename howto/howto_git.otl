@@ -242,6 +242,11 @@ Force credential update
 	git config credential.helper store
 Generate patch emails of commits done in a branch
 	git format-patch <parent> --stdout
+Rebase vs merge
+	# assuming branch-a is our current version
+	git checkout branch-a
+	git rebase -Xtheirs branch-b # <- ours: branch-b, theirs: branch-a
+	git merge -Xtheirs branch-b  # <- ours: branch-a, theirs: branch-b
 Change old (unpushed) commit message (rebase's reword)
 	git rebase -i HEAD~<num_commits_to_the_target_commit>
 Clone with temporarly disabled SSL check
