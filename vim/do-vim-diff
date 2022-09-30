@@ -18,8 +18,9 @@ function usage() {
     echo "Usage: $app <root1> <root2> <common-relative-path-to-file> # compare same relative file path in different roots"
     echo "Usage: $app -f <root> <file1> <file2>                      # compare <file1> and <file2> starting from <root>"
     echo "Usage: $app -p <file>                                      # edit diff of <file> vs <file>.orig and <file>.rej"
-    echo "Usage: $app -g <file>                                      # view diff of <file> vs un-staged git changes"
-    echo "Usage: $app -G \"ver1:ver2\" <file>                        # view diff of <file:ver1> vs <file:ver2>, where ver can be any git ref as branch/tag/HEAD/."
+    echo "Usage: $app -g <file>                                      # view diff of <file> vs un-/staged git changes"
+    echo "Usage: $app -G \"ver1:ver2\" <file>                          # view diff of <file:ver1> vs <file:ver2>, where ver can be any git ref as branch/tag/HEAD/."
+    echo "Usage: $app -b <branch/tag> <file>                             # view diff of <file> vs <file:branch/tag>"
 }
 
 function short_path() {
@@ -133,9 +134,13 @@ fcmp2=""
 list=0
 skip=0
 vers=""
-while getopts qhfprRsgdwv:F:mV:lLG: flag
+branch=""
+while getopts qhfprRsgdwv:F:mV:lLG:b: flag
 do
     case $flag in
+        b)
+            branch="$OPTARG"
+            ;;
         G)
             vers="$OPTARG"
             ;;
@@ -208,6 +213,13 @@ do
 done
 shift $(( OPTIND - 1 ))  # shift to the last flag or argument
 
+if [ ! "$branch" == "" ]; then
+	[ $# -ne 1 ] && usage && exit
+  cmd1="git show $branch:$1"
+  vimdiff <($cmd1) $1
+  exit
+fi
+
 if [ ! "$vers" == "" ]; then
   [ $# -ne 1 ] && usage && exit
   ver1=$(echo "$vers" | cut -d':' -f 1)
@@ -224,7 +236,8 @@ fi
 if [ $git -eq 1 ]; then
 	[ $# -ne 1 ] && usage && exit
 
-  git difftool -t vimdiff -y "$1"
+  #git difftool -t vimdiff -y "$1"
+  vimdiff -c 'set readonly|set nomodifiable|wincmd l' <(git show HEAD:$1) $1
   exit
 fi
 
