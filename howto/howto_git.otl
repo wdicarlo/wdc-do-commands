@@ -52,8 +52,6 @@ List last 5 short log messages
 	git log --pretty=oneline --abbrev-commit -5
 Update tracking branches
 	git remote -v update
-Delete a tag
-	git tag -d mytag
 Create a tag
 	git tag -m "GitDemos 1.2.4" gitdemos-1.2.4
 Track a specific remote branch of a different repository
@@ -98,7 +96,10 @@ List all commits containing changes of a specific file (history of a file)
 	git log --oneline arch/arm/mach-gitdemos/gitdemos_devel_board.c
 List graph of all commit containing changes of a file
 	git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative arch/arm/mach-gitdemos/gitdemos_devel_board.c
-Undo changes (revert) of a file un-stagged
+Undo changes (revert) of a un-stagged file
+	git checkout arch/arm/mach-gitdemos/clock.c
+Undo changes (revert) of a stagged file
+	git reset arch/arm/mach-gitdemos/clock.c
 	git checkout arch/arm/mach-gitdemos/clock.c
 Display simplified git status
 	git status -s
@@ -346,6 +347,9 @@ Delete all local branches without referenced remote branch
 Delete local and remote branch
 	git branch -d localBranchName # delete branch locally
 	git push origin --delete remoteBranchName # delete branch remotely
+Delete local and remote tag
+	git tag -d mytag
+	git push --delete origin v0.1.0
 List all tags reachable from a branch
 	git tag --merged <branch> --sort=taggerdate
 Get git folder
@@ -365,8 +369,6 @@ Use vimdiff as merge tool
 	git config mergetool.prompt false
 Clone single branch
 	git clone --single-branch --branch <branch> <repo>
-Delete remote tag
-	git push --delete origin v0.1.0
 Delete a (big) file from the git repository and history
 	# credit: https://stackoverflow.com/a/2158271/3676996
 	# warning: it is highly disruptive to other developers
