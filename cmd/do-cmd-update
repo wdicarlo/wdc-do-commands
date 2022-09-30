@@ -5,8 +5,9 @@
 home_dir="$WDC_DO_COMMANDS_DIR"
 
 function usage() {
-    echo "Usage: $cmd [-f] [-r] [-m \"message\"] <improved-bin-cmd>"
+    echo "Usage: $cmd [-f] [-r] [-p] [-m \"message\"] <improved-bin-cmd>"
     echo "where:"
+    echo "            -p          : print patch file"
     echo "            -f          : update file (defualt update command)"
     echo "            -r          : avoid review of changes before to update"
     echo "            -m          : message to append to the standard message"
@@ -16,9 +17,13 @@ quiet=0
 file=0
 review=1
 message=""
-while getopts hqfrm: flag
+patch=0
+while getopts hqfrm:p flag
 do
 	case $flag in
+		p)
+			patch=1
+			;;
 		m)
 			message="$OPTARG"
 			;;
@@ -70,6 +75,8 @@ if [ $n -eq 0 ]; then
     echo "Command without changes: $cmd"
     exit
 fi
+
+[ $patch -eq 1 ] && git diff $cmd && exit
 
 if [ $review -eq 1 ]; then
 	do-git-diff -q $cmd | do-pipe-to-vim -o $cmd
