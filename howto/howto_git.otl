@@ -404,3 +404,9 @@ Configure git to prune deleted tags while fetching
 	git config fetch.pruneTags true # add --global to configure globally
 Configure git to prune deleted tags while fetching from a specific remote
 	git config remote.origin.pruneTags true # add --global to configure globally
+Get long sha from short one
+	git rev-parse <short-sha>
+Find the commit containing a change
+	git log -p path/to/the/file.yaml | grep "^commit\|^diff\|^index\|\+[ ]\+kubernetes_version: 1.22" | grep -B3 "^\+"
+Find the tag associated to a commit
+	git name-rev --tags  --name-only <long-sha> # git name-rev --tags --all will list all tags
