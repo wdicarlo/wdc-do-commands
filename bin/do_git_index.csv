@@ -6,6 +6,7 @@ gcf;git config
 gcl;git clone
 gco;git commit
 gcp;git cherry-pick
+gd;git diff
 gh;git help
 gi;git init
 gl;git log

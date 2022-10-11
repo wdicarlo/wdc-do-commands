@@ -8,6 +8,7 @@
 /bin/do-wezterm
 /bin/do_cmd_counts.csv
 /bin/do_cmd_index.csv
+/bin/do_git_index.csv
 /bin/do_git_conf_author.csv
 /bin/gucci
 /neovim
