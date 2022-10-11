@@ -744,6 +744,8 @@ alias git='mygit'
 alias do-git-conf-author-wdc='do-git-conf-author "Walter Di Carlo" walter@di-carlo.it'
 function d () { source $WDC_DO_COMMANDS_BIN/_d "$@"; }
 export -f d
+function g () { source $WDC_DO_COMMANDS_BIN/_g "$@"; }
+export -f g
 
 # default proxy setup
 #export http_proxy=

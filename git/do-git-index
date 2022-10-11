@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Usage help function
+cmd=`basename $0`
+
+[ "$WDC_DO_COMMANDS_DIR" == "" ] && echo "Missing WDC_DO_COMMANDS_DIR" && exit
+export WDC_DO_COMMANDS_BIN="${WDC_DO_COMMANDS_DIR}/bin"
+
+function usage() {
+  echo "Usage: $cmd [-h] [-t] [-T] [<grep_pattern>]"
+  echo "where:"
+  echo "       -h                          : print this help"
+  echo "       -t                          : pretty print"
+  echo "       -T                          : print command type; function or file"
+}
+
+# Arguments processing
+otable=0
+ctype=0
+while getopts htT flag
+do
+  case $flag in
+    T)
+      ctype=1
+      ;;
+    t)
+      otable=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))  # shift to the last flag or argument
+
+
+idxfile="$(echo $WDC_DO_COMMANDS_BIN/do_git_index.csv)"
+[ $# -gt 1 ] && usage && exit
+[ $# -eq 1 ] && [ $otable -eq 1 ] && cat "$idxfile" | grep "$1" | column -t -s';' && exit
+[ $# -ge 0 ] && [ $ctype -eq 1 ] && cat "$idxfile" | grep "${1:-.}" | while IFS=';' read -r idx cmd; do echo "$idx;$cmd;$(type -t $cmd)"; done && exit
+[ $otable -eq 1 ] && cat "$idxfile" | column -t -s';' && exit
+[ $# -eq 1 ] && cat "$idxfile" | grep "$1" && exit
+
+[ $# -eq 0 ] && cat "$idxfile" 

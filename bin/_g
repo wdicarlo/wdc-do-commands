@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+[ -z $WDC_DO_COMMANDS_BIN ] && echo "Undefined WDC_DO_COMMANDS_BIN." && return
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "$(basename ${BASH_SOURCE[0]}) must be sourced" && exit
+cntfile="$(echo $WDC_DO_COMMANDS_BIN/do_git_counts.csv)"
+[ ! -f "$cntfile" ] && touch "$cntfile"
+idxfile="$(echo $WDC_DO_COMMANDS_BIN/do_git_index.csv)"
+[ ! -f "$idxfile" ] && touch "$idxfile"
+idx="g${1}";shift
+[ "$idx" == "g-h" ] && 
+  echo "g [-h] [-s [<patt>]] [-d [<patt>]] [-c [<patt>]] [-v] <abbr> [<params>]" && 
+  echo "g -h          : help" &&
+  echo "g -v          : verbose" &&
+  echo "g -s [<patt>] : list commands abbreviations filtered by <patt>" &&
+  echo "g -d [<patt>] : list commands filtered by <patt>" &&
+  echo "g -c [<patt>] : list usage counter filtered by <patt>" && return
+cmd="";verbose=0
+[ "$idx" == "g-v" ] && verbose=1 && idx="d${1}" && shift
+[ "$idx" == "g-s" ] && do-git-index -t "^g[a-z]*${1}.*;" | grep "${1}"  && return
+[ "$idx" == "g-d" ] && do-git-index -t "git .*${1}.*" | grep "${1}"  && return
+[ "$idx" == "g-c" ] && cat "$cntfile" | while IFS=';' read -r cmd count; do sc=$(do-git-index ";$cmd$"|cut -d';' -f1);echo "${sc:----};$cmd;$count"; done |sort -t';' -n -r -k3| column -s ';' -t | grep "${1:-^}" && return
+[ "${idx:0:2}" == "g-" ] && echo "Wrong option. Use g -h to get availble options." && return 
+cmdname=$(cat "$idxfile"|grep "^${idx};"|cut -d';' -f2)
+[ "$cmdname" == "" ] && echo "No command found for $idx" && return
+[ $(grep -c "$cmdname" "$cntfile") -eq 0 ] && read -p "First use of the command (${cmdname})! Continue? (y/[n]) " ans && [ ! "$ans" == "y" ] && return 
+cmd="$cmd $cmdname" && for par in "$@"; do cmd="$cmd \"${par}\""; done
+[ -t 0 ] && echo "> $cmd"
+[ $(grep -c "$cmdname" "$cntfile" 2>/dev/null) -eq 0 ] && echo "${cmdname};0" >> "$cntfile"
+eval "sed -i 's/^\(${cmdname}\);\([0-9]\+\)/echo \"\1;\$((\2+1))\"/ge' $cntfile" && cp "$cntfile" "${cntfile}.bak"
+[ $verbose -eq 1 ] && cmd="set -x;$cmd;set +x"
+eval "$cmd"
