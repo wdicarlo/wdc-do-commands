@@ -14,7 +14,7 @@ idx="g${1}";shift
   echo "g -d [<patt>] : list commands filtered by <patt>" &&
   echo "g -c [<patt>] : list usage counter filtered by <patt>" && return
 cmd="";verbose=0
-[ "$idx" == "g-v" ] && verbose=1 && idx="d${1}" && shift
+[ "$idx" == "g-v" ] && verbose=1 && idx="g${1}" && shift
 [ "$idx" == "g-s" ] && do-git-index -t "^g[a-z]*${1}.*;" | grep "${1}"  && return
 [ "$idx" == "g-d" ] && do-git-index -t "git .*${1}.*" | grep "${1}"  && return
 [ "$idx" == "g-c" ] && cat "$cntfile" | while IFS=';' read -r cmd count; do sc=$(do-git-index ";$cmd$"|cut -d';' -f1);echo "${sc:----};$cmd;$count"; done |sort -t';' -n -r -k3| column -s ';' -t | grep "${1:-^}" && return
