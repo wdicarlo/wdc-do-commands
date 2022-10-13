@@ -746,6 +746,10 @@ function d () { source $WDC_DO_COMMANDS_BIN/_d "$@"; }
 export -f d
 function g () { source $WDC_DO_COMMANDS_BIN/_g "$@"; }
 export -f g
+function k () { source $WDC_DO_COMMANDS_BIN/_k "$@"; }
+export -f k
+#alias k=kubectl
+#[ "$(type -t __start_kubectl 2>/dev/null)" == "function" ] &&  complete -F __start_kubectl k
 
 # default proxy setup
 #export http_proxy=
@@ -765,7 +769,5 @@ export -f g
 #    echo "Missing file: do_proxy_setup"
 #fi
 
-alias k=kubectl
-[ "$(type -t __start_kubectl 2>/dev/null)" == "function" ] &&  complete -F __start_kubectl k
 
 update_env
