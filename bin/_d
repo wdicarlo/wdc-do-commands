@@ -6,7 +6,7 @@ cntfile="$(echo $WDC_DO_COMMANDS_BIN/do_cmd_counts.csv)"
 idxfile="$(echo $WDC_DO_COMMANDS_BIN/do_cmd_index.csv)"
 [ ! -f "$idxfile" ] && touch "$idxfile"
 idx="d${1}";shift
-[ "$idx" == "d-h" ] && 
+[[ "$idx" == "d-h" || "$idx" == "d" ]] && 
   echo "d [-h] [-s [<patt>]] [-d [<patt>]] [-c [<patt>]] [-v] <abbr> [<params>]" && 
   echo "d -h          : help" &&
   echo "d -v          : verbose" &&
