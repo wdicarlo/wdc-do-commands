@@ -1,3 +1,26 @@
+Version 0.14.0:
+ - Improved d command
+ - Added k command
+ - Improved g command
+ - Improved d and g commands
+ - Improved g command
+ - Added g and git/do-git-index commands
+ - Updated howto/howto_git.otl file.
+ - Updated howto/howto_git.otl file.
+ - Improved vim/do-vim-diff command.
+ - Improved cmd/do-cmd-update command.
+ - Improved git/do-git-log command.
+ - Updated howto/howto_git.otl file.
+ - Improved az/do-az-forecast-report command.
+ - Updated howto/howto_bash.otl file.
+ - Improved bin/do_bash_customization command.
+ - Improved find/do-find-string command.
+ - Improved git/do-git-conf-author command.
+ - Added cmd/do-cmd-sys-tools command
+ - Improved az/do-az-forecast-report command.
+ - Improved vim/do-vim-diff command.
+ - Improved do_env_setup command.
+
 Version 0.13.0:
  - Improved whoami and hostname commands.
  - Improved Azure forecast scripts
