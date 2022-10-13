@@ -77,7 +77,7 @@ cd "${prj_root}$prjname" || return
 export PROJECT_TASK=
 if [ ! -f .bash_env ]; then
     shift $#
-    source "$WDC_DO_COMMANDS_BIN/do_env_setup -i"
+    source "$WDC_DO_COMMANDS_BIN/do_env_setup" -i
 fi
 
 # set title of terminal window
