@@ -18,3 +18,4 @@ az_subs_csv="${az_subs}.csv"
 az login -u "$AZ_USERNAME" --tenant "$AZ_TENANT_ID" | tee "${az_subs_json}"
 
 [ -f "$az_subs_json" ] && cat "$az_subs_json" | jq -r '.[] | "\(.name),\(.id),\(.state)"' | grep Enabled | cut -d',' -f1,2 | sort > "$az_subs_csv"
+[ -f "$az_subs_csv" ] && cat "$az_subs_csv"
