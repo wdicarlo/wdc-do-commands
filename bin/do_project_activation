@@ -79,6 +79,10 @@ if [ ! -f .bash_env ]; then
     shift $#
     source "$WDC_DO_COMMANDS_BIN/do_env_setup" -i
 fi
+echo "== Environments =="
+source "$WDC_DO_COMMANDS_BIN/do_env_setup" -l
+echo "== Booksmarks =="
+source "$WDC_DO_COMMANDS_BIN/do_cd_bookmark" -l
 
 # set title of terminal window
 echo -ne "\033]0;$PROJECT{$PROJECT_ENV}\007"
