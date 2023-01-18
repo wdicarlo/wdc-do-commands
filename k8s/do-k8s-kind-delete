@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+[ ! -d "$PROJECT_PATH" ] && mkdir "$PROJECT_PATH/configs"
+
+[ ! $# -eq 1 ] && echo "Missing cluster name" && exit
+
+cname="$1"
+
+config="$PROJECT_PATH/configs/$cname.yaml"
+
+[ ! -f "$config" ] && echo "Missing cluster config: $config" && exit
+
+export KUBECONFIG="$config"
+
+kind delete clusters "$cname"
+
+do-env-setup -i
+
+rm "$PROJECT_PATH/.envs/do_env_setup_for_$cname"
+rm "$config"
