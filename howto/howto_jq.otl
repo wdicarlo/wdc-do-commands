@@ -60,3 +60,5 @@ Compare json files
 		jq -Rs '{ text: . | @html }' page.html
 	Embed html into json
 		jq --slurpfile texts <(jq -Rs '{ text: .| @html }' page.html) '.path.to.item.value=$texts[0].text' doc.json
+Add one entry
+	echo $DOCKER_AUTH_CONFIG | jq -r '.auths += {"my-repo-uri": { "auth": "***********" }}'
