@@ -220,6 +220,7 @@ Print differences in the last commit
 Use external tool to view differences in the last commit
 	git difftool HEAD~
 Uncommit (delete) latest commit/s without loosing the history
+	git revert HEAD                      # revert last commit
 	git revert --no-commit <sha>         # revert one commit
 	git revert --no-commit <sha-1>..HEAD # revert set of commits
 Uncommit latest commits still not pushed (loosing the history)
