@@ -3,13 +3,15 @@
 #TODO: use only two inout <path/filename> <other-root-path>
 app=`basename $0`
 function usage() {
-    echo "Usage: $app [-d] [-r|-R [-F <filter>]] [-s] [-w] [-v <p1:e1#p2:e2>] [<root1> <root2>|<file1> <file2>]"
+    echo "Usage: $app [-d] [-r|-R [-F <filter>]] [-s] [-w] [-v <p1:e1#p2:e2>] [-S <pattern> [-i]] [<root1> <root2>|<file1> <file2>]"
     echo "       -r                  : sequential recursive selection"
     echo "       -R                  : selective recursive selection"
     echo "       -F <filter>         : filter pattern"
     echo "       -d                  : use DirDiff plugin"
     echo "       -m                  : use meld tool"
     echo "       -s                  : just print a summary of differences"
+    echo "       -S <pattern>        : compare search result differences between <root1> and <root2>"
+    echo "       -i                  : ignore case"
     echo "       -l                  : compare folders list"
     echo "       -L                  : compare files list"
     echo "       -w                  : ignore white spaces"
@@ -135,9 +137,17 @@ list=0
 skip=0
 vers=""
 branch=""
-while getopts qhfprRsgdwv:F:mV:lLG:b: flag
+search=""
+icase=0
+while getopts qhfprRsgdwv:F:mV:lLG:b:S:i flag
 do
     case $flag in
+        i)
+            icase=1
+            ;;
+        S)
+            search="$OPTARG"
+            ;;
         b)
             branch="$OPTARG"
             ;;
@@ -220,6 +230,16 @@ if [ ! "$branch" == "" ]; then
   exit
 fi
 
+if [ ! "$search" == "" ]; then
+	[ $# -ne 2 ] && usage && exit
+  opts=""
+  [ $icase -eq 1 ] && opts="-i"
+  cmd1="grep -RHn $opts $search $1 2>/dev/null | sed 's#$1##'"
+  cmd2="grep -RHn $opts $search $2 2>/dev/null | sed 's#$2##'"
+  echo "$cmd1 vs $cmd2"
+  vimdiff <(eval "$cmd1") <(eval "$cmd2")
+  exit
+fi
 if [ ! "$vers" == "" ]; then
   [ $# -ne 1 ] && usage && exit
   ver1=$(echo "$vers" | cut -d':' -f 1)
