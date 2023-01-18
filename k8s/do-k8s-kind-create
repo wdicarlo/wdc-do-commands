@@ -8,7 +8,7 @@ cname="$1"
 
 config="$PROJECT_PATH/configs/$cname.yaml"
 
-[ -f "$config" ] && echo "Cluster config already exists: $config"
+[ -f "$config" ] && echo "Cluster config already exists: $config" && exit
 
 export KUBECONFIG="$config"
 
