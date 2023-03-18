@@ -16,6 +16,8 @@ function usage() {
   echo "       -l                          : list available environments"
   echo "       -c                          : check current and if not valid activate specified env"
   echo "       -e <env>                    : create and activate environment <env>"
+  echo "       -E <env>                    : Edit and activate environment <env>"
+  echo "       -f                          : force reevaluation of active env"
   echo "       -v                          : list environment variables"
 }
 
@@ -26,11 +28,20 @@ init=0
 check=0
 env=""
 vars=0
-while getopts hilce:v flag
+edit=0
+force=0
+while getopts hilce:vE:f flag
 do
   case $flag in
+    f)
+      force=1
+      ;;
     v)
       vars=1
+      ;;
+    E)
+      edit=1
+      env="$OPTARG"
       ;;
     e)
       env="$OPTARG"
@@ -105,9 +116,10 @@ fi
 
 if [ ! "$env" == "" ]; then
   envpath="${envs_dir}/do_env_setup_for_$env" 
+  [ -f "$envpath" ] && [ $edit -eq 1 ] && vi "$envpath"
   [ -f "$envpath" ] && echo "Environment already exist!!!" 
   [ ! -f "$envpath" ] && cp "${envs_tpl_dir}/do_env_setup_for_ini" "${envpath}"
-  source $WDC_DO_COMMANDS_BIN/do_env_setup $env
+  source $WDC_DO_COMMANDS_BIN/do_env_setup -f $env
   return
 fi
 
@@ -116,7 +128,7 @@ if [ $# == 1 ]
 then
     if [ "$PROJECT_ENV" == "$1" ]; then
         echo "Active environment: $PROJECT_ENV"
-        return
+        [ $force -eq 0 ] && return
     fi
     n=$(ls -1 ${envs_dir}/do_env_setup_for_* | grep "do_env_setup_for_$1" | awk '{ print NR, $0 }' | wc -l)
     ls -1 ${envs_dir}/do_env_setup_for_* | grep "do_env_setup_for_$1" | awk '{ print NR, $0 }' | sed "s#${envs_dir}/do_env_setup_for_##"
