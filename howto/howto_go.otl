@@ -1,0 +1,9 @@
+Go Programming Language
+	Go Tips and Tricks
+GOROOT
+	# variable that defines where your Go SDK is located
+GOPATH
+	# variable that defines the root of your workspace (default ~/go)
+	# contains: src, pkg, bin
+Print go environment variables
+	go env <var> # ex. go env GOROOT
