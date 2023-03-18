@@ -183,3 +183,5 @@ Copy a file from pod to local filesystem
 	kubectl cp <namespace>/<pod-name>:/path/to/<file.ext> ./<file.ext>
 Monitor resources creation
 	watch kubectl get pods,services,deployments -n <mynamespace>
+List pods in a node
+	kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=<node-name>
