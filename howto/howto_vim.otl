@@ -429,7 +429,10 @@ u@.              : execute command JUST typed in
 !1} sort -u      : sorts paragraph (note normal mode!!)
 :g/^$/;/^$/-1!sort : Sort each block (note the crucial ;)
 " Sorting with internal sort
-:sort /.*\%2v/   : sort all lines on second column [N]
+:%sort /.*\%2v/   : sort all lines on second column [N]
+:'<,'>sort!       : reverse sort of selected lines
+:%sort u          : sort and remove duplicated lines 
+:%sort n          : sort numerically
 " number lines  (linux or cygwin only)
 :new | r!nl #                  [N]
 :'<,'>!sort -k3 -n   : sort numerically the third column of the selected lines
@@ -1112,3 +1115,5 @@ Linediff
 	" when any one of them is saved, its original buffer is updated. Note that this does not save the original buffer
 	:LinediffReset " will delete the temporary buffers
 	" a third :Linediff will do the same as :LinediffReset, but will also initiate a new diff process
+Delete pattern with @ character
+    :g/\[ \] \%d64/d " @ is represented with \%d64 where 64 is the decimal ascii value
