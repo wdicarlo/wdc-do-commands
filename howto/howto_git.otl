@@ -196,6 +196,10 @@ Show files saved with a stash
 	git stash show my_changes
 Show differences saved with a stash
 	git stash show -p my_changes
+Compare HEAD with stashed changes
+	git diff HEAD..stash@{0}
+Compare two stashed set of code
+	git diff stash@{0}..stash@{1}
 Pop saved stash
 	git stash pop my_changes
 Rename the current branch
