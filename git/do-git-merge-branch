@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+# TODO:
+# [ ] merge by squash, fastforward or rebase
+# [ ] merge on develop or master
+# [ ] support feature, bug fix and hot fix branches
+# [ ] manage change log with:
+#   [ ] add entry converting branch name starting with FT_, BF_ and HF_ replacing all _ with white spaces
+#   [ ] add commit messages starting with FT: BF: HF:
+#   [ ] skip commit messages starting with WIP:
 
 # Usage help function
 cmd=`basename $0`
