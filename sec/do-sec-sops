@@ -8,6 +8,7 @@ function usage() {
   echo "where:"
   echo "       -h                          : print this help"
   echo "       -d                          : print decrypted file"
+  echo "       -e                          : encrypt file"
   echo "       -r                          : print raw file"
   echo "       -K <key_file>               : key file"
   echo "       -P <passphrase>             : passphrase"
@@ -29,7 +30,7 @@ verbose=""
 ftype=""
 quiet=0
 dryrun=0
-while getopts hrdK:P:ivt:nq flag
+while getopts hrdK:P:ivt:nqe flag
 do
   case $flag in
     q)
@@ -52,6 +53,9 @@ do
       ;;
     i)
       import=1
+      ;;
+    e)
+      dump=2
       ;;
     d)
       dump=1
@@ -97,8 +101,10 @@ efile="$1"
 if [ $raw -eq 0 ]; then
   if [ $dump -eq 0 ]; then
     cmd="sops $verbose $ftype \"$efile\""
-  else
+  elif [ $dump -eq 1 ]; then
     cmd="sops $verbose $ftype -d \"$efile\""
+  elif [ $dump -eq 2 ]; then
+    cmd="sops $verbose $ftype -e \"$efile\""
   fi
 else
   cmd="cat \"$efile\" | grep -v \"^sops_\""
