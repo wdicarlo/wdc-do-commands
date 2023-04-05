@@ -54,7 +54,8 @@ force_color_prompt=yes
 
 function do_rm()
 {
-  if [ $(echo "$@" | grep -c "\-r\|\-rf") -eq 0  ]; then
+  if [ $(echo " $@" | grep -c " \-[a-qs-zA-QS-Z]*[rR]\+[a-qs-zA-QS-Z]*\| --recursive") -eq 0  ]; then
+   echo "> rm $@"
    eval "\rm $@"
    return
   fi
@@ -67,6 +68,7 @@ function do_rm()
   fi
   n=$(ls -aFR $@ | grep -Ev '/|@|=|>|\|' | grep -cv "^[ \t]*$" )
   if [ $n -lt 10 ]; then
+   echo "> rm $@"
     eval "\rm $@"
     return
   fi
@@ -74,13 +76,14 @@ function do_rm()
   read answer
   if [ "$answer" == "L" ]
   then
-    ls -aFR $@ | grep -Ev '/|@|=|>|\|' | grep -v "^[ \t]*$"
+    ls -aFR $@ | grep -Ev '/|@|=|>|\|' | grep -v "^[ \t]*$" | less
     return
   fi
   if [ "$answer" != "$n" ]
   then
     return
   fi
+  echo "> rm $@"
   eval "\rm $@"
 }
 
