@@ -52,6 +52,38 @@ force_color_prompt=yes
 # in vim.
 #set -o vi
 
+function do_rm()
+{
+  if [ $(echo "$@" | grep -c "\-r\|\-rf") -eq 0  ]; then
+   eval "\rm $@"
+   return
+  fi
+
+  echo "Are you sure? {Y/N}"
+  read answer
+  if [ "$answer" != "Y" ]
+  then
+    return
+  fi
+  n=$(ls -aFR $@ | grep -Ev '/|@|=|>|\|' | grep -cv "^[ \t]*$" )
+  if [ $n -lt 10 ]; then
+    eval "\rm $@"
+    return
+  fi
+  echo "Are you really sure? $n files will be deleted. Type $n to confirm or L to list them!!!"
+  read answer
+  if [ "$answer" == "L" ]
+  then
+    ls -aFR $@ | grep -Ev '/|@|=|>|\|' | grep -v "^[ \t]*$"
+    return
+  fi
+  if [ "$answer" != "$n" ]
+  then
+    return
+  fi
+  eval "\rm $@"
+}
+
 function update_prompt()
 {
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -702,6 +734,8 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 
+alias rm='do_rm $@'
+
 #alias vi='vim'
 alias vi='vim_launcher $@'
 alias vinp='vim --noplugin $@'
@@ -722,6 +756,7 @@ alias cd-p='cd $PROJECT/$PROJECT'
 alias cd-projects='cd $PROJECTS'
 alias cd-tests='cd $TESTS'
 alias cd-releases='cd /media/shared/releases/'
+
 
 # generate functions for do_ commands
 eval "$(do-cmd-aliases -f)"
