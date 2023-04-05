@@ -92,9 +92,9 @@ report=azure_forecast_${year}_q${quarter}_p${period}_w${week}.csv
 
 [ "$AZ_SUBSCRIPTIONS_PATT_IN" == "" ] && AZ_SUBSCRIPTIONS_PATT_IN="^"
 [ "$AZ_SUBSCRIPTIONS_PATT_OUT" == "" ] && AZ_SUBSCRIPTIONS_PATT_OUT="^$"
-[ $list -eq 1 ] && (./do-az-subscriptions | grep "$AZ_SUBSCRIPTIONS_PATT_IN" | grep -v "$AZ_SUBSCRIPTIONS_PATT_OUT") && exit
+[ $list -eq 1 ] && (do-az-subscriptions | grep "$AZ_SUBSCRIPTIONS_PATT_IN" | grep -v "$AZ_SUBSCRIPTIONS_PATT_OUT") && exit
 
-[ $(./do-az-subscriptions | grep -v "^$" | wc -l) -eq 0 ] && echoerr "Missing subscriptions. Please run do-az-login" && exit
+[ $(do-az-subscriptions | grep -v "^$" | wc -l) -eq 0 ] && echoerr "Missing subscriptions. Please run do-az-login" && exit
 
 if [ $halfyear -ne 0 ]; then
   IFS=':' read -r hperiod begin end <<< $(hy $halfyear)
@@ -111,8 +111,8 @@ elif [ $month -ne 0 ]; then
   report=azure_forecast_${year}_p${period}_w${week}.csv
 fi
 echo "Generating report for range: $drange"
-./do-az-subscriptions | grep "$AZ_SUBSCRIPTIONS_PATT_IN" | grep -v "$AZ_SUBSCRIPTIONS_PATT_OUT" | while IFS=',' read sub id; do ./do-az-forecast -d "$drange" -u -s "$sub,$id"; done
-./do-az-subscriptions | grep "$AZ_SUBSCRIPTIONS_PATT_IN" | grep -v "$AZ_SUBSCRIPTIONS_PATT_OUT" | 
+do-az-subscriptions | grep "$AZ_SUBSCRIPTIONS_PATT_IN" | grep -v "$AZ_SUBSCRIPTIONS_PATT_OUT" | while IFS=',' read sub id; do do-az-forecast -d "$drange" -u -s "$sub,$id"; done
+do-az-subscriptions | grep "$AZ_SUBSCRIPTIONS_PATT_IN" | grep -v "$AZ_SUBSCRIPTIONS_PATT_OUT" | 
   while IFS=',' read sub id
   do 
     echo "$sub,$(cat "$sub.csv"|grep -v "^tot"|tail -1)"
