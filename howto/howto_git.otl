@@ -44,8 +44,18 @@ Patch of changes ready to be committed on master
 	git diff master > ../adiff.patch
 Print diffs of a file ready to be committed on master
 	git diff master Makefile
+Print staged diffs of a file
+	git diff --cached afile.txt
+Unstage files ready to be committed
+	git restore --staged <file>...
+Unstage files ready to be committed leaving changes in the working copy
+	git reset --mixed
 Unstage files ready to be committed
 	git rm -r --cached  *
+Unstage added file EXAMPLES
+	git reset HEAD EXAMPLES
+Unstage all added files to the index
+	git reset HEAD .
 Create a Patch of last commit avoiding whitespaces
 	git diff -w HEAD~1..HEAD > ../fsmc_20121117_no_whitespace_changes.patch
 List last 5 short log messages
@@ -76,8 +86,6 @@ Create a branch whit changed files still not stagged
 	git checkout -b another_branch
 Display nice git history
 	git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative
-Unstage added file EXAMPLES
-	git reset HEAD EXAMPLES
 Diff of file ready to be committed
 	git diff -w master -- arch/arm/mach-gitdemos/gitdemos10_debug_board.c
 Stages All ... equivalent to "git add .; git add -u"
@@ -92,8 +100,6 @@ Checkout tag into a new branch
 	git checkout -b oklaoma-gitdemos-0.3 oklaoma-gitdemos-0.3
 Create a patch between two tags
 	git diff gitdemos-1.2.4..gitdemos-1.2.5 > ../linux-2.6.35-gitdemos-1.2.4-1.2.5.patch
-Unstage all added files to the index
-	git reset HEAD .
 List all commits containing changes of a specific file (history of a file)
 	git log --oneline arch/arm/mach-gitdemos/gitdemos_devel_board.c
 List graph of all commit containing changes of a file
@@ -167,10 +173,6 @@ Amend the author of last commit (new author added in .git/config file)
 	git commit --amend --reset-author
 Untrack a file, i.e delete from the repo but leave a local copy
 	git rm --cached afile.txt
-Print staged diffs of a file
-	git diff --cached afile.txt
-Unstage files ready to be committed leaving changes in the working copy
-	git reset --mixed
 Customize Git Colors
 	Add the following section in ~/.gitconfig
 	[color "status"]

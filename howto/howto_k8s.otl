@@ -49,6 +49,13 @@ List applications deployed with argocd
 	argocd app list -o wide
 List available Custom Resources Definitions (CRD)
 	kubectl get customresourcedefinitions.apiextensions.k8s.io
+	kubectl get crd
+Get detail of a CRD
+	kubectl describe crd <crd_name>
+	kubectl get crd <crd_name> -o yaml
+	kubectl get <crd_name> # to get a list of applied resources from this CRD
+Delete a CRD
+	kubectl delete crd <crd_name>
 Create openfaas function with argocd
 	argocd app create openfaas-functions \
 		--repo https://github.com/wdicarlo/bring-gitops-to-your-openfaas-functions-with-argocd.git \
@@ -62,6 +69,8 @@ View merged k8s clusters configs
 	kubectl config view
 Print specific config
 	kubectl config --kubeconfig <path_to_config> view
+Print config for the selected context
+	kubectl config --kubeconfig <path_to_config> view --flatten --minify
 Generate kubectl bash completition file
 	kubectl completion bash
 Query configured users 
@@ -185,3 +194,12 @@ Monitor resources creation
 	watch kubectl get pods,services,deployments -n <mynamespace>
 List pods in a node
 	kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=<node-name>
+Additional features of oc command for OpenShift platform
+	# oc is built on top of kubectl
+	# Full support for OpenShift resources such as DeploymentConfigs, BuildConfigs, Routes, ImageStreams, and ImageStreamTags
+	# Offers a built-in login command which allows authentication
+	# Has more commands, like command new-app which makes it easier to get new applications started using existing source code or pre-built images
+List OpenShift projects
+	oc projects
+Select OpenShift project
+	oc project <prj>

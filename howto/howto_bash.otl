@@ -157,3 +157,5 @@ List folders sorted by sizes
 	find . -maxdepth 1 -type d| grep -v "^\.$" | xargs -I@ sh -c "echo @;du -cs @| grep total | sed 's/^\(.*\)[ \t]\+total/\1/'" | paste -d " " - - | sort -r -n -k 2 | while read -r a b; do echo "$b $a"; done | column -t
 Copy files from one path into another
 	find | grep -v .git | cpio -pdvum ../target-path
+Get time of timeout command
+	time timeout 5 sleep 10; echo hello
