@@ -125,9 +125,9 @@ elif [ $symbol -eq 2 ]; then
 fi
 if [ $list -eq 1 ]; then
     if [ $# -gt 0 ]; then
-        echo "$bookmarks"| grep $patt | grep --color "^\|$relpath *$\|$relpath *#.*"
+        echo "$bookmarks"| grep $patt | grep --color "^\|$relpath *$\|$relpath *#.*" | awk '{print $3 " " $1}' | column -t
     else
-        echo "$bookmarks"| grep --color "^\|$relpath *$\|$relpath *#.*"
+        echo "$bookmarks"| grep --color "^\|$relpath *$\|$relpath *#.*" | awk '{print $3 " " $1}' | column -t
     fi
     return
 fi
