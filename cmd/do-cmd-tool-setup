@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+force=0
+[ $# -eq 3 ] && [ "$1" == "-f" ] && force=1 && shift
+[ $# -ne 2 ] && echo "Wrong parameters: <URL> <target-bin-name>" && exit
+
+URL="$1"
+BIN_NAME="$2"
+DIR="$HOME/tools"
+TAR="${DIR}/${BIN_NAME}.tar.gz"
+TOOL_DIR="${DIR}/${BIN_NAME}"
+
+[ -f "$TAR" ] && [ $force -eq 1 ] && rm -f "$TAR"
+[ -h "${WDC_DO_COMMANDS_BIN}/${BIN_NAME}" ] && [ $force -eq 1 ] && rm "${WDC_DO_COMMANDS_BIN}/${BIN_NAME}"
+
+[ -f "$TAR" ] && echo "Archive $TAR already exists" && exit
+[ -h "${WDC_DO_COMMANDS_BIN}/${BIN_NAME}" ] && echo "The tool ${BIN_NAME} already exists" && exit
+
+[ ! -d "$TOOL_DIR" ] && mkdir -p "$TOOL_DIR"
+
+echo "> curl -sLS \"$URL\" -o \"$TAR\""
+curl -sLS "$URL" -o "$TAR"
+
+[ ! -f "$TAR" ] && exit
+
+echo "> tar -xzf \"$TAR\" -C \"${TOOL_DIR}\" --strip-components 1"
+tar -xzf "$TAR" -C "${TOOL_DIR}" --strip-components 1
+
+[ ! -d "${TOOL_DIR}" ] && exit
+
+echo "> ln -s \"${TOOL_DIR}/bin/${BIN_NAME}\" \"${WDC_DO_COMMANDS_BIN}/${BIN_NAME}\""
+ln -s "${TOOL_DIR}/bin/${BIN_NAME}" "${WDC_DO_COMMANDS_BIN}/${BIN_NAME}"
