@@ -28,3 +28,13 @@ List regions
 	az account list-locations | jq -r '.[] | "\(.name) \(.regionalDisplayName)"'
 Show secrets in keyvault
 	az keyvault secret show --name "my-secret-name" --vault-name "mykeyvault-b3e2" # add --query "value" to get only the content of "value" attribute
+Download a secret from keyvault
+	az keyvault secret download \
+	 --vault-name mykeyvault \
+	 --name wlab-ssh \
+	 --file wlab-ssh && \
+	az keyvault secret download \
+	 --vault-name mykeyvault \
+	 --name wlab-ssh-pub \
+	 --file wlab-ssh.pub
+

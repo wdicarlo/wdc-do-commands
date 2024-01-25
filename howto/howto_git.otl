@@ -190,6 +190,8 @@ Show details of a commit; date, long id, author, message, diffs
 	git show <commit>
 Replace git with http protocol
 	git config --global url."https://".insteadOf git://
+Configure ssh key per project
+	git config core.sshCommand "ssh -o IdentitiesOnly=yes -i ~/.ssh/id_rsa_gl -F /dev/null"
 Save into a stash
 	git stash save my_changes
 List saved stashes
@@ -328,10 +330,20 @@ Stash untracked files without staging them
 	git stash save -u
 Generate diff for untracked file
 	git diff --no-index /dev/null <file>
+Backup a branch before rebase
+	git checkout my-feature
+	git branch my-feature-backup
+	# try a rebase or a force push
+	# if anything goes wrong, restore
+	git checkout my-feature
+	git reset --hard my-feature-backup
 Rebase feature branch to new integration branch
 	git checkout my_feature
 	git rebase new_int_branch
+	# eventually fix conflics
+	git push --force-with-lease # better to use on branches not used by others
 Rebase develop on diverged master
+	# avoid rebase on shared branches like master and develop branches
 	git rebase master develop
 	git checkout master
 	git push origin master

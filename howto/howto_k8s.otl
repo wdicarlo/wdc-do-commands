@@ -18,6 +18,8 @@ Get (kind) cluster information
 	kubectl cluster-info --context kind-kind
 Create a namespace
 	kubectl create namespace argocd
+List all resources attached to a namespace
+	kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n <namespace>
 Get the argocd CLI
 	arkade install argocd
 Install argocd without using arkade
@@ -169,10 +171,12 @@ Install unused-volumes kubectl plugin
 	kubectl krew install myplugin
 List unused volumes
 	kubectl describe -A pvc | grep -E "^Name:.*$|^Namespace:.*$|^Used By:.*$" | grep -B 2 "<none>" | grep -E "^Name:.*$|^Namespace:.*$" | cut -f2 -d: | paste -d " " - -
-Clean up Pods in Evicted state
+Delete Pods in Evicted state
 	kubectl get pods --all-namespaces -o wide | grep Evicted | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n
-Clean up Pods in Error state
+Delete Pods in Error state
 	kubectl get pods --all-namespaces -o wide | grep Error | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n
+Delete Pods in Failed state
+	kubectl get pods --namespace=<mynamespace> --field-selector status.phase=Failed | awk '{ print $1 }' | xargs -I@ sh -c "kubectl delete pods -n <mynamespace> @"
 Clearing the Completed state of Pods
 	kubectl get pods --all-namespaces -o wide | grep Completed | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n
 Clean up unused PVs
@@ -187,7 +191,27 @@ Resize volume (PVC) of PostgreSql pod
 	# wait the pod shutdown gracefully
 	kubectl -n <namespace> scale statefulset <statefulset_name> --replicas=1
 Patch PVC to remove the finalizers
-	kubectl patch pvc <pvc-name> -p '{metadata:{finalizers:null}}' -n <namespace>
+	kubectl patch pvc <pvc-name> -p '{"metadata":{"finalizers":null}}' -n <namespace>
+Patch ConfigMap to remove the finalizers
+	kubectl patch configmap/mymap --type json --patch='[ { "op": "remove", "path": "/metadata/finalizers" } ]'
+Patch all resources of the specifoed type in the specified namespace to remove the finalizers
+	kubectl get <resource-type> -n <namespace> --no-headers -ojsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | xargs -I@ kubectl patch -n ci <resource-type> @ --type=merge -p '{"metadata":{"finalizers":null}}'
+Force deletion of namespace removing the finalizers
+	cat <<EOF | curl -X PUT \
+	  localhost:8080/api/v1/namespaces/test/finalize \
+	  -H "Content-Type: application/json" \
+	  --data-binary @-
+	{
+	  "kind": "Namespace",
+	  "apiVersion": "v1",
+	  "metadata": {
+		"name": "test"
+	  },
+	  "spec": {
+		"finalizers": null
+	  }
+	}
+	EOF
 Copy a file from pod to local filesystem
 	kubectl cp <namespace>/<pod-name>:/path/to/<file.ext> ./<file.ext>
 Monitor resources creation
@@ -203,3 +227,20 @@ List OpenShift projects
 	oc projects
 Select OpenShift project
 	oc project <prj>
+Get deployment config in json format
+	kubectl get deployment --namespace myspace mydeployment -o json | jq
+Get deployment status
+	kubectl get deployment --namespace myspace mydeployment -o jsonpath='{.status}' | jq
+Get labels of a pod
+	kubectl get pods -n myspace mypod-3c7ff65bc3-fbdzb -o jsonpath='{.metadata.labels}' | jq
+Label a pod
+	kubectl label pods -n myspace mypod-3c7ff65bc3-fbdzb "myprj.mydomain.org/release"="0.19.39-71"
+Delete a pod label
+	kubectl label pods -n myspace mypod-3c7ff64bc3-fbdzb "myprj.mydomain.org/release"- # not the - sign at the end of the command
+List pods by label
+	kubectl get pods -n myspace -l 'myprj.mydomain.org/release in (0.19.39-71, 1.0, 1.1)' # using set-based selector
+Wait to copy data until the service is up and running
+	kubectl apply --namespace ${namespace} -f ./service.yaml # StatefulSet with a volume mount
+	kubectl wait --for=jsonpath='{.status.phase}'=Running -n ${namespace} pod/myservice-0
+	kubectl cp ./data ${namespace}/myservice-0:/home/dev/data
+

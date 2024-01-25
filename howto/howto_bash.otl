@@ -93,6 +93,8 @@ Generate secret
 	cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | base64
 Print content of a file in a tar archive
 	tar -xf ~/backups/wdc-do-commands-backup-211202-143838.tar.bz2 bin/do_cmd_counts.csv -O
+Create compressed tar archive with a different root folder
+	tar -czf my-archive-file.tgz --transform='s/my-archive-folder/archive-folder/' my-archive-folder/
 List shell options status
 	shop -o # list of active options in $SHELLOPTS
 		allexport      	off
@@ -159,3 +161,5 @@ Copy files from one path into another
 	find | grep -v .git | cpio -pdvum ../target-path
 Get time of timeout command
 	time timeout 5 sleep 10; echo hello
+Completion outputs debug logs to a file named compdebug
+	export BASH_COMP_DEBUG_FILE=compdebug

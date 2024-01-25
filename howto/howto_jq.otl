@@ -62,3 +62,6 @@ Compare json files
 		jq --slurpfile texts <(jq -Rs '{ text: .| @html }' page.html) '.path.to.item.value=$texts[0].text' doc.json
 Add one entry
 	echo $DOCKER_AUTH_CONFIG | jq -r '.auths += {"my-repo-uri": { "auth": "***********" }}'
+Operate on all keys and values of an object
+	# with_entries(foo) is a shorthand for to_entries | map(foo) | from_entries
+	jq '. | with_entries(select((.value | type) == "array" or (.value | type) == "object"))' data.json
