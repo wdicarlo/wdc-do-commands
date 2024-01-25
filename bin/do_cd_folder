@@ -4,14 +4,19 @@
 usage() 
 {
     cmd=`basename $0`
-    echo "Usage: $cmd <folder-name-grep-pattern>"
+    echo "Usage: $cmd [-p] <folder-name-grep-pattern>"
+    echo "             -p  : create the folder"
 }
 
 prj_root=$(pwd)
 n=0
 maxdepth=5
+create=0
+[ "$1" == "-p" ] && create=1 && shift
+
 if [ $# == 1 ]
 then
+  [ $create -eq 1 ] && mkdir -p "$1" && [ $? -ne 0 ] && echo "Cannot create folder" && return
   n=$(find $prj_root -maxdepth $maxdepth -type d -name "*$1*" | awk '{ print NR, $0 }' | wc -l)
   find $prj_root -maxdepth $maxdepth -type d -name "*$1*" | awk '{ print NR, $0 }'
 else
