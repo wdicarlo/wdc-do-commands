@@ -20,6 +20,7 @@ function usage() {
         echo "Usage: $cmd [-h] [-n <name>] [-s] [-f] [-o] [-d <tree_depth>] [-t|-T] <topology>"
         echo "where:"
         echo "       <topology>                  : topology ID where:"
+        echo "             0                       : empty demo repo"
         echo "             1                       : minimum demo repo"
         echo "             2                       : minimum demo repo with a merged branch"
         echo "             3                       : minimum demo repo with an aligned branch"
@@ -323,11 +324,16 @@ mkdir "$name"
 cd "$name"
 git init -q
 do-git-conf-author "wdicarlo" "walter@di-carlo.it"
-do-git-bump-version -d 
+[ ! "$A_TOPOLOGY" == "0" ] && do-git-bump-version -d 
 if [ $gitflow -eq 1 ]; then
    git flow init -d -f
 fi
-if [ "$A_TOPOLOGY" = 10 ]; then
+if [ "$A_TOPOLOGY" = 0 ]; then
+ touch .gitignore
+ git add .
+ git commit -m "Init empty repository"
+ echo "Created empty repository" 
+elif [ "$A_TOPOLOGY" = 10 ]; then
     git_commit
     git_commit
     git_checkout -qb $BRANCH_DEV
