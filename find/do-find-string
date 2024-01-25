@@ -155,7 +155,8 @@ do
             fi
             ;;
         r)
-            root=$OPTARG
+            root=$(echo $OPTARG | sed 's#/$##')
+            [ ! -d "$root" ] && echo "Not a folder: $root" && exit
             ;;
         n)
             depth=$OPTARG
@@ -186,13 +187,14 @@ if [ $verbose -eq 1 ]; then
 	verbose_cmd="echo @;"
 fi
 if [ "$exclude" == "" ]; then
-    cmd="find \"$root\" -maxdepth \"$depth\" \( -not -path \"*/.*\" -and -type f \) $file $bin_filter $sav_filter | xargs -I@ sh -c \"$verbose_cmd $grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"\""
+    cmd="find \".\" -maxdepth \"$depth\" \( -not -path \"*/.*\" -and -type f \) $file $bin_filter $sav_filter | xargs -I@ sh -c \"$verbose_cmd $grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"\""
 else
-    cmd="find \"$root\" -maxdepth \"$depth\" \( -not -path \"*/.*\" -and -type f \) $file $bin_filter $sav_filter | xargs -I@ sh -c \"$grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
+    cmd="find \".\" -maxdepth \"$depth\" \( -not -path \"*/.*\" -and -type f \) $file $bin_filter $sav_filter | xargs -I@ sh -c \"$grep_cmd --color \\\"$pars\\\" \\\"$string\\\" \\\"@\\\"| \grep -v \\\"$exclude\\\"|\grep --color \\\"$string\\\"\""
 fi
 if [ ! "$postproc" == "" ]; then
     cmd+="|$postproc"
 fi
+[ ! "$root" == "." ] && cmd="cd $root && $cmd || cd ${PWD}"
 cmd+=" 2>/dev/null"
 TASK=$(echo $PROJECT_TASK|cut -d':' -f2)
 [ $taction -eq 0 ] && [ ! "$TASK" == "" ] && taction=1 && topic="$TASK"
@@ -209,11 +211,12 @@ if [ $taction -gt 0 ]; then
     [ $taction -eq 2 ] && print_topic "${topic}" && exit
     [ $taction -eq 99 ] && rm -f "${topic_file}" # reset result file
     if [ ! "$string" == "" ]; then
-      echo "# PWD=$PWD" >> "${topic_file}"
+      echo "# PWD=$(readlink -f $root)" >> "${topic_file}"
       #cmd+=" | sed \"s#^\\.#\$PWD#\""
       echo "# $cmd" >> "${topic_file}"
       [ $quiet -eq 0 ] && echo "> $cmd"
-      eval $cmd | tee -a $topic_file  | \grep --color "^\|$string"
+      [[ $taction -ne 6 && $taction -ne 7 ]] && eval $cmd | tee -a $topic_file | sed "s#^.#$root#" | \grep --color "^\|$string" && exit
+      [[ $taction -eq 6 || $taction -eq 7 ]] && eval $cmd >> $topic_file
     fi
     [[ $taction -eq 6 || $taction -eq 7 ]] && print_topic "${topic}" | do-pipe-cfile-to-vim && exit
 else
