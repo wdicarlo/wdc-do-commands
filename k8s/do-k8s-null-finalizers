@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+cmd=$(basename $0)
+[[ $# -ne 2 && $# -ne 3 ]] && echo "Usage: ${cmd} <namespace> <resource-type> [<num-resources>]" && exit 
+
+ns="$1"
+rtype="$2"
+rnum="${3:-0}"
+
+echo "Resources to be patched:"
+kubectl get ${rtype} -n ${ns} --no-headers -ojsonpath='{.items[*].metadata.name}{":\n"}' | tr ' ' '\n'
+kubectl get ${rtype} -n ${ns} --no-headers -ojsonpath='{.items[*].metadata.finalizers}{"\n"}' | tr ' ' '\n'
+echo ""
+
+count=$(kubectl get ${rtype} -n ${ns} --no-headers -ojsonpath='{.items[*].metadata.name}{"\n"}' | tr ' ' '\n' | wc -l)
+
+[ ${count} -ne ${rnum} ] && echo "Specify ${count} to patch all resources of type ${rtype}" && exit
+
+kubectl get ${rtype} -n ${ns} --no-headers -ojsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | xargs -I@ kubectl patch -n ${ns} ${rtype} @ --type=merge -p '{"metadata":{"finalizers":null}}'
