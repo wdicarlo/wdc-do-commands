@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+[ "$server" == "" ] && echo "Missing server" && exit
+[ "$token" == "" ] && echo "Missing token" && exit
+
+curl --header "Authorization: Bearer $token" -k $server/api/v1/$@
