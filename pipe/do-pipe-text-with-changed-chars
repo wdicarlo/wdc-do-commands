@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+cmd=$(basename $0)
+[ $# -ne 3 ] && echo "Usage: $cmd <pattern> <from-char> <to-char>" && exit 1
+
+cat | while read line
+do
+    if [[ "$line" == *"$1"* ]]; then
+        cmd="echo \"$line\" | tr '$2' '$3'"
+    else
+        cmd="echo \"$line\""
+    fi
+    eval "$cmd"
+done
