@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+cmd=$(basename $0)
+
+[ $# -eq 0 ] && echo "Usage: $cmd <namespace>[ ...<namespace>]" && exit
+[ "$1" == "-h" ] && echo "Usage: $cmd <namespace>[ ...<namespace>]" && exit
+
+for ns in $@
+do
+  kubectl get po -n $ns  -o yaml | grep "image:" | cut -d ':' -f 2,3 | tr -d ' '
+done | sort | uniq
