@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+function getconfigmaplist() {
+  # object-type kubeconfig
+  kubectl get --kubeconfig=$2 $1 -A 
+}
+function getconfigmap() {
+  # object-type kubeconfig
+  kubectl get --kubeconfig=$2 $1 -A -o yaml \
+    | grep -v "creationTimestamp:" \
+    | grep -v "resourceVersion:" \
+    | grep -v "uid:" \
+    | grep -v "lastTransitionTime:"
+}
+
+cmd=$(basename $0)
+
+list=0
+[ "$1" == "-l" ] && list=1 && shift
+[ "$1" == "-L" ] && list=2 && shift
+
+[ $# -ne 3 ] && echo "Usage: $cmd [-l|-L] <object-type> <kubeconfig1> <kubeconfig2>" && exit
+
+otype="$1"
+c1="$2"
+c2="$3"
+
+if [ $list -eq 2 ]; then
+  echo "$c1:"
+  getconfigmaplist $otype $c1
+  echo "$c2:"
+  getconfigmaplist $otype $c2
+elif [ $list -eq 1 ]; then
+  vimdiff \
+    <(getconfigmaplist $otype $c1) \
+    <(getconfigmaplist $otype $c2)
+else
+  vimdiff \
+    <(getconfigmap $otype $c1) \
+    <(getconfigmap $otype $c2)
+fi
