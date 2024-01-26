@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+context=""
+[ ! "$PROJECT_ENV" == "" ] &&  context=$(kubectl config get-contexts -o name|grep $PROJECT_ENV)
+
+opt=""
+[ ! "$context" == "" ] && opt="--context $context"
+
+cmd="k9s $opt"
+echo "> $cmd"
+eval "$cmd"
