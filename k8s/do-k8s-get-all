@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+cmd=$(basename $0)
+[ "$1" == "-h" ] && echo "Usage: $cmd [<namespace>]" && exit
+
+ns="default"
+[ $# -ne 0 ] && ns="$1"
+
+function kubectlgetall {
+  for i in $(kubectl api-resources --verbs=list --namespaced -o name | sort | uniq); do
+    echo "Resource:" $i
+    [ $(echo "${i}" | grep -c "packagemanifests\|events.events.k8s.io\|events") -gt 0 ] && echo "Skipped!!!" && continue
+    kubectl -n ${1} get --ignore-not-found ${i}
+  done
+}
+
+kubectlgetall ${ns}
+
