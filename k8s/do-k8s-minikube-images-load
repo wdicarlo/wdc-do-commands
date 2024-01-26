@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+#set -x 
+
+[ $# -lt 2 ] && echo "Wrong parameters. Use <profile> <image1>[..<imagen>]" && exit 1
+
+profile="$1" && shift
+ipath='images'
+
+[ ! -d "$ipath" ] && mkdir -p "$ipath"
+
+ilist=""
+for image in $@
+do
+  timage="$(echo $image | sed 's/:/-/').tar"
+  echo $image $timage
+  #[ -f "$ipath/$timage" ] && echo "Skiping..." && continue
+  cmd="docker save $image -o $ipath/$timage"
+  echo "> $cmd"
+  eval "$cmd"
+  ilist="${ilist}${timage} "
+done
+
+nodes=""
+while read -r name ip
+do
+  echo "minikube node: $name $ip"
+  nodes="${nodes}${name}:${ip} "
+done < <(minikube -p $profile node list) 
+echo "nodes=$nodes"
+echo ================================
+  
+for node in $nodes
+do
+  name=$(echo $node | cut -d":" -f 1)
+  ip=$(echo $node | cut -d":" -f 2)
+  echo "minikube node: $name $ip"
+  echo ================================
+  echo "archives: $ilist"
+  for archive in $ilist
+  do
+    echo ++++++++++++++++++++++++++++++++
+    echo "archive: $archive"
+    cmd="scp -i ~/.minikube/machines/$name/id_rsa $ipath/$archive  docker@$ip:/tmp/"
+    echo "> $cmd"
+    eval "$cmd"
+    cmd="ssh -i ~/.minikube/machines/$name/id_rsa docker@$ip 'docker load -i /tmp/$archive'"
+    echo "> $cmd"
+    eval "$cmd"
+  done
+done
